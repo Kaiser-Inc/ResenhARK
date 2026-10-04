@@ -1,6 +1,18 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { MAX_MEMBERS, type Member, addMember, createRoom, generateRoomCode } from "./room.js";
+import {
+  MAX_MEMBERS,
+  type Member,
+  type Room,
+  addMember,
+  createRoom,
+  generateRoomCode,
+  kick,
+  leave,
+  roomDeadline,
+  tickRoom,
+  transferOwnershipIfAway,
+} from "./room.js";
 
 const member = (id: string, name = id): Member => ({
   id,
@@ -9,6 +21,7 @@ const member = (id: string, name = id): Member => ({
   joinedAt: 0,
   connections: 0,
   offlineSince: null,
+  greeted: false,
 });
 
 test("generateRoomCode returns 5 letters from the alphabet", () => {
@@ -40,4 +53,107 @@ test("addMember rejects the 21st member", () => {
     room = result.room;
   }
   assert.deepEqual(addMember(room, member("extra"), 99), { ok: false, error: "room-full" });
+});
+
+const roomOf = (ownerId: string, members: Member[]): Room => ({
+  ...createRoom("KXPMR", members[0], 0),
+  ownerId,
+  members,
+});
+
+const online = (id: string, joinedAt: number): Member => ({
+  ...member(id),
+  joinedAt,
+  connections: 1,
+});
+
+const offlineOwner = (id: string, offlineSince: number): Member => ({
+  ...member(id),
+  offlineSince,
+});
+
+test("owner offline for 60s hands ownership to the earliest online member", () => {
+  const room = roomOf("a", [offlineOwner("a", 0), online("c", 2), online("b", 1)]);
+  const result = transferOwnershipIfAway(room, 60_000);
+  assert.equal(result.newOwnerId, "b");
+  assert.equal(result.room.ownerId, "b");
+});
+
+test("owner offline for 59s keeps ownership", () => {
+  const room = roomOf("a", [offlineOwner("a", 0), online("b", 1)]);
+  const result = transferOwnershipIfAway(room, 59_999);
+  assert.equal(result.newOwnerId, null);
+  assert.equal(result.room.ownerId, "a");
+});
+
+test("owner offline with nobody online keeps ownership and has no deadline", () => {
+  const room = roomOf("a", [offlineOwner("a", 0), member("b")]);
+  assert.equal(transferOwnershipIfAway(room, 120_000).newOwnerId, null);
+  assert.equal(roomDeadline(room), null);
+});
+
+test("roomDeadline is the owner's offlineSince plus 60s when someone can take over", () => {
+  const room = roomOf("a", [offlineOwner("a", 5_000), online("b", 1)]);
+  assert.equal(roomDeadline(room), 65_000);
+  assert.equal(roomDeadline(roomOf("a", [online("a", 0), online("b", 1)])), null);
+});
+
+test("tickRoom announces the new owner", () => {
+  const room = roomOf("a", [
+    { ...offlineOwner("a", 0), name: "Ana" },
+    { ...online("b", 1), name: "Bia" },
+  ]);
+  const result = tickRoom(room, 60_000);
+  assert.equal(result.room.ownerId, "b");
+  assert.deepEqual(result.system, ["Bia agora é o dono da sala"]);
+  assert.deepEqual(tickRoom(room, 1).system, []);
+});
+
+test("owner kicking themselves is invalid-target", () => {
+  const room = roomOf("a", [member("a"), member("b")]);
+  assert.deepEqual(kick(room, "a", "a"), { ok: false, error: "invalid-target" });
+  assert.deepEqual(kick(room, "a", "ghost"), { ok: false, error: "invalid-target" });
+});
+
+test("non-owner cannot kick", () => {
+  const room = roomOf("a", [member("a"), member("b"), member("c")]);
+  assert.deepEqual(kick(room, "b", "c"), { ok: false, error: "not-owner" });
+});
+
+test("kick removes the target from the room", () => {
+  const room = roomOf("a", [member("a"), member("b")]);
+  const result = kick(room, "a", "b");
+  assert.ok(result.ok);
+  assert.deepEqual(
+    result.room.members.map((m) => m.id),
+    ["a"],
+  );
+});
+
+test("owner leaving hands ownership to the next online member by joinedAt", () => {
+  const room = roomOf("a", [
+    { ...online("a", 0) },
+    { ...member("b"), joinedAt: 1 },
+    online("c", 2),
+  ]);
+  const left = leave(room, "a");
+  assert.equal(left.ownerId, "c");
+  assert.deepEqual(
+    left.members.map((m) => m.id),
+    ["b", "c"],
+  );
+});
+
+test("owner leaving with nobody online hands ownership to the next by joinedAt", () => {
+  const room = roomOf("a", [
+    member("a"),
+    { ...member("c"), joinedAt: 2 },
+    { ...member("b"), joinedAt: 1 },
+  ]);
+  assert.equal(leave(room, "a").ownerId, "b");
+});
+
+test("a non-owner leaving keeps the owner", () => {
+  const room = roomOf("a", [member("a"), member("b")]);
+  assert.equal(leave(room, "b").ownerId, "a");
 });

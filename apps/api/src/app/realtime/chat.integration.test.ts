@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import type { Ack } from "@resenhark/shared";
+import type { Ack, ChatMessage } from "@resenhark/shared";
 import type { Socket } from "socket.io-client";
 import {
   connectClient,
@@ -12,6 +12,16 @@ import {
   startTestServer,
 } from "../../test/helpers.js";
 import { systemMessage } from "../domain/room/chat.js";
+
+// Joins are announced as system messages; these tests care about user messages only.
+const userMessages = (messages: ChatMessage[]) => messages.filter((m) => m.kind === "user");
+
+async function nextUserMessage(socket: Socket): Promise<ChatMessage> {
+  for (;;) {
+    const message = await nextChatMessage(socket);
+    if (message.kind === "user") return message;
+  }
+}
 
 const send = (socket: Socket, text: unknown): Promise<Ack> =>
   socket.timeout(2000).emitWithAck("chat:send", { text });
@@ -29,21 +39,21 @@ test("a message reaches every member and new joiners get the history", async (t)
   });
   await nextState(anaClient);
   await nextState(biaClient);
-  assert.deepEqual(await nextChatHistory(anaClient), []);
+  assert.deepEqual(userMessages(await nextChatHistory(anaClient)), []);
 
   assert.deepEqual(await send(anaClient, "oi"), { ok: true });
-  const received = await nextChatMessage(biaClient);
+  const received = await nextUserMessage(biaClient);
   assert.equal(received.kind, "user");
   assert.equal(received.text, "oi");
   assert.equal(received.kind === "user" && received.name, "Ana");
   assert.equal(received.kind === "user" && received.memberId, ana.memberId);
   assert.equal(received.at, app.clock.now());
-  assert.deepEqual(await nextChatMessage(anaClient), received);
+  assert.deepEqual(await nextUserMessage(anaClient), received);
 
   const caio = await joinRoomVia(app, ana.code, "Caio");
   const caioClient = await connectClient(app.url, caio.sessionToken);
   t.after(() => caioClient.close());
-  assert.deepEqual(await nextChatHistory(caioClient), [received]);
+  assert.deepEqual(userMessages(await nextChatHistory(caioClient)), [received]);
 });
 
 test("history keeps only the last 200 messages", async (t) => {
@@ -79,7 +89,7 @@ test("html is stored as plain text", async (t) => {
   t.after(() => client.close());
   await nextState(client);
   await send(client, "<script>x</script>");
-  assert.equal((await nextChatMessage(client)).text, "<script>x</script>");
+  assert.equal((await nextUserMessage(client)).text, "<script>x</script>");
 });
 
 test("invalid messages are rejected and not stored", async (t) => {
@@ -92,7 +102,7 @@ test("invalid messages are rejected and not stored", async (t) => {
   for (const bad of ["", "   ", "a".repeat(501), 42]) {
     assert.deepEqual(await send(client, bad), { ok: false, error: "invalid-message" });
   }
-  assert.deepEqual(await app.store.chatHistory(ana.code), []);
+  assert.deepEqual(userMessages(await app.store.chatHistory(ana.code)), []);
 });
 
 test("a removed member cannot send", async (t) => {
@@ -106,7 +116,7 @@ test("a removed member cannot send", async (t) => {
   assert.ok(room);
   await app.store.save({ ...room, members: [] });
   assert.deepEqual(await send(client, "oi"), { ok: false, error: "invalid-session" });
-  assert.deepEqual(await app.store.chatHistory(ana.code), []);
+  assert.deepEqual(userMessages(await app.store.chatHistory(ana.code)), []);
 });
 
 test("a successful send renews the room and session TTLs", async (t) => {

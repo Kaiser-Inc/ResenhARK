@@ -11,6 +11,7 @@ const member = (id: string, connections: number): Member => ({
   joinedAt: 0,
   connections,
   offlineSince: null,
+  greeted: false,
 });
 
 test("projectRoom shows presence and ownership from the viewer's side", () => {

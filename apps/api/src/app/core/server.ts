@@ -23,7 +23,7 @@ export interface ServerDependencies {
 
 export async function createServer(
   deps: ServerDependencies,
-): Promise<{ fastify: FastifyInstance; io: Server }> {
+): Promise<{ fastify: FastifyInstance; io: Server; hub: RoomHub }> {
   const fastify = Fastify({ logger: deps.logger ?? settings.NODE_ENV !== "test" });
 
   fastify.setValidatorCompiler(validatorCompiler);
@@ -34,6 +34,7 @@ export async function createServer(
   const io = new Server(fastify.server, { cors: { origin: settings.CORS_ORIGIN } });
   const onError = (err: unknown) => fastify.log.error(err);
   const hub = new RoomHub({ ...deps, io, onError });
+  fastify.addHook("onClose", async () => hub.dispose());
   registerSocketGateway(io, { store: deps.store, hub, now: deps.now, newId: deps.newId, onError });
 
   await healthRoutes(fastify, deps);
@@ -47,5 +48,5 @@ export async function createServer(
     return reply.status(500).send({ error: "Internal server error" });
   });
 
-  return { fastify, io };
+  return { fastify, io, hub };
 }

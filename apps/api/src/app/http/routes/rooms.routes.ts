@@ -25,6 +25,7 @@ export async function roomRoutes(
     joinedAt: now(),
     connections: 0,
     offlineSince: null,
+    greeted: false,
   });
 
   app.post("/rooms", { schema: { body: joinRoomInputSchema } }, async (request, reply) => {
@@ -53,17 +54,7 @@ export async function roomRoutes(
     async (request, reply) => {
       const { code } = request.params;
       const member = newMember(request.body);
-      const ack = await hub.mutate(code, (room) => {
-        const result = addMember(room, member, now());
-        // addMember only fails with name-taken or room-full here.
-        if (!result.ok) {
-          return {
-            ok: false,
-            error: result.error === "not-a-member" ? "invalid-target" : result.error,
-          };
-        }
-        return result;
-      });
+      const ack = await hub.mutate(code, (room) => addMember(room, member, now()));
       if (!ack.ok) {
         return reply.status(ack.error === "room-not-found" ? 404 : 409).send({ error: ack.error });
       }

@@ -6,6 +6,7 @@ import { Redis } from "ioredis";
 import type { Server } from "socket.io";
 import { type Socket, io as connect } from "socket.io-client";
 import { createServer } from "../app/core/server.js";
+import type { RoomHub } from "../app/realtime/room-hub.js";
 import { RedisRoomStore } from "../app/repositories/redis-room-store.js";
 
 export const TEST_REDIS_URL = "redis://localhost:6379/15";
@@ -13,6 +14,7 @@ export const TEST_REDIS_URL = "redis://localhost:6379/15";
 export type TestServer = {
   fastify: FastifyInstance;
   io: Server;
+  hub: RoomHub;
   store: RedisRoomStore;
   clock: { now: () => number; set: (ms: number) => void };
   url: string;
@@ -42,7 +44,7 @@ export async function startTestServer(): Promise<TestServer> {
   };
   let counter = 0;
 
-  const { fastify, io } = await createServer({
+  const { fastify, io, hub } = await createServer({
     store,
     redis,
     now: clock.now,
@@ -56,6 +58,7 @@ export async function startTestServer(): Promise<TestServer> {
   return {
     fastify,
     io,
+    hub,
     store,
     clock,
     url: `http://127.0.0.1:${port}`,

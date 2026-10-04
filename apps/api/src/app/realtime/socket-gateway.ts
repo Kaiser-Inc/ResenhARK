@@ -2,7 +2,7 @@ import { type Ack, SOCKET_EVENTS } from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
 import { RateLimiter } from "../domain/room/rate-limiter.js";
-import type { Room } from "../domain/room/room.js";
+import { type Room, kick, leave } from "../domain/room/room.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { type MutationResult, type RoomHub, socketRoom } from "./room-hub.js";
 
@@ -40,6 +40,7 @@ export function registerSocketGateway(
       if (!room.members.some((m) => m.id === memberId)) {
         return { ok: false, error: "invalid-session" };
       }
+      const system: string[] = [];
       return {
         ok: true,
         room: {
@@ -47,11 +48,29 @@ export function registerSocketGateway(
           members: room.members.map((member) => {
             if (member.id !== memberId) return member;
             const connections = Math.max(0, member.connections + delta);
-            return { ...member, connections, offlineSince: connections === 0 ? now() : null };
+            const greet = delta === 1 && !member.greeted;
+            if (greet) system.push(`${member.name} entrou`);
+            return {
+              ...member,
+              connections,
+              offlineSince: connections === 0 ? now() : null,
+              greeted: member.greeted || greet,
+            };
           }),
         },
+        system,
       };
     };
+
+  /** Revokes the member's sessions and drops their sockets, telling them first if `event` is given. */
+  const dropMember = async (code: string, targetId: string, event?: string) => {
+    await store.revokeMemberSessions(code, targetId);
+    for (const s of await io.in(socketRoom(code)).fetchSockets()) {
+      if (s.data.memberId !== targetId) continue;
+      if (event) s.emit(event);
+      s.disconnect(true);
+    }
+  };
 
   io.on("connection", (socket) => {
     const { code, memberId } = socket.data as SocketData;
@@ -99,6 +118,57 @@ export function registerSocketGateway(
         reply({ ok: false, error: "server-error" });
       }
     });
+
+    // The ack goes out before `after` runs, so a disconnect cannot swallow it.
+    const intent =
+      (handler: (payload: unknown) => Promise<{ ack: Ack; after?: () => Promise<void> }>) =>
+      async (payload: unknown, ack?: (result: Ack) => void) => {
+        const reply = (result: Ack) => typeof ack === "function" && ack(result);
+        try {
+          const outcome = await handler(payload);
+          reply(outcome.ack);
+          await outcome.after?.();
+        } catch (err) {
+          onError(err);
+          reply({ ok: false, error: "server-error" });
+        }
+      };
+
+    socket.on(
+      "room:kick",
+      intent(async (payload) => {
+        const targetId = (payload as { targetId?: unknown } | null)?.targetId;
+        if (typeof targetId !== "string") return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          const result = kick(room, memberId, targetId);
+          if (!result.ok) return result;
+          const name = room.members.find((m) => m.id === targetId)?.name;
+          return { ...result, system: [`${name} foi removido da sala`] };
+        });
+        return {
+          ack,
+          after: ack.ok ? () => dropMember(code, targetId, SOCKET_EVENTS.kicked) : undefined,
+        };
+      }),
+    );
+
+    socket.on(
+      "room:leave",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          const leaver = room.members.find((m) => m.id === memberId);
+          if (!leaver) return { ok: false, error: "invalid-session" };
+          const left = leave(room, memberId);
+          const system = [`${leaver.name} saiu`];
+          const heir = left.members.find((m) => m.id === left.ownerId);
+          if (left.ownerId !== room.ownerId && heir) {
+            system.push(`${heir.name} agora é o dono da sala`);
+          }
+          return { ok: true, room: left, system };
+        });
+        return { ack, after: ack.ok ? () => dropMember(code, memberId) : undefined };
+      }),
+    );
 
     socket.on("disconnect", async () => {
       if (!(await connected).ok) return;
