@@ -279,6 +279,7 @@ export function apply(
     } else if (me.online) {
       me.online = false;
       me.offlineSince = ctx.now;
+      if (s.phase === "contest" && allDecided(s)) resolve(s, ctx, events);
     }
     return { ok: true, state: s, events };
   }

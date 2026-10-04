@@ -781,3 +781,12 @@ test("nextDeadline picks the earliest pending deadline", () => {
   assert.equal(nextDeadline(w), 16_000);
   assert.equal(nextDeadline(sys(w, { type: "end" }).state), null);
 });
+test("the last undecided contestant going offline resolves the window", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const p = ok(apply(w, o1, { type: "pass" }, fixedCtx())).state;
+  const r = ok(apply(p, o2, { type: "set-online", online: false }, fixedCtx(2000)));
+  assert.deepEqual(types(r), ["card-revealed"]);
+  assert.equal(r.state.phase, "turn-start");
+  assert.equal(r.state.contestDeadline, null);
+});
