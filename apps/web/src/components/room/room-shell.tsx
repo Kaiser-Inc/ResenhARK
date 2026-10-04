@@ -17,6 +17,8 @@ import { toast } from "sonner";
 
 import { ChatPanel } from "@/components/chat/chat-panel";
 import { ChatSkeleton } from "@/components/chat/chat-thread";
+import { HitlineBoard } from "@/components/hitline/hitline-board";
+import { LobbyPanel } from "@/components/lobby/lobby-panel";
 import { ConnectionBanner } from "@/components/room/connection-banner";
 import { RoomMobileBar } from "@/components/room/room-mobile-bar";
 import { type RoomActions, RoomSidebar } from "@/components/room/room-sidebar";
@@ -25,7 +27,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { PageHeader } from "@/components/ui/page-header";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -250,7 +251,7 @@ type RoomShellProps = {
 };
 
 export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }: RoomShellProps) {
-  const { status, room, chat, chatLoaded, unread, setChatVisible, send } = useRoom(
+  const { status, room, events, chat, chatLoaded, unread, setChatVisible, send, clock } = useRoom(
     code,
     sessionToken,
   );
@@ -260,6 +261,12 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
   const [removeTarget, setRemoveTarget] = useState<MemberView | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const connected = status === "connected";
+  // The owner left a finished game's result to set up another one; the others keep seeing it.
+  const [backToLobby, setBackToLobby] = useState(false);
+  const gameOver = room?.game?.view.phase === "game-over";
+  useEffect(() => {
+    if (room?.game && !gameOver) setBackToLobby(false);
+  }, [room?.game, gameOver]);
 
   useEffect(() => {
     if (status === "invalid-session" && !left.current) onInvalidSession();
@@ -324,8 +331,18 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         focusOnMount={focusOnMount}
       >
         {room ? (
-          // Placeholder until the lobby arrives.
-          <PageHeader title="Lobby" />
+          room.game && !(gameOver && backToLobby) ? (
+            <HitlineBoard
+              room={room}
+              events={events}
+              send={send}
+              clock={clock}
+              connected={connected}
+              onNewGame={() => setBackToLobby(true)}
+            />
+          ) : (
+            <LobbyPanel room={room} send={send} connected={connected} />
+          )
         ) : (
           <GameAreaSkeleton />
         )}

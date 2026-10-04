@@ -90,3 +90,18 @@ export async function twoMembersInRoom(browser: Browser) {
   const { page: bia, context: biaContext } = await joinRoomAs(browser, code, "Bia");
   return { ana, bia, code, anaContext, biaContext };
 }
+
+/** Picks `option` in a Base select: opens the combobox named `label`, then clicks the option. */
+export async function chooseOption(page: Page, label: string, option: string) {
+  await page.getByRole("combobox", { name: label }).click();
+  await page.getByRole("option", { name: option, exact: true }).click();
+}
+
+/** Owner flow up to the first drawn card: import the dev deck, set N and start. */
+export async function importDeckAndStart(page: Page, targetCards = "2") {
+  await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
+  await page.getByRole("button", { name: "Importar playlist" }).click();
+  await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await chooseOption(page, "Cartas para vencer", targetCards);
+  await page.getByRole("button", { name: "Iniciar partida" }).click();
+}
