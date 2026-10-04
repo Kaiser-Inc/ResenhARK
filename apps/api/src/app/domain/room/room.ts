@@ -5,7 +5,7 @@ import {
   ROOM_CODE_ALPHABET,
   normalizeName,
 } from "@resenhark/shared";
-import type { HitlineState } from "../../games/hitline/engine.js";
+import { type HitlineState, nextDeadline } from "../../games/hitline/engine.js";
 import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 
 export type Member = {
@@ -110,11 +110,16 @@ export function leave(room: Room, memberId: string): Room {
   return { ...room, members, ownerId: heir?.id ?? room.ownerId };
 }
 
-/** When the room next needs a tick, or null. The game deadline joins in later. */
+/** When the room next needs a tick (owner handover or game deadline), or null. */
 export function roomDeadline(room: Room): number | null {
   const owner = room.members.find((m) => m.id === room.ownerId);
-  if (!owner || owner.offlineSince === null || !nextOnline(room.members, owner.id)) return null;
-  return owner.offlineSince + OWNER_GRACE_MS;
+  const handover =
+    !owner || owner.offlineSince === null || !nextOnline(room.members, owner.id)
+      ? null
+      : owner.offlineSince + OWNER_GRACE_MS;
+  const game = room.game ? nextDeadline(room.game.state) : null;
+  if (handover === null) return game;
+  return game === null ? handover : Math.min(handover, game);
 }
 
 /** Applies every time-driven change that is due. `system` are chat texts the caller must announce. */

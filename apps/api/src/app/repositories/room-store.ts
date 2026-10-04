@@ -7,6 +7,8 @@ export interface RoomStore {
   load(code: string): Promise<Room | null>;
   save(room: Room): Promise<void>;
   exists(code: string): Promise<boolean>;
+  /** Codes of every stored room (boot-time rehydration). */
+  listCodes(): Promise<string[]>;
   createSession(token: string, code: string, memberId: string): Promise<void>;
   resolveSession(token: string): Promise<{ code: string; memberId: string } | null>;
   revokeSession(token: string): Promise<void>;

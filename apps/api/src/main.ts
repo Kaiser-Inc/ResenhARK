@@ -13,7 +13,7 @@ import { RedisRoomStore } from "./app/repositories/redis-room-store.js";
 
 async function bootstrap(): Promise<void> {
   const redis = createRedis(settings.REDIS_URL);
-  const { fastify } = await createServer({
+  const { fastify, hub } = await createServer({
     store: new RedisRoomStore(redis),
     redis,
     now: () => Date.now(),
@@ -34,6 +34,7 @@ async function bootstrap(): Promise<void> {
   try {
     await fastify.listen({ port: settings.PORT, host: "0.0.0.0" });
     console.log(`API running on port ${settings.PORT}`);
+    await hub.rehydrate();
   } catch (err) {
     fastify.log.error(err);
     redis.disconnect();

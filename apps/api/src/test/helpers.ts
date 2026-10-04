@@ -32,10 +32,14 @@ function seededRng(seed: number): () => number {
 }
 
 export async function startTestServer(
-  overrides: Partial<Pick<ServerDependencies, "audio" | "fetchAudio" | "playlists">> = {},
+  overrides: Partial<Pick<ServerDependencies, "audio" | "fetchAudio" | "playlists">> & {
+    /** Keeps the db's contents, to simulate a second API instance on the same Redis. */
+    keepData?: boolean;
+  } = {},
 ): Promise<TestServer> {
+  const { keepData, ...deps } = overrides;
   const redis = new Redis(TEST_REDIS_URL);
-  await redis.flushdb();
+  if (!keepData) await redis.flushdb();
   const store = new RedisRoomStore(redis);
 
   let current = 1_000_000;
@@ -56,7 +60,7 @@ export async function startTestServer(
     audio: { findPreviewUrl: async () => null },
     playlists: new FixturePlaylistSource(() => `id-${++counter}`),
     fetchAudio: async () => new Response(null, { status: 404 }),
-    ...overrides,
+    ...deps,
     logger: false,
   });
   await fastify.listen({ port: 0, host: "127.0.0.1" });

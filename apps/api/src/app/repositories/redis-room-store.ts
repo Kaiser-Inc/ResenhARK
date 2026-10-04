@@ -25,6 +25,10 @@ export class RedisRoomStore implements RoomStore {
     return (await this.redis.exists(roomKey(code))) === 1;
   }
 
+  async listCodes(): Promise<string[]> {
+    return (await this.scan("room:*")).map((key) => key.slice("room:".length));
+  }
+
   async createSession(token: string, code: string, memberId: string): Promise<void> {
     const setKey = memberSessionsKey(code, memberId);
     await this.redis

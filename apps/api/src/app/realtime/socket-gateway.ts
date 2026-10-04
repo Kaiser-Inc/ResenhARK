@@ -52,11 +52,16 @@ export function registerSocketGateway(
         return { ok: false, error: "invalid-session" };
       }
       const system: string[] = [];
+      const before = room.members.find((m) => m.id === memberId);
+      const next = Math.max(0, (before?.connections ?? 0) + delta);
+      const flipped = (before?.connections ?? 0) > 0 !== next > 0;
+      const withPresence = flipped ? setPresence(room, memberId, next > 0) : { room, events: [] };
       return {
         ok: true,
+        events: withPresence.events,
         room: {
-          ...room,
-          members: room.members.map((member) => {
+          ...withPresence.room,
+          members: withPresence.room.members.map((member) => {
             if (member.id !== memberId) return member;
             const connections = Math.max(0, member.connections + delta);
             const greet = delta === 1 && !member.greeted;
@@ -72,6 +77,41 @@ export function registerSocketGateway(
         system,
       };
     };
+
+  /** Mirrors a member's presence into the running game, when they are a player. */
+  const setPresence = (room: Room, memberId: string, online: boolean) => {
+    const game = room.game;
+    if (!game || !running(room) || !game.state.players.some((p) => p.id === memberId)) {
+      return { room, events: [] };
+    }
+    const result = apply(game.state, memberId, { type: "set-online", online }, ctx());
+    if (!result.ok) return { room, events: [] };
+    return {
+      room: { ...room, game: { ...game, state: result.state } },
+      events: result.events,
+    };
+  };
+
+  /** A kicked or departed player leaves the running game; the turn passes if it was theirs. */
+  const removeFromGame = (room: Room, memberId: string) => {
+    const game = room.game;
+    if (!game || !running(room) || !game.state.players.some((p) => p.id === memberId)) {
+      return { room, events: [] };
+    }
+    const result = apply(game.state, SYSTEM_ACTOR, { type: "remove", playerId: memberId }, ctx());
+    if (!result.ok) return { room, events: [] };
+    return {
+      room: {
+        ...room,
+        game: {
+          ...game,
+          state: result.state,
+          playerIds: game.playerIds.filter((id) => id !== memberId),
+        },
+      },
+      events: result.events,
+    };
+  };
 
   /** Revokes the member's sessions and drops their sockets, telling them first if `event` is given. */
   const dropMember = async (code: string, targetId: string, event?: string) => {
@@ -158,7 +198,8 @@ export function registerSocketGateway(
           const result = kick(room, memberId, targetId);
           if (!result.ok) return result;
           const name = room.members.find((m) => m.id === targetId)?.name;
-          return { ...result, system: [`${name} foi removido da sala`] };
+          const removed = removeFromGame(result.room, targetId);
+          return { ...removed, ok: true, system: [`${name} foi removido da sala`] };
         });
         return {
           ack,
@@ -179,7 +220,8 @@ export function registerSocketGateway(
           if (left.ownerId !== room.ownerId && heir) {
             system.push(`${heir.name} agora é o dono da sala`);
           }
-          return { ok: true, room: left, system };
+          const removed = removeFromGame(left, memberId);
+          return { ok: true, ...removed, system };
         });
         return { ack, after: ack.ok ? () => dropMember(code, memberId) : undefined };
       }),

@@ -2,7 +2,7 @@ import { type Ack, type ErrorCode, type GameEvent, SOCKET_EVENTS } from "@resenh
 import type { Server } from "socket.io";
 import { systemMessage } from "../domain/room/chat.js";
 import { type Room, roomDeadline, tickRoom } from "../domain/room/room.js";
-import { type Card, SYSTEM_ACTOR, apply } from "../games/hitline/engine.js";
+import { type Card, SYSTEM_ACTOR, apply, tick } from "../games/hitline/engine.js";
 import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { projectRoom } from "./project-room.js";
@@ -65,6 +65,14 @@ export class RoomHub {
     await Promise.all(due.map(([code]) => this.fire(code)));
   }
 
+  /** Boot: re-arms the timer of every stored room that has a pending deadline. */
+  async rehydrate(): Promise<void> {
+    for (const code of await this.deps.store.listCodes()) {
+      const room = await this.deps.store.load(code);
+      if (room) this.schedule(code, room);
+    }
+  }
+
   dispose(): void {
     for (const { timer } of this.timers.values()) clearTimeout(timer);
     this.timers.clear();
@@ -110,14 +118,14 @@ export class RoomHub {
       this.timers.delete(code);
       return { ok: false, error: "room-not-found" };
     }
-    const ticked = tickRoom(loaded, now());
+    const ticked = this.tickGame(tickRoom(loaded, now()));
     const result = await fn(ticked.room);
     if (!result.ok) {
       // The tick is time passing, not part of the intent: keep it even when the intent fails.
-      if (ticked.room !== loaded) await this.commit(ticked.room, [], ticked.system);
+      if (ticked.room !== loaded) await this.commit(ticked.room, ticked.events, ticked.system);
       return result;
     }
-    const events = result.events ?? [];
+    const events = [...ticked.events, ...(result.events ?? [])];
     await this.commit(result.room, events, [
       ...ticked.system,
       ...(result.system ?? []),
@@ -125,6 +133,25 @@ export class RoomHub {
     ]);
     this.watchAudio(result.room, events, result.audioMisses ?? 0);
     return { ok: true };
+  }
+
+  /** Runs the game's due deadlines; decides by state, so a stale timer is a no-op. */
+  private tickGame(ticked: { room: Room; system: string[] }): {
+    room: Room;
+    system: string[];
+    events: GameEvent[];
+  } {
+    const game = ticked.room.game;
+    if (!game || game.state.phase === "game-over") return { ...ticked, events: [] };
+    const { now, rng, newId } = this.deps;
+    const result = tick(game.state, { now: now(), rng, newId });
+    // Every tick transition emits an event; none means nothing was due.
+    if (result.events.length === 0) return { ...ticked, events: [] };
+    return {
+      ...ticked,
+      room: { ...ticked.room, game: { ...game, state: result.state } },
+      events: result.events,
+    };
   }
 
   /** After a card-drawn, looks for its preview outside the queue; fire and forget. */
