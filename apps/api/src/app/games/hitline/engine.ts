@@ -222,6 +222,7 @@ export function apply(
     }
     const drawId = ctx.newId();
     s.draw = { id: drawId, card: s.deck[0] };
+    s.lastReveal = null;
     s.phase = "guessing";
     events.push({ type: "card-drawn", drawId });
     return { ok: true, state: s, events };

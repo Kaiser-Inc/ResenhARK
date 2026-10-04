@@ -72,3 +72,22 @@ test("deck contents are never projected, only the count", () => {
     for (const c of state.deck) assert.equal(json.includes(`"${c.title}"`), false);
   }
 });
+
+test("the last reveal disappears once the next card is drawn", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(30), fixedCtx());
+  const first = state.players[state.turn].id;
+  const r1 = apply(state, first, { type: "draw" }, fixedCtx());
+  assert.ok(r1.ok);
+  const r2 = apply(
+    r1.state,
+    first,
+    { type: "lock-guess", slot: 0, title: "", artist: "" },
+    fixedCtx(),
+  );
+  assert.ok(r2.ok);
+  assert.notEqual(project(r2.state, "spectator").lastReveal, null);
+  const second = r2.state.players[r2.state.turn].id;
+  const r3 = apply(r2.state, second, { type: "draw" }, fixedCtx());
+  assert.ok(r3.ok);
+  assert.equal(project(r3.state, "spectator").lastReveal, null);
+});
