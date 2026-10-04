@@ -2,12 +2,22 @@ import type { MemberView } from "@resenhark/shared";
 import { CrownIcon } from "lucide-react";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
+import { MemberMenu } from "@/components/room/member-menu";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-// `members` is null until the first room state arrives.
-export function PeopleList({ members }: { members: MemberView[] | null }) {
+type PeopleListProps = {
+  /** Null until the first room state arrives. */
+  members: MemberView[] | null;
+  /** Owner only: shows a "Remover da sala" menu on everyone else. */
+  onRemove?: (member: MemberView) => void;
+  /** The connection is down: the menus stay but cannot be used. */
+  actionsDisabled?: boolean;
+  youId?: string;
+};
+
+export function PeopleList({ members, onRemove, actionsDisabled = false, youId }: PeopleListProps) {
   if (!members) {
     return (
       <section aria-label="Carregando pessoas" aria-busy="true" className="flex flex-col gap-1">
@@ -62,6 +72,13 @@ export function PeopleList({ members }: { members: MemberView[] | null }) {
               </div>
             ) : null}
           </div>
+          {onRemove && member.id !== youId ? (
+            <MemberMenu
+              name={member.name}
+              disabled={actionsDisabled}
+              onRemove={() => onRemove(member)}
+            />
+          ) : null}
         </li>
       ))}
     </ul>

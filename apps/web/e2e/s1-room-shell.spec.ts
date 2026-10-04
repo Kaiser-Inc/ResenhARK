@@ -1,5 +1,11 @@
-import { expect, test } from "@playwright/test";
-import { createRoomAs, expectNoAxeViolations, joinRoomAs, twoMembersInRoom } from "./support";
+import {
+  createRoomAs,
+  expect,
+  expectNoAxeViolations,
+  joinRoomAs,
+  test,
+  twoMembersInRoom,
+} from "./support";
 
 test("both members appear online in the sidebar and survive a reload", async ({ browser }) => {
   const { ana, bia } = await twoMembersInRoom(browser);

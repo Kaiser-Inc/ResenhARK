@@ -1,6 +1,5 @@
-import { expect, test } from "@playwright/test";
 import { HUES, SHAPES } from "@resenhark/shared";
-import { expectNoAxeViolations } from "./support";
+import { expect, expectNoAxeViolations, test } from "./support";
 
 test("create a room, then a second browser joins through the link", async ({ browser }) => {
   const ana = await browser.newPage();

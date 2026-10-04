@@ -1,6 +1,32 @@
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
-import { type Browser, type BrowserContext, type Page, expect } from "@playwright/test";
+import {
+  type Browser,
+  type BrowserContext,
+  type Page,
+  test as base,
+  expect,
+} from "@playwright/test";
+
+export { expect };
+
+/**
+ * `test` that closes every context the test opened with `browser.newContext()`/`newPage()`.
+ * Playwright keeps them (and their animated pages and sockets) alive until the worker ends,
+ * which piles up renderers during a long run and stalls the dev servers.
+ */
+export const test = base.extend<{ closeLeakedContexts: undefined }>({
+  closeLeakedContexts: [
+    async ({ browser, context }, use) => {
+      const before = new Set(browser.contexts());
+      await use();
+      for (const leaked of browser.contexts()) {
+        if (leaked !== context && !before.has(leaked)) await leaked.close().catch(() => {});
+      }
+    },
+    { auto: true },
+  ],
+});
 
 export const UI_DIR = path.resolve(
   __dirname,

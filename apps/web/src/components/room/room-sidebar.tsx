@@ -1,13 +1,24 @@
 "use client";
 
 import type { MemberView } from "@resenhark/shared";
-import { LinkIcon } from "lucide-react";
+import { LinkIcon, LogOutIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { ResenharkLogo } from "@/components/brand/resenhark-logo";
 import { PeopleList } from "@/components/room/people-list";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+
+/** What the signed-in member can do in the room; absent until the first state arrives. */
+export type RoomActions = {
+  youId: string;
+  isOwner: boolean;
+  /** The connection is down: nothing that needs the server can run. */
+  disabled: boolean;
+  onRemove: (member: MemberView) => void;
+  onLeave: () => Promise<void>;
+};
 
 async function copyLink(code: string) {
   try {
@@ -33,12 +44,41 @@ export function RoomCode({ code }: { code: string }) {
   );
 }
 
-export function RoomPeople({ members }: { members: MemberView[] | null }) {
+export function RoomPeople({
+  members,
+  actions,
+}: {
+  members: MemberView[] | null;
+  actions?: RoomActions | null;
+}) {
   return (
     <section className="flex flex-col gap-2">
       <h2 className="text-xs text-muted-foreground">Pessoas</h2>
-      <PeopleList members={members} />
+      <PeopleList
+        members={members}
+        youId={actions?.youId}
+        onRemove={actions?.isOwner ? actions.onRemove : undefined}
+        actionsDisabled={actions?.disabled}
+      />
     </section>
+  );
+}
+
+export function LeaveRoom({ actions }: { actions: RoomActions }) {
+  return (
+    <ConfirmDialog
+      trigger={
+        <Button type="button" variant="outline" disabled={actions.disabled}>
+          <LogOutIcon aria-hidden="true" strokeWidth={1.75} />
+          Sair da sala
+        </Button>
+      }
+      title="Sair da sala?"
+      description="Você pode voltar pelo código como alguém novo."
+      confirmLabel="Sair"
+      variant="destructive"
+      onConfirm={actions.onLeave}
+    />
   );
 }
 
@@ -51,7 +91,15 @@ export function ThemeRow() {
   );
 }
 
-export function RoomSidebar({ code, members }: { code: string; members: MemberView[] | null }) {
+export function RoomSidebar({
+  code,
+  members,
+  actions,
+}: {
+  code: string;
+  members: MemberView[] | null;
+  actions: RoomActions | null;
+}) {
   return (
     <aside
       aria-label="Painel da sala"
@@ -67,9 +115,14 @@ export function RoomSidebar({ code, members }: { code: string; members: MemberVi
         <RoomCode code={code} />
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2">
-        <RoomPeople members={members} />
+        <RoomPeople members={members} actions={actions} />
       </div>
-      <div className="border-border border-t p-4">
+      <div className="flex flex-col gap-3 border-border border-t p-4">
+        {actions ? (
+          <div className="flex">
+            <LeaveRoom actions={actions} />
+          </div>
+        ) : null}
         <ThemeRow />
       </div>
     </aside>

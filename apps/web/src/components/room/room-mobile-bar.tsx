@@ -5,11 +5,25 @@ import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 
 import { ResenharkLogo } from "@/components/brand/resenhark-logo";
-import { RoomCode, RoomPeople, ThemeRow } from "@/components/room/room-sidebar";
+import {
+  LeaveRoom,
+  type RoomActions,
+  RoomCode,
+  RoomPeople,
+  ThemeRow,
+} from "@/components/room/room-sidebar";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
-export function RoomMobileBar({ code, members }: { code: string; members: MemberView[] | null }) {
+export function RoomMobileBar({
+  code,
+  members,
+  actions,
+}: {
+  code: string;
+  members: MemberView[] | null;
+  actions: RoomActions | null;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -40,8 +54,13 @@ export function RoomMobileBar({ code, members }: { code: string; members: Member
             <SheetTitle>Sala</SheetTitle>
           </SheetHeader>
           <RoomCode code={code} />
-          <RoomPeople members={members} />
-          <div className="mt-auto border-border border-t pt-4">
+          <RoomPeople members={members} actions={actions} />
+          <div className="mt-auto flex flex-col gap-3 border-border border-t pt-4">
+            {actions ? (
+              <div className="flex">
+                <LeaveRoom actions={actions} />
+              </div>
+            ) : null}
             <ThemeRow />
           </div>
         </SheetContent>
