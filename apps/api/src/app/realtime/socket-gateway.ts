@@ -91,10 +91,12 @@ export function registerSocketGateway(
         } as const;
         await store.appendChat(code, message);
         io.to(socketRoom(code)).emit(SOCKET_EVENTS.chatMessage, message);
+        // Commit boundary: stored and delivered, so a failed TTL renewal is logged, not acked as an error.
+        await store.touch(code).catch(onError);
         reply({ ok: true });
       } catch (err) {
         onError(err);
-        reply({ ok: false, error: "invalid-session" });
+        reply({ ok: false, error: "server-error" });
       }
     });
 

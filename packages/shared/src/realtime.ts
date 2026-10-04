@@ -25,6 +25,7 @@ export type ErrorCode =
   | "invalid-slot"
   | "already-decided"
   | "not-a-player"
+  | "server-error"
   // Client-side only: an emit that got no ack in time.
   | "timeout";
 

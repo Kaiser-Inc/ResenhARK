@@ -32,3 +32,12 @@ test("RateLimiter tracks each key separately", () => {
   assert.equal(limiter.allow("ana", 0), false);
   assert.equal(limiter.allow("bia", 0), true);
 });
+
+test("RateLimiter evicts idle keys once the window has passed", () => {
+  const limiter = new RateLimiter(5, 5000);
+  limiter.allow("ana", 0);
+  limiter.allow("bia", 0);
+  assert.equal(limiter.size(), 2);
+  limiter.allow("caio", 5001);
+  assert.equal(limiter.size(), 1);
+});

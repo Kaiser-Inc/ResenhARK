@@ -108,3 +108,30 @@ test("a removed member cannot send", async (t) => {
   assert.deepEqual(await send(client, "oi"), { ok: false, error: "invalid-session" });
   assert.deepEqual(await app.store.chatHistory(ana.code), []);
 });
+
+test("a successful send renews the room and session TTLs", async (t) => {
+  const app = await startTestServer();
+  t.after(() => app.close());
+  const ana = await createRoomVia(app, "Ana");
+  const client = await connectClient(app.url, ana.sessionToken);
+  t.after(() => client.close());
+  await nextState(client);
+  const { redis } = app.store;
+  const keys = [`room:${ana.code}`, `session:${ana.sessionToken}`];
+  for (const key of keys) await redis.expire(key, 100);
+  assert.deepEqual(await send(client, "oi"), { ok: true });
+  for (const key of keys) assert.ok((await redis.ttl(key)) > 21000, `${key} ttl not renewed`);
+});
+
+test("an unexpected failure acks server-error, not invalid-session", async (t) => {
+  const app = await startTestServer();
+  t.after(() => app.close());
+  const ana = await createRoomVia(app, "Ana");
+  const client = await connectClient(app.url, ana.sessionToken);
+  t.after(() => client.close());
+  await nextState(client);
+  app.store.appendChat = async () => {
+    throw new Error("redis down");
+  };
+  assert.deepEqual(await send(client, "oi"), { ok: false, error: "server-error" });
+});
