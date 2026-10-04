@@ -67,20 +67,26 @@ export function Timeline({
         </li>
       );
     }
+    if (!interactive) {
+      // Display only: no disabled button without a reason, same 32 px rhythm.
+      return (
+        <li key={`gap-${slot}`} aria-hidden="true">
+          <div className="flex h-8 w-full items-center rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground">
+            {gapLabel(cards, slot)}
+          </div>
+        </li>
+      );
+    }
     return (
       <li key={`gap-${slot}`}>
         <button
           type="button"
           data-gap
-          disabled={!interactive}
-          tabIndex={interactive ? 0 : -1}
           aria-pressed={selectedSlot === slot}
           onClick={() => onSelect(slot)}
           className={cn(
-            "flex h-8 w-full items-center gap-2 rounded-md border border-dashed px-3 text-sm transition-colors duration-[120ms] ease-out outline-hidden enabled:hover:bg-accent disabled:cursor-default focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
-            interactive
-              ? "border-border-strong text-foreground"
-              : "border-border text-muted-foreground",
+            "flex h-8 w-full items-center gap-2 rounded-md border border-dashed px-3 text-sm transition-colors duration-[120ms] ease-out outline-hidden hover:bg-accent focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
+            "border-border-strong text-foreground",
             selectedSlot === slot && "border-solid border-primary-text text-primary-text",
           )}
         >

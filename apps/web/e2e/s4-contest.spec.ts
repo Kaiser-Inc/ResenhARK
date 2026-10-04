@@ -78,3 +78,24 @@ test("buy is disabled with a reason after one purchase", async ({ browser }) => 
   await expect(buy).toHaveAccessibleDescription("Uma compra por vez");
   await expect(row(turn, turnName)).toContainText("0 fichas");
 });
+
+test("disabled actions explain themselves: offline and no slot chosen", async ({ browser }) => {
+  const { turn } = await startTwoPlayerGame(browser);
+  const draw = turn.getByRole("button", { name: "Puxar carta" });
+  await expect(draw).toBeEnabled();
+  await turn.context().setOffline(true);
+  await expect(draw).toBeDisabled();
+  await expect(draw).toHaveAccessibleDescription("Reconectando…");
+  await turn.context().setOffline(false);
+  await expect(draw).toBeEnabled({ timeout: 15_000 });
+
+  await draw.click();
+  const lock = turn.getByRole("button", { name: "Travar palpite" });
+  await expect(lock).toBeDisabled();
+  await expect(lock).toHaveAccessibleDescription("Escolha uma posição");
+  await turn
+    .getByRole("button", { name: /Inserir/ })
+    .first()
+    .click();
+  await expect(lock).toBeEnabled();
+});

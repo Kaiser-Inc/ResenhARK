@@ -62,9 +62,10 @@ test("gaps stay visible but disabled for a player waiting for the turn", async (
   const code = await createRoomAs(ana, "Ana");
   const { page: bia } = await joinRoomAs(browser, code, "Bia");
   await importDeckAndStart(ana);
-  const gaps = bia.getByRole("button", { name: /Inserir/ });
-  await expect(gaps.first()).toBeVisible();
-  for (const gap of await gaps.all()) await expect(gap).toBeDisabled();
+  const timeline = bia.getByRole("list", { name: /^Timeline de / });
+  await expect(timeline).toContainText("Inserir");
+  // display-only gaps are not buttons
+  await expect(bia.getByRole("button", { name: /Inserir/ })).toHaveCount(0);
   // scrollable timeline stays keyboard-reachable for a non-interactive viewer
   await expect(bia.getByRole("list", { name: /^Timeline de / })).toHaveAttribute("tabindex", "0");
 });

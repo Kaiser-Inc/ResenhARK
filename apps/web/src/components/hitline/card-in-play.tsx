@@ -101,14 +101,9 @@ export function CardInPlay({
         ) : null}
         {isTurn && phase === "turn-start" ? (
           <div className="flex flex-wrap items-start gap-2">
-            <Button
-              type="button"
-              loading={pending === "draw"}
-              disabled={!connected}
-              onClick={onDraw}
-            >
+            <ActionButton id="draw" loading={pending === "draw"} reason={offline} onClick={onDraw}>
               Puxar carta
-            </Button>
+            </ActionButton>
             <ActionButton
               id="buy"
               variant="outline"
@@ -151,19 +146,14 @@ export function CardInPlay({
               </Field>
             </div>
             <div className="flex flex-wrap items-start gap-2">
-              <div className="flex flex-col items-start gap-1">
-                <Button
-                  type="button"
-                  loading={pending === "lock"}
-                  disabled={!connected || chosenSlot === null}
-                  onClick={onLock}
-                >
-                  Travar palpite
-                </Button>
-                {chosenSlot === null ? (
-                  <p className="text-xs text-muted-foreground">Escolha um vão na timeline</p>
-                ) : null}
-              </div>
+              <ActionButton
+                id="lock"
+                loading={pending === "lock"}
+                reason={offline ?? (chosenSlot === null ? "Escolha uma posição" : null)}
+                onClick={onLock}
+              >
+                Travar palpite
+              </ActionButton>
               <ActionButton
                 id="skip"
                 variant="outline"
