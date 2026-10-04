@@ -51,6 +51,9 @@ export function PlaylistImport({ playlist, warning, disabled, onImport }: Playli
             value={link}
             onChange={(event) => setLink(event.target.value)}
             placeholder="https://open.spotify.com/playlist/…"
+            type="url"
+            name="playlist"
+            spellCheck={false}
             autoComplete="off"
             aria-invalid={!!error}
             aria-describedby={error ? errorId : undefined}
@@ -68,22 +71,22 @@ export function PlaylistImport({ playlist, warning, disabled, onImport }: Playli
         {error ? <FieldError id={errorId}>{error}</FieldError> : null}
       </Field>
       {playlist ? (
-        <p className="flex min-w-0 items-baseline gap-2 text-sm">
+        <output className="flex min-w-0 items-baseline gap-2 text-sm">
           <span className="font-medium">{playlist.count} faixas prontas</span>
           <span title={playlist.name} className="min-w-0 truncate text-muted-foreground">
             {playlist.name}
           </span>
-        </p>
+        </output>
       ) : null}
       {warning ? (
-        <p className="flex items-start gap-2 text-sm text-warning">
+        <output className="flex items-start gap-2 text-sm text-warning">
           <TriangleAlertIcon
             aria-hidden="true"
             strokeWidth={1.75}
             className="mt-0.5 size-4 shrink-0"
           />
           {warning}
-        </p>
+        </output>
       ) : null}
     </form>
   );

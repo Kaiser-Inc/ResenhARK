@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export function RevealPanel({ reveal, playerName }: { reveal: RevealView; playerName: string }) {
   const { card, guess } = reveal;
-  const outcome = !guess ? "tempo esgotado" : guess.correct ? "acertou" : "errou";
+  const outcome = !guess ? "ficou sem tempo" : guess.correct ? "acertou" : "errou";
   const artists = card.artists.join(", ");
   return (
     <section aria-label="Virada" className="flex flex-col gap-2">

@@ -41,10 +41,11 @@ export function Scoreboard({ view, members }: ScoreboardProps) {
                 </span>
                 {player.online ? null : <Badge>offline</Badge>}
                 <span className="font-mono tabular-nums">
+                  <span className="sr-only">cartas </span>
                   {player.timeline.length}/{view.config.targetCards}
                 </span>
                 <span className="w-16 text-right text-muted-foreground">
-                  {player.tokens} fichas
+                  {player.tokens} {player.tokens === 1 ? "ficha" : "fichas"}
                 </span>
                 <ChevronDownIcon
                   aria-hidden="true"

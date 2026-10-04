@@ -48,7 +48,10 @@ export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect
         aria-pressed={selectedSlot === slot}
         onClick={() => onSelect(slot)}
         className={cn(
-          "flex h-8 w-full items-center gap-2 rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground transition-colors duration-[120ms] ease-out outline-hidden enabled:hover:bg-accent disabled:cursor-default focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
+          "flex h-8 w-full items-center gap-2 rounded-md border border-dashed px-3 text-sm transition-colors duration-[120ms] ease-out outline-hidden enabled:hover:bg-accent disabled:cursor-default focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
+          interactive
+            ? "border-border-strong text-foreground"
+            : "border-border text-muted-foreground",
           selectedSlot === slot && "border-solid border-primary-text text-primary-text",
         )}
       >
@@ -65,6 +68,8 @@ export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect
       ref={listRef}
       aria-label={`Timeline de ${ownerName}`}
       onKeyDown={onKeyDown}
+      // scrollable region must be keyboard-reachable; when interactive the gap buttons are the tab stops
+      tabIndex={interactive ? undefined : 0}
       className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto"
     >
       {gap(0)}
@@ -74,7 +79,10 @@ export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect
             <span className="w-[72px] shrink-0 font-mono text-2xl leading-7 font-semibold">
               {card.year}
             </span>
-            <span className="min-w-0 truncate text-sm leading-[22px] text-muted-foreground">
+            <span
+              title={`${card.title} · ${card.artists.join(", ")}`}
+              className="min-w-0 truncate text-sm leading-[22px] text-muted-foreground"
+            >
               {card.title} · {card.artists.join(", ")}
             </span>
           </li>

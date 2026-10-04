@@ -30,7 +30,6 @@ function GameList() {
       {SOON.map((name) => (
         <li
           key={name}
-          aria-disabled="true"
           className={cn("flex h-10 items-center gap-2 text-sm text-subtle-foreground")}
         >
           {name}

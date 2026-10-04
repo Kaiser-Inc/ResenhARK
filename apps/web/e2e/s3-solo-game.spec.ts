@@ -63,6 +63,8 @@ test("gaps stay visible but disabled for a player waiting for the turn", async (
   const gaps = bia.getByRole("button", { name: /Inserir/ });
   await expect(gaps.first()).toBeVisible();
   for (const gap of await gaps.all()) await expect(gap).toBeDisabled();
+  // scrollable timeline stays keyboard-reachable for a non-interactive viewer
+  await expect(bia.getByRole("list", { name: /^Timeline de / })).toHaveAttribute("tabindex", "0");
 });
 
 test("non-owner sees the waiting state in the lobby", async ({ browser }) => {
@@ -85,6 +87,8 @@ test("small playlist warning appears for a big N", async ({ page }) => {
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: "40 faixas prontas" })).toBeVisible();
+  await expect(page.getByLabel("Link da playlist")).toHaveAttribute("type", "url");
   await expect(page.getByText(/Playlist pequena/)).toHaveCount(0);
   await chooseOption(page, "Cartas para vencer", "30");
   await expect(page.getByText(/Playlist pequena para 1 jogador e N=30/)).toBeVisible();
@@ -97,6 +101,9 @@ test("owner starts a new game after the game is over", async ({ page }) => {
   await page.getByRole("button", { name: "Encerrar partida" }).click();
   await page.getByRole("button", { name: "Encerrar", exact: true }).click();
   await expect(page.getByRole("region", { name: "Resultado" })).toBeVisible();
+  await expect(
+    page.getByRole("region", { name: "Resultado" }).getByText(/^\d+ fichas?$/),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Nova partida" }).click();
   await expect(page.getByText("40 faixas prontas")).toBeVisible();
   await page.reload();

@@ -1,8 +1,12 @@
 "use client";
 
-import type { HitlineView, MemberView } from "@resenhark/shared";
+import type { Ack, HitlineView, MemberView } from "@resenhark/shared";
+
+import { useState } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { gameErrorMessage } from "@/lib/game-errors";
 
 const REASONS: Record<NonNullable<HitlineView["endReason"]>, string> = {
   target: "Chegou ao número de cartas para vencer.",
@@ -14,10 +18,17 @@ type ResultPanelProps = {
   view: HitlineView;
   members: MemberView[];
   isOwner: boolean;
-  onNewGame: () => Promise<unknown>;
+  onNewGame: () => Promise<Ack>;
 };
 
 export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelProps) {
+  const [loading, setLoading] = useState(false);
+  async function newGame() {
+    setLoading(true);
+    const ack = await onNewGame();
+    setLoading(false);
+    if (!ack.ok) toast.error(gameErrorMessage(ack.error));
+  }
   const name = (id: string) => members.find((m) => m.id === id)?.name ?? "Alguém";
   const standings = [...view.players].sort((a, b) => b.timeline.length - a.timeline.length);
   return (
@@ -37,13 +48,15 @@ export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelPr
             <span className="font-mono tabular-nums">
               {player.timeline.length}/{view.config.targetCards}
             </span>
-            <span className="w-16 text-right text-muted-foreground">{player.tokens} fichas</span>
+            <span className="w-16 text-right text-muted-foreground">
+              {player.tokens} {player.tokens === 1 ? "ficha" : "fichas"}
+            </span>
           </li>
         ))}
       </ol>
       {isOwner ? (
         <div>
-          <Button type="button" onClick={onNewGame}>
+          <Button type="button" loading={loading} onClick={() => void newGame()}>
             Nova partida
           </Button>
         </div>
