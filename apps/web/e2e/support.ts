@@ -1,3 +1,4 @@
+import net from "node:net";
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
 import {
@@ -59,11 +60,14 @@ export async function expectNoAxeViolations(page: Page) {
 
 /** Creates a room through the UI as `name` and waits until the room URL is open. */
 export async function createRoomAs(page: Page, name: string): Promise<string> {
-  await page.goto("/");
-  await page.getByRole("button", { name: "Criar sala" }).click();
-  await page.getByLabel("Seu nome").fill(name);
-  await page.getByRole("button", { name: "Criar e entrar" }).click();
-  await expect(page).toHaveURL(/\/sala\/[A-HJKMNP-Z]{5}$/);
+  // On a cold dev server a click can land before hydration and do nothing: redo the whole flow.
+  await expect(async () => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Criar sala" }).click();
+    await page.getByLabel("Seu nome").fill(name);
+    await page.getByRole("button", { name: "Criar e entrar" }).click();
+    await expect(page).toHaveURL(/\/sala\/[A-HJKMNP-Z]{5}$/, { timeout: 5_000 });
+  }).toPass({ timeout: 40_000 });
   return page.url().split("/").pop() as string;
 }
 
@@ -104,4 +108,50 @@ export async function importDeckAndStart(page: Page, targetCards = "2") {
   await expect(page.getByText("40 faixas prontas")).toBeVisible();
   await chooseOption(page, "Cartas para vencer", targetCards);
   await page.getByRole("button", { name: "Iniciar partida" }).click();
+}
+
+/** Reads the hidden drawn card straight from the e2e Redis (db 14), so tests can answer it right. */
+export async function peekDraw(code: string): Promise<{ title: string; artists: string[] }> {
+  const send = (socket: net.Socket, ...args: string[]) =>
+    socket.write(
+      `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
+    );
+  const raw = await new Promise<string>((resolve, reject) => {
+    const socket = net.connect(6379, "localhost");
+    let data = "";
+    socket.on("error", reject);
+    socket.on("data", (chunk) => {
+      data += chunk.toString();
+      // +OK\r\n then $<len>\r\n<payload>\r\n
+      const match = /\+OK\r\n\$(\d+)\r\n/.exec(data);
+      if (!match) return;
+      const start = match.index + match[0].length;
+      if (Buffer.byteLength(data.slice(start)) >= Number(match[1]) + 2) {
+        socket.end();
+        resolve(data.slice(start, start + Number(match[1])));
+      }
+    });
+    send(socket, "SELECT", "14");
+    send(socket, "GET", `room:${code}`);
+  });
+  const card = JSON.parse(raw).game.state.draw.card;
+  return { title: card.title, artists: card.artists };
+}
+
+/** Ana and Bia in a started 2-player game (N=10); returns who plays first, found by the "Puxar carta" button. */
+export async function startTwoPlayerGame(browser: Browser) {
+  const { ana, bia, code } = await twoMembersInRoom(browser);
+  await importDeckAndStart(ana, "10");
+  const draw = (page: Page) => page.getByRole("button", { name: "Puxar carta" });
+  await expect
+    .poll(async () => (await draw(ana).isVisible()) || (await draw(bia).isVisible()))
+    .toBe(true);
+  const anaFirst = await draw(ana).isVisible();
+  return {
+    code,
+    turn: anaFirst ? ana : bia,
+    other: anaFirst ? bia : ana,
+    turnName: anaFirst ? "Ana" : "Bia",
+    otherName: anaFirst ? "Bia" : "Ana",
+  };
 }

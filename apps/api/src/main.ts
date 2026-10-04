@@ -1,5 +1,6 @@
 import { newId } from "./app/core/ids.js";
 import { createRedis } from "./app/core/redis.js";
+import { seededRng } from "./app/core/seeded-rng.js";
 import { createServer } from "./app/core/server.js";
 import { settings } from "./app/core/settings.js";
 import { ChainedPreview } from "./app/gateways/audio/chained-preview.js";
@@ -16,7 +17,7 @@ async function bootstrap(): Promise<void> {
     store: new RedisRoomStore(redis),
     redis,
     now: () => Date.now(),
-    rng: Math.random,
+    rng: settings.E2E_SEED === undefined ? Math.random : seededRng(settings.E2E_SEED),
     newId,
     audio:
       settings.AUDIO_SOURCE === "fixture"

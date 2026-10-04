@@ -17,6 +17,7 @@ const envSchema = z
     WEB_URL: z.string().default("http://localhost:4000"),
     PLAYLIST_SOURCE: z.enum(["spotify", "fixture"]).optional(),
     AUDIO_SOURCE: z.enum(["real", "fixture"]).default("real"),
+    E2E_SEED: z.coerce.number().int().optional(),
   })
   .transform((env, ctx) => {
     const production = env.NODE_ENV === "production";
@@ -31,6 +32,8 @@ const envSchema = z
     return {
       ...env,
       SESSION_SECRET: env.SESSION_SECRET ?? DEV_SESSION_SECRET,
+      // Seeds the rng (turn order, deck shuffle) for e2e; ignored outside NODE_ENV=test.
+      E2E_SEED: env.NODE_ENV === "test" ? env.E2E_SEED : undefined,
       PLAYLIST_SOURCE: env.PLAYLIST_SOURCE ?? (production ? "spotify" : "fixture"),
     };
   });

@@ -28,6 +28,7 @@ export default defineConfig({
         PLAYLIST_SOURCE: "fixture",
         AUDIO_SOURCE: "fixture",
         CORS_ORIGIN: "http://localhost:4000",
+        E2E_SEED: "1",
       },
     },
     {

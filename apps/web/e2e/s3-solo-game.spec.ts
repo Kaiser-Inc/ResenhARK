@@ -43,6 +43,8 @@ test("keyboard: arrows move focus between gaps and Enter chooses", async ({ page
   await page.getByRole("button", { name: "Puxar carta" }).click();
   const gaps = page.getByRole("button", { name: /Inserir/ });
   await expect(gaps).toHaveCount(2);
+  // The gaps render before the phase flips to guessing; focusing a disabled one is a silent no-op.
+  await expect(gaps.first()).toBeEnabled();
   await gaps.first().focus();
   await page.keyboard.press("ArrowDown");
   await expect(gaps.nth(1)).toBeFocused();

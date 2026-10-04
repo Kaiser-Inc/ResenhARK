@@ -1,10 +1,14 @@
 "use client";
 
-import type { PublicCard } from "@resenhark/shared";
+import type { MemberView, PublicCard } from "@resenhark/shared";
 import { CheckIcon } from "lucide-react";
 import { Fragment, useRef } from "react";
 
+import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { cn } from "@/lib/utils";
+
+/** A gap someone already holds: the guess or a contest. Shown with who, never clickable. */
+export type TakenGap = { slot: number; member: MemberView | undefined; text: string };
 
 type TimelineProps = {
   ownerName: string;
@@ -13,6 +17,7 @@ type TimelineProps = {
   interactive: boolean;
   selectedSlot: number | null;
   onSelect: (slot: number) => void;
+  taken?: TakenGap[];
 };
 
 function gapLabel(cards: PublicCard[], slot: number): string {
@@ -22,7 +27,14 @@ function gapLabel(cards: PublicCard[], slot: number): string {
   return `Inserir entre ${cards[slot - 1].year} e ${cards[slot].year}`;
 }
 
-export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect }: TimelineProps) {
+export function Timeline({
+  ownerName,
+  cards,
+  interactive,
+  selectedSlot,
+  onSelect,
+  taken = [],
+}: TimelineProps) {
   const listRef = useRef<HTMLOListElement>(null);
 
   function onKeyDown(event: React.KeyboardEvent) {
@@ -38,30 +50,48 @@ export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect
     ]?.focus();
   }
 
-  const gap = (slot: number) => (
-    <li key={`gap-${slot}`}>
-      <button
-        type="button"
-        data-gap
-        disabled={!interactive}
-        tabIndex={interactive ? 0 : -1}
-        aria-pressed={selectedSlot === slot}
-        onClick={() => onSelect(slot)}
-        className={cn(
-          "flex h-8 w-full items-center gap-2 rounded-md border border-dashed px-3 text-sm transition-colors duration-[120ms] ease-out outline-hidden enabled:hover:bg-accent disabled:cursor-default focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
-          interactive
-            ? "border-border-strong text-foreground"
-            : "border-border text-muted-foreground",
-          selectedSlot === slot && "border-solid border-primary-text text-primary-text",
-        )}
-      >
-        {selectedSlot === slot ? (
-          <CheckIcon aria-hidden="true" strokeWidth={1.75} className="size-4" />
-        ) : null}
-        {gapLabel(cards, slot)}
-      </button>
-    </li>
-  );
+  const gap = (slot: number) => {
+    const held = taken.find((t) => t.slot === slot);
+    if (held) {
+      return (
+        <li key={`gap-${slot}`}>
+          <div
+            title={held.text}
+            className="flex h-8 w-full items-center gap-2 rounded-md border border-solid border-border-strong bg-secondary px-3 text-sm"
+          >
+            {held.member ? (
+              <MemberAvatar name={held.member.name} avatar={held.member.avatar} size={24} />
+            ) : null}
+            <span className="min-w-0 truncate">{held.text}</span>
+          </div>
+        </li>
+      );
+    }
+    return (
+      <li key={`gap-${slot}`}>
+        <button
+          type="button"
+          data-gap
+          disabled={!interactive}
+          tabIndex={interactive ? 0 : -1}
+          aria-pressed={selectedSlot === slot}
+          onClick={() => onSelect(slot)}
+          className={cn(
+            "flex h-8 w-full items-center gap-2 rounded-md border border-dashed px-3 text-sm transition-colors duration-[120ms] ease-out outline-hidden enabled:hover:bg-accent disabled:cursor-default focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
+            interactive
+              ? "border-border-strong text-foreground"
+              : "border-border text-muted-foreground",
+            selectedSlot === slot && "border-solid border-primary-text text-primary-text",
+          )}
+        >
+          {selectedSlot === slot ? (
+            <CheckIcon aria-hidden="true" strokeWidth={1.75} className="size-4" />
+          ) : null}
+          {gapLabel(cards, slot)}
+        </button>
+      </li>
+    );
+  };
 
   return (
     <ol

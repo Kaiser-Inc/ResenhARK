@@ -37,7 +37,9 @@ export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProp
           {turnMember?.name ?? "Fim de jogo"}
         </p>
         <p aria-live="polite" className="text-sm text-muted-foreground">
-          {view.phase === "game-over" ? "" : `${isTurn ? "Sua vez · " : ""}${PHASES[view.phase]}`}
+          {view.phase === "game-over"
+            ? ""
+            : `${isTurn && view.phase !== "contest" ? "Sua vez · " : ""}${PHASES[view.phase]}`}
         </p>
       </div>
       {showTimer ? <Countdown deadline={deadline} clock={clock} /> : null}

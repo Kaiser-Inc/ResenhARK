@@ -17,6 +17,7 @@ import { toast } from "sonner";
 
 import { ChatPanel } from "@/components/chat/chat-panel";
 import { ChatSkeleton } from "@/components/chat/chat-thread";
+import { Countdown } from "@/components/hitline/countdown";
 import { HitlineBoard } from "@/components/hitline/hitline-board";
 import { LobbyPanel } from "@/components/lobby/lobby-panel";
 import { ConnectionBanner } from "@/components/room/connection-banner";
@@ -30,6 +31,7 @@ import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from "@/comp
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import type { ServerClock } from "@/lib/server-clock";
 import { clearSession } from "@/lib/session";
 import { useRoom } from "@/lib/use-room";
 import { cn } from "@/lib/utils";
@@ -73,6 +75,9 @@ function UnreadBadge({ count }: { count: number }) {
   );
 }
 
+/** While a contest is open the chat tab keeps a fixed reminder, so nobody misses it from there. */
+type ContestNotice = { deadline: number; clock: ServerClock };
+
 type RoomFrameProps = {
   code: string;
   members: MemberView[] | null;
@@ -80,6 +85,7 @@ type RoomFrameProps = {
   /** Null while loading: the chat spot shows a skeleton. */
   chat: ChatSlot | null;
   reconnecting?: boolean;
+  contest?: ContestNotice | null;
   /** Move focus to the main region on mount (the join form that had it just went away). */
   focusOnMount?: boolean;
   children: ReactNode;
@@ -91,6 +97,7 @@ function RoomFrame({
   actions,
   chat,
   reconnecting = false,
+  contest = null,
   focusOnMount = false,
   children,
 }: RoomFrameProps) {
@@ -142,6 +149,12 @@ function RoomFrame({
                   <div className="px-4 py-8">{children}</div>
                 </TabsContent>
                 <TabsContent value="chat" keepMounted className="flex min-h-0 flex-col">
+                  {contest ? (
+                    <output className="flex shrink-0 items-center gap-1 bg-secondary px-4 py-2 text-sm font-medium">
+                      Contestação aberta ·{" "}
+                      <Countdown deadline={contest.deadline} clock={contest.clock} />
+                    </output>
+                  ) : null}
                   {panel}
                 </TabsContent>
               </Tabs>
@@ -322,6 +335,11 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         actions={actions}
         chat={chatSlot}
         reconnecting={status === "reconnecting"}
+        contest={
+          room?.game?.view.phase === "contest" && room.game.view.contestDeadline !== null
+            ? { deadline: room.game.view.contestDeadline, clock }
+            : null
+        }
         focusOnMount={focusOnMount}
       >
         {room ? (

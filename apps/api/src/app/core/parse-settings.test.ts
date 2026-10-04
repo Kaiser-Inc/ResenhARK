@@ -27,3 +27,15 @@ test("production with a 32+ char SESSION_SECRET passes and keeps it", () => {
   assert.equal(result.data.SESSION_SECRET, secret);
   assert.equal(result.data.PLAYLIST_SOURCE, "spotify");
 });
+
+test("E2E_SEED is honored only when NODE_ENV is test", () => {
+  const seeded = parseSettings({ NODE_ENV: "test", E2E_SEED: "1" });
+  assert.ok(seeded.success);
+  assert.equal(seeded.data.E2E_SEED, 1);
+  const dev = parseSettings({ NODE_ENV: "development", E2E_SEED: "1" });
+  assert.ok(dev.success);
+  assert.equal(dev.data.E2E_SEED, undefined);
+  const unset = parseSettings({ NODE_ENV: "test" });
+  assert.ok(unset.success);
+  assert.equal(unset.data.E2E_SEED, undefined);
+});
