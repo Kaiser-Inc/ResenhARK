@@ -1,12 +1,18 @@
+function fold(text: string): string {
+  return text.toLowerCase().normalize("NFD").replace(/\p{M}+/gu, "");
+}
+
 /** Lowercase, strip accents, drop version/feature noise and punctuation. */
 export function normalizeTitle(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{M}+/gu, "")
-    .replace(/ - .*$/, "")
+  return fold(text)
+    .trim()
+    .replace(/\s[-\u2013\u2014]\s.*$/, "")
     .replace(/\([^)]*\)|\[[^\]]*\]/g, " ")
+    .replace(/[([][^)\]]*$/, "")
+    .replace(/&/g, " and ")
     .replace(/\b(?:feat|ft|featuring)\b.*$/, "")
+    .replace(/['\u2019`\u00b4]/g, "")
+    .trim()
     .replace(/^the /, "")
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
@@ -29,9 +35,12 @@ export function levenshtein(a: string, b: string): number {
 }
 
 function fuzzy(guess: string, answer: string): boolean {
-  const a = normalizeTitle(guess);
-  const b = normalizeTitle(answer);
-  if (!a || !b) return false;
+  const rawA = fold(guess).trim();
+  const rawB = fold(answer).trim();
+  if (!rawA || !rawB) return false;
+  // ponytail: answers like "!!!" or "(Intro)" normalize to empty; compare raw instead
+  const a = normalizeTitle(guess) || rawA;
+  const b = normalizeTitle(answer) || rawB;
   return levenshtein(a, b) <= Math.floor(b.length * 0.2);
 }
 

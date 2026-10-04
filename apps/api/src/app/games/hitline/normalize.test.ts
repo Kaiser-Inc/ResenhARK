@@ -38,3 +38,32 @@ test("levenshtein basics", () => {
   assert.equal(levenshtein("", "abc"), 3);
   assert.equal(levenshtein("abc", "abc"), 0);
 });
+
+const extra: [string, string, boolean][] = [
+  ["dont stop", "Don't Stop", true],
+  ["im", "I'm", true],
+  ["dont stop", "Don’t Stop", true],
+  ["rock and roll", "Rock & Roll", true],
+  ["rock & roll", "Rock and Roll", true],
+  ["song", "Song – Remastered", true],
+  ["song", "Song — Live", true],
+  ["song", "Song (Live", true],
+  ["!!!", "!!!", true],
+  ["(intro)", "(Intro)", true],
+  ["queen", "(Intro)", false],
+  ["!!!", "", false],
+  ["francois", "François", true],
+  ["abcdx", "abcde", true], // 5 chars: 1 edit allowed
+  ["abxdx", "abcde", false], // 5 chars: 2 edits rejected
+  ["abcx", "abcd", false], // 4 chars: 0 edits allowed
+  ["abcd", "abcd", true],
+];
+for (const [guess, answer, expected] of extra) {
+  test(`matchesTitle extra ${JSON.stringify(guess)} vs ${JSON.stringify(answer)} is ${expected}`, () => {
+    assert.equal(matchesTitle(guess, answer), expected);
+  });
+}
+
+test("leading space before The is ignored", () => {
+  assert.equal(matchesArtist(" the killers", ["The Killers"]), true);
+});
