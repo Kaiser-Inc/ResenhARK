@@ -12,7 +12,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
-  title: "ResenhARK",
+  title: { default: "ResenhARK", template: "%s | ResenhARK" },
   description: "Uma sala para reunir o time, conversar e jogar.",
   robots: { index: false, follow: false },
 };

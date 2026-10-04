@@ -20,6 +20,7 @@ export function RoomMobileBar({ code, members }: { code: string; members: Member
           translate="no"
           className="min-w-0 flex-1 truncate font-mono text-sm font-semibold tracking-[0.15em]"
         >
+          <span className="sr-only">Código da sala </span>
           {code}
         </span>
         <Button

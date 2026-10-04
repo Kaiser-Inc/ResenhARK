@@ -1,7 +1,7 @@
 "use client";
 
 import { HUES, type JoinRoomInput, joinRoomInputSchema } from "@resenhark/shared";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { AvatarPicker } from "@/components/avatar/avatar-picker";
@@ -15,15 +15,28 @@ type JoinFormProps = {
   onSubmit: (input: JoinRoomInput) => Promise<void>;
   onRoomMissing?: () => void;
   onCancel?: () => void;
+  /** Focus the name field on mount (when the form replaces a control that had focus). */
+  focusOnMount?: boolean;
 };
 
-export function JoinForm({ submitLabel, onSubmit, onRoomMissing, onCancel }: JoinFormProps) {
+export function JoinForm({
+  submitLabel,
+  onSubmit,
+  onRoomMissing,
+  onCancel,
+  focusOnMount = false,
+}: JoinFormProps) {
   const id = useId();
+  const nameRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [avatar, setAvatar] = useState<JoinRoomInput["avatar"]>({ hue: HUES[6], shape: "round" });
   const [nameError, setNameError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    if (focusOnMount) nameRef.current?.focus();
+  }, [focusOnMount]);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -31,6 +44,7 @@ export function JoinForm({ submitLabel, onSubmit, onRoomMissing, onCancel }: Joi
     const parsed = joinRoomInputSchema.safeParse({ name, avatar });
     if (!parsed.success) {
       setNameError("Escreva um nome de até 20 letras");
+      nameRef.current?.focus();
       return;
     }
     setNameError(null);
@@ -42,6 +56,7 @@ export function JoinForm({ submitLabel, onSubmit, onRoomMissing, onCancel }: Joi
       setPending(false);
       if (error instanceof ApiError && error.code === "name-taken") {
         setNameError("Nome já em uso nesta sala");
+        nameRef.current?.focus();
       } else if (error instanceof ApiError && error.code === "room-full") {
         setFormError("A sala está cheia (20 pessoas)");
       } else if (error instanceof ApiError && error.code === "room-not-found") {
@@ -61,7 +76,9 @@ export function JoinForm({ submitLabel, onSubmit, onRoomMissing, onCancel }: Joi
         <Field data-invalid={!!nameError}>
           <FieldLabel htmlFor={nameId}>Seu nome</FieldLabel>
           <Input
+            ref={nameRef}
             id={nameId}
+            name="nickname"
             value={name}
             maxLength={20}
             autoComplete="nickname"

@@ -50,8 +50,7 @@ export function MemberAvatar({
 }: MemberAvatarProps) {
   return (
     <span
-      role="img"
-      aria-label={name}
+      aria-hidden="true"
       className={cn("relative inline-flex shrink-0", className)}
       style={{ width: size, height: size }}
     >

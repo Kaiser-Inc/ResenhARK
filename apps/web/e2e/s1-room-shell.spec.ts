@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { createRoomAs, expectNoAxeViolations, twoMembersInRoom } from "./support";
+import { createRoomAs, expectNoAxeViolations, joinRoomAs, twoMembersInRoom } from "./support";
 
 test("both members appear online in the sidebar and survive a reload", async ({ browser }) => {
   const { ana, bia } = await twoMembersInRoom(browser);
@@ -110,4 +110,11 @@ test("loading shows the people list and game area skeletons in the room frame", 
   await expect(page.getByRole("button", { name: "Copiar link" })).toBeVisible();
   release();
   await expect(page.getByLabel("Seu nome")).toBeVisible();
+});
+
+test("joining through the link moves focus to the main region", async ({ browser }) => {
+  const anaContext = await browser.newContext();
+  const code = await createRoomAs(await anaContext.newPage(), "Ana");
+  const { page: bia } = await joinRoomAs(browser, code, "Bia");
+  await expect(bia.locator("#main-content")).toBeFocused();
 });

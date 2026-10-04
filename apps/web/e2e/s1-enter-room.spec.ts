@@ -115,3 +115,42 @@ test("home and join form have no serious accessibility violations", async ({ pag
   await page.getByRole("button", { name: "Criar sala" }).click();
   await expectNoAxeViolations(page);
 });
+
+test("opening the create form focuses the name field, cancelling returns focus to the button", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Criar sala" }).click();
+  await expect(page.getByLabel("Seu nome")).toBeFocused();
+  await page.getByRole("button", { name: "Cancelar" }).click();
+  await expect(page.getByRole("button", { name: "Criar sala" })).toBeFocused();
+});
+
+test("pressing d does not toggle the theme", async ({ page }) => {
+  await page.goto("/");
+  const html = page.locator("html");
+  await expect(html).toHaveClass(/dark/);
+  await page.getByRole("button", { name: "Criar sala" }).focus();
+  await page.keyboard.press("d");
+  await expect(html).toHaveClass(/dark/);
+  await page.getByRole("button", { name: "Alternar tema" }).click();
+  await expect(html).not.toHaveClass(/dark/);
+});
+
+test("validation errors move focus to the invalid field", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Criar sala" }).click();
+  await page.getByRole("button", { name: "Criar e entrar" }).click();
+  await expect(page.getByText("Escreva um nome de até 20 letras")).toBeVisible();
+  await expect(page.getByLabel("Seu nome")).toBeFocused();
+  await page.getByRole("button", { name: "Cancelar" }).click();
+  await page.getByRole("button", { name: "Entrar com código" }).click();
+  await expect(page.getByText("O código tem 5 letras")).toBeVisible();
+  await expect(page.getByLabel("Código da sala")).toBeFocused();
+});
+
+test("pages have descriptive titles and a header landmark", async ({ page }) => {
+  await page.goto("/sala/ZZZZZ");
+  await expect(page).toHaveTitle("Sala ZZZZZ | ResenhARK");
+  await expect(page.getByRole("banner")).toBeVisible();
+});

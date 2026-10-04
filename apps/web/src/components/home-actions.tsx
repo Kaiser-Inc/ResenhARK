@@ -2,7 +2,7 @@
 
 import { roomCodeSchema } from "@resenhark/shared";
 import { useRouter } from "next/navigation";
-import { useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { JoinForm } from "@/components/join-form";
 import { Button } from "@/components/ui/button";
@@ -17,12 +17,22 @@ export function HomeActions() {
   const [creating, setCreating] = useState(false);
   const [code, setCode] = useState("");
   const [codeError, setCodeError] = useState<string | null>(null);
+  const createRef = useRef<HTMLButtonElement>(null);
+  const codeRef = useRef<HTMLInputElement>(null);
+  const wasCreating = useRef(false);
+
+  // The create button unmounts while the form is open; hand focus back to it on cancel.
+  useEffect(() => {
+    if (wasCreating.current && !creating) createRef.current?.focus();
+    wasCreating.current = creating;
+  }, [creating]);
 
   function enterWithCode(event: React.FormEvent) {
     event.preventDefault();
     const parsed = roomCodeSchema.safeParse(code.trim());
     if (!parsed.success) {
       setCodeError("O código tem 5 letras");
+      codeRef.current?.focus();
       return;
     }
     router.push(`/sala/${parsed.data}`);
@@ -37,6 +47,7 @@ export function HomeActions() {
           </h2>
           <JoinForm
             submitLabel="Criar e entrar"
+            focusOnMount
             onCancel={() => setCreating(false)}
             onSubmit={async (input) => {
               const room = await createRoom(input);
@@ -51,15 +62,20 @@ export function HomeActions() {
         </section>
       ) : (
         <div className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:gap-6">
-          <Button onClick={() => setCreating(true)}>Criar sala</Button>
+          <Button ref={createRef} onClick={() => setCreating(true)}>
+            Criar sala
+          </Button>
           <form onSubmit={enterWithCode} noValidate className="flex items-end gap-2">
             <Field data-invalid={!!codeError} className="w-40">
               <FieldLabel htmlFor={codeId}>Código da sala</FieldLabel>
               <Input
+                ref={codeRef}
                 id={codeId}
+                name="code"
                 value={code}
                 maxLength={5}
                 autoCapitalize="characters"
+                enterKeyHint="go"
                 autoComplete="off"
                 spellCheck={false}
                 placeholder="ABCDE"

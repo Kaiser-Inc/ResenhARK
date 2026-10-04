@@ -26,7 +26,7 @@ type Gate =
   | { kind: "missing" }
   | { kind: "error" }
   | { kind: "join" }
-  | { kind: "joined"; sessionToken: string };
+  | { kind: "joined"; sessionToken: string; justJoined?: boolean };
 
 export function RoomGate({ code }: { code: string }) {
   const [gate, setGate] = useState<Gate>({ kind: "loading" });
@@ -61,6 +61,7 @@ export function RoomGate({ code }: { code: string }) {
       <RoomShell
         code={code}
         sessionToken={gate.sessionToken}
+        focusOnMount={gate.justJoined}
         onInvalidSession={handleInvalidSession}
       />
     );
@@ -139,7 +140,7 @@ export function RoomGate({ code }: { code: string }) {
           onSubmit={async (input) => {
             const member = await joinRoom(code, input);
             saveSession(code, { ...member, name: input.name });
-            setGate({ kind: "joined", sessionToken: member.sessionToken });
+            setGate({ kind: "joined", sessionToken: member.sessionToken, justJoined: true });
           }}
         />
       </main>
