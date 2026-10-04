@@ -122,8 +122,12 @@ export function registerSocketGateway(
     // The ack goes out before `after` runs, so a disconnect cannot swallow it.
     const intent =
       (handler: (payload: unknown) => Promise<{ ack: Ack; after?: () => Promise<void> }>) =>
-      async (payload: unknown, ack?: (result: Ack) => void) => {
-        const reply = (result: Ack) => typeof ack === "function" && ack(result);
+      async (...args: unknown[]) => {
+        // A payload-less emit puts the ack callback first.
+        const last = args[args.length - 1];
+        const ack = typeof last === "function" ? (last as (result: Ack) => void) : undefined;
+        const payload = typeof args[0] === "function" ? undefined : args[0];
+        const reply = (result: Ack) => ack?.(result);
         try {
           const outcome = await handler(payload);
           reply(outcome.ack);

@@ -12,8 +12,9 @@ import {
   stateWhere,
 } from "../../test/helpers.js";
 
-const emit = (socket: Socket, event: string, payload?: unknown): Promise<Ack> =>
-  socket.timeout(2000).emitWithAck(event, payload);
+// Omits the payload argument entirely when there is none, like a real payload-less client emit.
+const emit = (socket: Socket, event: string, ...payload: unknown[]): Promise<Ack> =>
+  socket.timeout(2000).emitWithAck(event, ...payload);
 
 /** Consumes chat messages until one has this text. */
 async function systemText(socket: Socket, text: string): Promise<ChatMessage> {
