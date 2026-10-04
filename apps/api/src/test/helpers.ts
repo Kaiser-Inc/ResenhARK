@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
-import { type RoomStatePayload, SOCKET_EVENTS } from "@resenhark/shared";
+import { type ChatMessage, type RoomStatePayload, SOCKET_EVENTS } from "@resenhark/shared";
 import type { FastifyInstance } from "fastify";
 import { Redis } from "ioredis";
 import type { Server } from "socket.io";
@@ -98,6 +98,9 @@ export async function joinRoomVia(
 
 // room:state events seen per client, recorded from socket creation so none is missed.
 const stateBuffers = new WeakMap<Socket, RoomStatePayload[]>();
+// chat:history and chat:message payloads per client, recorded the same way.
+const chatBuffers = new WeakMap<Socket, Record<string, unknown[]>>();
+const chatEvents = [SOCKET_EVENTS.chatHistory, SOCKET_EVENTS.chatMessage];
 
 /** Resolves once connected; rejects with the server's connect_error. */
 export function connectClient(url: string, sessionToken: string): Promise<Socket> {
@@ -110,6 +113,12 @@ export function connectClient(url: string, sessionToken: string): Promise<Socket
     const buffer: RoomStatePayload[] = [];
     stateBuffers.set(socket, buffer);
     socket.on(SOCKET_EVENTS.state, (state: RoomStatePayload) => buffer.push(state));
+    const chat: Record<string, unknown[]> = {};
+    chatBuffers.set(socket, chat);
+    for (const event of chatEvents) {
+      chat[event] = [];
+      socket.on(event, (payload: unknown) => chat[event].push(payload));
+    }
     socket.once("connect", () => resolve(socket));
     socket.once("connect_error", (err) => {
       socket.close();
@@ -153,3 +162,21 @@ export function stateWhere(
 export function nextState(socket: Socket, timeoutMs = 2000): Promise<RoomStatePayload> {
   return stateWhere(socket, () => true, timeoutMs);
 }
+
+/** Resolves with the oldest unread payload of a chat event, waiting for one if none is buffered. */
+async function nextChatEvent<T>(socket: Socket, event: string, timeoutMs: number): Promise<T> {
+  const buffer = chatBuffers.get(socket)?.[event];
+  if (!buffer) throw new Error("socket was not created by connectClient");
+  const deadline = Date.now() + timeoutMs;
+  while (!buffer.length) {
+    if (Date.now() > deadline) throw new Error(`no ${event} within ${timeoutMs}ms`);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  return buffer.shift() as T;
+}
+
+export const nextChatHistory = (socket: Socket, timeoutMs = 2000) =>
+  nextChatEvent<ChatMessage[]>(socket, SOCKET_EVENTS.chatHistory, timeoutMs);
+
+export const nextChatMessage = (socket: Socket, timeoutMs = 2000) =>
+  nextChatEvent<ChatMessage>(socket, SOCKET_EVENTS.chatMessage, timeoutMs);

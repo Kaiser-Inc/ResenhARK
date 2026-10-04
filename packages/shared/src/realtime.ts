@@ -43,8 +43,21 @@ export type MemberView = {
 export type LobbyView = null;
 export type GameView = null;
 export type GameEvent = never;
-// Placeholder until chat messages exist (Task 7).
-export type ChatMessage = never;
+
+export const CHAT_MAX_LENGTH = 500;
+export const CHAT_HISTORY = 200;
+
+export type ChatMessage =
+  | {
+      id: string;
+      kind: "user";
+      memberId: string;
+      name: string;
+      avatar: Avatar;
+      text: string;
+      at: number;
+    }
+  | { id: string; kind: "system"; text: string; at: number };
 
 export type RoomView = {
   code: string;

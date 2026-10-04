@@ -1,3 +1,4 @@
+import { CHAT_HISTORY, type ChatMessage } from "@resenhark/shared";
 import type { Redis } from "ioredis";
 import type { Room } from "../domain/room/room.js";
 import { ROOM_TTL_SECONDS, type RoomStore } from "./room-store.js";
@@ -52,6 +53,20 @@ export class RedisRoomStore implements RoomStore {
       .multi()
       .del(setKey, ...tokens.map(sessionKey))
       .exec();
+  }
+
+  async appendChat(code: string, message: ChatMessage): Promise<void> {
+    await this.redis
+      .multi()
+      .lpush(chatKey(code), JSON.stringify(message))
+      .ltrim(chatKey(code), 0, CHAT_HISTORY - 1)
+      .expire(chatKey(code), ROOM_TTL_SECONDS)
+      .exec();
+  }
+
+  async chatHistory(code: string): Promise<ChatMessage[]> {
+    const raw = await this.redis.lrange(chatKey(code), 0, CHAT_HISTORY - 1);
+    return raw.reverse().map((item) => JSON.parse(item) as ChatMessage);
   }
 
   async touch(code: string): Promise<void> {
