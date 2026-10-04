@@ -3,6 +3,7 @@
 import { Radio } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
 import { type Avatar, HUES, SHAPES, type Shape } from "@resenhark/shared";
+import { useId } from "react";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { cn } from "@/lib/utils";
@@ -41,6 +42,9 @@ type AvatarPickerProps = {
 };
 
 export function AvatarPicker({ name, value, onChange }: AvatarPickerProps) {
+  const id = useId();
+  const hueLabelId = `${id}-hue`;
+  const shapeLabelId = `${id}-shape`;
   const seed = name.trim() || "?";
   return (
     <div className="flex flex-col gap-6">
@@ -52,11 +56,11 @@ export function AvatarPicker({ name, value, onChange }: AvatarPickerProps) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span id="avatar-hue-label" className="text-sm font-medium">
+        <span id={hueLabelId} className="text-sm font-medium">
           Cor
         </span>
         <RadioGroup
-          aria-labelledby="avatar-hue-label"
+          aria-labelledby={hueLabelId}
           value={value.hue}
           onValueChange={(hue) => onChange({ ...value, hue: Number(hue) })}
           className="flex flex-wrap gap-3"
@@ -75,11 +79,11 @@ export function AvatarPicker({ name, value, onChange }: AvatarPickerProps) {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span id="avatar-shape-label" className="text-sm font-medium">
+        <span id={shapeLabelId} className="text-sm font-medium">
           Forma
         </span>
         <RadioGroup
-          aria-labelledby="avatar-shape-label"
+          aria-labelledby={shapeLabelId}
           value={value.shape}
           onValueChange={(shape) => onChange({ ...value, shape: shape as Shape })}
           className="flex flex-wrap gap-3"

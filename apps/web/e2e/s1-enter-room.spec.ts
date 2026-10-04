@@ -44,6 +44,33 @@ test("unknown code shows room not found", async ({ page }) => {
   await expect(page).toHaveURL(/\/$/);
 });
 
+test("a server error is not shown as a missing room, and retry recovers", async ({
+  page,
+  browser,
+}) => {
+  const ana = await browser.newPage();
+  await ana.goto("/");
+  await ana.getByRole("button", { name: "Criar sala" }).click();
+  await ana.getByLabel("Seu nome").fill("Ana");
+  await ana.getByRole("button", { name: "Criar e entrar" }).click();
+  await expect(ana).toHaveURL(/\/sala\/[A-HJKMNP-Z]{5}$/);
+  const code = ana.url().split("/").pop() as string;
+
+  let failing = true;
+  await page.route(`**/rooms/${code}`, (route) =>
+    failing ? route.fulfill({ status: 500, body: "boom" }) : route.continue(),
+  );
+  await page.goto(`/sala/${code}`);
+  await expect(
+    page.getByRole("heading", { name: "Não deu para falar com o servidor." }),
+  ).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sala não encontrada" })).toHaveCount(0);
+
+  failing = false;
+  await page.getByRole("button", { name: "Tentar de novo" }).click();
+  await expect(page.getByLabel("Seu nome")).toBeVisible();
+});
+
 test("avatar picker changes the preview for every shape and hue", async ({ page }) => {
   // CA-F10: the preview SVG is different for each of the 10 shapes and each of the 8 hues.
   await page.goto("/");

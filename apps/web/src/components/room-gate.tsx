@@ -1,11 +1,11 @@
 "use client";
 
-import { SearchXIcon } from "lucide-react";
+import { SearchXIcon, WifiOffIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { JoinForm } from "@/components/join-form";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -23,12 +23,15 @@ import { cn } from "@/lib/utils";
 type Gate =
   | { kind: "loading" }
   | { kind: "missing" }
+  | { kind: "error" }
   | { kind: "join" }
   | { kind: "joined"; name?: string };
 
 export function RoomGate({ code }: { code: string }) {
   const [gate, setGate] = useState<Gate>({ kind: "loading" });
+  const [attempt, setAttempt] = useState(0);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: attempt re-runs the lookup on retry
   useEffect(() => {
     let cancelled = false;
     const session = loadSession(code);
@@ -38,11 +41,11 @@ export function RoomGate({ code }: { code: string }) {
     }
     roomExists(code)
       .then((exists) => !cancelled && setGate({ kind: exists ? "join" : "missing" }))
-      .catch(() => !cancelled && setGate({ kind: "missing" }));
+      .catch(() => !cancelled && setGate({ kind: "error" }));
     return () => {
       cancelled = true;
     };
-  }, [code]);
+  }, [code, attempt]);
 
   if (gate.kind === "loading") {
     return (
@@ -72,6 +75,34 @@ export function RoomGate({ code }: { code: string }) {
             <Link href="/" className={cn(buttonVariants({ variant: "outline" }))}>
               Voltar ao início
             </Link>
+          </EmptyContent>
+        </Empty>
+      </main>
+    );
+  }
+
+  if (gate.kind === "error") {
+    return (
+      <main id="main-content" className="mx-auto w-full max-w-[720px] px-4 py-12 sm:px-6">
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <WifiOffIcon aria-hidden="true" strokeWidth={1.75} />
+            </EmptyMedia>
+            <EmptyTitle>
+              <h1 className="text-xl">Não deu para falar com o servidor.</h1>
+            </EmptyTitle>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setGate({ kind: "loading" });
+                setAttempt((n) => n + 1);
+              }}
+            >
+              Tentar de novo
+            </Button>
           </EmptyContent>
         </Empty>
       </main>
