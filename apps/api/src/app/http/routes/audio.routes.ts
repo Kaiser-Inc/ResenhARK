@@ -32,12 +32,13 @@ export async function audioRoutes(
         if (!url) return notFound();
         const upstream = await fetchAudio(url);
         if (!upstream.ok) return notFound();
-        const length = upstream.headers.get("content-length");
-        reply
+        // Buffer first: a failing body must still end as the uniform 404.
+        const body = Buffer.from(await upstream.arrayBuffer());
+        return reply
           .header("content-type", upstream.headers.get("content-type") ?? "audio/mpeg")
-          .header("cache-control", "no-store");
-        if (length) reply.header("content-length", length);
-        return reply.send(Buffer.from(await upstream.arrayBuffer()));
+          .header("cache-control", "no-store")
+          .header("content-length", body.length)
+          .send(body);
       } catch {
         return notFound();
       }

@@ -24,12 +24,23 @@ const card: Card = {
 let app: TestServer;
 let owner: TestSession;
 const fetched: string[] = [];
+let failBody = false;
 
 before(async () => {
   app = await startTestServer({
     audio: { findPreviewUrl: async () => PROVIDER_URL },
     fetchAudio: async (url) => {
       fetched.push(url);
+      if (failBody) {
+        return new Response(
+          new ReadableStream({
+            start(controller) {
+              controller.error(new Error("boom"));
+            },
+          }),
+          { headers: { "content-type": "audio/mpeg" } },
+        );
+      }
       return new Response(BODY, {
         headers: { "content-type": "audio/mpeg", "x-origin": "dzcdn" },
       });
@@ -89,4 +100,16 @@ test("response never contains the provider URL", async () => {
   const miss = await get(ticketPath("d3"));
   assert.equal(miss.statusCode, 404);
   assert.ok(!(JSON.stringify(miss.headers) + miss.body).includes("dzcdn"));
+});
+
+test("a failing upstream body stream returns 404", async () => {
+  await seedDraw("d4");
+  failBody = true;
+  try {
+    const res = await get(ticketPath("d4"));
+    assert.equal(res.statusCode, 404);
+    assert.deepEqual(res.json(), { error: "not-found" });
+  } finally {
+    failBody = false;
+  }
 });
