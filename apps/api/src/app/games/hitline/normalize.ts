@@ -1,5 +1,8 @@
 function fold(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/\p{M}+/gu, "");
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}+/gu, "");
 }
 
 /** Lowercase, strip accents, drop version/feature noise and punctuation. */

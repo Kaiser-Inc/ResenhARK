@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_HITLINE_CONFIG } from "@resenhark/shared";
 import { type HitlineAction, type HitlineState, apply, create, nextDeadline } from "./engine.js";
+import { project } from "./project.js";
 import { card, deckOf, fixedCtx } from "./test-deck.js";
 
 function ok(r: ReturnType<typeof apply>): { state: HitlineState; events: unknown[] } {
@@ -305,9 +306,34 @@ test("buy needs 3 tokens and can happen while guessing", () => {
   state.players[0].tokens = 3;
   const r = ok(apply(state, tp, { type: "buy" }, fixedCtx()));
   assert.equal(r.state.players[0].tokens, 0);
-  assert.equal(r.state.players[0].timeline.length, 2);
   assert.equal(r.state.phase, "guessing");
-  assert.equal(r.state.draw?.card.id, "next");
+  // the hidden draw stays in play untouched; the bought card is the one after it
+  assert.equal(r.state.draw?.card.id, "top");
+  assert.equal(r.state.draw?.id, state.draw?.id);
+  assert.deepEqual(
+    r.state.deck.map((c) => c.id),
+    ["top", "after", ...state.deck.slice(3).map((c) => c.id)],
+  );
+  assert.deepEqual(
+    r.state.players[0].timeline.map((c) => c.id),
+    ["ax", "next"],
+  );
+  assert.deepEqual(types(r), ["card-bought"]);
+  assert.equal(JSON.stringify(r.events).includes("Top Song"), false);
+  assert.equal(JSON.stringify(r.events).includes('"top"'), false);
+  assert.equal(JSON.stringify(project(r.state, "b")).includes("Top Song"), false);
+  // and the guess still resolves against the original card
+  const done = ok(apply(r.state, tp, lock(2), fixedCtx()));
+  assert.ok(done.state.lastReveal?.card.id === "top" || done.state.phase === "contest");
+});
+test("buy while guessing with nothing after the hidden card ends the game uncharged", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  state.players[0].tokens = 3;
+  state.deck = state.deck.slice(0, 1);
+  const r = ok(apply(state, tp, { type: "buy" }, fixedCtx()));
+  assert.equal(r.state.endReason, "deck-empty");
+  assert.equal(r.state.players[0].tokens, 3);
+  assert.equal(JSON.stringify(r.events).includes("Top Song"), false);
 });
 test("buy after locking the guess is wrong-phase", () => {
   const { state, tp } = drawnTable(2, 2000);

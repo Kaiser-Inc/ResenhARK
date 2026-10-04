@@ -322,12 +322,14 @@ export function apply(
       return { ok: false, error: "wrong-phase" };
     if (s.bought) return { ok: false, error: "already-bought" };
     if (player.tokens < BUY_COST) return { ok: false, error: "insufficient-tokens" };
-    if (s.deck.length === 0) {
+    // While guessing, deck[0] is the hidden draw: buy the card after it.
+    const at = s.phase === "guessing" ? 1 : 0;
+    if (s.deck.length <= at) {
       events.push(gameOver(s, deckEmptyWinners(s.players), "deck-empty"));
       return { ok: true, state: s, events };
     }
     player.tokens -= BUY_COST;
-    const bought = s.deck.shift() as Card;
+    const bought = s.deck.splice(at, 1)[0];
     player.timeline = insertAt(player.timeline, correctSlot(player.timeline, bought.year), bought);
     s.bought = true;
     events.push({ type: "card-bought", playerId: player.id, card: toPublicCard(bought) });
@@ -335,8 +337,6 @@ export function apply(
       events.push(gameOver(s, [player.id], "target"));
       return { ok: true, state: s, events };
     }
-    // The card being guessed was the top of the pile and is now owned: draw the next one.
-    if (s.phase === "guessing") nextDraw(s, ctx, events);
     return { ok: true, state: s, events };
   }
 
