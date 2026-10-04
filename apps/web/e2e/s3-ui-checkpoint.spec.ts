@@ -64,14 +64,14 @@ for (const viewport of VIEWPORTS) {
       await shot(bia.page, name("lobby-member"));
       await bia.context.close(); // offline members are not dealt in: Ana plays alone
 
-      await chooseOption(page, "Cartas para vencer", "10");
+      await chooseOption(page, "Cartas para vencer", "30");
       await page.getByRole("button", { name: "Iniciar partida" }).click();
       await expect(page.getByRole("button", { name: "Puxar carta" })).toBeVisible();
       await shot(page, name("turn-start"));
 
       // Play turns until both a hit and a miss were seen.
       const seen = new Set<string>();
-      for (let turn = 0; turn < 12 && seen.size < 2; turn++) {
+      for (let turn = 0; turn < 25 && seen.size < 2; turn++) {
         await page.getByRole("button", { name: "Puxar carta" }).click();
         const gaps = page.getByRole("button", { name: /Inserir/ });
         await gaps.first().waitFor();
@@ -89,6 +89,9 @@ for (const viewport of VIEWPORTS) {
         }
         await expect(page.getByRole("button", { name: "Puxar carta" })).toBeVisible();
       }
+
+      // Random guesses: fail loudly if a run never produced both outcomes.
+      expect([...seen].sort()).toEqual(["hit", "miss"]);
 
       await page.getByRole("button", { name: "Encerrar partida" }).click();
       await page.getByRole("button", { name: "Encerrar", exact: true }).click();

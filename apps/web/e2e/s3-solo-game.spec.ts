@@ -37,6 +37,34 @@ test("solo game: import, start, draw, guess, reveal", async ({ page }) => {
   expect(mediaErrors.filter((m) => /media|audio/i.test(m))).toEqual([]);
 });
 
+test("keyboard: arrows move focus between gaps and Enter chooses", async ({ page }) => {
+  await createRoomAs(page, "Ana");
+  await importDeckAndStart(page);
+  await page.getByRole("button", { name: "Puxar carta" }).click();
+  const gaps = page.getByRole("button", { name: /Inserir/ });
+  await expect(gaps).toHaveCount(2);
+  await gaps.first().focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(gaps.nth(1)).toBeFocused();
+  await page.keyboard.press("ArrowUp");
+  await expect(gaps.first()).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(gaps.nth(1)).toHaveAttribute("aria-pressed", "true");
+  await expect(gaps.first()).toHaveAttribute("aria-pressed", "false");
+});
+
+test("gaps stay visible but disabled for a player waiting for the turn", async ({ browser }) => {
+  const context = await browser.newContext();
+  const ana = await context.newPage();
+  const code = await createRoomAs(ana, "Ana");
+  const { page: bia } = await joinRoomAs(browser, code, "Bia");
+  await importDeckAndStart(ana);
+  const gaps = bia.getByRole("button", { name: /Inserir/ });
+  await expect(gaps.first()).toBeVisible();
+  for (const gap of await gaps.all()) await expect(gap).toBeDisabled();
+});
+
 test("non-owner sees the waiting state in the lobby", async ({ browser }) => {
   const context = await browser.newContext();
   const ana = await context.newPage();
@@ -70,6 +98,8 @@ test("owner starts a new game after the game is over", async ({ page }) => {
   await page.getByRole("button", { name: "Encerrar", exact: true }).click();
   await expect(page.getByRole("region", { name: "Resultado" })).toBeVisible();
   await page.getByRole("button", { name: "Nova partida" }).click();
+  await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await page.reload();
   await expect(page.getByText("40 faixas prontas")).toBeVisible();
   await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeVisible();
 });

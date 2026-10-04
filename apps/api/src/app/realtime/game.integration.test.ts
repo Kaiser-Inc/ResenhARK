@@ -128,6 +128,20 @@ test("start twice is game-running, configure during a game too, end then restart
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
 });
 
+test("game:reset returns every client to the lobby and keeps the deck", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"]);
+  await ready(owner);
+  await emit(owner, "game:start");
+  assert.deepEqual(await emit(owner, "game:reset"), { ok: false, error: "no-game" }); // still running
+  await emit(owner, "game:end");
+  await stateWhere(clients[1], (x) => x.room.game?.view.phase === "game-over");
+  assert.deepEqual(await emit(clients[1], "game:reset"), { ok: false, error: "not-owner" });
+  assert.deepEqual(await emit(owner, "game:reset"), { ok: true });
+  const s = await stateWhere(clients[1], (x) => x.room.game === null);
+  assert.ok(s.room.lobby.playlist);
+  assert.deepEqual(await emit(owner, "game:reset"), { ok: false, error: "no-game" });
+});
+
 test("members beyond maxPlayers become spectators", async (t) => {
   const { clients, owner } = await room(t, ["Ana", "Bia"]);
   await ready(owner, 1);

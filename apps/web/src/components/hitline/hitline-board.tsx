@@ -1,6 +1,6 @@
 "use client";
 
-import type { RoomView } from "@resenhark/shared";
+import type { Ack, RoomView } from "@resenhark/shared";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -22,8 +22,8 @@ type HitlineBoardProps = {
   send: Send;
   clock: ServerClock;
   connected: boolean;
-  /** Owner only: leave the finished game's result and go back to the lobby. */
-  onNewGame: () => void;
+  /** Owner only: the server drops the finished game and every client goes back to the lobby. */
+  onNewGame: () => Promise<Ack>;
 };
 
 export function HitlineBoard({

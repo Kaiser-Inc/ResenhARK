@@ -28,7 +28,7 @@ export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect
   function onKeyDown(event: React.KeyboardEvent) {
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
     const gaps = Array.from(
-      listRef.current?.querySelectorAll<HTMLButtonElement>("[data-gap]") ?? [],
+      listRef.current?.querySelectorAll<HTMLButtonElement>("[data-gap]:not(:disabled)") ?? [],
     );
     const at = gaps.indexOf(document.activeElement as HTMLButtonElement);
     if (at < 0) return;
@@ -38,26 +38,27 @@ export function Timeline({ ownerName, cards, interactive, selectedSlot, onSelect
     ]?.focus();
   }
 
-  const gap = (slot: number) =>
-    interactive ? (
-      <li key={`gap-${slot}`}>
-        <button
-          type="button"
-          data-gap
-          aria-pressed={selectedSlot === slot}
-          onClick={() => onSelect(slot)}
-          className={cn(
-            "flex h-8 w-full items-center gap-2 rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground transition-colors duration-[120ms] ease-out outline-hidden hover:bg-accent focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
-            selectedSlot === slot && "border-solid border-primary-text text-primary-text",
-          )}
-        >
-          {selectedSlot === slot ? (
-            <CheckIcon aria-hidden="true" strokeWidth={1.75} className="size-4" />
-          ) : null}
-          {gapLabel(cards, slot)}
-        </button>
-      </li>
-    ) : null;
+  const gap = (slot: number) => (
+    <li key={`gap-${slot}`}>
+      <button
+        type="button"
+        data-gap
+        disabled={!interactive}
+        tabIndex={interactive ? 0 : -1}
+        aria-pressed={selectedSlot === slot}
+        onClick={() => onSelect(slot)}
+        className={cn(
+          "flex h-8 w-full items-center gap-2 rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground transition-colors duration-[120ms] ease-out outline-hidden enabled:hover:bg-accent disabled:cursor-default focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
+          selectedSlot === slot && "border-solid border-primary-text text-primary-text",
+        )}
+      >
+        {selectedSlot === slot ? (
+          <CheckIcon aria-hidden="true" strokeWidth={1.75} className="size-4" />
+        ) : null}
+        {gapLabel(cards, slot)}
+      </button>
+    </li>
+  );
 
   return (
     <ol

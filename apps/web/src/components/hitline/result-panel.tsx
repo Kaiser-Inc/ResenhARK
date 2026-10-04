@@ -14,7 +14,7 @@ type ResultPanelProps = {
   view: HitlineView;
   members: MemberView[];
   isOwner: boolean;
-  onNewGame: () => void;
+  onNewGame: () => Promise<unknown>;
 };
 
 export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelProps) {

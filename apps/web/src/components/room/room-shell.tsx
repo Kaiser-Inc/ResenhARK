@@ -261,12 +261,6 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
   const [removeTarget, setRemoveTarget] = useState<MemberView | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const connected = status === "connected";
-  // The owner left a finished game's result to set up another one; the others keep seeing it.
-  const [backToLobby, setBackToLobby] = useState(false);
-  const gameOver = room?.game?.view.phase === "game-over";
-  useEffect(() => {
-    if (room?.game && !gameOver) setBackToLobby(false);
-  }, [room?.game, gameOver]);
 
   useEffect(() => {
     if (status === "invalid-session" && !left.current) onInvalidSession();
@@ -331,14 +325,14 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         focusOnMount={focusOnMount}
       >
         {room ? (
-          room.game && !(gameOver && backToLobby) ? (
+          room.game ? (
             <HitlineBoard
               room={room}
               events={events}
               send={send}
               clock={clock}
               connected={connected}
-              onNewGame={() => setBackToLobby(true)}
+              onNewGame={() => send("game:reset")}
             />
           ) : (
             <LobbyPanel room={room} send={send} connected={connected} />

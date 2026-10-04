@@ -270,6 +270,18 @@ export function registerSocketGateway(
     );
 
     socket.on(
+      "game:reset",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (!room.game || running(room)) return { ok: false, error: "no-game" };
+          return { ok: true, room: { ...room, game: null } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
       "game:action",
       intent(async (payload) => {
         const parsed = hitlineIntentSchema.safeParse(payload);
