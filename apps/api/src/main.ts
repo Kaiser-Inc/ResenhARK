@@ -32,9 +32,9 @@ async function bootstrap(): Promise<void> {
   });
 
   try {
+    await hub.rehydrate();
     await fastify.listen({ port: settings.PORT, host: "0.0.0.0" });
     console.log(`API running on port ${settings.PORT}`);
-    await hub.rehydrate();
   } catch (err) {
     fastify.log.error(err);
     redis.disconnect();

@@ -62,10 +62,7 @@ async function startGame(owner: Socket, clients: Socket[]) {
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
   const started = await stateWhere(owner, (s) => s.events.some((e) => e.type === "game-started"));
   const turnId = started.room.game?.view.turnPlayerId;
-  return clients.findIndex((_, i) => i >= 0 && turnId !== undefined && turnId === idOf(i));
-  function idOf(i: number) {
-    return started.room.members[i].id;
-  }
+  return started.room.members.findIndex((m) => m.id === turnId);
 }
 
 test("a game survives an API restart and resolves expired deadlines on reconnect", async (t) => {
@@ -95,50 +92,58 @@ test("a game survives an API restart and resolves expired deadlines on reconnect
   assert.notEqual(first.room.game?.view.phase, "contest");
 });
 
-test("rehydrate schedules timers for rooms with pending deadlines", async (t) => {
+test("rehydrate resets ghost presence and arms the game and owner deadlines", async (t) => {
   const { app, sessions, clients, owner } = await startRoom(t, ["Ana", "Bia"]);
   const turn = await startGame(owner, clients);
-  await emit(clients[turn], "game:action", { type: "draw" });
-  await emit(clients[turn], "game:action", {
-    type: "lock-guess",
-    slot: 0,
-    title: "x",
-    artist: "y",
-  });
-  const open = await stateWhere(owner, (s) => s.room.game?.view.phase === "contest");
-  const deadline = open.room.game?.view.contestDeadline as number;
+  assert.equal(turn, 0, "seeded rng gives Ana the first turn");
+  await emit(clients[0], "game:action", { type: "draw" });
   app.store.redis.disconnect();
   for (const c of clients) c.close();
   await app.close();
 
   const app2 = await startTestServer({ ...withAudio, keepData: true });
   t.after(() => app2.close());
-  app2.clock.set(deadline + 1000);
-  await app2.hub.runDueTimers();
-  const before = await app2.store.load(sessions[0].code);
-  assert.equal(before?.game?.state.phase, "contest", "nothing is scheduled before rehydrate");
-
   await app2.hub.rehydrate();
+  const bia = await connectClient(app2.url, sessions[1].sessionToken);
+  t.after(() => bia.close());
+  await stateWhere(bia, (s) => s.room.members[1].online);
+  const base = app2.clock.now();
+
+  app2.clock.set(base + 31_000);
   await app2.hub.runDueTimers();
-  const after = await app2.store.load(sessions[0].code);
-  assert.ok(after?.game?.state.lastReveal);
+  const passed = await app2.store.load(sessions[0].code);
+  assert.equal(passed?.game?.state.turn, 1, "ghost-online Ana loses the turn after 30 s");
+
+  app2.clock.set(base + 61_000);
+  await app2.hub.runDueTimers();
+  const handed = await app2.store.load(sessions[0].code);
+  assert.equal(handed?.ownerId, sessions[1].memberId, "ownership moves after 60 s");
+});
+
+test("a corrupt room does not stop rehydrate", async (t) => {
+  const { app, sessions, clients } = await startRoom(t, ["Ana"]);
+  app.store.redis.disconnect();
+  for (const c of clients) c.close();
+  await app.close();
+
+  const app2 = await startTestServer({ ...withAudio, keepData: true });
+  t.after(() => app2.close());
+  await app2.store.redis.set("room:ZZZZZ", "{not json");
+  await app2.hub.rehydrate();
+  const room = await app2.store.load(sessions[0].code);
+  assert.equal(room?.members[0].connections, 0);
 });
 
 test("kicking the turn player mid-game passes the turn", async (t) => {
-  const { sessions, clients, owner } = await startRoom(t, ["Ana", "Bia", "Cid"]);
-  let turn = await startGame(owner, clients);
-  // The owner cannot kick themselves: restart until someone else holds the turn.
-  for (let i = 0; turn === 0 && i < 20; i++) {
-    assert.deepEqual(await emit(owner, "game:end"), { ok: true });
-    turn = await startGame(owner, clients);
-  }
-  assert.notEqual(turn, 0);
+  const { sessions, clients, owner } = await startRoom(t, ["Ana", "Bia", "Cid", "Dan", "Eli"]);
+  const turn = await startGame(owner, clients);
+  assert.notEqual(turn, 0, "seeded rng gives a non-owner the first turn");
   const victim = sessions[turn].memberId;
   assert.deepEqual(await emit(owner, "room:kick", { targetId: victim }), { ok: true });
-  const s = await stateWhere(owner, (x) => x.room.members.length === 2);
+  const s = await stateWhere(owner, (x) => x.room.members.length === 4);
   assert.ok(s.events.some((e) => e.type === "turn-passed" && e.reason === "removed"));
   assert.notEqual(s.room.game?.view.turnPlayerId, victim);
-  assert.equal(s.room.game?.view.players.length, 2);
+  assert.equal(s.room.game?.view.players.length, 4);
 });
 
 test("a member who joins mid-game is a spectator and plays the next game", async (t) => {

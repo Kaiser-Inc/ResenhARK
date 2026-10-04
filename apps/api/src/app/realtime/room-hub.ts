@@ -65,11 +65,52 @@ export class RoomHub {
     await Promise.all(due.map(([code]) => this.fire(code)));
   }
 
-  /** Boot: re-arms the timer of every stored room that has a pending deadline. */
+  /**
+   * Boot: connection counts persisted before a crash are ghosts, so every member starts offline
+   * (the first real connection flips them back), then each room's timer is armed. One bad room
+   * must not stop the boot.
+   */
   async rehydrate(): Promise<void> {
-    for (const code of await this.deps.store.listCodes()) {
-      const room = await this.deps.store.load(code);
-      if (room) this.schedule(code, room);
+    const { store, now, rng, newId } = this.deps;
+    for (const code of await store.listCodes()) {
+      try {
+        await this.mutate(code, (room) => {
+          let game = room.game;
+          const events: GameEvent[] = [];
+          for (const m of room.members) {
+            if (!game || game.state.phase === "game-over") break;
+            if (!game.state.players.some((p) => p.id === m.id)) continue;
+            const r = apply(
+              game.state,
+              m.id,
+              { type: "set-online", online: false },
+              {
+                now: now(),
+                rng,
+                newId,
+              },
+            );
+            if (!r.ok) continue;
+            game = { ...game, state: r.state };
+            events.push(...r.events);
+          }
+          return {
+            ok: true,
+            events,
+            room: {
+              ...room,
+              game,
+              members: room.members.map((m) => ({
+                ...m,
+                connections: 0,
+                offlineSince: m.offlineSince ?? now(),
+              })),
+            },
+          };
+        });
+      } catch (err) {
+        this.deps.onError?.(err);
+      }
     }
   }
 
@@ -122,7 +163,10 @@ export class RoomHub {
     const result = await fn(ticked.room);
     if (!result.ok) {
       // The tick is time passing, not part of the intent: keep it even when the intent fails.
-      if (ticked.room !== loaded) await this.commit(ticked.room, ticked.events, ticked.system);
+      if (ticked.room !== loaded) {
+        await this.commit(ticked.room, ticked.events, ticked.system);
+        this.watchAudio(ticked.room, ticked.events, 0);
+      }
       return result;
     }
     const events = [...ticked.events, ...(result.events ?? [])];
