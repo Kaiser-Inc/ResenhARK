@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_HITLINE_CONFIG } from "@resenhark/shared";
-import { type HitlineState, apply, create, nextDeadline } from "./engine.js";
+import { type HitlineAction, type HitlineState, apply, create, nextDeadline } from "./engine.js";
 import { card, deckOf, fixedCtx } from "./test-deck.js";
 
 function ok(r: ReturnType<typeof apply>): { state: HitlineState; events: unknown[] } {
@@ -144,6 +144,7 @@ test("invalid slot is rejected", () => {
 test("turn advances skipping offline players and clears per-turn state", () => {
   const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b", "c"], deckOf(20), fixedCtx());
   state.players[1].online = false;
+  state.players[2].tokens = 0;
   for (const p of state.players) p.timeline = [card(`${p.id}x`, 1990)];
   state.deck = [card("top", 2000), ...deckOf(5)];
   const tp = state.players[0].id;
@@ -205,4 +206,334 @@ test("system can end the game", () => {
   const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(10), fixedCtx());
   const r = ok(apply(state, "system", { type: "end" }, fixedCtx()));
   assert.equal(r.state.endReason, "ended");
+});
+
+// ---- Task 15: tokens, skip, buy, contests ----
+const types = (r: { events: unknown[] }) => r.events.map((e) => (e as { type: string }).type);
+/** n players, everyone with timeline [1990], deck top of the given year, turn player not yet drawn. */
+function table(n: number, top: number, config = DEFAULT_HITLINE_CONFIG) {
+  const ids = ["a", "b", "c"].slice(0, n);
+  const { state } = create(config, ids, deckOf(20), fixedCtx());
+  for (const p of state.players) p.timeline = [card(`${p.id}x`, 1990)];
+  state.deck = [
+    { ...card("top", top, "Top Song", ["Top Artist"]) },
+    card("next", 2010),
+    card("after", 2011),
+    ...deckOf(5),
+  ];
+  state.turn = 0;
+  const tp = state.players[0].id;
+  const [, o1, o2] = state.players.map((p) => p.id);
+  return { state, tp, o1, o2 };
+}
+function drawnTable(n: number, top: number, config = DEFAULT_HITLINE_CONFIG) {
+  const t = table(n, top, config);
+  return { ...t, state: ok(apply(t.state, t.tp, { type: "draw" }, fixedCtx())).state };
+}
+const lock = (slot: number, title = "", artist = ""): HitlineAction => ({
+  type: "lock-guess",
+  slot,
+  title,
+  artist,
+});
+const tokensOf = (s: HitlineState, id: string) => s.players.find((p) => p.id === id)?.tokens;
+const timelineOf = (s: HitlineState, id: string) => s.players.find((p) => p.id === id)?.timeline;
+
+test("skip costs 1 token, reveals the card and draws another", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  const r = ok(apply(state, tp, { type: "skip" }, { ...fixedCtx(), newId: () => "z" }));
+  assert.equal(r.state.players[0].tokens, 1);
+  assert.deepEqual(
+    r.state.discards.map((c) => c.id),
+    ["top"],
+  );
+  assert.equal(r.state.deck.length, state.deck.length - 1);
+  assert.equal(r.state.draw?.card.id, "next");
+  assert.equal(r.state.draw?.id, "z");
+  assert.notEqual(state.draw?.id, "z");
+  assert.equal(r.state.phase, "guessing");
+  assert.deepEqual(types(r), ["card-skipped", "card-drawn"]);
+  assert.equal((r.events[0] as { card: { title: string } }).card.title, "Top Song");
+});
+test("skip without tokens is insufficient-tokens, and skip needs guessing", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  state.players[0].tokens = 0;
+  assert.deepEqual(apply(state, tp, { type: "skip" }, fixedCtx()), {
+    ok: false,
+    error: "insufficient-tokens",
+  });
+  const t = table(2, 2000);
+  assert.deepEqual(apply(t.state, t.tp, { type: "skip" }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+  assert.deepEqual(apply(state, state.players[1].id, { type: "skip" }, fixedCtx()), {
+    ok: false,
+    error: "not-your-turn",
+  });
+});
+test("skip with an empty pile ends the game", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  state.deck = state.deck.slice(0, 1);
+  const r = ok(apply(state, tp, { type: "skip" }, fixedCtx()));
+  assert.equal(r.state.phase, "game-over");
+  assert.equal(r.state.endReason, "deck-empty");
+});
+test("buy costs 3, places the card correctly and only once per turn", () => {
+  const { state, tp } = table(2, 2000);
+  state.players[0].tokens = 7;
+  const r = ok(apply(state, tp, { type: "buy" }, fixedCtx()));
+  assert.equal(r.state.players[0].tokens, 4);
+  assert.deepEqual(
+    r.state.players[0].timeline.map((c) => c.year),
+    [1990, 2000],
+  );
+  assert.equal(r.state.bought, true);
+  assert.equal(r.state.deck.length, state.deck.length - 1);
+  assert.deepEqual(types(r), ["card-bought"]);
+  assert.deepEqual(apply(r.state, tp, { type: "buy" }, fixedCtx()), {
+    ok: false,
+    error: "already-bought",
+  });
+});
+test("buy needs 3 tokens and can happen while guessing", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  assert.deepEqual(apply(state, tp, { type: "buy" }, fixedCtx()), {
+    ok: false,
+    error: "insufficient-tokens",
+  });
+  state.players[0].tokens = 3;
+  const r = ok(apply(state, tp, { type: "buy" }, fixedCtx()));
+  assert.equal(r.state.players[0].tokens, 0);
+  assert.equal(r.state.players[0].timeline.length, 2);
+  assert.equal(r.state.phase, "guessing");
+  assert.equal(r.state.draw?.card.id, "next");
+});
+test("buy after locking the guess is wrong-phase", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  state.players[0].tokens = 5;
+  state.players[1].tokens = 1;
+  const locked = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  assert.equal(locked.phase, "contest");
+  assert.deepEqual(apply(locked, tp, { type: "buy" }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+});
+test("buying the Nth card wins immediately", () => {
+  const { state, tp } = table(2, 2000, { ...DEFAULT_HITLINE_CONFIG, targetCards: 2 });
+  state.players[0].tokens = 3;
+  const r = ok(apply(state, tp, { type: "buy" }, fixedCtx()));
+  assert.equal(r.state.phase, "game-over");
+  assert.deepEqual(r.state.winners, [tp]);
+  assert.equal(r.state.endReason, "target");
+});
+test("buy with an empty pile ends the game", () => {
+  const { state, tp } = table(2, 2000);
+  state.players[0].tokens = 3;
+  state.deck = [];
+  const r = ok(apply(state, tp, { type: "buy" }, fixedCtx()));
+  assert.equal(r.state.endReason, "deck-empty");
+});
+test("lock-guess opens the contest window when someone can contest", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  const r = ok(apply(state, tp, lock(0), fixedCtx(1000)));
+  assert.equal(r.state.phase, "contest");
+  assert.equal(r.state.contestDeadline, 1000 + 15_000);
+  assert.equal(nextDeadline(r.state), 16_000);
+  assert.deepEqual(types(r), ["guess-locked", "contest-opened"]);
+  assert.equal(r.state.lastReveal, null);
+  assert.equal(r.state.deck.length, state.deck.length);
+});
+test("no contest window when the others are offline or have no tokens", () => {
+  const a = drawnTable(2, 2000);
+  a.state.players[1].online = false;
+  assert.notEqual(ok(apply(a.state, a.tp, lock(0), fixedCtx())).state.phase, "contest");
+  const b = drawnTable(2, 2000);
+  b.state.players[1].tokens = 0;
+  assert.notEqual(ok(apply(b.state, b.tp, lock(0), fixedCtx())).state.phase, "contest");
+});
+test("contest takes 1 token and the slot becomes unavailable", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r = ok(apply(w, o1, { type: "contest", slot: 0 }, fixedCtx()));
+  assert.equal(tokensOf(r.state, o1), 1);
+  assert.deepEqual(types(r), ["contested"]);
+  assert.equal(r.state.phase, "contest");
+  assert.deepEqual(apply(r.state, o2, { type: "contest", slot: 0 }, fixedCtx()), {
+    ok: false,
+    error: "slot-taken",
+  });
+});
+test("contesting the turn player's own slot is slot-taken; bad range is invalid-slot", () => {
+  const { state, tp, o1 } = drawnTable(2, 2000);
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  assert.deepEqual(apply(w, o1, { type: "contest", slot: 1 }, fixedCtx()), {
+    ok: false,
+    error: "slot-taken",
+  });
+  for (const slot of [-1, 2, 0.5])
+    assert.deepEqual(apply(w, o1, { type: "contest", slot }, fixedCtx()), {
+      ok: false,
+      error: "invalid-slot",
+    });
+});
+test("contest checks phase, actor and tokens", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  assert.deepEqual(apply(state, o1, { type: "contest", slot: 0 }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  assert.deepEqual(apply(w, tp, { type: "contest", slot: 0 }, fixedCtx()), {
+    ok: false,
+    error: "not-your-turn",
+  });
+  assert.deepEqual(apply(w, tp, { type: "pass" }, fixedCtx()), {
+    ok: false,
+    error: "not-your-turn",
+  });
+  w.players[2].tokens = 0;
+  assert.deepEqual(apply(w, o2, { type: "contest", slot: 0 }, fixedCtx()), {
+    ok: false,
+    error: "insufficient-tokens",
+  });
+});
+test("double contest by the same player is already-decided and charges once", () => {
+  const { state, tp, o1 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r1 = ok(apply(w, o1, { type: "contest", slot: 0 }, fixedCtx())).state;
+  assert.deepEqual(apply(r1, o1, { type: "contest", slot: 0 }, fixedCtx()), {
+    ok: false,
+    error: "already-decided",
+  });
+  assert.deepEqual(apply(r1, o1, { type: "pass" }, fixedCtx()), {
+    ok: false,
+    error: "already-decided",
+  });
+  assert.equal(tokensOf(r1, o1), 1);
+});
+test("double draw is wrong-phase and the deck shrinks once", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  assert.equal(state.deck.length, 8);
+  assert.deepEqual(apply(state, tp, { type: "draw" }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  assert.deepEqual(apply(w, tp, { type: "draw" }, fixedCtx()), { ok: false, error: "wrong-phase" });
+  assert.equal(w.deck.length, 8);
+  const r = ok(apply(w, state.players[1].id, { type: "pass" }, fixedCtx()));
+  assert.equal(r.state.deck.length, 7);
+});
+test("window resolves as soon as everyone decided", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const r1 = ok(apply(w, o1, { type: "contest", slot: 1 }, fixedCtx())).state;
+  assert.equal(r1.phase, "contest");
+  const r2 = ok(apply(r1, o2, { type: "pass" }, fixedCtx()));
+  assert.deepEqual(types(r2), ["passed", "card-revealed"]);
+  assert.equal(r2.state.phase, "turn-start");
+  assert.equal(r2.state.contestDeadline, null);
+  assert.deepEqual(r2.state.contests, []);
+});
+test("an offline or token-less player does not hold the window open", () => {
+  const { state, tp, o1 } = drawnTable(3, 2000);
+  state.players[2].tokens = 0;
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const r = ok(apply(w, o1, { type: "pass" }, fixedCtx()));
+  assert.ok(types(r).includes("card-revealed"));
+});
+test("turn player keeps the card when both are right on the same year", () => {
+  const { state, tp, o1 } = drawnTable(2, 1990);
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r = ok(apply(w, o1, { type: "contest", slot: 0 }, fixedCtx()));
+  assert.equal(r.state.lastReveal?.receiverId, tp);
+  assert.equal(timelineOf(r.state, tp)?.length, 2);
+  assert.equal(timelineOf(r.state, o1)?.length, 1);
+  assert.deepEqual(r.state.lastReveal?.contests, [{ playerId: o1, slot: 0, correct: true }]);
+  assert.equal(r.state.discards.length, 0);
+});
+test("first correct contester gets the card into their own timeline", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  state.players[0].timeline = [1990, 2000, 2000, 2010].map((y, i) => card(`t${i}`, y));
+  // turn player wrong at slot 0; o1 (slot 2) and o2 (slot 1) are both right
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const r1 = ok(apply(w, o1, { type: "contest", slot: 2 }, fixedCtx())).state;
+  const r = ok(apply(r1, o2, { type: "contest", slot: 1 }, fixedCtx()));
+  assert.equal(r.state.lastReveal?.receiverId, o1);
+  assert.deepEqual(
+    timelineOf(r.state, o1)?.map((c) => c.year),
+    [1990, 2000],
+  );
+  assert.equal(timelineOf(r.state, o2)?.length, 1);
+  assert.equal(timelineOf(r.state, tp)?.length, 4);
+  assert.deepEqual(
+    r.state.lastReveal?.contests.map((c) => c.correct),
+    [true, true],
+  );
+});
+test("two correct contesters on a shared year: the first in order wins", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 1990);
+  // turn player wrong would need an invalid year, so make the turn timeline [2000] instead
+  state.players[0].timeline = [card("tx", 2000)];
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r1 = ok(apply(w, o2, { type: "contest", slot: 0 }, fixedCtx())).state;
+  assert.equal(r1.phase, "contest");
+  const r = ok(apply(r1, o1, { type: "pass" }, fixedCtx()));
+  assert.equal(r.state.lastReveal?.receiverId, o2);
+});
+test("nobody correct: the card is discarded", () => {
+  const { state, tp, o1 } = drawnTable(2, 1980);
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r = ok(apply(w, o1, { type: "pass" }, fixedCtx()));
+  assert.equal(r.state.lastReveal?.receiverId, null);
+  assert.deepEqual(
+    r.state.discards.map((c) => c.id),
+    ["top"],
+  );
+});
+test("a contester reaching the target wins", () => {
+  const { state, tp, o1 } = drawnTable(2, 1980, { ...DEFAULT_HITLINE_CONFIG, targetCards: 2 });
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r = ok(apply(w, o1, { type: "contest", slot: 0 }, fixedCtx()));
+  assert.equal(r.state.phase, "game-over");
+  assert.deepEqual(r.state.winners, [o1]);
+});
+test("token rules: position+title, position+artist, wrong position+both, wrong position+one", () => {
+  const cases: [number, string, string, boolean][] = [
+    [1, "top song", "", true],
+    [1, "", "Top Artist", true],
+    [0, "Top Song", "top artist", true],
+    [0, "Top Song", "", false],
+    [0, "", "Top Artist", false],
+    [1, "", "", false],
+  ];
+  for (const [slot, title, artist, awarded] of cases) {
+    const { state, tp } = drawnTable(1, 2000);
+    const r = ok(apply(state, tp, lock(slot, title, artist), fixedCtx()));
+    assert.equal(r.state.lastReveal?.tokenAwarded, awarded, `${slot}/${title}/${artist}`);
+    assert.equal(r.state.players[0].tokens, awarded ? 3 : 2);
+  }
+  const { state, tp } = drawnTable(1, 2000);
+  const rev = ok(apply(state, tp, lock(1, "Top Song", "nope"), fixedCtx())).state.lastReveal;
+  assert.equal(rev?.guess?.titleOk, true);
+  assert.equal(rev?.guess?.artistOk, false);
+});
+test("a contester never earns a token for the names", () => {
+  const { state, tp, o1 } = drawnTable(2, 1980);
+  const w = ok(apply(state, tp, lock(1, "Top Song", "Top Artist"), fixedCtx())).state;
+  const r = ok(apply(w, o1, { type: "contest", slot: 0 }, fixedCtx()));
+  assert.equal(tokensOf(r.state, o1), 1);
+  assert.equal(tokensOf(r.state, tp), 3); // wrong position + both names
+  assert.equal(r.state.lastReveal?.tokenAwarded, true);
+});
+test("player with 0 tokens cannot contest and counts as decided", () => {
+  const { state, tp, o1 } = drawnTable(2, 2000);
+  state.players[1].tokens = 1;
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  assert.equal(w.phase, "contest");
+  const r = ok(apply(w, o1, { type: "contest", slot: 1 }, fixedCtx()));
+  assert.ok(types(r).includes("card-revealed"));
+  assert.equal(tokensOf(r.state, o1), 0);
 });

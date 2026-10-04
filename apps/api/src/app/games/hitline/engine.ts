@@ -1,5 +1,6 @@
 import type { HitlineConfig, HitlineEvent } from "@resenhark/shared";
-import { toRevealView } from "./project.js";
+import { matchesArtist, matchesTitle } from "./normalize.js";
+import { toPublicCard, toRevealView } from "./project.js";
 import { correctSlot, insertAt, isCorrectSlot } from "./slots.js";
 
 export type Card = {
@@ -166,16 +167,38 @@ function nextTurn(s: HitlineState, ctx: Ctx): void {
   s.turnDeadline = ctx.now + s.config.guessSeconds * 1000;
 }
 
+function nextDraw(s: HitlineState, ctx: Ctx, events: HitlineEvent[]): void {
+  if (s.deck.length === 0) {
+    events.push(gameOver(s, deckEmptyWinners(s.players), "deck-empty"));
+    return;
+  }
+  const drawId = ctx.newId();
+  s.draw = { id: drawId, card: s.deck[0] };
+  events.push({ type: "card-drawn", drawId });
+}
+
 function resolve(s: HitlineState, ctx: Ctx, events: HitlineEvent[]): void {
   const player = s.players[s.turn];
   const draw = s.draw as { id: string; card: Card };
   const guess = s.guess as Guess;
+  const year = draw.card.year;
   s.deck.shift();
-  const correct = isCorrectSlot(player.timeline, guess.slot, draw.card.year);
-  if (correct)
-    player.timeline = insertAt(
-      player.timeline,
-      correctSlot(player.timeline, draw.card.year),
+  const correct = isCorrectSlot(player.timeline, guess.slot, year);
+  const titleOk = matchesTitle(guess.title, draw.card.title);
+  const artistOk = matchesArtist(guess.artist, draw.card.artists);
+  const tokenAwarded = (correct && (titleOk || artistOk)) || (!correct && titleOk && artistOk);
+  if (tokenAwarded) player.tokens += 1;
+  const contests = s.contests.map((c) => ({
+    ...c,
+    correct: isCorrectSlot(player.timeline, c.slot, year),
+  }));
+  const receiver = correct
+    ? player
+    : s.players.find((p) => p.id === contests.find((c) => c.correct)?.playerId);
+  if (receiver)
+    receiver.timeline = insertAt(
+      receiver.timeline,
+      correctSlot(receiver.timeline, year),
       draw.card,
     );
   else s.discards.push(draw.card);
@@ -183,18 +206,31 @@ function resolve(s: HitlineState, ctx: Ctx, events: HitlineEvent[]): void {
     card: draw.card,
     turnPlayerId: player.id,
     reason: "resolved",
-    // ponytail: title/artist matching and token award arrive with the normalizer (Task 15).
-    guess: { ...guess, correct, titleOk: false, artistOk: false },
-    contests: [],
-    receiverId: correct ? player.id : null,
-    tokenAwarded: false,
+    guess: { ...guess, correct, titleOk, artistOk },
+    contests,
+    receiverId: receiver?.id ?? null,
+    tokenAwarded,
   };
   events.push({ type: "card-revealed", reveal: toRevealView(s.lastReveal) });
-  if (player.timeline.length >= s.config.targetCards) {
-    events.push(gameOver(s, [player.id], "target"));
+  if (receiver && receiver.timeline.length >= s.config.targetCards) {
+    events.push(gameOver(s, [receiver.id], "target"));
     return;
   }
   nextTurn(s, ctx);
+}
+
+const canContest = (s: HitlineState, p: Player) =>
+  p.id !== s.players[s.turn].id && p.online && p.tokens >= CONTEST_COST;
+
+/** Everyone else contested, passed, is offline or has no token to spend. */
+function allDecided(s: HitlineState): boolean {
+  return s.players.every(
+    (p) =>
+      p.id === s.players[s.turn].id ||
+      !canContest(s, p) ||
+      s.passed.includes(p.id) ||
+      s.contests.some((c) => c.playerId === p.id),
+  );
 }
 
 export function apply(
@@ -216,22 +252,46 @@ export function apply(
     s.deck.shift();
     s.draw = null;
     events.push({ type: "audio-missing" });
-    if (action.giveUp || s.deck.length === 0) {
+    if (action.giveUp) {
       events.push(gameOver(s, deckEmptyWinners(s.players), "deck-empty"));
       return { ok: true, state: s, events };
     }
-    const drawId = ctx.newId();
-    s.draw = { id: drawId, card: s.deck[0] };
-    events.push({ type: "card-drawn", drawId });
+    nextDraw(s, ctx, events);
     return { ok: true, state: s, events };
   }
   if (action.type === "end") {
     events.push(gameOver(s, [], "ended"));
     return { ok: true, state: s, events };
   }
-  if (action.type !== "draw" && action.type !== "lock-guess")
+  if (system || action.type === "set-online" || action.type === "remove")
     return { ok: false, error: "wrong-phase" };
+
+  if (action.type === "contest" || action.type === "pass") {
+    if (s.phase !== "contest") return { ok: false, error: "wrong-phase" };
+    if (s.players[s.turn].id === actorId) return { ok: false, error: "not-your-turn" };
+    if (s.passed.includes(actorId) || s.contests.some((c) => c.playerId === actorId))
+      return { ok: false, error: "already-decided" };
+    if (action.type === "pass") {
+      s.passed.push(actorId);
+      events.push({ type: "passed", playerId: actorId });
+    } else {
+      const me = s.players.find((p) => p.id === actorId) as Player;
+      if (me.tokens < CONTEST_COST) return { ok: false, error: "insufficient-tokens" };
+      const { slot } = action;
+      if (!Number.isInteger(slot) || slot < 0 || slot > s.players[s.turn].timeline.length)
+        return { ok: false, error: "invalid-slot" };
+      if (slot === s.guess?.slot || s.contests.some((c) => c.slot === slot))
+        return { ok: false, error: "slot-taken" };
+      me.tokens -= CONTEST_COST;
+      s.contests.push({ playerId: actorId, slot });
+      events.push({ type: "contested", playerId: actorId, slot });
+    }
+    if (allDecided(s)) resolve(s, ctx, events);
+    return { ok: true, state: s, events };
+  }
+
   if (s.players[s.turn].id !== actorId) return { ok: false, error: "not-your-turn" };
+  const player = s.players[s.turn];
 
   if (action.type === "draw") {
     if (s.phase !== "turn-start") return { ok: false, error: "wrong-phase" };
@@ -239,23 +299,60 @@ export function apply(
       events.push(gameOver(s, deckEmptyWinners(s.players), "deck-empty"));
       return { ok: true, state: s, events };
     }
-    const drawId = ctx.newId();
-    s.draw = { id: drawId, card: s.deck[0] };
     s.lastReveal = null;
     s.phase = "guessing";
-    events.push({ type: "card-drawn", drawId });
+    nextDraw(s, ctx, events);
     return { ok: true, state: s, events };
   }
 
+  if (action.type === "skip") {
+    if (s.phase !== "guessing" || !s.draw) return { ok: false, error: "wrong-phase" };
+    if (player.tokens < SKIP_COST) return { ok: false, error: "insufficient-tokens" };
+    player.tokens -= SKIP_COST;
+    const skipped = s.deck.shift() as Card;
+    s.discards.push(skipped);
+    s.draw = null;
+    events.push({ type: "card-skipped", card: toPublicCard(skipped) });
+    nextDraw(s, ctx, events);
+    return { ok: true, state: s, events };
+  }
+
+  if (action.type === "buy") {
+    if (s.phase !== "turn-start" && s.phase !== "guessing")
+      return { ok: false, error: "wrong-phase" };
+    if (s.bought) return { ok: false, error: "already-bought" };
+    if (player.tokens < BUY_COST) return { ok: false, error: "insufficient-tokens" };
+    if (s.deck.length === 0) {
+      events.push(gameOver(s, deckEmptyWinners(s.players), "deck-empty"));
+      return { ok: true, state: s, events };
+    }
+    player.tokens -= BUY_COST;
+    const bought = s.deck.shift() as Card;
+    player.timeline = insertAt(player.timeline, correctSlot(player.timeline, bought.year), bought);
+    s.bought = true;
+    events.push({ type: "card-bought", playerId: player.id, card: toPublicCard(bought) });
+    if (player.timeline.length >= s.config.targetCards) {
+      events.push(gameOver(s, [player.id], "target"));
+      return { ok: true, state: s, events };
+    }
+    // The card being guessed was the top of the pile and is now owned: draw the next one.
+    if (s.phase === "guessing") nextDraw(s, ctx, events);
+    return { ok: true, state: s, events };
+  }
+
+  if (action.type !== "lock-guess") return { ok: false, error: "wrong-phase" };
   if (s.phase !== "guessing") return { ok: false, error: "wrong-phase" };
   const { slot } = action;
-  if (!Number.isInteger(slot) || slot < 0 || slot > s.players[s.turn].timeline.length) {
+  if (!Number.isInteger(slot) || slot < 0 || slot > player.timeline.length) {
     return { ok: false, error: "invalid-slot" };
   }
   s.guess = { slot, title: action.title, artist: action.artist };
   events.push({ type: "guess-locked", slot });
-  // Always resolves immediately here; Task 15 opens the contest window when someone can contest.
-  resolve(s, ctx, events);
+  if (s.players.some((p) => canContest(s, p))) {
+    s.phase = "contest";
+    s.contestDeadline = ctx.now + s.config.contestSeconds * 1000;
+    events.push({ type: "contest-opened", deadline: s.contestDeadline });
+  } else resolve(s, ctx, events);
   return { ok: true, state: s, events };
 }
 

@@ -46,6 +46,7 @@ test("no projection or event leaks the drawn card before the reveal", () => {
 });
 test("the card is exposed only after the reveal", () => {
   const { state, tp } = drawn();
+  for (const p of state.players) if (p.id !== tp) p.tokens = 0;
   const r = apply(state, tp, { type: "lock-guess", slot: 0, title: "t", artist: "a" }, fixedCtx());
   assert.ok(r.ok);
   assert.ok(leaksHiddenCard(project(r.state, "spectator"), hidden) === true);
@@ -75,6 +76,7 @@ test("deck contents are never projected, only the count", () => {
 
 test("the last reveal disappears once the next card is drawn", () => {
   const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(30), fixedCtx());
+  for (const p of state.players) p.tokens = 0;
   const first = state.players[state.turn].id;
   const r1 = apply(state, first, { type: "draw" }, fixedCtx());
   assert.ok(r1.ok);
@@ -90,4 +92,31 @@ test("the last reveal disappears once the next card is drawn", () => {
   const r3 = apply(r2.state, second, { type: "draw" }, fixedCtx());
   assert.ok(r3.ok);
   assert.equal(project(r3.state, "spectator").lastReveal, null);
+});
+
+test("the contest phase leaks nothing: projections, contested and passed events", () => {
+  const { state, tp } = drawn();
+  const [o1, o2] = state.players.map((p) => p.id).filter((id) => id !== tp);
+  const lock = apply(
+    state,
+    tp,
+    { type: "lock-guess", slot: 0, title: "Meu Palpite", artist: "Meu Artista" },
+    fixedCtx(),
+  );
+  assert.ok(lock.ok);
+  assert.equal(lock.state.phase, "contest");
+  assert.equal(leaksHiddenCard(lock.events, hidden), false);
+  const c = apply(lock.state, o1, { type: "contest", slot: 1 }, fixedCtx());
+  assert.ok(c.ok);
+  assert.equal(c.state.phase, "contest");
+  assert.equal(leaksHiddenCard(c.events, hidden), false);
+  for (const v of viewers(c.state)) {
+    assert.equal(leaksHiddenCard(project(c.state, v), hidden), false, v);
+    if (v !== tp) assert.equal(JSON.stringify(project(c.state, v)).includes("Meu Palpite"), false);
+  }
+  assert.equal(project(c.state, tp).guess?.title, "Meu Palpite");
+  const pass = apply(c.state, o2, { type: "pass" }, fixedCtx());
+  assert.ok(pass.ok);
+  assert.equal((pass.events[0] as { type: string }).type, "passed");
+  assert.equal(leaksHiddenCard(pass.events[0], hidden), false);
 });
