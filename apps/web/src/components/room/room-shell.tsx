@@ -220,7 +220,9 @@ function RemovedState() {
               <UserXIcon aria-hidden="true" strokeWidth={1.75} />
             </EmptyMedia>
             <EmptyTitle>
-              <h1 className="text-xl">Você foi removido da sala</h1>
+              <h1 className="text-[28px] leading-8 font-semibold tracking-[-0.03em] sm:text-[40px] sm:leading-[44px]">
+                Você foi removido da sala
+              </h1>
             </EmptyTitle>
           </EmptyHeader>
           <EmptyContent>
@@ -335,6 +337,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         description="A pessoa pode voltar pelo código como alguém novo."
         confirmLabel="Remover"
         variant="destructive"
+        confirmDisabled={!connected}
         onConfirm={async () => {
           if (!removeTarget) return;
           const ack = await send("room:kick", { targetId: removeTarget.id });

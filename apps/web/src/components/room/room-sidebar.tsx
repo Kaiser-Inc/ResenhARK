@@ -77,6 +77,7 @@ export function LeaveRoom({ actions }: { actions: RoomActions }) {
       description="Você pode voltar pelo código como alguém novo."
       confirmLabel="Sair"
       variant="destructive"
+      confirmDisabled={actions.disabled}
       onConfirm={actions.onLeave}
     />
   );

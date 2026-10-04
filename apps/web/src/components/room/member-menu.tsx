@@ -20,7 +20,7 @@ export function MemberMenu({
       <Menu.Trigger
         disabled={disabled}
         aria-label={`Opções de ${name}`}
-        render={<Button variant="ghost" size="icon-sm" />}
+        render={<Button variant="ghost" size="icon" />}
       >
         <EllipsisIcon aria-hidden="true" strokeWidth={1.75} />
       </Menu.Trigger>

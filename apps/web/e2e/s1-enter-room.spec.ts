@@ -17,7 +17,7 @@ test("create a room, then a second browser joins through the link", async ({ bro
   await expect(bia.getByText("Nome já em uso nesta sala")).toBeVisible();
   await bia.getByLabel("Seu nome").fill("Bia");
   await bia.getByRole("button", { name: "Entrar" }).click();
-  await expect(bia.getByText("Bia")).toBeVisible();
+  await expect(bia.getByText("Bia", { exact: true })).toBeVisible();
 });
 
 test("enter with a room code from the home page", async ({ page, browser }) => {

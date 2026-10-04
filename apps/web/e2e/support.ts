@@ -21,7 +21,10 @@ export const test = base.extend<{ closeLeakedContexts: undefined }>({
       const before = new Set(browser.contexts());
       await use();
       for (const leaked of browser.contexts()) {
-        if (leaked !== context && !before.has(leaked)) await leaked.close().catch(() => {});
+        if (leaked !== context && !before.has(leaked))
+          await leaked.close().catch((error: Error) => {
+            if (!/closed/i.test(error.message)) throw error;
+          });
       }
     },
     { auto: true },

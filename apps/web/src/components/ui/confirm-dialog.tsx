@@ -22,6 +22,8 @@ type ConfirmDialogProps = {
   confirmLabel?: string;
   cancelLabel?: string;
   variant?: "default" | "destructive";
+  /** Blocks the confirm button (e.g. the action needs a connection that is down). */
+  confirmDisabled?: boolean;
   /**
    * Runs on confirm. While the returned promise is pending the dialog shows a
    * loading state; it closes when the promise resolves and stays open when it
@@ -40,6 +42,7 @@ function ConfirmDialog({
   confirmLabel = "Confirmar",
   cancelLabel = "Cancelar",
   variant = "default",
+  confirmDisabled = false,
   onConfirm,
   open: openProp,
   onOpenChange,
@@ -79,6 +82,7 @@ function ConfirmDialog({
           <Button
             variant={variant === "destructive" ? "destructive" : "default"}
             loading={pending}
+            disabled={confirmDisabled}
             onClick={confirm}
           >
             {confirmLabel}

@@ -252,3 +252,43 @@ test("room with chat has no serious accessibility violations", async ({ browser 
   await ana.setViewportSize({ width: 390, height: 844 });
   await expectNoAxeViolations(ana);
 });
+
+test("a draft typed while a message is pending is kept", async ({ page }) => {
+  await createRoomAs(page, "Ana");
+  // Hold the server's reply to the send so the ack stays pending.
+  await page.routeWebSocket(/socket\.io/, (ws) => {
+    const server = ws.connectToServer();
+    ws.onMessage((message) => server.send(message));
+    server.onMessage((message) => {
+      const frame = typeof message === "string" ? message : message.toString();
+      if (/^43\d*\[/.test(frame)) setTimeout(() => ws.send(message), 1500);
+      else ws.send(message);
+    });
+  });
+  await page.reload();
+  await expect(composer(page)).toBeEnabled();
+  await composer(page).fill("primeira");
+  await composer(page).press("Enter");
+  await composer(page).fill("rascunho novo");
+  await expect(thread(page).getByText("primeira")).toBeVisible();
+  await page.waitForTimeout(2000);
+  await expect(composer(page)).toHaveValue("rascunho novo");
+});
+
+test("confirm dialogs cannot be confirmed while offline", async ({ browser }) => {
+  const { ana } = await twoMembersInRoom(browser);
+  await ana.getByRole("button", { name: "Opções de Bia" }).click();
+  await ana.getByRole("menuitem", { name: "Remover da sala" }).click();
+  await expect(ana.getByRole("alertdialog").getByRole("button", { name: "Remover" })).toBeEnabled();
+  await ana.context().setOffline(true);
+  await expect(
+    ana.getByRole("alertdialog").getByRole("button", { name: "Remover" }),
+  ).toBeDisabled();
+  await ana.getByRole("alertdialog").getByRole("button", { name: "Cancelar" }).click();
+  await ana.context().setOffline(false);
+  await expect(composer(ana)).toBeEnabled({ timeout: 15_000 });
+  await ana.getByRole("button", { name: "Sair da sala" }).click();
+  await expect(ana.getByRole("alertdialog").getByRole("button", { name: "Sair" })).toBeEnabled();
+  await ana.context().setOffline(true);
+  await expect(ana.getByRole("alertdialog").getByRole("button", { name: "Sair" })).toBeDisabled();
+});
