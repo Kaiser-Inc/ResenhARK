@@ -70,6 +70,12 @@ test("member stays online until the last of two tabs disconnects", async (t) => 
     return room?.members.find((m) => m.id === bia.memberId)?.connections === 2;
   });
 
+  // Skip the watcher's states from before Bia connected (she was offline in those).
+  await stateWhere(
+    watcher,
+    (s) => s.room.members.find((m) => m.id === bia.memberId)?.online === true,
+  );
+
   tab1.close();
   await waitFor(async () => {
     const room = await app.store.load(ana.code);

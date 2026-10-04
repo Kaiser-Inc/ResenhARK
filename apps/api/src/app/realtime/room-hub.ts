@@ -21,6 +21,8 @@ export class RoomHub {
       now: () => number;
       rng: () => number;
       newId: () => string;
+      /** Receives post-commit delivery failures (touch/broadcast). */
+      onError?: (err: unknown) => void;
     },
   ) {}
 
@@ -56,8 +58,13 @@ export class RoomHub {
     const result = await fn(room);
     if (!result.ok) return result;
     await store.save(result.room);
-    await store.touch(code);
-    await this.broadcast(code, result.room, result.events ?? []);
+    // Commit boundary: the room is saved, so the mutation succeeded whatever happens next.
+    try {
+      await store.touch(code);
+      await this.broadcast(code, result.room, result.events ?? []);
+    } catch (err) {
+      this.deps.onError?.(err);
+    }
     return { ok: true };
   }
 }

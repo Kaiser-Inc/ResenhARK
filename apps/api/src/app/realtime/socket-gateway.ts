@@ -46,14 +46,14 @@ export function registerSocketGateway(
 
   io.on("connection", (socket) => {
     const { code, memberId } = socket.data as SocketData;
-    // Join and enqueue in the same tick so a fast disconnect is queued after the connect.
-    void socket.join(socketRoom(code));
-    const connected: Promise<Ack> = hub
-      .mutate(code, adjustConnections(memberId, 1))
-      .catch((err) => {
-        onError(err);
-        return { ok: false, error: "invalid-session" };
-      });
+    // Join before the mutation so the first broadcast already reaches this socket.
+    const connected: Promise<Ack> = (async () => {
+      await socket.join(socketRoom(code));
+      return hub.mutate(code, adjustConnections(memberId, 1));
+    })().catch((err): Ack => {
+      onError(err);
+      return { ok: false, error: "invalid-session" };
+    });
 
     void connected.then((ack) => {
       if (!ack.ok) socket.disconnect(true);

@@ -96,6 +96,9 @@ export async function joinRoomVia(
   return { code, ...res.json() };
 }
 
+// room:state events seen per client, recorded from socket creation so none is missed.
+const stateBuffers = new WeakMap<Socket, RoomStatePayload[]>();
+
 /** Resolves once connected; rejects with the server's connect_error. */
 export function connectClient(url: string, sessionToken: string): Promise<Socket> {
   return new Promise((resolve, reject) => {
@@ -104,6 +107,9 @@ export function connectClient(url: string, sessionToken: string): Promise<Socket
       transports: ["websocket"],
       reconnection: false,
     });
+    const buffer: RoomStatePayload[] = [];
+    stateBuffers.set(socket, buffer);
+    socket.on(SOCKET_EVENTS.state, (state: RoomStatePayload) => buffer.push(state));
     socket.once("connect", () => resolve(socket));
     socket.once("connect_error", (err) => {
       socket.close();
@@ -112,24 +118,35 @@ export function connectClient(url: string, sessionToken: string): Promise<Socket
   });
 }
 
-/** Resolves with the first `room:state` that satisfies the predicate. */
+/**
+ * Resolves with the first `room:state` that satisfies the predicate, consuming events
+ * received since the previous call (or since connecting) before waiting for new ones.
+ */
 export function stateWhere(
   socket: Socket,
   predicate: (state: RoomStatePayload) => boolean,
   timeoutMs = 2000,
 ): Promise<RoomStatePayload> {
+  const buffer = stateBuffers.get(socket);
+  if (!buffer) throw new Error("socket was not created by connectClient");
   return new Promise((resolve, reject) => {
-    const onState = (state: RoomStatePayload) => {
-      if (!predicate(state)) return;
-      clearTimeout(timer);
-      socket.off(SOCKET_EVENTS.state, onState);
-      resolve(state);
-    };
     const timer = setTimeout(() => {
-      socket.off(SOCKET_EVENTS.state, onState);
+      socket.off(SOCKET_EVENTS.state, check);
       reject(new Error(`no matching ${SOCKET_EVENTS.state} within ${timeoutMs}ms`));
     }, timeoutMs);
-    socket.on(SOCKET_EVENTS.state, onState);
+    // Registered after connectClient's recorder, so the buffer is already up to date here.
+    function check() {
+      while (buffer?.length) {
+        const state = buffer.shift() as RoomStatePayload;
+        if (!predicate(state)) continue;
+        clearTimeout(timer);
+        socket.off(SOCKET_EVENTS.state, check);
+        resolve(state);
+        return;
+      }
+    }
+    socket.on(SOCKET_EVENTS.state, check);
+    check();
   });
 }
 

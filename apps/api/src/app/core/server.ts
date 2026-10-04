@@ -32,13 +32,9 @@ export async function createServer(
   await fastify.register(fastifyCors, corsOptions);
 
   const io = new Server(fastify.server, { cors: { origin: settings.CORS_ORIGIN } });
-  const hub = new RoomHub({ ...deps, io });
-  registerSocketGateway(io, {
-    store: deps.store,
-    hub,
-    now: deps.now,
-    onError: (err) => fastify.log.error(err),
-  });
+  const onError = (err: unknown) => fastify.log.error(err);
+  const hub = new RoomHub({ ...deps, io, onError });
+  registerSocketGateway(io, { store: deps.store, hub, now: deps.now, onError });
 
   await healthRoutes(fastify, deps);
   await roomRoutes(fastify, deps, hub);
