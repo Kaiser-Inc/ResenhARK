@@ -122,6 +122,8 @@ test("start twice is game-running, configure during a game too, end then restart
     error: "game-running",
   });
   assert.deepEqual(await emit(owner, "game:end"), { ok: true });
+  const ended = await stateWhere(owner, (x) => x.room.game?.view.phase === "game-over");
+  assert.ok(ended.room.members.every((m) => m.role === "member"));
   assert.deepEqual(await emit(owner, "game:end"), { ok: false, error: "no-game" });
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
 });
@@ -170,15 +172,23 @@ test("a card without audio is skipped with an audio-missing event", async (t) =>
 });
 
 test("ten consecutive misses are tolerated, the next one ends by deck-empty", async (t) => {
+  let lookups = 0;
   const { owner } = await room(t, ["Ana"], {
     playlists: playlists(20),
-    audio: { findPreviewUrl: async () => null },
+    audio: {
+      findPreviewUrl: async () => {
+        lookups++;
+        return null;
+      },
+    },
   });
   await ready(owner);
   await emit(owner, "game:start");
   assert.deepEqual(await emit(owner, "game:action", { type: "draw" }), { ok: true });
   const over = await stateWhere(owner, (x) => x.room.game?.view.phase === "game-over", 4000);
   assert.equal(over.room.game?.view.endReason, "deck-empty");
+  assert.equal(over.room.members[0].role, "member");
+  assert.equal(lookups, 11);
   for (let i = 0; ; i++) {
     assert.ok(i < 20, "no winner message");
     if ((await nextChatMessage(owner)).text === "Ana venceu") break;
@@ -204,4 +214,41 @@ test("projection to a spectator equals a non-turn player's except for `you`", as
   assert.equal(spectator.room.members[2].role, "spectator");
   assert.deepEqual(spectator.room.game, states[other].room.game);
   assert.deepEqual(spectator.room.lobby, states[other].room.lobby);
+});
+
+test("a stale missing-preview result after the game ended is ignored", async (t) => {
+  let release: (url: string | null) => void = () => {};
+  const { app, sessions, owner } = await room(t, ["Ana"], {
+    playlists: playlists(20),
+    audio: {
+      findPreviewUrl: () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    },
+  });
+  await ready(owner);
+  await emit(owner, "game:start");
+  await emit(owner, "game:action", { type: "draw" });
+  await emit(owner, "game:end");
+  release(null);
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  const game = (await app.store.load(sessions[0].code))?.game;
+  assert.equal(game?.state.endReason, "ended");
+  assert.equal(game?.state.deck.length, 19);
+});
+
+test("a draw that cannot be indexed fails the mutation and is not saved", async (t) => {
+  const { app, sessions, owner } = await room(t, ["Ana"]);
+  await ready(owner);
+  await emit(owner, "game:start");
+  const store = app.store;
+  store.indexDraw = async () => {
+    throw new Error("index down");
+  };
+  assert.deepEqual(await emit(owner, "game:action", { type: "draw" }), {
+    ok: false,
+    error: "server-error",
+  });
+  assert.equal((await store.load(sessions[0].code))?.game?.state.draw, null);
 });

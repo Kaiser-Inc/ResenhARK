@@ -16,6 +16,7 @@ export function projectRoom(room: Room, viewerId: string, now: number): RoomView
       ? lobby.deck.cards.length < cap * lobby.config.targetCards * 2
       : false,
   };
+  const active = !!game && game.state.phase !== "game-over";
   let gameView: GameView | null = null;
   if (game) {
     const view = project(game.state, viewerId);
@@ -34,7 +35,7 @@ export function projectRoom(room: Room, viewerId: string, now: number): RoomView
       avatar: member.avatar,
       online: isOnline(member),
       isOwner: member.id === room.ownerId,
-      role: game ? (game.playerIds.includes(member.id) ? "player" : "spectator") : "member",
+      role: active ? (game.playerIds.includes(member.id) ? "player" : "spectator") : "member",
     })),
     lobby: lobbyView,
     game: gameView,

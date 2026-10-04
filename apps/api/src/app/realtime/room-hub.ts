@@ -170,6 +170,11 @@ export class RoomHub {
 
   private async commit(room: Room, events: GameEvent[], system: string[]): Promise<void> {
     const { store, io, now, newId } = this.deps;
+    // Indexed before the save and not best-effort: a persisted draw without its index would 404 its audio.
+    // ponytail: separate write, not the same MULTI; a stray index for an unsaved draw is harmless.
+    for (const event of events) {
+      if (event.type === "card-drawn") await store.indexDraw(event.drawId, room.code);
+    }
     await store.save(room);
     this.schedule(room.code, room);
     // Commit boundary: the room is saved, so the mutation succeeded whatever happens next.
@@ -180,9 +185,6 @@ export class RoomHub {
         io.to(socketRoom(room.code)).emit(SOCKET_EVENTS.chatMessage, message);
       }
       await store.touch(room.code);
-      for (const event of events) {
-        if (event.type === "card-drawn") await store.indexDraw(event.drawId, room.code);
-      }
       await this.broadcast(room.code, room, events);
     } catch (err) {
       this.deps.onError?.(err);
