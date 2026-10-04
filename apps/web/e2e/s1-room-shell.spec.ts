@@ -86,3 +86,28 @@ test("room shell has no serious accessibility violations", async ({ browser }) =
   const { ana } = await twoMembersInRoom(browser);
   await expectNoAxeViolations(ana);
 });
+
+test("loading shows the people list and game area skeletons in the room frame", async ({
+  page,
+  browser,
+}) => {
+  const ana = await browser.newPage();
+  const code = await createRoomAs(ana, "Ana");
+  let release: () => void = () => {};
+  const held = new Promise<void>((resolve) => {
+    release = resolve;
+  });
+  await page.route(`**/rooms/${code}`, async (route) => {
+    await held;
+    await route.continue();
+  });
+  await page.goto(`/sala/${code}`);
+  await expect(page.getByRole("region", { name: "Carregando sala" })).toHaveAttribute(
+    "aria-busy",
+    "true",
+  );
+  await expect(page.getByRole("region", { name: "Carregando pessoas" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Copiar link" })).toBeVisible();
+  release();
+  await expect(page.getByLabel("Seu nome")).toBeVisible();
+});

@@ -10,15 +10,14 @@ import { cn } from "@/lib/utils";
 export function PeopleList({ members }: { members: MemberView[] | null }) {
   if (!members) {
     return (
-      <div aria-busy="true" className="flex flex-col gap-1">
-        <span className="sr-only">Carregando pessoas</span>
+      <section aria-label="Carregando pessoas" aria-busy="true" className="flex flex-col gap-1">
         {[0, 1, 2].map((i) => (
           <div key={i} className="flex h-10 items-center gap-3">
             <Skeleton className="size-8 rounded-full" />
             <Skeleton className="h-4 w-24" />
           </div>
         ))}
-      </div>
+      </section>
     );
   }
 

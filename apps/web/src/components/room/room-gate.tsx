@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { JoinForm } from "@/components/join-form";
-import { RoomShell } from "@/components/room/room-shell";
+import { RoomLoading, RoomShell } from "@/components/room/room-shell";
 import { SiteBar } from "@/components/site-bar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -17,7 +17,6 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import { PageHeader } from "@/components/ui/page-header";
-import { Skeleton } from "@/components/ui/skeleton";
 import { joinRoom, roomExists } from "@/lib/api";
 import { clearSession, loadSession, saveSession } from "@/lib/session";
 import { cn } from "@/lib/utils";
@@ -67,19 +66,7 @@ export function RoomGate({ code }: { code: string }) {
     );
   }
 
-  if (gate.kind === "loading") {
-    return (
-      <>
-        <SiteBar />
-        <main id="main-content" className="mx-auto w-full max-w-[720px] px-4 py-12 sm:px-6">
-          <div aria-busy="true" aria-label="Carregando a sala" className="flex flex-col gap-4">
-            <Skeleton className="h-10 w-2/3" />
-            <Skeleton className="h-control w-full" />
-          </div>
-        </main>
-      </>
-    );
-  }
+  if (gate.kind === "loading") return <RoomLoading code={code} />;
 
   if (gate.kind === "missing") {
     return (

@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import type { MemberView } from "@resenhark/shared";
+import { type ReactNode, useEffect } from "react";
 
 import { ConnectionBanner } from "@/components/room/connection-banner";
 import { RoomMobileBar } from "@/components/room/room-mobile-bar";
@@ -8,6 +9,48 @@ import { RoomSidebar } from "@/components/room/room-sidebar";
 import { PageHeader } from "@/components/ui/page-header";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRoom } from "@/lib/use-room";
+
+type RoomFrameProps = {
+  code: string;
+  members: MemberView[] | null;
+  reconnecting?: boolean;
+  children: ReactNode;
+};
+
+function RoomFrame({ code, members, reconnecting = false, children }: RoomFrameProps) {
+  return (
+    <div className="flex h-dvh flex-col">
+      <ConnectionBanner visible={reconnecting} />
+      <div className="flex min-h-0 flex-1">
+        <RoomSidebar code={code} members={members} />
+        <div className="flex min-w-0 flex-1 flex-col">
+          <RoomMobileBar code={code} members={members} />
+          <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto">
+            <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:py-12">{children}</div>
+          </main>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GameAreaSkeleton() {
+  return (
+    <section aria-label="Carregando sala" aria-busy="true" className="flex flex-col gap-6">
+      <Skeleton className="h-10 w-48" />
+      <Skeleton className="h-40 w-full" />
+    </section>
+  );
+}
+
+/** The room before its first state: same frame, skeletons for the people list and the game area. */
+export function RoomLoading({ code }: { code: string }) {
+  return (
+    <RoomFrame code={code} members={null}>
+      <GameAreaSkeleton />
+    </RoomFrame>
+  );
+}
 
 type RoomShellProps = {
   code: string;
@@ -22,31 +65,14 @@ export function RoomShell({ code, sessionToken, onInvalidSession }: RoomShellPro
     if (status === "invalid-session") onInvalidSession();
   }, [status, onInvalidSession]);
 
-  const members = room?.members ?? null;
-
   return (
-    <div className="flex h-dvh flex-col">
-      <ConnectionBanner visible={status === "reconnecting"} />
-      <div className="flex min-h-0 flex-1">
-        <RoomSidebar code={code} members={members} />
-        <div className="flex min-w-0 flex-1 flex-col">
-          <RoomMobileBar code={code} members={members} />
-          <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto">
-            <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6 lg:py-12">
-              {room ? (
-                // Placeholder until the lobby arrives.
-                <PageHeader title="Lobby" />
-              ) : (
-                <div aria-busy="true" className="flex flex-col gap-6">
-                  <span className="sr-only">Carregando a sala</span>
-                  <Skeleton className="h-10 w-48" />
-                  <Skeleton className="h-40 w-full" />
-                </div>
-              )}
-            </div>
-          </main>
-        </div>
-      </div>
-    </div>
+    <RoomFrame code={code} members={room?.members ?? null} reconnecting={status === "reconnecting"}>
+      {room ? (
+        // Placeholder until the lobby arrives.
+        <PageHeader title="Lobby" />
+      ) : (
+        <GameAreaSkeleton />
+      )}
+    </RoomFrame>
   );
 }
