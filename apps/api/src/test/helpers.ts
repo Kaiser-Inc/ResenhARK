@@ -6,6 +6,7 @@ import { Redis } from "ioredis";
 import type { Server } from "socket.io";
 import { type Socket, io as connect } from "socket.io-client";
 import { type ServerDependencies, createServer } from "../app/core/server.js";
+import { FixturePlaylistSource } from "../app/gateways/fixture/fixture-playlist-source.js";
 import type { RoomHub } from "../app/realtime/room-hub.js";
 import { RedisRoomStore } from "../app/repositories/redis-room-store.js";
 
@@ -31,7 +32,7 @@ function seededRng(seed: number): () => number {
 }
 
 export async function startTestServer(
-  overrides: Partial<Pick<ServerDependencies, "audio" | "fetchAudio">> = {},
+  overrides: Partial<Pick<ServerDependencies, "audio" | "fetchAudio" | "playlists">> = {},
 ): Promise<TestServer> {
   const redis = new Redis(TEST_REDIS_URL);
   await redis.flushdb();
@@ -53,6 +54,7 @@ export async function startTestServer(
     rng: seededRng(42),
     newId: () => `id-${++counter}`,
     audio: { findPreviewUrl: async () => null },
+    playlists: new FixturePlaylistSource(() => `id-${++counter}`),
     fetchAudio: async () => new Response(null, { status: 404 }),
     ...overrides,
     logger: false,

@@ -2,6 +2,8 @@ import { type Ack, type ErrorCode, type GameEvent, SOCKET_EVENTS } from "@resenh
 import type { Server } from "socket.io";
 import { systemMessage } from "../domain/room/chat.js";
 import { type Room, roomDeadline, tickRoom } from "../domain/room/room.js";
+import { type Card, SYSTEM_ACTOR, apply } from "../games/hitline/engine.js";
+import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { projectRoom } from "./project-room.js";
 
@@ -10,10 +12,15 @@ export type MutationResult =
       ok: true;
       room: Room;
       events?: GameEvent[];
+      /** Consecutive missing previews so far; set only by the audio loop. */
+      audioMisses?: number;
       // Chat texts announced as system messages.
       system?: string[];
     }
   | { ok: false; error: ErrorCode };
+
+/** Consecutive cards without a preview tolerated before the game ends. */
+export const MAX_AUDIO_MISSES = 10;
 
 export const socketRoom = (code: string) => `room:${code}`;
 
@@ -26,6 +33,7 @@ export class RoomHub {
     private readonly deps: {
       store: RoomStore;
       io: Server;
+      audio: AudioPreviewSource;
       now: () => number;
       rng: () => number;
       newId: () => string;
@@ -109,11 +117,55 @@ export class RoomHub {
       if (ticked.room !== loaded) await this.commit(ticked.room, [], ticked.system);
       return result;
     }
-    await this.commit(result.room, result.events ?? [], [
+    const events = result.events ?? [];
+    await this.commit(result.room, events, [
       ...ticked.system,
       ...(result.system ?? []),
+      ...winnerAnnouncements(result.room, events),
     ]);
+    this.watchAudio(result.room, events, result.audioMisses ?? 0);
     return { ok: true };
+  }
+
+  /** After a card-drawn, looks for its preview outside the queue; fire and forget. */
+  private watchAudio(room: Room, events: GameEvent[], misses: number): void {
+    let drawn: string | null = null;
+    for (const e of events) if (e.type === "card-drawn") drawn = e.drawId;
+    const draw = room.game?.state.draw;
+    if (!drawn || !draw || draw.id !== drawn) return;
+    void this.checkAudio(room.code, draw, misses).catch(this.deps.onError);
+  }
+
+  private async checkAudio(
+    code: string,
+    draw: { id: string; card: Card },
+    misses: number,
+  ): Promise<void> {
+    // A provider failure is not proof of a missing preview: leave the card in play.
+    const url = await this.deps.audio.findPreviewUrl(draw.card).catch((err) => {
+      this.deps.onError?.(err);
+      return "error";
+    });
+    if (url) return;
+    await this.mutate(code, (room) => {
+      const game = room.game;
+      // The draw moved on (skip, timeout, end) while the lookup ran.
+      if (!game || game.state.draw?.id !== draw.id) return { ok: false, error: "wrong-phase" };
+      const { now, rng, newId } = this.deps;
+      const result = apply(
+        game.state,
+        SYSTEM_ACTOR,
+        { type: "audio-missing", giveUp: misses >= MAX_AUDIO_MISSES },
+        { now: now(), rng, newId },
+      );
+      if (!result.ok) return result;
+      return {
+        ok: true,
+        room: { ...room, game: { ...game, state: result.state } },
+        events: result.events,
+        audioMisses: misses + 1,
+      };
+    });
   }
 
   private async commit(room: Room, events: GameEvent[], system: string[]): Promise<void> {
@@ -128,9 +180,23 @@ export class RoomHub {
         io.to(socketRoom(room.code)).emit(SOCKET_EVENTS.chatMessage, message);
       }
       await store.touch(room.code);
+      for (const event of events) {
+        if (event.type === "card-drawn") await store.indexDraw(event.drawId, room.code);
+      }
       await this.broadcast(room.code, room, events);
     } catch (err) {
       this.deps.onError?.(err);
     }
   }
+}
+
+/** "Ana venceu" / "Ana e Bia venceram" for a game-over with winners still in the room. */
+function winnerAnnouncements(room: Room, events: GameEvent[]): string[] {
+  const over = events.find((e) => e.type === "game-over");
+  if (!over) return [];
+  const names = over.winners
+    .map((id) => room.members.find((m) => m.id === id)?.name)
+    .filter((name): name is string => !!name);
+  if (names.length === 0) return [];
+  return [`${names.join(", ")} ${names.length === 1 ? "venceu" : "venceram"}`];
 }

@@ -162,3 +162,47 @@ test("end finishes the game with no winners", () => {
   assert.equal(r.state.endReason, "ended");
   assert.deepEqual(r.state.winners, []);
 });
+
+test("audio-missing drops the drawn card unrevealed and draws the next", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(10), fixedCtx());
+  const tp = state.players[0].id;
+  const ctx = fixedCtx();
+  const s1 = ok(apply(state, tp, { type: "draw" }, ctx)).state;
+  const first = s1.draw?.card.id;
+  const r = ok(apply(s1, "system", { type: "audio-missing" }, ctx));
+  assert.equal(r.state.deck.length, s1.deck.length - 1);
+  assert.notEqual(r.state.draw?.card.id, first);
+  assert.notEqual(r.state.draw?.id, s1.draw?.id);
+  assert.deepEqual(r.state.discards, s1.discards);
+  assert.equal(r.state.phase, "guessing");
+  assert.deepEqual(
+    r.events.map((e) => (e as { type: string }).type),
+    ["audio-missing", "card-drawn"],
+  );
+});
+test("audio-missing is system-only and needs a draw in guessing", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(10), fixedCtx());
+  assert.deepEqual(apply(state, "system", { type: "audio-missing" }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+  const tp = state.players[0].id;
+  const s1 = ok(apply(state, tp, { type: "draw" }, fixedCtx())).state;
+  assert.equal(apply(s1, tp, { type: "audio-missing" }, fixedCtx()).ok, false);
+});
+test("audio-missing with giveUp, or on the last card, ends by deck-empty", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(10), fixedCtx());
+  const s1 = ok(apply(state, state.players[0].id, { type: "draw" }, fixedCtx())).state;
+  const gave = ok(apply(s1, "system", { type: "audio-missing", giveUp: true }, fixedCtx()));
+  assert.equal(gave.state.phase, "game-over");
+  assert.equal(gave.state.endReason, "deck-empty");
+  assert.equal(gave.state.draw, null);
+  s1.deck = s1.deck.slice(0, 1);
+  const last = ok(apply(s1, "system", { type: "audio-missing" }, fixedCtx()));
+  assert.equal(last.state.endReason, "deck-empty");
+});
+test("system can end the game", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(10), fixedCtx());
+  const r = ok(apply(state, "system", { type: "end" }, fixedCtx()));
+  assert.equal(r.state.endReason, "ended");
+});

@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import type { ServerDependencies } from "../../core/server.js";
 import { settings } from "../../core/settings.js";
-import type { Card } from "../../games/hitline/engine.js";
 import { verifyAudioTicket } from "../audio-tickets.js";
 
 type Query = { m?: unknown; t?: unknown };
@@ -24,9 +23,8 @@ export async function audioRoutes(
         if (!verifyAudioTicket(settings.SESSION_SECRET, drawId, m, t)) return notFound();
         const code = await store.roomOfDraw(drawId);
         const room = code ? await store.load(code) : null;
-        // Room.game is typed null until the game wiring lands.
-        const game = room?.game as { state?: { draw?: { id: string; card: Card } | null } } | null;
-        const card = game?.state?.draw?.id === drawId ? game.state.draw.card : null;
+        const draw = room?.game?.state.draw;
+        const card = draw?.id === drawId ? draw.card : null;
         if (!room || !card || !room.members.some((member) => member.id === m)) return notFound();
         const url = await audio.findPreviewUrl(card);
         if (!url) return notFound();

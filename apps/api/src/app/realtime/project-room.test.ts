@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { DEFAULT_HITLINE_CONFIG } from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
 import { projectRoom } from "./project-room.js";
 
@@ -27,6 +28,10 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
       ["bia", false, false, "member"],
     ],
   );
-  assert.equal(view.lobby, null);
+  assert.deepEqual(view.lobby, {
+    config: DEFAULT_HITLINE_CONFIG,
+    playlist: null,
+    smallPlaylist: false,
+  });
   assert.equal(view.game, null);
 });

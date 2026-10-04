@@ -7,6 +7,7 @@ import { DeezerPreview } from "./app/gateways/audio/deezer-preview.js";
 import { createFetchAudio } from "./app/gateways/audio/fetch-audio.js";
 import { FixturePreview } from "./app/gateways/audio/fixture-preview.js";
 import { ItunesPreview } from "./app/gateways/audio/itunes-preview.js";
+import { FixturePlaylistSource } from "./app/gateways/fixture/fixture-playlist-source.js";
 import { RedisRoomStore } from "./app/repositories/redis-room-store.js";
 
 async function bootstrap(): Promise<void> {
@@ -22,6 +23,11 @@ async function bootstrap(): Promise<void> {
         ? new FixturePreview()
         : new ChainedPreview([new DeezerPreview(), new ItunesPreview()]),
     fetchAudio: createFetchAudio(),
+    // ponytail: the Spotify source lands in Task 20; until then production reports it as disconnected.
+    playlists:
+      settings.PLAYLIST_SOURCE === "fixture"
+        ? new FixturePlaylistSource(newId)
+        : { load: async () => ({ ok: false, error: "spotify-disconnected" }) },
   });
 
   try {

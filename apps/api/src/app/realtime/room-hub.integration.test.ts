@@ -20,6 +20,7 @@ async function setup(t: { after: (fn: () => Promise<void>) => void }) {
   const deps = {
     store: app.store,
     io: app.io,
+    audio: { findPreviewUrl: async () => null },
     now: app.clock.now,
     rng: Math.random,
     newId: () => "x",

@@ -5,6 +5,8 @@ import {
   ROOM_CODE_ALPHABET,
   normalizeName,
 } from "@resenhark/shared";
+import type { HitlineState } from "../../games/hitline/engine.js";
+import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 
 export type Member = {
   id: string;
@@ -17,13 +19,16 @@ export type Member = {
   greeted: boolean;
 };
 
+export type Lobby = { config: HitlineConfig; deck: ImportedPlaylist | null };
+export type ActiveGame = { type: "hitline"; state: HitlineState; playerIds: string[] };
+
 export type Room = {
   code: string;
   ownerId: string;
   members: Member[];
   lastActivityAt: number;
-  lobby: { config: HitlineConfig; deck: null };
-  game: null;
+  lobby: Lobby;
+  game: ActiveGame | null;
 };
 
 export type RoomError = "name-taken" | "room-full" | "not-owner" | "invalid-target";

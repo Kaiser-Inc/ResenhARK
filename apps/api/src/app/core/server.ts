@@ -4,6 +4,7 @@ import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod
 import type { Redis } from "ioredis";
 import { Server } from "socket.io";
 import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
+import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import { audioRoutes } from "../http/routes/audio.routes.js";
 import { healthRoutes } from "../http/routes/health.routes.js";
 import { roomRoutes } from "../http/routes/rooms.routes.js";
@@ -20,6 +21,7 @@ export interface ServerDependencies {
   rng: () => number;
   newId: () => string;
   audio: AudioPreviewSource;
+  playlists: PlaylistSource;
   /** Fetches the bytes behind a provider preview URL. */
   fetchAudio: (url: string) => Promise<Response>;
   /** Defaults to on outside of NODE_ENV=test. */
@@ -40,7 +42,15 @@ export async function createServer(
   const onError = (err: unknown) => fastify.log.error(err);
   const hub = new RoomHub({ ...deps, io, onError });
   fastify.addHook("onClose", async () => hub.dispose());
-  registerSocketGateway(io, { store: deps.store, hub, now: deps.now, newId: deps.newId, onError });
+  registerSocketGateway(io, {
+    store: deps.store,
+    hub,
+    playlists: deps.playlists,
+    now: deps.now,
+    rng: deps.rng,
+    newId: deps.newId,
+    onError,
+  });
 
   await healthRoutes(fastify, deps);
   await roomRoutes(fastify, deps, hub);

@@ -1,3 +1,4 @@
+import type { HitlineConfig, HitlineEvent, HitlineView } from "./hitline.js";
 import type { Avatar } from "./room.js";
 
 export type ErrorCode =
@@ -40,10 +41,14 @@ export type MemberView = {
   role: "player" | "spectator" | "member";
 };
 
-// Placeholders, filled in when lobby and game views exist.
-export type LobbyView = null;
-export type GameView = null;
-export type GameEvent = never;
+export type LobbyView = {
+  config: HitlineConfig;
+  playlist: { name: string; count: number } | null;
+  /** True when the playlist is likely too short for the players and target. */
+  smallPlaylist: boolean;
+};
+export type GameView = { type: "hitline"; view: HitlineView };
+export type GameEvent = HitlineEvent;
 
 export const CHAT_MAX_LENGTH = 500;
 export const CHAT_HISTORY = 200;

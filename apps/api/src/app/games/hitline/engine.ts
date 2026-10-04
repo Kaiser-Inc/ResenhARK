@@ -55,7 +55,7 @@ export type HitlineAction =
   | { type: "lock-guess"; slot: number; title: string; artist: string }
   | { type: "contest"; slot: number }
   | { type: "pass" }
-  | { type: "audio-missing" }
+  | { type: "audio-missing"; giveUp?: boolean }
   | { type: "set-online"; online: boolean }
   | { type: "remove" }
   | { type: "end" };
@@ -72,6 +72,8 @@ export type EngineResult =
   | { ok: true; state: HitlineState; events: HitlineEvent[] }
   | { ok: false; error: RuleError };
 
+/** Actor for hub-driven actions (missing audio, owner ending the game). */
+export const SYSTEM_ACTOR = "system";
 export const START_TOKENS = 2;
 export const SKIP_COST = 1;
 export const CONTEST_COST = 1;
@@ -203,9 +205,26 @@ export function apply(
 ): EngineResult {
   const s = structuredClone(state);
   const events: HitlineEvent[] = [];
-  if (!s.players.some((p) => p.id === actorId)) return { ok: false, error: "not-a-player" };
+  const system = actorId === SYSTEM_ACTOR;
+  if (!system && !s.players.some((p) => p.id === actorId))
+    return { ok: false, error: "not-a-player" };
   if (s.phase === "game-over") return { ok: false, error: "wrong-phase" };
 
+  if (action.type === "audio-missing") {
+    if (!system || s.phase !== "guessing" || !s.draw) return { ok: false, error: "wrong-phase" };
+    // The card was never played or shown: drop it without a reveal or a discard.
+    s.deck.shift();
+    s.draw = null;
+    events.push({ type: "audio-missing" });
+    if (action.giveUp || s.deck.length === 0) {
+      events.push(gameOver(s, deckEmptyWinners(s.players), "deck-empty"));
+      return { ok: true, state: s, events };
+    }
+    const drawId = ctx.newId();
+    s.draw = { id: drawId, card: s.deck[0] };
+    events.push({ type: "card-drawn", drawId });
+    return { ok: true, state: s, events };
+  }
   if (action.type === "end") {
     events.push(gameOver(s, [], "ended"));
     return { ok: true, state: s, events };

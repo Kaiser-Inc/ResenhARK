@@ -1,8 +1,15 @@
-import { type Ack, SOCKET_EVENTS } from "@resenhark/shared";
+import {
+  type Ack,
+  SOCKET_EVENTS,
+  hitlineConfigSchema,
+  hitlineIntentSchema,
+} from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
 import { RateLimiter } from "../domain/room/rate-limiter.js";
-import { type Room, kick, leave } from "../domain/room/room.js";
+import { type Room, isOnline, kick, leave } from "../domain/room/room.js";
+import { SYSTEM_ACTOR, apply, create } from "../games/hitline/engine.js";
+import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { type MutationResult, type RoomHub, socketRoom } from "./room-hub.js";
 
@@ -13,12 +20,16 @@ export function registerSocketGateway(
   deps: {
     store: RoomStore;
     hub: RoomHub;
+    playlists: PlaylistSource;
     now: () => number;
+    rng: () => number;
     newId: () => string;
     onError: (err: unknown) => void;
   },
 ): void {
-  const { store, hub, now, newId, onError } = deps;
+  const { store, hub, playlists, now, rng, newId, onError } = deps;
+  const ctx = () => ({ now: now(), rng, newId });
+  const running = (room: Room) => !!room.game && room.game.state.phase !== "game-over";
   const chatLimiter = new RateLimiter(5, 5000);
 
   io.use(async (socket, next) => {
@@ -171,6 +182,110 @@ export function registerSocketGateway(
           return { ok: true, room: left, system };
         });
         return { ack, after: ack.ok ? () => dropMember(code, memberId) : undefined };
+      }),
+    );
+
+    const notOwner = (room: Room) => room.ownerId !== memberId;
+
+    socket.on(
+      "lobby:configure",
+      intent(async (payload) => {
+        const parsed = hitlineConfigSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, config: parsed.data } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:import",
+      intent(async (payload) => {
+        const link = (payload as { link?: unknown } | null)?.link;
+        if (typeof link !== "string" || link.length === 0 || link.length > 500) {
+          return { ack: { ok: false, error: "invalid-input" } };
+        }
+        // Cheap owner check first, so only the owner can trigger an outbound call.
+        const current = await store.load(code);
+        if (!current) return { ack: { ok: false, error: "room-not-found" } };
+        if (notOwner(current)) return { ack: { ok: false, error: "not-owner" } };
+        // Network call stays outside the room queue.
+        const loaded = await playlists.load(link);
+        if (!loaded.ok) return { ack: { ok: false, error: loaded.error } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, deck: loaded.playlist } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "game:start",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          const deck = room.lobby.deck;
+          if (!deck) return { ok: false, error: "no-deck" };
+          const playerIds = room.members
+            .filter(isOnline)
+            .sort((a, b) => a.joinedAt - b.joinedAt)
+            .slice(0, room.lobby.config.maxPlayers)
+            .map((m) => m.id);
+          // Each player takes a card and at least one must remain to draw.
+          if (deck.cards.length <= playerIds.length) return { ok: false, error: "playlist-empty" };
+          const started = create(room.lobby.config, playerIds, deck.cards, ctx());
+          return {
+            ok: true,
+            room: { ...room, game: { type: "hitline", state: started.state, playerIds } },
+            events: started.events,
+            system: ["Partida de Hitline começou"],
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "game:end",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          const game = room.game;
+          if (!game || !running(room)) return { ok: false, error: "no-game" };
+          const result = apply(game.state, SYSTEM_ACTOR, { type: "end" }, ctx());
+          if (!result.ok) return result;
+          return {
+            ok: true,
+            room: { ...room, game: { ...game, state: result.state } },
+            events: result.events,
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "game:action",
+      intent(async (payload) => {
+        const parsed = hitlineIntentSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          const game = room.game;
+          if (!game) return { ok: false, error: "no-game" };
+          const result = apply(game.state, memberId, parsed.data, ctx());
+          if (!result.ok) return result;
+          return {
+            ok: true,
+            room: { ...room, game: { ...game, state: result.state } },
+            events: result.events,
+          };
+        });
+        return { ack };
       }),
     );
 
