@@ -1,7 +1,10 @@
+import assert from "node:assert/strict";
 import type { AddressInfo } from "node:net";
+import { type RoomStatePayload, SOCKET_EVENTS } from "@resenhark/shared";
 import type { FastifyInstance } from "fastify";
 import { Redis } from "ioredis";
 import type { Server } from "socket.io";
+import { type Socket, io as connect } from "socket.io-client";
 import { createServer } from "../app/core/server.js";
 import { RedisRoomStore } from "../app/repositories/redis-room-store.js";
 
@@ -63,4 +66,73 @@ export async function startTestServer(): Promise<TestServer> {
       redis.disconnect();
     },
   };
+}
+
+const defaultAvatar = { hue: 275, shape: "organic" } as const;
+
+export type TestSession = { code: string; memberId: string; sessionToken: string };
+
+export async function createRoomVia(app: TestServer, name: string): Promise<TestSession> {
+  const res = await app.fastify.inject({
+    method: "POST",
+    url: "/rooms",
+    payload: { name, avatar: defaultAvatar },
+  });
+  assert.equal(res.statusCode, 201);
+  return res.json();
+}
+
+export async function joinRoomVia(
+  app: TestServer,
+  code: string,
+  name: string,
+): Promise<TestSession> {
+  const res = await app.fastify.inject({
+    method: "POST",
+    url: `/rooms/${code}/members`,
+    payload: { name, avatar: defaultAvatar },
+  });
+  assert.equal(res.statusCode, 201);
+  return { code, ...res.json() };
+}
+
+/** Resolves once connected; rejects with the server's connect_error. */
+export function connectClient(url: string, sessionToken: string): Promise<Socket> {
+  return new Promise((resolve, reject) => {
+    const socket = connect(url, {
+      auth: { sessionToken },
+      transports: ["websocket"],
+      reconnection: false,
+    });
+    socket.once("connect", () => resolve(socket));
+    socket.once("connect_error", (err) => {
+      socket.close();
+      reject(err);
+    });
+  });
+}
+
+/** Resolves with the first `room:state` that satisfies the predicate. */
+export function stateWhere(
+  socket: Socket,
+  predicate: (state: RoomStatePayload) => boolean,
+  timeoutMs = 2000,
+): Promise<RoomStatePayload> {
+  return new Promise((resolve, reject) => {
+    const onState = (state: RoomStatePayload) => {
+      if (!predicate(state)) return;
+      clearTimeout(timer);
+      socket.off(SOCKET_EVENTS.state, onState);
+      resolve(state);
+    };
+    const timer = setTimeout(() => {
+      socket.off(SOCKET_EVENTS.state, onState);
+      reject(new Error(`no matching ${SOCKET_EVENTS.state} within ${timeoutMs}ms`));
+    }, timeoutMs);
+    socket.on(SOCKET_EVENTS.state, onState);
+  });
+}
+
+export function nextState(socket: Socket, timeoutMs = 2000): Promise<RoomStatePayload> {
+  return stateWhere(socket, () => true, timeoutMs);
 }

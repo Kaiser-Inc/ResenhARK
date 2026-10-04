@@ -74,6 +74,29 @@ test("joining with a taken name returns 409 name-taken", async () => {
   await app.close();
 });
 
+test("two simultaneous joins with the same name yield one 201 and one 409", async () => {
+  const app = await startTestServer();
+  const created = (
+    await app.fastify.inject({ method: "POST", url: "/rooms", payload: ana })
+  ).json();
+  const join = () =>
+    app.fastify.inject({
+      method: "POST",
+      url: `/rooms/${created.code}/members`,
+      payload: { name: "Bia", avatar: ana.avatar },
+    });
+  const results = await Promise.all([join(), join()]);
+  assert.deepEqual(results.map((r) => r.statusCode).sort(), [201, 409]);
+  const loser = results.find((r) => r.statusCode === 409);
+  assert.deepEqual(loser?.json(), { error: "name-taken" });
+  const room = await app.store.load(created.code);
+  assert.deepEqual(
+    room?.members.map((m) => m.name),
+    ["Ana", "Bia"],
+  );
+  await app.close();
+});
+
 test("joining a full room returns 409 room-full", async () => {
   const app = await startTestServer();
   const created = (

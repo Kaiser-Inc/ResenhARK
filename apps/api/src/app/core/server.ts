@@ -5,6 +5,8 @@ import type { Redis } from "ioredis";
 import { Server } from "socket.io";
 import { healthRoutes } from "../http/routes/health.routes.js";
 import { roomRoutes } from "../http/routes/rooms.routes.js";
+import { RoomHub } from "../realtime/room-hub.js";
+import { registerSocketGateway } from "../realtime/socket-gateway.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { corsOptions } from "./cors.js";
 import { settings } from "./settings.js";
@@ -29,8 +31,17 @@ export async function createServer(
 
   await fastify.register(fastifyCors, corsOptions);
 
+  const io = new Server(fastify.server, { cors: { origin: settings.CORS_ORIGIN } });
+  const hub = new RoomHub({ ...deps, io });
+  registerSocketGateway(io, {
+    store: deps.store,
+    hub,
+    now: deps.now,
+    onError: (err) => fastify.log.error(err),
+  });
+
   await healthRoutes(fastify, deps);
-  await roomRoutes(fastify, deps);
+  await roomRoutes(fastify, deps, hub);
 
   fastify.setErrorHandler((error: FastifyError, _request, reply) => {
     if (error.statusCode && error.statusCode < 500) {
@@ -39,9 +50,6 @@ export async function createServer(
     fastify.log.error(error);
     return reply.status(500).send({ error: "Internal server error" });
   });
-
-  // Handlers are attached in the realtime task.
-  const io = new Server(fastify.server, { cors: { origin: settings.CORS_ORIGIN } });
 
   return { fastify, io };
 }

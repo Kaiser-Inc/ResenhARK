@@ -4,6 +4,7 @@ import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import type { ServerDependencies } from "../../core/server.js";
 import { type Member, addMember, createRoom, generateRoomCode } from "../../domain/room/room.js";
+import type { RoomHub } from "../../realtime/room-hub.js";
 
 const MAX_CODE_ATTEMPTS = 5;
 
@@ -12,6 +13,7 @@ const codeParams = z.object({ code: z.string().transform((code) => code.toUpperC
 export async function roomRoutes(
   fastify: FastifyInstance,
   deps: ServerDependencies,
+  hub: RoomHub,
 ): Promise<void> {
   const { store, now, rng, newId } = deps;
   const app = fastify.withTypeProvider<ZodTypeProvider>();
@@ -50,15 +52,23 @@ export async function roomRoutes(
     { schema: { params: codeParams, body: joinRoomInputSchema } },
     async (request, reply) => {
       const { code } = request.params;
-      const room = await store.load(code);
-      if (!room) return reply.status(404).send({ error: "room-not-found" });
-
       const member = newMember(request.body);
-      const result = addMember(room, member, now());
-      if (!result.ok) return reply.status(409).send({ error: result.error });
+      const ack = await hub.mutate(code, (room) => {
+        const result = addMember(room, member, now());
+        // addMember only fails with name-taken or room-full here.
+        if (!result.ok) {
+          return {
+            ok: false,
+            error: result.error === "not-a-member" ? "invalid-target" : result.error,
+          };
+        }
+        return result;
+      });
+      if (!ack.ok) {
+        return reply.status(ack.error === "room-not-found" ? 404 : 409).send({ error: ack.error });
+      }
 
       const sessionToken = newId();
-      await store.save(result.room);
       await store.createSession(sessionToken, code, member.id);
       return reply.status(201).send({ memberId: member.id, sessionToken });
     },
