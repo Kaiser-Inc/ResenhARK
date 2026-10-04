@@ -1,4 +1,4 @@
-import { RoomGate } from "@/components/room-gate";
+import { RoomGate } from "@/components/room/room-gate";
 
 export default async function RoomPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;

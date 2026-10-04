@@ -1,6 +1,6 @@
 import path from "node:path";
 import AxeBuilder from "@axe-core/playwright";
-import { type Page, expect } from "@playwright/test";
+import { type Browser, type BrowserContext, type Page, expect } from "@playwright/test";
 
 export const UI_DIR = path.resolve(
   __dirname,
@@ -26,4 +26,38 @@ export async function expectNoAxeViolations(page: Page) {
   expect(
     serious.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
   ).toEqual([]);
+}
+
+/** Creates a room through the UI as `name` and waits until the room URL is open. */
+export async function createRoomAs(page: Page, name: string): Promise<string> {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Criar sala" }).click();
+  await page.getByLabel("Seu nome").fill(name);
+  await page.getByRole("button", { name: "Criar e entrar" }).click();
+  await expect(page).toHaveURL(/\/sala\/[A-HJKMNP-Z]{5}$/);
+  return page.url().split("/").pop() as string;
+}
+
+/** Joins an existing room through the link as `name`, in a context of its own. */
+export async function joinRoomAs(
+  browser: Browser,
+  code: string,
+  name: string,
+): Promise<{ page: Page; context: BrowserContext }> {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto(`/sala/${code}`);
+  await page.getByLabel("Seu nome").fill(name);
+  await page.getByRole("button", { name: "Entrar" }).click();
+  await expect(page.getByRole("list", { name: "Pessoas na sala" })).toBeVisible();
+  return { page, context };
+}
+
+/** Ana creates the room, Bia joins from another browser context. */
+export async function twoMembersInRoom(browser: Browser) {
+  const anaContext = await browser.newContext();
+  const ana = await anaContext.newPage();
+  const code = await createRoomAs(ana, "Ana");
+  const { page: bia, context: biaContext } = await joinRoomAs(browser, code, "Bia");
+  return { ana, bia, code, anaContext, biaContext };
 }

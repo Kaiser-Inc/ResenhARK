@@ -43,6 +43,8 @@ export type MemberView = {
 export type LobbyView = null;
 export type GameView = null;
 export type GameEvent = never;
+// Placeholder until chat messages exist (Task 7).
+export type ChatMessage = never;
 
 export type RoomView = {
   code: string;

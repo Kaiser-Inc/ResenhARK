@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import type { ReactNode } from "react";
 
 import { Providers } from "@/components/providers";
-import { SiteBar } from "@/components/site-bar";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "blobatar/motion.css";
@@ -31,7 +30,6 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             <a className="skip-link" href="#main-content">
               Ir para o conteúdo
             </a>
-            <SiteBar />
             {children}
           </Providers>
         </ThemeProvider>
