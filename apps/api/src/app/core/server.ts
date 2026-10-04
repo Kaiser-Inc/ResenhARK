@@ -3,6 +3,8 @@ import Fastify, { type FastifyError, type FastifyInstance } from "fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import type { Redis } from "ioredis";
 import { Server } from "socket.io";
+import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
+import { audioRoutes } from "../http/routes/audio.routes.js";
 import { healthRoutes } from "../http/routes/health.routes.js";
 import { roomRoutes } from "../http/routes/rooms.routes.js";
 import { RoomHub } from "../realtime/room-hub.js";
@@ -17,6 +19,9 @@ export interface ServerDependencies {
   now: () => number;
   rng: () => number;
   newId: () => string;
+  audio: AudioPreviewSource;
+  /** Fetches the bytes behind a provider preview URL. */
+  fetchAudio: (url: string) => Promise<Response>;
   /** Defaults to on outside of NODE_ENV=test. */
   logger?: boolean;
 }
@@ -39,6 +44,7 @@ export async function createServer(
 
   await healthRoutes(fastify, deps);
   await roomRoutes(fastify, deps, hub);
+  await audioRoutes(fastify, deps);
 
   fastify.setErrorHandler((error: FastifyError, _request, reply) => {
     if (error.statusCode && error.statusCode < 500) {

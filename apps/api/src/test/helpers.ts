@@ -5,7 +5,7 @@ import type { FastifyInstance } from "fastify";
 import { Redis } from "ioredis";
 import type { Server } from "socket.io";
 import { type Socket, io as connect } from "socket.io-client";
-import { createServer } from "../app/core/server.js";
+import { type ServerDependencies, createServer } from "../app/core/server.js";
 import type { RoomHub } from "../app/realtime/room-hub.js";
 import { RedisRoomStore } from "../app/repositories/redis-room-store.js";
 
@@ -30,7 +30,9 @@ function seededRng(seed: number): () => number {
   };
 }
 
-export async function startTestServer(): Promise<TestServer> {
+export async function startTestServer(
+  overrides: Partial<Pick<ServerDependencies, "audio" | "fetchAudio">> = {},
+): Promise<TestServer> {
   const redis = new Redis(TEST_REDIS_URL);
   await redis.flushdb();
   const store = new RedisRoomStore(redis);
@@ -50,6 +52,9 @@ export async function startTestServer(): Promise<TestServer> {
     now: clock.now,
     rng: seededRng(42),
     newId: () => `id-${++counter}`,
+    audio: { findPreviewUrl: async () => null },
+    fetchAudio: async () => new Response(null, { status: 404 }),
+    ...overrides,
     logger: false,
   });
   await fastify.listen({ port: 0, host: "127.0.0.1" });

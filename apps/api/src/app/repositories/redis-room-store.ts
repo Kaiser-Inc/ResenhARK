@@ -6,6 +6,7 @@ import { ROOM_TTL_SECONDS, type RoomStore } from "./room-store.js";
 const roomKey = (code: string) => `room:${code}`;
 const chatKey = (code: string) => `chat:${code}`;
 const sessionKey = (token: string) => `session:${token}`;
+const drawKey = (drawId: string) => `draw:${drawId}`;
 const memberSessionsKey = (code: string, memberId: string) => `member-sessions:${code}:${memberId}`;
 
 export class RedisRoomStore implements RoomStore {
@@ -67,6 +68,14 @@ export class RedisRoomStore implements RoomStore {
   async chatHistory(code: string): Promise<ChatMessage[]> {
     const raw = await this.redis.lrange(chatKey(code), 0, CHAT_HISTORY - 1);
     return raw.reverse().map((item) => JSON.parse(item) as ChatMessage);
+  }
+
+  async indexDraw(drawId: string, code: string): Promise<void> {
+    await this.redis.set(drawKey(drawId), code, "EX", ROOM_TTL_SECONDS);
+  }
+
+  async roomOfDraw(drawId: string): Promise<string | null> {
+    return this.redis.get(drawKey(drawId));
   }
 
   async touch(code: string): Promise<void> {

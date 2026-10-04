@@ -15,6 +15,9 @@ export interface RoomStore {
   appendChat(code: string, message: ChatMessage): Promise<void>;
   /** Oldest first. */
   chatHistory(code: string): Promise<ChatMessage[]>;
+  /** Maps a draw to its room so /audio can find it; expires with the room. */
+  indexDraw(drawId: string, code: string): Promise<void>;
+  roomOfDraw(drawId: string): Promise<string | null>;
   /** Renews the TTL of the room, its chat and its sessions. */
   touch(code: string): Promise<void>;
 }
