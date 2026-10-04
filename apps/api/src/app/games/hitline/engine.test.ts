@@ -1,7 +1,14 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_HITLINE_CONFIG } from "@resenhark/shared";
-import { type HitlineAction, type HitlineState, apply, create, nextDeadline } from "./engine.js";
+import {
+  type HitlineAction,
+  type HitlineState,
+  apply,
+  create,
+  nextDeadline,
+  tick,
+} from "./engine.js";
 import { project } from "./project.js";
 import { card, deckOf, fixedCtx } from "./test-deck.js";
 
@@ -562,4 +569,215 @@ test("player with 0 tokens cannot contest and counts as decided", () => {
   const r = ok(apply(w, o1, { type: "contest", slot: 1 }, fixedCtx()));
   assert.ok(types(r).includes("card-revealed"));
   assert.equal(tokensOf(r.state, o1), 0);
+});
+
+// ---- Task 17: deadlines and presence ----
+const noLeak = (events: unknown[]) => {
+  const json = JSON.stringify(events);
+  assert.equal(json.includes("Top Song"), false);
+  assert.equal(json.includes("Top Artist"), false);
+  assert.equal(json.includes('"top"'), false);
+  assert.equal(json.includes("2000"), false);
+};
+const sys = (s: HitlineState, a: HitlineAction, now = 0) =>
+  ok(apply(s, "system", a, fixedCtx(now)));
+const setOnline = (s: HitlineState, id: string, online: boolean, now: number) =>
+  ok(apply(s, id, { type: "set-online", online }, fixedCtx(now))).state;
+
+test("contest window closes at the deadline and resolves", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  const w = ok(apply(state, tp, lock(1), fixedCtx(1000))).state;
+  const early = tick(w, fixedCtx(15_999));
+  assert.equal(early.state.phase, "contest");
+  assert.deepEqual(early.events, []);
+  const r = tick(w, fixedCtx(16_000));
+  assert.deepEqual(types(r), ["card-revealed"]);
+  assert.equal(r.state.phase, "turn-start");
+  assert.equal(r.state.lastReveal?.reason, "resolved");
+  assert.equal(r.state.contestDeadline, null);
+});
+test("guess timer expiring with a drawn card reveals and discards it", () => {
+  const { state } = drawnTable(2, 2000);
+  assert.equal(tick(state, fixedCtx(119_999)).events.length, 0);
+  const r = tick(state, fixedCtx(120_000));
+  assert.deepEqual(types(r), ["card-revealed"]);
+  assert.equal(r.state.lastReveal?.reason, "timeout");
+  assert.equal(r.state.lastReveal?.guess, null);
+  assert.equal(r.state.lastReveal?.receiverId, null);
+  assert.equal(r.state.lastReveal?.tokenAwarded, false);
+  assert.deepEqual(
+    r.state.discards.map((c) => c.id),
+    ["top"],
+  );
+  assert.equal(r.state.deck.length, state.deck.length - 1);
+  assert.equal(r.state.turn, 1);
+  assert.equal(r.state.phase, "turn-start");
+  assert.equal(r.state.turnDeadline, 240_000);
+});
+test("guess timer expiring before drawing passes the turn without discarding", () => {
+  const { state, tp } = table(2, 2000);
+  const r = tick(state, fixedCtx(120_000));
+  assert.deepEqual(r.events, [{ type: "turn-passed", playerId: tp, reason: "timeout" }]);
+  assert.equal(r.state.turn, 1);
+  assert.equal(r.state.discards.length, 0);
+  assert.equal(r.state.deck.length, state.deck.length);
+  assert.equal(r.state.lastReveal, null);
+});
+test("turn player offline for 30s loses the turn, keeps tokens and timeline, card returns to the bottom unrevealed", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  const off = setOnline(state, tp, false, 1000);
+  assert.equal(off.players[0].offlineSince, 1000);
+  assert.equal(nextDeadline(off), 31_000);
+  assert.equal(tick(off, fixedCtx(30_999)).events.length, 0);
+  const r = tick(off, fixedCtx(31_000));
+  assert.deepEqual(r.events, [{ type: "turn-passed", playerId: tp, reason: "offline" }]);
+  assert.equal(r.state.deck.at(-1)?.id, "top");
+  assert.equal(r.state.deck[0].id, "next");
+  assert.equal(r.state.deck.length, state.deck.length);
+  assert.equal(r.state.lastReveal, null);
+  assert.equal(r.state.discards.length, 0);
+  assert.equal(r.state.players[0].tokens, 2);
+  assert.equal(r.state.players[0].timeline.length, 1);
+  assert.equal(r.state.turn, 1);
+  assert.equal(r.state.draw, null);
+  noLeak(r.events);
+  assert.equal(JSON.stringify(project(r.state, "b")).includes("Top Song"), false);
+});
+test("coming back online clears the offline clock", () => {
+  const { state, tp } = drawnTable(2, 2000);
+  const back = setOnline(setOnline(state, tp, false, 1000), tp, true, 5000);
+  assert.equal(back.players[0].offlineSince, null);
+  assert.equal(tick(back, fixedCtx(60_000)).events.length, 0);
+  assert.equal(nextDeadline(back), state.turnDeadline);
+  // going offline twice keeps the first timestamp
+  const twice = setOnline(setOnline(state, tp, false, 1000), tp, false, 9000);
+  assert.equal(twice.players[0].offlineSince, 1000);
+});
+test("set-online is self-only and system cannot use it", () => {
+  const { state } = table(2, 2000);
+  assert.deepEqual(apply(state, "zzz", { type: "set-online", online: false }, fixedCtx()), {
+    ok: false,
+    error: "not-a-player",
+  });
+  assert.deepEqual(apply(state, "system", { type: "set-online", online: false }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+});
+test("offline players are skipped when the turn advances", () => {
+  const { state, o1 } = table(3, 2000);
+  const off = setOnline(state, o1, false, 0);
+  const r = tick(off, fixedCtx(120_000));
+  assert.equal(r.state.turn, 2);
+  assert.equal(r.state.players[r.state.turn].online, true);
+});
+test("tick resets the clock after a pass instead of looping forever", () => {
+  const { state } = table(2, 2000);
+  const r = tick(state, fixedCtx(10_000_000));
+  assert.equal(r.events.length, 1);
+  assert.equal(r.state.turnDeadline, 10_120_000);
+});
+test("an all-offline table only runs on the guess timer", () => {
+  const { state, tp, o1 } = table(2, 2000);
+  const off = setOnline(setOnline(state, tp, false, 0), o1, false, 0);
+  assert.equal(tick(off, fixedCtx(60_000)).events.length, 0);
+  assert.equal(nextDeadline(off), 120_000);
+});
+test("removing the turn player passes the turn and returns the drawn card unrevealed", () => {
+  const { state, tp, o1 } = drawnTable(3, 2000);
+  const r = sys(state, { type: "remove", playerId: tp }, 500);
+  assert.deepEqual(r.events, [{ type: "turn-passed", playerId: tp, reason: "removed" }]);
+  assert.equal(r.state.players.length, 2);
+  assert.equal(r.state.players[r.state.turn].id, o1);
+  assert.equal(r.state.deck.at(-1)?.id, "top");
+  assert.equal(r.state.deck.length, state.deck.length);
+  assert.equal(r.state.draw, null);
+  assert.equal(r.state.lastReveal, null);
+  assert.equal(r.state.phase, "turn-start");
+  assert.equal(r.state.turnDeadline, 500 + 120_000);
+  noLeak(r.events);
+  assert.equal(JSON.stringify(project(r.state, o1)).includes("Top Song"), false);
+});
+test("removing the turn player while contesting returns the card and drops the window", () => {
+  const { state, tp, o1 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(1), fixedCtx())).state;
+  const r = sys(w, { type: "remove", playerId: tp });
+  assert.equal(r.state.deck.at(-1)?.id, "top");
+  assert.equal(r.state.phase, "turn-start");
+  assert.equal(r.state.contestDeadline, null);
+  assert.equal(r.state.players[r.state.turn].id, o1);
+  noLeak(r.events);
+});
+test("removing the last-seat turn player wraps to the first", () => {
+  const { state } = table(3, 2000);
+  state.turn = 2;
+  const last = state.players[2].id;
+  const r = sys(state, { type: "remove", playerId: last });
+  assert.equal(r.state.turn, 0);
+});
+test("removing a non-turn player before the turn keeps the turn on the same player", () => {
+  const { state, tp } = table(3, 2000);
+  state.turn = 2;
+  const holder = state.players[2].id;
+  const r = sys(state, { type: "remove", playerId: state.players[0].id });
+  assert.equal(r.state.players[r.state.turn].id, holder);
+  assert.deepEqual(r.events, []);
+  assert.notEqual(tp, holder);
+});
+test("removing a contester drops their contest and re-evaluates the window", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const c = ok(apply(w, o1, { type: "contest", slot: 1 }, fixedCtx())).state;
+  const r = sys(c, { type: "remove", playerId: o1 });
+  assert.equal(r.state.phase, "contest");
+  assert.deepEqual(r.state.contests, []);
+  assert.equal(r.state.players.length, 2);
+  // the remaining player passing now closes the window
+  const done = ok(apply(r.state, o2, { type: "pass" }, fixedCtx()));
+  assert.ok(types(done).includes("card-revealed"));
+});
+test("removing the last undecided player resolves the window", () => {
+  const { state, tp, o1, o2 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const p = ok(apply(w, o1, { type: "pass" }, fixedCtx())).state;
+  const r = sys(p, { type: "remove", playerId: o2 });
+  assert.deepEqual(types(r), ["card-revealed"]);
+  assert.equal(r.state.phase, "turn-start");
+});
+test("removing a passer drops the pass", () => {
+  const { state, tp, o1 } = drawnTable(3, 2000);
+  const w = ok(apply(state, tp, lock(0), fixedCtx())).state;
+  const p = ok(apply(w, o1, { type: "pass" }, fixedCtx())).state;
+  const r = sys(p, { type: "remove", playerId: o1 });
+  assert.deepEqual(r.state.passed, []);
+});
+test("removing every player ends the game", () => {
+  const { state, tp } = table(1, 2000);
+  const r = sys(state, { type: "remove", playerId: tp });
+  assert.equal(r.state.phase, "game-over");
+  assert.equal(r.state.endReason, "ended");
+  assert.deepEqual(r.state.winners, []);
+  assert.deepEqual(types(r), ["game-over"]);
+});
+test("remove is system-only and needs a known player", () => {
+  const { state, tp, o1 } = table(2, 2000);
+  assert.deepEqual(apply(state, tp, { type: "remove", playerId: o1 }, fixedCtx()), {
+    ok: false,
+    error: "wrong-phase",
+  });
+  assert.deepEqual(apply(state, "system", { type: "remove", playerId: "zzz" }, fixedCtx()), {
+    ok: false,
+    error: "not-a-player",
+  });
+});
+test("nextDeadline picks the earliest pending deadline", () => {
+  const { state, o1 } = table(2, 2000);
+  assert.equal(nextDeadline(state), 120_000);
+  assert.equal(nextDeadline(setOnline(state, state.players[0].id, false, 1000)), 31_000);
+  // an offline non-turn player never counts
+  assert.equal(nextDeadline(setOnline(state, o1, false, 1000)), 120_000);
+  const d = drawnTable(2, 2000);
+  const w = ok(apply(d.state, d.tp, lock(0), fixedCtx(1000))).state;
+  assert.equal(nextDeadline(w), 16_000);
+  assert.equal(nextDeadline(sys(w, { type: "end" }).state), null);
 });

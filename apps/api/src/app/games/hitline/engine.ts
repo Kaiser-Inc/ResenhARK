@@ -58,7 +58,7 @@ export type HitlineAction =
   | { type: "pass" }
   | { type: "audio-missing"; giveUp?: boolean }
   | { type: "set-online"; online: boolean }
-  | { type: "remove" }
+  | { type: "remove"; playerId: string }
   | { type: "end" };
 export type RuleError =
   | "not-your-turn"
@@ -263,8 +263,26 @@ export function apply(
     events.push(gameOver(s, [], "ended"));
     return { ok: true, state: s, events };
   }
-  if (system || action.type === "set-online" || action.type === "remove")
-    return { ok: false, error: "wrong-phase" };
+  if (action.type === "remove") {
+    if (!system) return { ok: false, error: "wrong-phase" };
+    if (!s.players.some((p) => p.id === action.playerId))
+      return { ok: false, error: "not-a-player" };
+    removePlayer(s, action.playerId, ctx, events);
+    return { ok: true, state: s, events };
+  }
+  if (action.type === "set-online") {
+    if (system) return { ok: false, error: "wrong-phase" };
+    const me = s.players.find((p) => p.id === actorId) as Player;
+    if (action.online) {
+      me.online = true;
+      me.offlineSince = null;
+    } else if (me.online) {
+      me.online = false;
+      me.offlineSince = ctx.now;
+    }
+    return { ok: true, state: s, events };
+  }
+  if (system) return { ok: false, error: "wrong-phase" };
 
   if (action.type === "contest" || action.type === "pass") {
     if (s.phase !== "contest") return { ok: false, error: "wrong-phase" };
@@ -356,15 +374,90 @@ export function apply(
   return { ok: true, state: s, events };
 }
 
-// ponytail: timeouts, offline grace and removal land in Task 17.
+/** The hidden drawn card leaves play unrevealed: back to the bottom, no card data in any event. */
+function returnDrawToBottom(s: HitlineState): void {
+  if (s.draw) s.deck.push(s.deck.shift() as Card);
+}
+
+function removePlayer(s: HitlineState, id: string, ctx: Ctx, events: HitlineEvent[]): void {
+  const idx = s.players.findIndex((p) => p.id === id);
+  const wasTurn = idx === s.turn;
+  if (wasTurn) returnDrawToBottom(s);
+  s.players.splice(idx, 1);
+  s.contests = s.contests.filter((c) => c.playerId !== id);
+  s.passed = s.passed.filter((p) => p !== id);
+  if (s.players.length === 0) {
+    events.push(gameOver(s, [], "ended"));
+    return;
+  }
+  if (wasTurn) {
+    events.push({ type: "turn-passed", playerId: id, reason: "removed" });
+    s.turn = idx - 1; // nextTurn steps forward onto the player who slid into this seat
+    if (s.turn < 0) s.turn = s.players.length - 1;
+    nextTurn(s, ctx);
+    return;
+  }
+  if (idx < s.turn) s.turn -= 1;
+  if (s.phase === "contest" && allDecided(s)) resolve(s, ctx, events);
+}
+
+/** The turn player has been offline long enough to lose the turn (never when nobody is online). */
+function offlineExpired(s: HitlineState, now: number): boolean {
+  const p = s.players[s.turn];
+  return (
+    (s.phase === "turn-start" || s.phase === "guessing") &&
+    !p.online &&
+    p.offlineSince !== null &&
+    s.players.some((q) => q.online) &&
+    now >= p.offlineSince + OFFLINE_GRACE_MS
+  );
+}
+
 export function tick(
   state: HitlineState,
-  _ctx: Ctx,
+  ctx: Ctx,
 ): { state: HitlineState; events: HitlineEvent[] } {
-  return { state: structuredClone(state), events: [] };
+  const s = structuredClone(state);
+  const events: HitlineEvent[] = [];
+  for (let i = 0; i < 50 && s.phase !== "game-over"; i++) {
+    const pid = s.players[s.turn].id;
+    if (s.phase === "contest") {
+      if (s.contestDeadline === null || ctx.now < s.contestDeadline) break;
+      resolve(s, ctx, events);
+    } else if (offlineExpired(s, ctx.now)) {
+      returnDrawToBottom(s);
+      events.push({ type: "turn-passed", playerId: pid, reason: "offline" });
+      nextTurn(s, ctx);
+    } else if (ctx.now < s.turnDeadline) break;
+    else if (s.phase === "turn-start") {
+      events.push({ type: "turn-passed", playerId: pid, reason: "timeout" });
+      nextTurn(s, ctx);
+    } else {
+      const card = s.deck.shift() as Card;
+      s.discards.push(card);
+      s.lastReveal = {
+        card,
+        turnPlayerId: pid,
+        reason: "timeout",
+        guess: null,
+        contests: [],
+        receiverId: null,
+        tokenAwarded: false,
+      };
+      events.push({ type: "card-revealed", reveal: toRevealView(s.lastReveal) });
+      nextTurn(s, ctx);
+    }
+  }
+  return { state: s, events };
 }
 
 export function nextDeadline(state: HitlineState): number | null {
   if (state.phase === "game-over") return null;
-  return state.phase === "contest" ? state.contestDeadline : state.turnDeadline;
+  if (state.phase === "contest") return state.contestDeadline;
+  const p = state.players[state.turn];
+  const offline =
+    !p.online && p.offlineSince !== null && state.players.some((q) => q.online)
+      ? p.offlineSince + OFFLINE_GRACE_MS
+      : Number.POSITIVE_INFINITY;
+  return Math.min(state.turnDeadline, offline);
 }
