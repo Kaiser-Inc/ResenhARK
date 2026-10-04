@@ -49,7 +49,7 @@ function TabsList({
       <TabsPrimitive.Indicator
         data-slot="tabs-indicator"
         renderBeforeHydration
-        className="pointer-events-none absolute top-0 left-0 bg-primary-text transition-[translate,width,height] duration-200 ease-in-out group-data-[orientation=horizontal]/tabs:top-auto group-data-[orientation=horizontal]/tabs:-bottom-px group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=horizontal]/tabs:w-(--active-tab-width) group-data-[orientation=horizontal]/tabs:translate-x-(--active-tab-left) group-data-[orientation=vertical]/tabs:w-0.5 group-data-[orientation=vertical]/tabs:h-(--active-tab-height) group-data-[orientation=vertical]/tabs:translate-y-(--active-tab-top)"
+        className="pointer-events-none absolute top-0 left-0 bg-primary-text transition-[translate,width,height] duration-[120ms] ease-out motion-reduce:transition-none group-data-[orientation=horizontal]/tabs:top-auto group-data-[orientation=horizontal]/tabs:-bottom-px group-data-[orientation=horizontal]/tabs:h-0.5 group-data-[orientation=horizontal]/tabs:w-(--active-tab-width) group-data-[orientation=horizontal]/tabs:translate-x-(--active-tab-left) group-data-[orientation=vertical]/tabs:w-0.5 group-data-[orientation=vertical]/tabs:h-(--active-tab-height) group-data-[orientation=vertical]/tabs:translate-y-(--active-tab-top)"
       />
     </TabsPrimitive.List>
   );
@@ -73,7 +73,7 @@ function TabsContent({ className, ...props }: TabsPrimitive.Panel.Props) {
     <TabsPrimitive.Panel
       data-slot="tabs-content"
       className={cn(
-        "flex-1 text-sm outline-hidden animate-in fade-in-0 duration-150 ease-out",
+        "flex-1 text-sm outline-hidden motion-safe:animate-in motion-safe:fade-in-0 motion-safe:duration-150 motion-safe:ease-out focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",
         className,
       )}
       {...props}

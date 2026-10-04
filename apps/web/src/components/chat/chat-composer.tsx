@@ -16,12 +16,14 @@ type Props = {
 export function ChatComposer({ disabled, onSend }: Props) {
   const [text, setText] = useState("");
   const sending = useRef(false);
+  const [pending, setPending] = useState(false);
   const current = useRef("");
 
   async function submit() {
     const trimmed = text.trim();
     if (!trimmed || disabled || sending.current) return;
     sending.current = true;
+    setPending(true);
     const sent = text;
     try {
       const ack = await onSend(trimmed);
@@ -32,6 +34,7 @@ export function ChatComposer({ disabled, onSend }: Props) {
       else toast.error("Não deu para enviar. Tenta de novo.");
     } finally {
       sending.current = false;
+      setPending(false);
     }
   }
 
@@ -50,11 +53,13 @@ export function ChatComposer({ disabled, onSend }: Props) {
         {/* One line that grows up to four (field-sizing); Enter sends, Shift+Enter breaks the line. */}
         <Textarea
           id="chat-composer"
+          name="message"
+          autoComplete="off"
           rows={1}
           value={text}
           maxLength={CHAT_MAX_LENGTH}
           disabled={disabled}
-          placeholder="Escreva uma mensagem"
+          placeholder="Escreva uma mensagem…"
           onChange={(event) => {
             current.current = event.target.value;
             setText(event.target.value);
@@ -66,7 +71,13 @@ export function ChatComposer({ disabled, onSend }: Props) {
           }}
           className="max-h-[104px] min-h-8 overflow-y-auto py-1 md:max-h-[92px] md:py-1.5"
         />
-        <Button type="submit" size="icon" aria-label="Enviar" disabled={disabled || !text.trim()}>
+        <Button
+          type="submit"
+          size="icon"
+          aria-label="Enviar"
+          loading={pending}
+          disabled={disabled || !text.trim()}
+        >
           <SendIcon aria-hidden="true" strokeWidth={1.75} />
         </Button>
       </div>

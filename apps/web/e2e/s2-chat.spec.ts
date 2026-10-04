@@ -292,3 +292,40 @@ test("confirm dialogs cannot be confirmed while offline", async ({ browser }) =>
   await ana.context().setOffline(true);
   await expect(ana.getByRole("alertdialog").getByRole("button", { name: "Sair" })).toBeDisabled();
 });
+
+test("composer has form attributes and the send button shows a pending state", async ({ page }) => {
+  await createRoomAs(page, "Ana");
+  await page.routeWebSocket(/socket\.io/, (ws) => {
+    const server = ws.connectToServer();
+    ws.onMessage((message) => server.send(message));
+    server.onMessage((message) => {
+      const frame = typeof message === "string" ? message : message.toString();
+      if (/^43\d*\[/.test(frame)) setTimeout(() => ws.send(message), 1000);
+      else ws.send(message);
+    });
+  });
+  await page.reload();
+  await expect(composer(page)).toBeEnabled();
+  await expect(composer(page)).toHaveAttribute("name", "message");
+  await expect(composer(page)).toHaveAttribute("autocomplete", "off");
+  await expect(composer(page)).toHaveAttribute("placeholder", "Escreva uma mensagem…");
+  const send = page.getByRole("button", { name: "Enviar" });
+  await composer(page).fill("oi");
+  await composer(page).press("Enter");
+  await expect(send).toHaveAttribute("aria-busy", "true");
+  await expect(send).not.toHaveAttribute("aria-busy", "true");
+});
+
+test("scrollable log and tab panel are keyboard focusable with a visible focus ring", async ({
+  page,
+}) => {
+  await createRoomAs(page, "Ana");
+  await expect(thread(page)).toHaveAttribute("tabindex", "0");
+  await page.setViewportSize({ width: 390, height: 844 });
+  const chatTab = page.getByRole("tablist").getByRole("tab", { name: /^Chat/ });
+  await chatTab.click();
+  await chatTab.press("Tab");
+  const panel = page.getByRole("tabpanel", { name: /^Chat/ });
+  await expect(panel).toBeFocused();
+  await expect(panel).toHaveCSS("outline-style", "solid");
+});
