@@ -5,6 +5,7 @@ import {
   expect,
   importDeckAndStart,
   joinRoomAs,
+  peekDraw,
   setTheme,
   startTwoPlayerGame,
   test,
@@ -29,9 +30,9 @@ async function playTurnByKeyboard(page: Page) {
   await expect(gaps.first()).toBeEnabled();
   await tabTo(page, gaps);
   await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("ArrowUp");
+  await expect(gaps.nth(1)).toBeFocused();
   await page.keyboard.press("Space");
-  await expect(gaps.first()).toHaveAttribute("aria-pressed", "true");
+  await expect(gaps.nth(1)).toHaveAttribute("aria-pressed", "true");
   await tabTo(page, page.getByLabel("Música"));
   await page.keyboard.type("zzz");
   await page.keyboard.press("Tab");
@@ -58,9 +59,30 @@ test("keyboard only: draw, choose a slot with arrows, lock, and the other player
   await playTurnByKeyboard(other);
   const pass = turn.getByRole("button", { name: "Passar" });
   await expect(pass).toBeVisible();
+  // The previous reveal is gone while a new card is in play, so a Virada here can only come from the pass.
+  await expect(turn.getByRole("region", { name: "Virada" })).toHaveCount(0);
   await tabTo(turn, pass);
   await turn.keyboard.press("Enter");
+  // Only the pass produces these: a new reveal and the next turn for the first player.
+  await expect(turn.getByRole("button", { name: "Puxar carta" })).toBeVisible();
   await expect(turn.getByRole("region", { name: "Virada" })).toContainText(/\d{4}/);
+});
+
+test("the winner is announced", async ({ page }) => {
+  const code = await createRoomAs(page, "Ana");
+  await importDeckAndStart(page, "2");
+  await page.getByRole("button", { name: "Puxar carta" }).click();
+  const card = await peekDraw(code);
+  const starter = Number(
+    (await page.getByRole("list", { name: /^Timeline de / }).innerText()).match(/\d{4}/)?.[0],
+  );
+  const gaps = page.getByRole("button", { name: /Inserir/ });
+  await expect(gaps.first()).toBeEnabled();
+  await gaps.nth(card.year >= starter ? 1 : 0).click();
+  await page.getByRole("button", { name: "Travar palpite" }).click();
+  await expect(page.locator('[aria-live="polite"]').filter({ hasText: "Ana venceu" })).toHaveCount(
+    1,
+  );
 });
 
 test("reveal is announced in the live region", async ({ page }) => {
@@ -81,18 +103,33 @@ test("reveal is announced in the live region", async ({ page }) => {
 
 test("turn and contest changes are announced to each player", async ({ browser }) => {
   test.setTimeout(60_000);
-  const { turn, other, turnName } = await startTwoPlayerGame(browser);
-  const live = (page: Page, text: string) =>
+  const { code, turn, other, turnName, otherName } = await startTwoPlayerGame(browser);
+  const live = (page: Page, text: string | RegExp) =>
     page.locator('[aria-live="polite"]').filter({ hasText: text });
   await expect(live(turn, "Sua vez")).toHaveCount(1);
   await expect(live(other, `Vez de ${turnName}`)).toHaveCount(1);
   await turn.getByRole("button", { name: "Puxar carta" }).click();
+  const card = await peekDraw(code);
   await turn
     .getByRole("button", { name: /Inserir/ })
     .first()
     .click();
   await turn.getByRole("button", { name: "Travar palpite" }).click();
   await expect(live(other, /Contestação aberta, \d+ segundos/)).toHaveCount(1);
+  // Before the reveal no live region may leak the hidden card.
+  for (const page of [turn, other]) {
+    const spoken = (await page.locator('[aria-live="polite"]').allInnerTexts()).join(" ");
+    expect(spoken).not.toContain(String(card.year));
+    expect(spoken).not.toContain(card.title);
+  }
+  await other
+    .getByRole("button", { name: /Inserir/ })
+    .first()
+    .click();
+  for (const page of [turn, other]) {
+    await expect(live(page, `${otherName} contestou`)).toHaveCount(1);
+    await expect(live(page, /Carta virada: \d{4},/)).toHaveCount(1);
+  }
 });
 
 for (const { theme, width, height } of [
@@ -108,6 +145,7 @@ for (const { theme, width, height } of [
     await setTheme(page, theme);
     const check = async (p: Page, screen: string) => {
       // 1.2 s lets the transient "+1" gain (1 s fade) finish: axe blends text with its mid-fade opacity.
+      await expect(p.locator("html")).toHaveClass(new RegExp(`\\b${theme}\\b`));
       await p.waitForTimeout(1_200);
       const { violations } = await new AxeBuilder({ page: p }).analyze();
       expect(
