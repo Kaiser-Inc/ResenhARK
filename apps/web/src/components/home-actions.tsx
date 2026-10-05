@@ -61,13 +61,22 @@ export function HomeActions() {
           />
         </section>
       ) : (
-        <div className="flex flex-col items-start gap-8 sm:flex-row sm:items-end sm:gap-6">
-          <Button ref={createRef} onClick={() => setCreating(true)}>
+        // One grid, three explicit rows on sm+: label / controls / feedback. The form and the Field
+        // are `display: contents`, so their children sit in the grid and the error row never
+        // moves the controls. Below sm everything stacks in DOM order.
+        <div className="grid grid-cols-1 gap-y-1.5 sm:grid-cols-[auto_10rem_auto] sm:grid-rows-[auto_auto_auto] sm:items-center sm:gap-x-6">
+          <Button
+            ref={createRef}
+            className="mb-6 justify-self-start sm:col-start-1 sm:row-start-2 sm:mb-0"
+            onClick={() => setCreating(true)}
+          >
             Criar sala
           </Button>
-          <form onSubmit={enterWithCode} noValidate className="flex items-end gap-2">
-            <Field data-invalid={!!codeError} className="w-40">
-              <FieldLabel htmlFor={codeId}>Código da sala</FieldLabel>
+          <form onSubmit={enterWithCode} noValidate className="contents">
+            <Field data-invalid={!!codeError} className="contents">
+              <FieldLabel htmlFor={codeId} className="sm:col-start-2 sm:row-start-1">
+                Código da sala
+              </FieldLabel>
               <Input
                 ref={codeRef}
                 id={codeId}
@@ -79,7 +88,7 @@ export function HomeActions() {
                 autoComplete="off"
                 spellCheck={false}
                 placeholder="ABCDE"
-                className="font-mono uppercase"
+                className="font-mono uppercase sm:col-start-2 sm:row-start-2"
                 aria-invalid={!!codeError || undefined}
                 aria-describedby={codeError ? `${codeId}-error` : undefined}
                 onChange={(event) => {
@@ -87,9 +96,20 @@ export function HomeActions() {
                   setCodeError(null);
                 }}
               />
-              {codeError ? <FieldError id={`${codeId}-error`}>{codeError}</FieldError> : null}
+              {codeError ? (
+                <FieldError
+                  id={`${codeId}-error`}
+                  className="sm:col-span-2 sm:col-start-2 sm:row-start-3"
+                >
+                  {codeError}
+                </FieldError>
+              ) : null}
             </Field>
-            <Button type="submit" variant="outline">
+            <Button
+              type="submit"
+              variant="outline"
+              className="mt-4 justify-self-start sm:col-start-3 sm:row-start-2 sm:mt-0"
+            >
               Entrar com código
             </Button>
           </form>

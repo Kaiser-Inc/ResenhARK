@@ -8,7 +8,18 @@ import { motion } from "motion/react";
 import { useReduced } from "@/components/hitline/motion";
 import { cn } from "@/lib/utils";
 
-const EXPRESSIONS = { idle, happy, sad, mad, thinking, love } satisfies Record<string, Expression>;
+// `love` and `mad` tint the head toward rose/red, which turns the player's own color into another one.
+// Identity (hue) must survive the expression, so the same poses are used without their tint.
+const untinted = ({ tint: _tint, ...pose }: Expression): Expression => pose;
+
+const EXPRESSIONS = {
+  idle,
+  happy,
+  sad,
+  mad: untinted(mad),
+  thinking,
+  love: untinted(love),
+} satisfies Record<string, Expression>;
 
 export type MemberExpression = keyof typeof EXPRESSIONS;
 
