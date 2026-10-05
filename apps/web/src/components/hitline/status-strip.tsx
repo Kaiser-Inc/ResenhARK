@@ -25,8 +25,7 @@ function Waiting({
   clock,
 }: { name: string; deadline: number; clock: ServerClock }) {
   const seconds = useSecondsLeft(deadline, clock);
-  // Not live: it would be read out every second.
-  return <span aria-live="off">{`Aguardando ${name} · ${seconds}s`}</span>;
+  return <span>{`Aguardando ${name} · ${seconds}s`}</span>;
 }
 
 export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProps) {
@@ -55,7 +54,7 @@ export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProp
         <p title={turnMember?.name} className="min-w-0 truncate text-base leading-6 font-semibold">
           {turnMember?.name ?? "Fim de jogo"}
         </p>
-        <p aria-live="polite" className="text-sm text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {waiting && offlineDeadline !== null ? (
             <Waiting name={turnMember.name} deadline={offlineDeadline} clock={clock} />
           ) : waiting ? (

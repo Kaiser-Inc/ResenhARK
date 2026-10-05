@@ -106,7 +106,6 @@ export function RevealPanel({ reveal, members }: { reveal: RevealView; members: 
   const playerName = name(reveal.turnPlayerId);
   const artists = card.artists.join(", ");
   const hit = reveal.receiverId === reveal.turnPlayerId;
-  const summary = !guess ? "ficou sem tempo" : guess.correct ? "acertou" : "errou";
   return (
     <section aria-label="Virada" className="flex flex-col gap-2">
       <h2 className="text-base font-semibold">Virada</h2>
@@ -172,9 +171,6 @@ export function RevealPanel({ reveal, members }: { reveal: RevealView; members: 
       <p className="text-sm">
         {reveal.receiverId ? `${name(reveal.receiverId)} levou a carta` : "Ninguém levou a carta"}
         {reveal.tokenAwarded ? ` · +1 ficha para ${playerName}` : ""}
-      </p>
-      <p aria-live="polite" className="sr-only">
-        Carta virada: {card.year}, {card.title}, {artists}, {playerName} {summary}
       </p>
     </section>
   );

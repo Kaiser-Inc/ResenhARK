@@ -178,12 +178,15 @@ function RoomFrame({
                 </div>
               </main>
               {layout === "wide" ? (
-                <div className="relative flex w-[360px] shrink-0 flex-col before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border">
+                <aside
+                  aria-label="Chat"
+                  className="relative flex w-[360px] shrink-0 flex-col before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border"
+                >
                   <div className="flex h-14 shrink-0 items-center px-4">
                     <h2 className="text-base font-semibold">Chat</h2>
                   </div>
                   {panel}
-                </div>
+                </aside>
               ) : null}
             </div>
           )}

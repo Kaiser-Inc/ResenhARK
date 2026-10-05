@@ -4,6 +4,7 @@ import type { Ack, PublicCard, RoomView } from "@resenhark/shared";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { Announcer } from "@/components/hitline/announcer";
 import { CardInPlay, type Pending } from "@/components/hitline/card-in-play";
 import { ResultPanel } from "@/components/hitline/result-panel";
 import { RevealPanel } from "@/components/hitline/reveal-panel";
@@ -112,6 +113,7 @@ export function HitlineBoard({
   return (
     <section aria-label="Hitline" className="flex flex-col gap-8">
       <h1 className="sr-only">Hitline</h1>
+      <Announcer events={events} view={view} members={room.members} you={room.you} clock={clock} />
       <StatusStrip view={view} turnMember={turnMember} isTurn={isTurn} clock={clock} />
       {isSpectator ? (
         <p className="text-sm text-muted-foreground">
