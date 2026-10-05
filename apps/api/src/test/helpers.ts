@@ -33,7 +33,10 @@ function seededRng(seed: number): () => number {
 
 export async function startTestServer(
   overrides: Partial<
-    Pick<ServerDependencies, "audio" | "fetchAudio" | "playlists" | "spotifyAuth">
+    Pick<
+      ServerDependencies,
+      "audio" | "fetchAudio" | "playlists" | "spotifyAuth" | "trustProxyHops"
+    >
   > & {
     /** Keeps the db's contents, to simulate a second API instance on the same Redis. */
     keepData?: boolean;

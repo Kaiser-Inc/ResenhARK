@@ -41,6 +41,12 @@ const get = (server: TestServer, url: string, token?: string) =>
     url,
     headers: token ? { authorization: `Bearer ${token}` } : {},
   });
+const authorize = (server: TestServer, token?: string) =>
+  server.fastify.inject({
+    method: "POST",
+    url: "/admin/spotify/authorize",
+    headers: token ? { authorization: `Bearer ${token}` } : {},
+  });
 const adminToken = async (server: TestServer) =>
   ((await login(server, settings.ADMIN_PASSWORD)).json() as { adminToken: string }).adminToken;
 
@@ -49,7 +55,8 @@ test("wrong password is 401 and status without token is 401", async () => {
   assert.equal(res.statusCode, 401);
   assert.deepEqual(res.json(), { error: "invalid-password" });
   assert.equal((await get(app, "/admin/spotify/status")).statusCode, 401);
-  assert.equal((await get(app, "/admin/spotify/authorize?admin=x")).statusCode, 401);
+  assert.equal((await authorize(app)).statusCode, 401);
+  assert.equal((await authorize(app, "bogus")).statusCode, 401);
   const dis = await app.fastify.inject({ method: "POST", url: "/admin/spotify/disconnect" });
   assert.equal(dis.statusCode, 401);
 });
@@ -59,11 +66,14 @@ test("login, authorize redirects to Spotify with state, callback stores the toke
   const token = await adminToken(app);
   assert.ok(await tokenRedis.get(`admin:${token}`));
   assert.ok((await tokenRedis.ttl(`admin:${token}`)) > 3500);
-  assert.deepEqual((await get(app, "/admin/spotify/status", token)).json(), { connected: false });
+  assert.deepEqual((await get(app, "/admin/spotify/status", token)).json(), {
+    connected: false,
+    configured: true,
+  });
 
-  const authz = await get(app, `/admin/spotify/authorize?admin=${token}`);
-  assert.equal(authz.statusCode, 302);
-  const location = new URL(authz.headers.location as string);
+  const authz = await authorize(app, token);
+  assert.equal(authz.statusCode, 200);
+  const location = new URL((authz.json() as { authorizeUrl: string }).authorizeUrl);
   assert.equal(location.origin, "https://accounts.spotify.com");
   const state = location.searchParams.get("state") as string;
   assert.ok(state);
@@ -78,7 +88,10 @@ test("login, authorize redirects to Spotify with state, callback stores the toke
   const replay = await get(app, `/admin/spotify/callback?code=${CODE}&state=${state}`);
   assert.equal(replay.headers.location, ERROR_URL);
 
-  assert.deepEqual((await get(app, "/admin/spotify/status", token)).json(), { connected: true });
+  assert.deepEqual((await get(app, "/admin/spotify/status", token)).json(), {
+    connected: true,
+    configured: true,
+  });
   const dis = await app.fastify.inject({
     method: "POST",
     url: "/admin/spotify/disconnect",
@@ -97,8 +110,10 @@ test("callback with an unknown state redirects with status=error", async () => {
 test("failed code exchange redirects with status=error and echoes nothing", async () => {
   app.clock.set(20_000_000);
   const token = await adminToken(app);
-  const authz = await get(app, `/admin/spotify/authorize?admin=${token}`);
-  const state = new URL(authz.headers.location as string).searchParams.get("state");
+  const authz = await authorize(app, token);
+  const state = new URL((authz.json() as { authorizeUrl: string }).authorizeUrl).searchParams.get(
+    "state",
+  );
   exchangeOk = false;
   const cb = await get(app, `/admin/spotify/callback?code=${CODE}&state=${state}`);
   exchangeOk = true;
@@ -117,14 +132,45 @@ test("without Spotify configured authorize/callback are 503 and status is discon
   const bare = await startTestServer();
   try {
     const token = await adminToken(bare);
-    const authz = await get(bare, `/admin/spotify/authorize?admin=${token}`);
+    const authz = await authorize(bare, token);
     assert.equal(authz.statusCode, 503);
     assert.deepEqual(authz.json(), { error: "spotify-not-configured" });
     assert.equal((await get(bare, "/admin/spotify/callback?code=a&state=b")).statusCode, 503);
     assert.deepEqual((await get(bare, "/admin/spotify/status", token)).json(), {
       connected: false,
+      configured: false,
     });
+    const dis = await bare.fastify.inject({
+      method: "POST",
+      url: "/admin/spotify/disconnect",
+      headers: { authorization: `Bearer ${token}` },
+    });
+    assert.equal(dis.statusCode, 204);
   } finally {
     await bare.close();
+  }
+});
+
+test("rate limit buckets follow X-Forwarded-For only when proxies are trusted", async () => {
+  const attempt = (server: TestServer, ip: string) =>
+    server.fastify.inject({
+      method: "POST",
+      url: "/admin/login",
+      headers: { "x-forwarded-for": ip },
+      payload: { password: "nope" },
+    });
+  const trusted = await startTestServer({ trustProxyHops: 1 });
+  const direct = await startTestServer({ trustProxyHops: 0 });
+  try {
+    for (const server of [trusted, direct]) {
+      for (let i = 0; i < 5; i++) await attempt(server, "1.1.1.1");
+    }
+    assert.equal((await attempt(trusted, "1.1.1.1")).statusCode, 429);
+    assert.equal((await attempt(trusted, "2.2.2.2")).statusCode, 401);
+    // Header ignored: the spoofed address shares the real client's exhausted bucket.
+    assert.equal((await attempt(direct, "3.3.3.3")).statusCode, 429);
+  } finally {
+    await trusted.close();
+    await direct.close();
   }
 });

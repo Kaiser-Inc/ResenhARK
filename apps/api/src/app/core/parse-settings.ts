@@ -9,7 +9,8 @@ const envSchema = z
     CORS_ORIGIN: z.string().default("http://localhost:4000"),
     REDIS_URL: z.string().default("redis://localhost:6379/0"),
     SESSION_SECRET: z.string().min(32).optional(),
-    ADMIN_PASSWORD: z.string().default("dev"),
+    ADMIN_PASSWORD: z.string().optional(),
+    TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
     PUBLIC_API_URL: z.string().default("http://127.0.0.1:3333"),
     SPOTIFY_CLIENT_ID: z.string().optional(),
     SPOTIFY_CLIENT_SECRET: z.string().optional(),
@@ -29,8 +30,17 @@ const envSchema = z
       });
       return z.NEVER;
     }
+    if (production && (env.ADMIN_PASSWORD ?? "").length < 12) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["ADMIN_PASSWORD"],
+        message: "ADMIN_PASSWORD (min 12 chars) is required in production",
+      });
+      return z.NEVER;
+    }
     return {
       ...env,
+      ADMIN_PASSWORD: env.ADMIN_PASSWORD ?? "dev",
       SESSION_SECRET: env.SESSION_SECRET ?? DEV_SESSION_SECRET,
       // Seeds the rng (turn order, deck shuffle) for e2e; ignored outside NODE_ENV=test.
       E2E_SEED: env.NODE_ENV === "test" ? env.E2E_SEED : undefined,

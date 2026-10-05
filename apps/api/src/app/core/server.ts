@@ -30,12 +30,20 @@ export interface ServerDependencies {
   fetchAudio: (url: string) => Promise<Response>;
   /** Defaults to on outside of NODE_ENV=test. */
   logger?: boolean;
+  /** Proxies in front of the API whose X-Forwarded-For is trusted. Defaults to TRUST_PROXY_HOPS. */
+  trustProxyHops?: number;
 }
 
 export async function createServer(
   deps: ServerDependencies,
 ): Promise<{ fastify: FastifyInstance; io: Server; hub: RoomHub }> {
-  const fastify = Fastify({ logger: deps.logger ?? settings.NODE_ENV !== "test" });
+  const logging = deps.logger ?? settings.NODE_ENV !== "test";
+  const hops = deps.trustProxyHops ?? settings.TRUST_PROXY_HOPS;
+  const fastify = Fastify({
+    logger: logging ? { redact: ["req.headers.authorization"] } : false,
+    // A trust function, not the number form: counts hops from the socket and ignores spoofed leading entries.
+    trustProxy: hops > 0 ? (_addr: string, hop: number) => hop < hops : false,
+  });
 
   fastify.setValidatorCompiler(validatorCompiler);
   fastify.setSerializerCompiler(serializerCompiler);

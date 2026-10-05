@@ -49,18 +49,17 @@ export async function adminRoutes(
 
   fastify.get("/admin/spotify/status", { preHandler: requireBearer }, async () => ({
     connected: spotifyAuth ? await spotifyAuth.isConnected() : false,
+    configured: spotifyAuth !== undefined,
   }));
 
-  fastify.get<{ Querystring: { admin?: string } }>(
+  fastify.post(
     "/admin/spotify/authorize",
-    async (request, reply) => {
-      if (!(await isAdmin(request.query.admin))) {
-        return reply.status(401).send({ error: "unauthorized" });
-      }
+    { preHandler: requireBearer },
+    async (_request, reply) => {
       if (!spotifyAuth) return notConfigured(reply);
       const state = newId();
       await redis.set(stateKey(state), "1", "EX", STATE_TTL_SECONDS);
-      return reply.redirect(spotifyAuth.authorizeUrl(state), 302);
+      return { authorizeUrl: spotifyAuth.authorizeUrl(state) };
     },
   );
 
