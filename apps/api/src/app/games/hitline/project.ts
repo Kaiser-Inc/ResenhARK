@@ -1,5 +1,5 @@
 import type { HitlineView, PublicCard, RevealView } from "@resenhark/shared";
-import type { Card, HitlineState, Reveal } from "./engine.js";
+import { type Card, type HitlineState, OFFLINE_GRACE_MS, type Reveal } from "./engine.js";
 
 // Every field is built explicitly: never spread a state object here, or hidden data leaks.
 export function toPublicCard(c: Card): PublicCard {
@@ -56,6 +56,8 @@ export function project(state: HitlineState, viewerId: string): HitlineView {
       id: p.id,
       tokens: p.tokens,
       online: p.online,
+      offlineDeadline:
+        p.online || p.offlineSince === null ? null : p.offlineSince + OFFLINE_GRACE_MS,
       timeline: p.timeline.map(toPublicCard),
     })),
     draw: state.draw ? { id: state.draw.id, audioUrl: null } : null,

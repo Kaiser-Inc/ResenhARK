@@ -74,6 +74,7 @@ export function HitlineBoard({
   const turnMember = room.members.find((m) => m.id === view.turnPlayerId);
   const turnPlayer = view.players.find((p) => p.id === view.turnPlayerId);
   const isOwner = room.ownerId === room.you;
+  const isSpectator = room.members.find((m) => m.id === room.you)?.role === "spectator";
   const guessing = isTurn && view.phase === "guessing";
   const canContest =
     !isTurn && view.phase === "contest" && disabledReason(view, room.you, "contest") === null;
@@ -112,6 +113,11 @@ export function HitlineBoard({
     <section aria-label="Hitline" className="flex flex-col gap-8">
       <h1 className="sr-only">Hitline</h1>
       <StatusStrip view={view} turnMember={turnMember} isTurn={isTurn} clock={clock} />
+      {isSpectator ? (
+        <p className="text-sm text-muted-foreground">
+          Você está assistindo. Entra na próxima partida.
+        </p>
+      ) : null}
       <output aria-live="polite" className="block text-sm text-muted-foreground empty:hidden">
         {notice}
       </output>

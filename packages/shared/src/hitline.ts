@@ -42,7 +42,14 @@ export type HitlineView = {
   config: HitlineConfig;
   turnPlayerId: string | null;
   deckCount: number;
-  players: { id: string; tokens: number; online: boolean; timeline: PublicCard[] }[];
+  players: {
+    id: string;
+    tokens: number;
+    online: boolean;
+    /** When an offline player loses the turn (if it is theirs); null while online. */
+    offlineDeadline: number | null;
+    timeline: PublicCard[];
+  }[];
   draw: { id: string; audioUrl: string | null } | null; // audioUrl is filled by the hub
   guess: { slot: number; title?: string; artist?: string } | null; // title/artist only for the turn player
   contests: { playerId: string; slot: number }[];

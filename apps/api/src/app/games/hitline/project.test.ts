@@ -120,3 +120,12 @@ test("the contest phase leaks nothing: projections, contested and passed events"
   assert.equal((pass.events[0] as { type: string }).type, "passed");
   assert.equal(leaksHiddenCard(pass.events[0], hidden), false);
 });
+
+test("an offline player projects the deadline at which they lose the turn", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(30), fixedCtx());
+  const r = apply(state, "a", { type: "set-online", online: false }, fixedCtx(5_000));
+  assert.ok(r.ok);
+  const players = project(r.state, "b").players;
+  assert.equal(players.find((p) => p.id === "a")?.offlineDeadline, 35_000);
+  assert.equal(players.find((p) => p.id === "b")?.offlineDeadline, null);
+});

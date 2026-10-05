@@ -10,7 +10,7 @@ import { gameErrorMessage } from "@/lib/game-errors";
 
 const REASONS: Record<NonNullable<HitlineView["endReason"]>, string> = {
   target: "Chegou ao número de cartas para vencer.",
-  "deck-empty": "Fim da pilha: vence a maior timeline.",
+  "deck-empty": "Fim da pilha: as cartas acabaram.",
   ended: "Partida encerrada pelo dono.",
 };
 
@@ -40,6 +40,11 @@ export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelPr
       </h2>
       {view.endReason ? (
         <p className="text-sm text-muted-foreground">{REASONS[view.endReason]}</p>
+      ) : null}
+      {view.endReason === "deck-empty" ? (
+        <p className="text-sm text-muted-foreground">
+          Desempate: mais cartas, depois mais fichas. Se continuar empatado, a vitória é dividida.
+        </p>
       ) : null}
       <ol className="flex flex-col gap-1 text-sm" aria-label="Placar final">
         {standings.map((player) => (

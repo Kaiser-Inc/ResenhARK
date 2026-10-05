@@ -11,7 +11,8 @@ export class FixturePlaylistSource implements PlaylistSource {
       ok: true,
       playlist: {
         name: "Baralho de desenvolvimento",
-        cards: devDeck.map((song) => ({
+        // "tiny" gives a 3-card deck so e2e can reach the end of the pile.
+        cards: (link.includes("tiny") ? devDeck.slice(0, 3) : devDeck).map((song) => ({
           id: this.newId(),
           title: song.title,
           artists: song.artists,
