@@ -110,10 +110,9 @@ export async function importDeckAndStart(page: Page, targetCards = "2") {
   await page.getByRole("button", { name: "Iniciar partida" }).click();
 }
 
-/** Reads the hidden drawn card straight from the e2e Redis (db 14), so tests can answer it right. */
-export async function peekDraw(
-  code: string,
-): Promise<{ title: string; artists: string[]; year: number }> {
+/** Reads the stored room straight from the e2e Redis (db 14); hidden game data included. */
+// biome-ignore lint/suspicious/noExplicitAny: test-only peek at the raw stored room
+export async function peekRoom(code: string): Promise<any> {
   const send = (socket: net.Socket, ...args: string[]) =>
     socket.write(
       `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
@@ -136,7 +135,39 @@ export async function peekDraw(
     send(socket, "SELECT", "14");
     send(socket, "GET", `room:${code}`);
   });
-  const card = JSON.parse(raw).game.state.draw.card;
+  return JSON.parse(raw);
+}
+
+/** Overwrites `tokens` of every player in the stored e2e room (db 14); a reload then shows the new balance. */
+export async function pokeTokens(code: string, tokens: number): Promise<void> {
+  const room = await peekRoom(code);
+  for (const player of room.game.state.players) player.tokens = tokens;
+  const body = JSON.stringify(room);
+  await new Promise<void>((resolve, reject) => {
+    const socket = net.connect(6379, "localhost");
+    const send = (...args: string[]) =>
+      socket.write(
+        `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
+      );
+    let data = "";
+    socket.on("error", reject);
+    socket.on("data", (chunk) => {
+      data += chunk.toString();
+      if ((data.match(/\r\n/g) ?? []).length >= 2) {
+        socket.end();
+        resolve();
+      }
+    });
+    send("SELECT", "14");
+    send("SET", `room:${code}`, body, "KEEPTTL");
+  });
+}
+
+/** Reads the hidden drawn card straight from the e2e Redis (db 14), so tests can answer it right. */
+export async function peekDraw(
+  code: string,
+): Promise<{ title: string; artists: string[]; year: number }> {
+  const card = (await peekRoom(code)).game.state.draw.card;
   return { title: card.title, artists: card.artists, year: card.year };
 }
 

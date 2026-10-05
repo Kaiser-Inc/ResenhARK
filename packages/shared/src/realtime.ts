@@ -15,6 +15,7 @@ export type ErrorCode =
   | "playlist-invalid-link"
   | "playlist-no-access"
   | "playlist-empty"
+  | "playlist-exhausted"
   | "no-deck"
   | "game-running"
   | "no-game"
@@ -44,6 +45,8 @@ export type MemberView = {
 export type LobbyView = {
   config: HitlineConfig;
   playlist: { name: string; count: number } | null;
+  /** Songs not yet played in this room (null without a playlist); below `count` once rounds were played. */
+  remaining: number | null;
   /** True when the playlist is likely too short for the players and target. */
   smallPlaylist: boolean;
 };

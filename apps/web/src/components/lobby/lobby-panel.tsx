@@ -79,6 +79,8 @@ export function LobbyPanel({ room, send, connected }: LobbyPanelProps) {
             warning={smallPlaylistWarning(room)}
             disabled={!connected}
             onImport={(link) => send("lobby:import", { link })}
+            remaining={lobby.remaining}
+            onResetPlayed={() => void act("lobby:reset-played")}
           />
           <GameConfigForm
             config={lobby.config}
@@ -105,6 +107,11 @@ export function LobbyPanel({ room, send, connected }: LobbyPanelProps) {
           {lobby.playlist ? (
             <p className="text-sm text-muted-foreground">
               {lobby.playlist.count} faixas · {lobby.playlist.name}
+            </p>
+          ) : null}
+          {lobby.playlist && lobby.remaining !== null && lobby.remaining < lobby.playlist.count ? (
+            <p className="text-sm font-medium">
+              Restam {lobby.remaining} de {lobby.playlist.count} músicas
             </p>
           ) : null}
           <GameConfigForm config={lobby.config} />

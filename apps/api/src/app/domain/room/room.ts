@@ -5,7 +5,8 @@ import {
   ROOM_CODE_ALPHABET,
   normalizeName,
 } from "@resenhark/shared";
-import { type HitlineState, nextDeadline } from "../../games/hitline/engine.js";
+import { type Card, type HitlineState, nextDeadline } from "../../games/hitline/engine.js";
+import { normalizeTitle } from "../../games/hitline/normalize.js";
 import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 
 export type Member = {
@@ -19,7 +20,12 @@ export type Member = {
   greeted: boolean;
 };
 
-export type Lobby = { config: HitlineConfig; deck: ImportedPlaylist | null };
+export type Lobby = {
+  config: HitlineConfig;
+  deck: ImportedPlaylist | null;
+  /** Stable keys (see playedKey) of every song already played in this room. */
+  played: string[];
+};
 export type ActiveGame = { type: "hitline"; state: HitlineState; playerIds: string[] };
 
 export type Room = {
@@ -51,7 +57,7 @@ export function createRoom(code: string, owner: Member, now: number): Room {
     ownerId: owner.id,
     members: [owner],
     lastActivityAt: now,
-    lobby: { config: DEFAULT_HITLINE_CONFIG, deck: null },
+    lobby: { config: DEFAULT_HITLINE_CONFIG, deck: null, played: [] },
     game: null,
   };
 }
@@ -69,6 +75,34 @@ export function addMember(room: Room, member: Member, now: number): RoomResult {
     ok: true,
     room: { ...room, members: [...room.members, member], lastActivityAt: now },
   };
+}
+
+/** Card ids are regenerated per import, so identity is the Spotify URL, else the ISRC, else title|artists. */
+export function playedKey(card: Card): string {
+  return (
+    card.spotifyUrl ??
+    card.isrc ??
+    `${normalizeTitle(card.title)}|${card.artists.map(normalizeTitle).join(",")}`
+  );
+}
+
+/** Deck cards not played yet in this room. */
+export function unplayedCards(lobby: Lobby): Card[] {
+  const played = new Set(lobby.played);
+  return (lobby.deck?.cards ?? []).filter((card) => !played.has(playedKey(card)));
+}
+
+/**
+ * Every card that left the deck (dealt, drawn, skipped, bought, audio-missing) counts as played.
+ * Idempotent, so it runs both on reset and on a start straight from a finished game.
+ */
+export function foldPlayed(room: Room): Room {
+  const { game, lobby } = room;
+  if (!game || !lobby.deck) return room;
+  const inDeck = new Set(game.state.deck.map((card) => card.id));
+  const played = new Set(lobby.played);
+  for (const card of lobby.deck.cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
+  return { ...room, lobby: { ...lobby, played: [...played] } };
 }
 
 export function isOnline(member: Member): boolean {

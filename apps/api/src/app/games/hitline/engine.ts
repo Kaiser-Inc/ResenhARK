@@ -134,6 +134,8 @@ function gameOver(
   s.phase = "game-over";
   s.winners = winners;
   s.endReason = reason;
+  // A drawn card was already heard, so it leaves the deck and counts as played.
+  if (s.draw) s.deck.shift();
   s.draw = null;
   s.guess = null;
   s.contestDeadline = null;
@@ -183,6 +185,7 @@ function resolve(s: HitlineState, ctx: Ctx, events: HitlineEvent[]): void {
   const guess = s.guess as Guess;
   const year = draw.card.year;
   s.deck.shift();
+  s.draw = null; // consumed: gameOver must not shift it again
   const correct = isCorrectSlot(player.timeline, guess.slot, year);
   const titleOk = matchesTitle(guess.title, draw.card.title);
   const artistOk = matchesArtist(guess.artist, draw.card.artists);
@@ -379,7 +382,9 @@ export function apply(
 
 /** The hidden drawn card leaves play unrevealed: back to the bottom, no card data in any event. */
 function returnDrawToBottom(s: HitlineState): void {
-  if (s.draw) s.deck.push(s.deck.shift() as Card);
+  if (!s.draw) return;
+  s.deck.push(s.deck.shift() as Card);
+  s.draw = null; // back in the deck unheard: gameOver must not shift it out
 }
 
 function removePlayer(s: HitlineState, id: string, ctx: Ctx, events: HitlineEvent[]): void {

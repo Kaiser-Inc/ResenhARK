@@ -101,7 +101,7 @@ export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: Re
       {isOwner ? (
         <div>
           <Button type="button" loading={loading} onClick={() => void newGame()}>
-            Nova partida
+            Outra rodada
           </Button>
         </div>
       ) : (

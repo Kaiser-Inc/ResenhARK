@@ -2,17 +2,21 @@
 
 import type { Ack, ErrorCode, LobbyView } from "@resenhark/shared";
 import { TriangleAlertIcon } from "lucide-react";
+import Link from "next/link";
 import { useId, useState } from "react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+
+const linkClass = cn(buttonVariants({ variant: "link" }), "h-auto px-0");
 
 const IMPORT_ERRORS: Partial<Record<ErrorCode, string>> = {
   "playlist-invalid-link": "Link inválido. Cole o link de uma playlist do Spotify.",
   "playlist-no-access": "Sem acesso a esta playlist. Adicione Kaiser como colaborador.",
   "playlist-empty": "Playlist vazia",
-  "spotify-disconnected": "Spotify desconectado. Um admin precisa conectar em /admin/spotify",
+  "spotify-disconnected": "Spotify desconectado. X",
   "invalid-input": "Link inválido. Cole o link de uma playlist do Spotify.",
 };
 
@@ -22,9 +26,19 @@ type PlaylistImportProps = {
   warning: string | null;
   disabled: boolean;
   onImport: (link: string) => Promise<Ack>;
+  /** Songs not yet played in this room; the played-set controls show once it is below the count. */
+  remaining: number | null;
+  onResetPlayed: () => void;
 };
 
-export function PlaylistImport({ playlist, warning, disabled, onImport }: PlaylistImportProps) {
+export function PlaylistImport({
+  playlist,
+  warning,
+  disabled,
+  onImport,
+  remaining,
+  onResetPlayed,
+}: PlaylistImportProps) {
   const id = useId();
   const [link, setLink] = useState("");
   const [loading, setLoading] = useState(false);
@@ -68,8 +82,39 @@ export function PlaylistImport({ playlist, warning, disabled, onImport }: Playli
             Importar playlist
           </Button>
         </div>
-        {error ? <FieldError id={errorId}>{error}</FieldError> : null}
+        {error ? (
+          <FieldError id={errorId}>
+            {error}
+            {error === IMPORT_ERRORS["spotify-disconnected"] ? (
+              <>
+                {" "}
+                <Link href="/admin/spotify" className={cn(linkClass, "text-xs")}>
+                  Conectar Spotify
+                </Link>
+              </>
+            ) : null}
+          </FieldError>
+        ) : null}
+        <Link href="/admin/spotify" className={cn(linkClass, "w-full justify-start text-xs")}>
+          Admin do Spotify
+        </Link>
       </Field>
+      {playlist && remaining !== null && remaining < playlist.count ? (
+        <div className="flex flex-wrap items-center gap-3">
+          <output className="text-sm font-medium">
+            Restam {remaining} de {playlist.count} músicas
+          </output>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={disabled}
+            onClick={onResetPlayed}
+          >
+            Recomeçar músicas
+          </Button>
+        </div>
+      ) : null}
       {playlist ? (
         <output className="flex min-w-0 items-baseline gap-2 text-sm">
           <span className="font-medium">{playlist.count} faixas prontas</span>

@@ -31,7 +31,32 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
   assert.deepEqual(view.lobby, {
     config: DEFAULT_HITLINE_CONFIG,
     playlist: null,
+    remaining: null,
     smallPlaylist: false,
   });
   assert.equal(view.game, null);
+});
+
+test("projectRoom counts remaining songs and sizes the small-playlist warning against them", () => {
+  const card = (i: number) => ({
+    id: `c${i}`,
+    title: `T${i}`,
+    artists: ["A"],
+    year: 1990,
+    isrc: null,
+    spotifyUrl: null,
+  });
+  const room = createRoom("ABCDE", member("ana", 1), 0);
+  room.lobby = {
+    ...room.lobby,
+    config: { ...DEFAULT_HITLINE_CONFIG, targetCards: 5 },
+    deck: { name: "P", cards: Array.from({ length: 12 }, (_, i) => card(i)) },
+  };
+  // 1 online player, N=5: warns below 10 songs.
+  assert.equal(projectRoom(room, "ana", 0).lobby.smallPlaylist, false);
+  room.lobby.played = ["t0|a", "t1|a", "t2|a"];
+  const view = projectRoom(room, "ana", 0).lobby;
+  assert.equal(view.playlist?.count, 12);
+  assert.equal(view.remaining, 9);
+  assert.equal(view.smallPlaylist, true);
 });

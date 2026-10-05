@@ -7,7 +7,14 @@ import {
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
 import { RateLimiter } from "../domain/room/rate-limiter.js";
-import { type Room, isOnline, kick, leave } from "../domain/room/room.js";
+import {
+  type Room,
+  foldPlayed,
+  isOnline,
+  kick,
+  leave,
+  unplayedCards,
+} from "../domain/room/room.js";
 import { SYSTEM_ACTOR, apply, create } from "../games/hitline/engine.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
@@ -259,7 +266,28 @@ export function registerSocketGateway(
         if (!loaded.ok) return { ack: { ok: false, error: loaded.error } };
         const ack = await hub.mutate(code, (room) => {
           if (notOwner(room)) return { ok: false, error: "not-owner" };
-          return { ok: true, room: { ...room, lobby: { ...room.lobby, deck: loaded.playlist } } };
+          if (running(room)) return { ok: false, error: "game-running" };
+          // A new playlist starts a fresh played-set; a finished game's cards belong to the old deck.
+          return {
+            ok: true,
+            room: {
+              ...room,
+              game: null,
+              lobby: { ...room.lobby, deck: loaded.playlist, played: [] },
+            },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:reset-played",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, played: [] } } };
         });
         return { ack };
       }),
@@ -268,19 +296,24 @@ export function registerSocketGateway(
     socket.on(
       "game:start",
       intent(async () => {
-        const ack = await hub.mutate(code, (room) => {
-          if (notOwner(room)) return { ok: false, error: "not-owner" };
-          if (running(room)) return { ok: false, error: "game-running" };
-          const deck = room.lobby.deck;
-          if (!deck) return { ok: false, error: "no-deck" };
+        const ack = await hub.mutate(code, (folded) => {
+          if (notOwner(folded)) return { ok: false, error: "not-owner" };
+          if (running(folded)) return { ok: false, error: "game-running" };
+          // A finished game's songs count as played even when the owner skips "Outra rodada".
+          const room = foldPlayed(folded);
+          if (!room.lobby.deck) return { ok: false, error: "no-deck" };
+          const pool = unplayedCards(room.lobby);
           const playerIds = room.members
             .filter(isOnline)
             .sort((a, b) => a.joinedAt - b.joinedAt)
             .slice(0, room.lobby.config.maxPlayers)
             .map((m) => m.id);
           // Each player takes a card and at least one must remain to draw.
-          if (deck.cards.length <= playerIds.length) return { ok: false, error: "playlist-empty" };
-          const started = create(room.lobby.config, playerIds, deck.cards, ctx());
+          if (pool.length <= playerIds.length) {
+            const played = (room.lobby.played ?? []).length > 0;
+            return { ok: false, error: played ? "playlist-exhausted" : "playlist-empty" };
+          }
+          const started = create(room.lobby.config, playerIds, pool, ctx());
           return {
             ok: true,
             room: { ...room, game: { type: "hitline", state: started.state, playerIds } },
@@ -317,7 +350,7 @@ export function registerSocketGateway(
         const ack = await hub.mutate(code, (room) => {
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           if (!room.game || running(room)) return { ok: false, error: "no-game" };
-          return { ok: true, room: { ...room, game: null } };
+          return { ok: true, room: { ...foldPlayed(room), game: null } };
         });
         return { ack };
       }),

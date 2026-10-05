@@ -290,7 +290,7 @@ test("a stale missing-preview result after the game ended is ignored", async (t)
   await new Promise((resolve) => setTimeout(resolve, 100));
   const game = (await app.store.load(sessions[0].code))?.game;
   assert.equal(game?.state.endReason, "ended");
-  assert.equal(game?.state.deck.length, 19);
+  assert.equal(game?.state.deck.length, 18); // 1 dealt + the drawn card, which was heard
 });
 
 test("a draw that cannot be indexed fails the mutation and is not saved", async (t) => {
@@ -306,4 +306,106 @@ test("a draw that cannot be indexed fails the mutation and is not saved", async 
     error: "server-error",
   });
   assert.equal((await store.load(sessions[0].code))?.game?.state.draw, null);
+});
+
+const titles = (s: RoomStatePayload) =>
+  (s.room.game?.view.players ?? []).flatMap((p) => p.timeline.map((c) => c.title));
+
+async function finishRound(owner: Socket, watcher: Socket) {
+  assert.deepEqual(await emit(owner, "game:end"), { ok: true });
+  await stateWhere(watcher, (x) => x.room.game?.view.phase === "game-over");
+  assert.deepEqual(await emit(owner, "game:reset"), { ok: true });
+  return stateWhere(watcher, (x) => x.room.game === null);
+}
+
+test("another round never deals a song already played in the room", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
+  await ready(owner);
+  await emit(owner, "game:start");
+  const first = titles(await stateWhere(clients[1], (x) => x.room.game !== null));
+  assert.equal(first.length, 2);
+  const lobby = await finishRound(owner, clients[1]);
+  assert.equal(lobby.room.lobby.remaining, 6);
+  assert.equal(lobby.room.lobby.playlist?.count, 8);
+  await emit(owner, "game:start");
+  const second = await stateWhere(clients[1], (x) => x.room.game !== null);
+  assert.equal(second.room.game?.view.deckCount, 4);
+  for (const title of titles(second)) assert.ok(!first.includes(title), `${title} repeated`);
+});
+
+test("starting straight from a finished game also counts its songs as played", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
+  await ready(owner);
+  await emit(owner, "game:start");
+  await emit(owner, "game:end");
+  await stateWhere(clients[1], (x) => x.room.game?.view.phase === "game-over");
+  await emit(owner, "game:start");
+  const s = await stateWhere(clients[1], (x) => x.room.game?.view.phase === "turn-start");
+  assert.equal(s.room.game?.view.deckCount, 4);
+});
+
+test("importing a playlist resets the played songs", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
+  await ready(owner);
+  await emit(owner, "game:start");
+  await finishRound(owner, clients[1]);
+  assert.deepEqual(await emit(owner, "lobby:import", { link: "x" }), { ok: true });
+  const s = await stateWhere(clients[1], (x) => x.room.lobby.remaining === 8);
+  assert.equal(s.room.lobby.playlist?.count, 8);
+});
+
+test("lobby:reset-played is owner-only, blocked mid-game, and restores every song", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
+  await ready(owner);
+  await emit(owner, "game:start");
+  assert.deepEqual(await emit(owner, "lobby:reset-played"), { ok: false, error: "game-running" });
+  await finishRound(owner, clients[1]);
+  assert.deepEqual(await emit(clients[1], "lobby:reset-played"), { ok: false, error: "not-owner" });
+  assert.deepEqual(await emit(owner, "lobby:reset-played"), { ok: true });
+  const s = await stateWhere(clients[1], (x) => x.room.lobby.remaining === 8);
+  assert.equal(s.room.lobby.remaining, 8);
+});
+
+test("game:start with nothing left to draw points to Recomeçar músicas", async (t) => {
+  const { app, sessions, clients, owner } = await room(t, ["Ana", "Bia"], {
+    playlists: playlists(8),
+  });
+  await ready(owner);
+  await emit(owner, "game:start");
+  await finishRound(owner, clients[1]);
+  const stored = await app.store.load(sessions[0].code);
+  assert.ok(stored);
+  await app.store.save({
+    ...stored,
+    lobby: { ...stored.lobby, played: cards(8).map((c) => `${c.title.toLowerCase()}|a`) },
+  });
+  assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "playlist-exhausted" });
+  assert.deepEqual(await emit(owner, "lobby:reset-played"), { ok: true });
+  assert.deepEqual(await emit(owner, "game:start"), { ok: true });
+});
+
+test("a room stored before the played list existed still reports playlist-empty", async (t) => {
+  const { app, sessions, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(2) });
+  await ready(owner);
+  const stored = await app.store.load(sessions[0].code);
+  assert.ok(stored);
+  const { played: _played, ...legacyLobby } = stored.lobby;
+  await app.store.save({ ...stored, lobby: legacyLobby as typeof stored.lobby });
+  assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "playlist-empty" });
+});
+
+test("a drawn card counts as played even when the owner ends before the reveal", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], {
+    playlists: playlists(8),
+    audio: { findPreviewUrl: async () => "preview" },
+  });
+  await ready(owner);
+  await emit(owner, "game:start");
+  const started = await stateWhere(clients[1], (x) => x.room.game !== null);
+  const turn = started.room.game?.view.turnPlayerId;
+  const turnClient = clients[started.room.members.findIndex((m) => m.id === turn)];
+  assert.deepEqual(await emit(turnClient, "game:action", { type: "draw" }), { ok: true });
+  await stateWhere(clients[1], (x) => x.room.game?.view.phase === "guessing");
+  const lobby = await finishRound(owner, clients[1]);
+  assert.equal(lobby.room.lobby.remaining, 5); // 2 dealt + 1 drawn
 });

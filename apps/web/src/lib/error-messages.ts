@@ -14,6 +14,7 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   "playlist-invalid-link": "Link inválido. Cole o link de uma playlist do Spotify.",
   "playlist-no-access": "Sem acesso a esta playlist. Deixe-a pública ou conecte a conta dona dela.",
   "playlist-empty": "A playlist tem poucas faixas para começar.",
+  "playlist-exhausted": "Todas as músicas já foram sorteadas. Use Recomeçar músicas no lobby.",
   "no-deck": "Importe uma playlist antes de começar.",
   "game-running": "Já tem uma partida rolando.",
   "no-game": "Não tem partida rolando.",

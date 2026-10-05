@@ -107,7 +107,7 @@ test("owner starts a new game after the game is over", async ({ page }) => {
   await expect(
     page.getByRole("region", { name: "Resultado" }).getByText(/^\d+ fichas?$/),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Nova partida" }).click();
+  await page.getByRole("button", { name: "Outra rodada" }).click();
   await expect(page.getByText("40 faixas prontas")).toBeVisible();
   await page.reload();
   await expect(page.getByText("40 faixas prontas")).toBeVisible();

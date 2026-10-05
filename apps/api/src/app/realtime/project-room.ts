@@ -1,6 +1,6 @@
 import type { GameView, LobbyView, RoomView } from "@resenhark/shared";
 import { settings } from "../core/settings.js";
-import { type Room, isOnline } from "../domain/room/room.js";
+import { type Room, isOnline, unplayedCards } from "../domain/room/room.js";
 import { project } from "../games/hitline/project.js";
 import { audioPath } from "../http/audio-tickets.js";
 
@@ -9,12 +9,12 @@ export function projectRoom(room: Room, viewerId: string, now: number): RoomView
   const { game, lobby } = room;
   const onlineCount = room.members.filter(isOnline).length;
   const cap = Math.min(onlineCount, lobby.config.maxPlayers);
+  const remaining = lobby.deck ? unplayedCards(lobby).length : null;
   const lobbyView: LobbyView = {
     config: { ...lobby.config },
     playlist: lobby.deck ? { name: lobby.deck.name, count: lobby.deck.cards.length } : null,
-    smallPlaylist: lobby.deck
-      ? lobby.deck.cards.length < cap * lobby.config.targetCards * 2
-      : false,
+    remaining,
+    smallPlaylist: remaining !== null && remaining < cap * lobby.config.targetCards * 2,
   };
   const active = !!game && game.state.phase !== "game-over";
   let gameView: GameView | null = null;

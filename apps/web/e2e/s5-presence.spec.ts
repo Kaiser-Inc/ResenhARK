@@ -40,7 +40,7 @@ test("owner ends the game with confirmation and returns to the lobby", async ({ 
   await expect(page.getByRole("region", { name: "Resultado" })).toContainText(
     "Partida encerrada pelo dono.",
   );
-  await page.getByRole("button", { name: "Nova partida" }).click();
+  await page.getByRole("button", { name: "Outra rodada" }).click();
   await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeVisible();
 });
 

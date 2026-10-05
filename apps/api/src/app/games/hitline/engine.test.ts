@@ -728,6 +728,16 @@ test("removing the last-seat turn player wraps to the first", () => {
   const r = sys(state, { type: "remove", playerId: last });
   assert.equal(r.state.turn, 0);
 });
+test("removing the last player while a card is drawn does not consume an unheard card", () => {
+  const state = solo([1990], 2000);
+  const drawn = ok(apply(state, "a", { type: "draw" }, fixedCtx())).state;
+  const deckBefore = drawn.deck.map((c) => c.id);
+  const r = sys(drawn, { type: "remove", playerId: "a" });
+  assert.equal(r.state.phase, "game-over");
+  assert.equal(r.state.draw, null);
+  // The drawn card went back unrevealed; the deck must keep every card, never shift one out.
+  assert.equal(r.state.deck.length, deckBefore.length);
+});
 test("removing a non-turn player before the turn keeps the turn on the same player", () => {
   const { state, tp } = table(3, 2000);
   state.turn = 2;
