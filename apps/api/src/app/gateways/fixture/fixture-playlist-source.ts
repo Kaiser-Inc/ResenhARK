@@ -9,7 +9,7 @@ const SPOTIFY_URLS = [
 
 /**
  * Dev and e2e source: ignores the link, except that a link without "playlist" is invalid and
- * "private" / "empty" in the link give the no-access and empty errors.
+ * "private" / "disconnected" / "empty" in the link give the no-access, disconnected and empty errors.
  */
 export class FixturePlaylistSource implements PlaylistSource {
   constructor(private readonly newId: () => string) {}
@@ -17,6 +17,7 @@ export class FixturePlaylistSource implements PlaylistSource {
   async load(link: string) {
     if (!link.includes("playlist")) return { ok: false, error: "playlist-invalid-link" } as const;
     if (link.includes("private")) return { ok: false, error: "playlist-no-access" } as const;
+    if (link.includes("disconnected")) return { ok: false, error: "spotify-disconnected" } as const;
     if (link.includes("empty")) return { ok: false, error: "playlist-empty" } as const;
     return {
       ok: true,

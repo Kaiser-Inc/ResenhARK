@@ -1,4 +1,12 @@
-import { createRoomAs, expect, expectNoAxeViolations, test } from "./support";
+import {
+  createRoomAs,
+  expect,
+  expectNoAxeViolations,
+  setTheme,
+  shot,
+  test,
+  twoMembersInRoom,
+} from "./support";
 
 test("admin login shows the connection status", async ({ page }) => {
   await page.goto("/admin/spotify");
@@ -28,6 +36,35 @@ test("callback status in the url shows a toast", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/spotify$/);
 });
 
+test("owner lobby links to the Spotify admin, a member does not", async ({ browser }) => {
+  const { ana, bia, anaContext, biaContext } = await twoMembersInRoom(browser);
+  await expect(ana.getByRole("link", { name: "Admin do Spotify" })).toHaveAttribute(
+    "href",
+    "/admin/spotify",
+  );
+  await expect(bia.getByRole("link", { name: "Admin do Spotify" })).toHaveCount(0);
+  await anaContext.close();
+  await biaContext.close();
+});
+
+for (const [name, width, height] of [
+  ["390", 390, 844],
+  ["1440", 1440, 900],
+] as const) {
+  test(`owner lobby admin link screenshot ${name}`, async ({ page }) => {
+    await setTheme(page, "dark");
+    await page.setViewportSize({ width, height });
+    await createRoomAs(page, "Ana");
+    await expect(page.getByRole("link", { name: "Admin do Spotify" })).toBeVisible();
+    await shot(page, `admin-link-${name}-dark`);
+  });
+}
+
+test("admin page links back home", async ({ page }) => {
+  await page.goto("/admin/spotify");
+  await expect(page.getByRole("link", { name: "Voltar ao início" })).toHaveAttribute("href", "/");
+});
+
 test("lobby shows the invalid link message", async ({ page }) => {
   await createRoomAs(page, "Ana");
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/album/abc");
@@ -47,6 +84,17 @@ test("lobby shows the no access and empty messages", async ({ page }) => {
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/empty");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(page.getByText(/^Playlist vazia/)).toBeVisible();
+});
+
+test("lobby offers a Conectar Spotify link when Spotify is disconnected", async ({ page }) => {
+  await createRoomAs(page, "Ana");
+  await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/disconnected");
+  await page.getByRole("button", { name: "Importar playlist" }).click();
+  await expect(page.getByText(/Spotify desconectado/)).toBeVisible();
+  await expect(page.getByRole("link", { name: "Conectar Spotify" })).toHaveAttribute(
+    "href",
+    "/admin/spotify",
+  );
 });
 
 test("reveal shows a QR code next to the Spotify link when the card has one", async ({ page }) => {
@@ -87,7 +135,7 @@ test("connect refuses an authorize url that is not the Spotify consent page", as
   await page.goto("/admin/spotify");
   await page.getByRole("button", { name: "Conectar Spotify" }).click();
   await expect(page.getByText("Não deu para conectar. Tenta de novo.")).toBeVisible();
-  await expect(page).toHaveURL(/localhost:4000\/admin\/spotify$/);
+  await expect(page).toHaveURL(/localhost:4001\/admin\/spotify$/);
 });
 
 test("connect follows a Spotify authorize url", async ({ page }) => {
