@@ -45,8 +45,8 @@ function AlertDialogContent({
         data-slot="alert-dialog-content"
         data-size={size}
         className={cn(
-          // Bottom sheet below 640px, centered 720px dialog above (480px for size="sm").
-          "group/alert-dialog-content fixed inset-x-0 bottom-0 z-50 grid w-full gap-6 rounded-t-lg border-t border-border bg-popover p-6 text-popover-foreground shadow-[var(--shadow-overlay)] outline-hidden transition-[transform,scale,opacity] duration-300 ease-drawer data-starting-style:[transform:translateY(100%)] data-ending-style:[transform:translateY(100%)] data-ending-style:duration-200 sm:inset-x-auto sm:top-1/2 sm:bottom-auto sm:left-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg sm:border-t-0 sm:duration-200 sm:ease-out sm:data-starting-style:[transform:none] sm:data-ending-style:[transform:none] sm:data-starting-style:scale-96 sm:data-ending-style:scale-96 data-starting-style:opacity-0 data-ending-style:opacity-0 sm:data-ending-style:duration-150 dark:border dark:border-border data-[size=default]:sm:max-w-[720px] data-[size=sm]:sm:max-w-[480px]",
+          // Full-screen sheet below 640px, centered 720px dialog above (480px for size="sm").
+          "group/alert-dialog-content fixed inset-0 z-50 grid w-full content-center gap-6 rounded-none border-0 border-border bg-popover p-6 text-popover-foreground shadow-[var(--shadow-overlay)] outline-hidden transition-[transform,scale,opacity] duration-300 ease-drawer data-starting-style:[transform:translateY(100%)] data-ending-style:[transform:translateY(100%)] data-ending-style:duration-200 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:w-[calc(100%-2rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:rounded-lg sm:border sm:duration-200 sm:ease-out sm:data-starting-style:[transform:none] sm:data-ending-style:[transform:none] sm:data-starting-style:scale-96 sm:data-ending-style:scale-96 data-starting-style:opacity-0 data-ending-style:opacity-0 sm:data-ending-style:duration-150 data-[size=default]:sm:max-w-[720px] data-[size=sm]:sm:max-w-[480px]",
           className,
         )}
         {...props}

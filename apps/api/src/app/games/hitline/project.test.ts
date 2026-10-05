@@ -129,3 +129,17 @@ test("an offline player projects the deadline at which they lose the turn", () =
   assert.equal(players.find((p) => p.id === "a")?.offlineDeadline, 35_000);
   assert.equal(players.find((p) => p.id === "b")?.offlineDeadline, null);
 });
+
+test("the offline deadline is the effective one: never past the turn deadline, null when nobody else is online", () => {
+  const { state } = create(DEFAULT_HITLINE_CONFIG, ["a", "b"], deckOf(30), fixedCtx());
+  const tp = state.players[state.turn].id;
+  const other = state.players.find((p) => p.id !== tp)?.id as string;
+  const off = apply(state, tp, { type: "set-online", online: false }, fixedCtx(5_000));
+  assert.ok(off.ok);
+  off.state.turnDeadline = 20_000;
+  const view = (s: HitlineState) => project(s, other).players.find((p) => p.id === tp);
+  assert.equal(view(off.state)?.offlineDeadline, 20_000);
+  const alone = apply(off.state, other, { type: "set-online", online: false }, fixedCtx(6_000));
+  assert.ok(alone.ok);
+  assert.equal(view(alone.state)?.offlineDeadline, null);
+});

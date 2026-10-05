@@ -31,11 +31,13 @@ function Waiting({
 
 export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProps) {
   const deadline = view.phase === "contest" ? view.contestDeadline : view.turnDeadline;
-  const offlineDeadline =
-    view.phase === "turn-start" || view.phase === "guessing"
-      ? (view.players.find((p) => p.id === view.turnPlayerId)?.offlineDeadline ?? null)
-      : null;
-  const waiting = offlineDeadline !== null && turnMember;
+  const turnPlayer = view.players.find((p) => p.id === view.turnPlayerId);
+  const waiting =
+    !!turnMember &&
+    !!turnPlayer &&
+    !turnPlayer.online &&
+    (view.phase === "turn-start" || view.phase === "guessing");
+  const offlineDeadline = turnPlayer?.offlineDeadline ?? null;
   const showTimer = view.phase !== "game-over" && deadline !== null && !waiting;
   return (
     <div className="flex items-center gap-3">
@@ -54,8 +56,10 @@ export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProp
           {turnMember?.name ?? "Fim de jogo"}
         </p>
         <p aria-live="polite" className="text-sm text-muted-foreground">
-          {waiting ? (
+          {waiting && offlineDeadline !== null ? (
             <Waiting name={turnMember.name} deadline={offlineDeadline} clock={clock} />
+          ) : waiting ? (
+            `Aguardando ${turnMember.name}`
           ) : view.phase === "game-over" ? (
             ""
           ) : (

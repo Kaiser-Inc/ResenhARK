@@ -1,5 +1,5 @@
 import type { HitlineView, PublicCard, RevealView } from "@resenhark/shared";
-import { type Card, type HitlineState, OFFLINE_GRACE_MS, type Reveal } from "./engine.js";
+import { type Card, type HitlineState, type Reveal, offlineExpiry } from "./engine.js";
 
 // Every field is built explicitly: never spread a state object here, or hidden data leaks.
 export function toPublicCard(c: Card): PublicCard {
@@ -35,6 +35,9 @@ export function toRevealView(r: Reveal): RevealView {
 
 export function project(state: HitlineState, viewerId: string): HitlineView {
   const turnPlayerId = state.phase === "game-over" ? null : (state.players[state.turn]?.id ?? null);
+  const expiry =
+    state.phase === "turn-start" || state.phase === "guessing" ? offlineExpiry(state) : null;
+  const turnOfflineDeadline = expiry === null ? null : Math.min(state.turnDeadline, expiry);
   const isTurnPlayer = turnPlayerId !== null && viewerId === turnPlayerId;
   let guess: HitlineView["guess"] = null;
   if (state.guess) {
@@ -56,8 +59,7 @@ export function project(state: HitlineState, viewerId: string): HitlineView {
       id: p.id,
       tokens: p.tokens,
       online: p.online,
-      offlineDeadline:
-        p.online || p.offlineSince === null ? null : p.offlineSince + OFFLINE_GRACE_MS,
+      offlineDeadline: p.id === turnPlayerId ? turnOfflineDeadline : null,
       timeline: p.timeline.map(toPublicCard),
     })),
     draw: state.draw ? { id: state.draw.id, audioUrl: null } : null,

@@ -404,13 +404,9 @@ function removePlayer(s: HitlineState, id: string, ctx: Ctx, events: HitlineEven
 
 /** The turn player has been offline long enough to lose the turn (never when nobody is online). */
 function offlineExpired(s: HitlineState, now: number): boolean {
-  const p = s.players[s.turn];
   return (
     (s.phase === "turn-start" || s.phase === "guessing") &&
-    !p.online &&
-    p.offlineSince !== null &&
-    s.players.some((q) => q.online) &&
-    now >= p.offlineSince + OFFLINE_GRACE_MS
+    (offlineExpiry(s) ?? Number.POSITIVE_INFINITY) <= now
   );
 }
 
@@ -455,10 +451,13 @@ export function tick(
 export function nextDeadline(state: HitlineState): number | null {
   if (state.phase === "game-over") return null;
   if (state.phase === "contest") return state.contestDeadline;
-  const p = state.players[state.turn];
-  const offline =
-    !p.online && p.offlineSince !== null && state.players.some((q) => q.online)
-      ? p.offlineSince + OFFLINE_GRACE_MS
-      : Number.POSITIVE_INFINITY;
-  return Math.min(state.turnDeadline, offline);
+  return Math.min(state.turnDeadline, offlineExpiry(state) ?? Number.POSITIVE_INFINITY);
+}
+
+/** When the offline turn player loses the turn; null if they are online or nobody else is. */
+export function offlineExpiry(s: HitlineState): number | null {
+  const p = s.players[s.turn];
+  return !p.online && p.offlineSince !== null && s.players.some((q) => q.online)
+    ? p.offlineSince + OFFLINE_GRACE_MS
+    : null;
 }
