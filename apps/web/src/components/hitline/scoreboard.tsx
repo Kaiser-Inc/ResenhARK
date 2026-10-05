@@ -7,6 +7,7 @@ import { useState } from "react";
 
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
 import { useReduced } from "@/components/hitline/motion";
+import { TokenStack } from "@/components/hitline/token-stack";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -65,8 +66,8 @@ export function Scoreboard({ view, members }: ScoreboardProps) {
                   {player.timeline.length}/{view.config.targetCards}
                   {reveal?.receiverId === player.id ? <Gain key={reveal.card.id} /> : null}
                 </span>
-                <span className="relative w-16 text-right text-muted-foreground">
-                  {player.tokens} {player.tokens === 1 ? "ficha" : "fichas"}
+                <span className="relative flex w-24 justify-end">
+                  <TokenStack count={player.tokens} />
                   {reveal?.tokenAwarded && reveal.turnPlayerId === player.id ? (
                     <Gain key={reveal.card.id} />
                   ) : null}
