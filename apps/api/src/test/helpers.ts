@@ -35,7 +35,7 @@ export async function startTestServer(
   overrides: Partial<
     Pick<
       ServerDependencies,
-      "audio" | "fetchAudio" | "playlists" | "spotifyAuth" | "trustProxyHops"
+      "audio" | "fetchAudio" | "playlists" | "spotifyAuth" | "trustProxyHops" | "redis"
     >
   > & {
     /** Keeps the db's contents, to simulate a second API instance on the same Redis. */

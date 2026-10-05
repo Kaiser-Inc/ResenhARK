@@ -38,13 +38,30 @@ const envSchema = z
       });
       return z.NEVER;
     }
+    const playlistSource = env.PLAYLIST_SOURCE ?? (production ? "spotify" : "fixture");
+    if (playlistSource === "spotify") {
+      for (const key of [
+        "SPOTIFY_CLIENT_ID",
+        "SPOTIFY_CLIENT_SECRET",
+        "SPOTIFY_REDIRECT_URI",
+      ] as const) {
+        if (!env[key]) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: [key],
+            message: `${key} is required when PLAYLIST_SOURCE=spotify`,
+          });
+          return z.NEVER;
+        }
+      }
+    }
     return {
       ...env,
       ADMIN_PASSWORD: env.ADMIN_PASSWORD ?? "dev",
       SESSION_SECRET: env.SESSION_SECRET ?? DEV_SESSION_SECRET,
       // Seeds the rng (turn order, deck shuffle) for e2e; ignored outside NODE_ENV=test.
       E2E_SEED: env.NODE_ENV === "test" ? env.E2E_SEED : undefined,
-      PLAYLIST_SOURCE: env.PLAYLIST_SOURCE ?? (production ? "spotify" : "fixture"),
+      PLAYLIST_SOURCE: playlistSource,
     };
   });
 

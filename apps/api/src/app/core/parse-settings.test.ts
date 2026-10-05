@@ -4,6 +4,11 @@ import { parseSettings } from "./parse-settings.js";
 
 const secret = "x".repeat(32);
 const adminPassword = "p".repeat(12);
+const spotify = {
+  SPOTIFY_CLIENT_ID: "id",
+  SPOTIFY_CLIENT_SECRET: "secret",
+  SPOTIFY_REDIRECT_URI: "https://api.example.com/admin/spotify/callback",
+};
 
 test("development without SESSION_SECRET falls back to the dev default", () => {
   const result = parseSettings({ NODE_ENV: "development" });
@@ -27,6 +32,7 @@ test("production with a 32+ char SESSION_SECRET passes and keeps it", () => {
     NODE_ENV: "production",
     SESSION_SECRET: secret,
     ADMIN_PASSWORD: adminPassword,
+    ...spotify,
   });
   assert.ok(result.success);
   assert.equal(result.data.SESSION_SECRET, secret);
@@ -67,4 +73,25 @@ test("TRUST_PROXY_HOPS defaults to 0", () => {
   const unset = parseSettings({ NODE_ENV: "development" });
   assert.ok(unset.success);
   assert.equal(unset.data.TRUST_PROXY_HOPS, 0);
+});
+
+test("PLAYLIST_SOURCE=spotify fails fast when any SPOTIFY_* is missing", () => {
+  const base = { NODE_ENV: "production", SESSION_SECRET: secret, ADMIN_PASSWORD: adminPassword };
+  for (const key of Object.keys(spotify) as (keyof typeof spotify)[]) {
+    const { [key]: _omitted, ...rest } = spotify;
+    const result = parseSettings({ ...base, ...rest });
+    assert.equal(result.success, false, key);
+    assert.ok(result.error?.flatten().fieldErrors[key]);
+  }
+  assert.ok(parseSettings({ ...base, ...spotify }).success);
+});
+
+test("PLAYLIST_SOURCE=fixture needs no Spotify credentials, even in production", () => {
+  const result = parseSettings({
+    NODE_ENV: "production",
+    SESSION_SECRET: secret,
+    ADMIN_PASSWORD: adminPassword,
+    PLAYLIST_SOURCE: "fixture",
+  });
+  assert.ok(result.success);
 });
