@@ -22,7 +22,11 @@ export function useSecondsLeft(deadline: number, clock: ServerClock): number {
 export function Countdown({ deadline, clock }: { deadline: number; clock: ServerClock }) {
   const seconds = useSecondsLeft(deadline, clock);
   return (
-    <span role="timer" className="font-mono text-base font-semibold tabular-nums">
+    <span
+      role="timer"
+      aria-label="Tempo restante"
+      className="font-mono text-base font-semibold tabular-nums"
+    >
       {seconds}s
     </span>
   );

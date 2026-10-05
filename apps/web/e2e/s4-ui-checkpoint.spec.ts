@@ -54,10 +54,10 @@ for (const viewport of VIEWPORTS) {
       const [x, y] = pages.filter((p) => p !== turn);
 
       await draw(turn).click();
-      await turn.getByRole("button", { name: "Sortear outra (1)" }).click();
+      await turn.getByRole("button", { name: "Sortear outra (1 ficha)" }).click();
       await expect(turn.getByText(/Carta descartada/)).toBeVisible();
-      await turn.getByRole("button", { name: "Sortear outra (1)" }).click();
-      await expect(turn.getByRole("button", { name: "Sortear outra (1)" })).toBeDisabled();
+      await turn.getByRole("button", { name: "Sortear outra (1 ficha)" }).click();
+      await expect(turn.getByRole("button", { name: "Sortear outra (1 ficha)" })).toBeDisabled();
       await shot(turn, name("disabled-reasons"));
 
       const card = await peekDraw(code);

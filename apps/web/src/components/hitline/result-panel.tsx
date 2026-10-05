@@ -51,6 +51,7 @@ export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelPr
           <li key={player.id} className="flex items-center gap-3">
             <span className="min-w-0 flex-1 truncate font-medium">{name(player.id)}</span>
             <span className="font-mono tabular-nums">
+              <span className="sr-only">cartas </span>
               {player.timeline.length}/{view.config.targetCards}
             </span>
             <span className="w-16 text-right text-muted-foreground">

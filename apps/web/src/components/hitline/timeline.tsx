@@ -16,6 +16,8 @@ type TimelineProps = {
   /** Gaps are only buttons for the turn player while guessing. */
   interactive: boolean;
   selectedSlot: number | null;
+  /** Gaps are a pick (aria-pressed) when guessing, a one-shot action when contesting. */
+  selectable?: boolean;
   onSelect: (slot: number) => void;
   taken?: TakenGap[];
 };
@@ -32,6 +34,7 @@ export function Timeline({
   cards,
   interactive,
   selectedSlot,
+  selectable = true,
   onSelect,
   taken = [],
 }: TimelineProps) {
@@ -82,7 +85,7 @@ export function Timeline({
         <button
           type="button"
           data-gap
-          aria-pressed={selectedSlot === slot}
+          aria-pressed={selectable ? selectedSlot === slot : undefined}
           onClick={() => onSelect(slot)}
           className={cn(
             "flex h-8 w-full items-center gap-2 rounded-md border border-dashed px-3 text-sm transition-colors duration-[120ms] ease-out outline-hidden hover:bg-accent focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring",

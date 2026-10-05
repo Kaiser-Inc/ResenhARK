@@ -152,7 +152,8 @@ export function HitlineBoard({
             <Timeline
               ownerName={turnMember?.name ?? ""}
               cards={turnPlayer.timeline}
-              interactive={(guessing || canContest) && connected}
+              interactive={(guessing || canContest) && connected && pending === null}
+              selectable={!canContest}
               selectedSlot={chosenSlot}
               taken={taken}
               onSelect={(slot) =>

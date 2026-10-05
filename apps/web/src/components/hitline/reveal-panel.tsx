@@ -26,7 +26,7 @@ function Mark({ ok, label, children }: { ok: boolean; label: string; children?: 
 
 const typed = (text: string) => (
   <span className="min-w-0 truncate text-muted-foreground">
-    {text ? `escreveu "${text}"` : "em branco"}
+    {text ? `escreveu “${text}”` : "em branco"}
   </span>
 );
 
@@ -48,9 +48,10 @@ export function RevealPanel({ reveal, members }: { reveal: RevealView; members: 
           href={card.spotifyUrl}
           target="_blank"
           rel="noreferrer"
-          className="w-fit text-sm text-primary-text underline-offset-4 hover:underline"
+          className="w-fit text-sm text-primary-text underline-offset-4 outline-hidden hover:underline focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           Ouvir no Spotify
+          <span className="sr-only"> (abre em nova aba)</span>
         </a>
       ) : null}
       <div className="flex flex-col gap-1">

@@ -111,7 +111,7 @@ export function CardInPlay({
               reason={offline ?? disabledReason(view, you, "buy")}
               onClick={onBuy}
             >
-              Comprar carta ({BUY_COST})
+              Comprar carta ({BUY_COST} fichas)
             </ActionButton>
           </div>
         ) : null}
@@ -127,7 +127,7 @@ export function CardInPlay({
                   value={guessText.title}
                   maxLength={100}
                   autoComplete="off"
-                  placeholder="ex.: Wonderwall"
+                  placeholder="ex.: Wonderwall…"
                   onChange={(e) => onGuessText({ ...guessText, title: e.target.value })}
                 />
               </Field>
@@ -140,7 +140,7 @@ export function CardInPlay({
                   value={guessText.artist}
                   maxLength={100}
                   autoComplete="off"
-                  placeholder="ex.: Oasis"
+                  placeholder="ex.: Oasis…"
                   onChange={(e) => onGuessText({ ...guessText, artist: e.target.value })}
                 />
               </Field>
@@ -161,7 +161,7 @@ export function CardInPlay({
                 reason={offline ?? disabledReason(view, you, "skip")}
                 onClick={onSkip}
               >
-                Sortear outra ({SKIP_COST})
+                Sortear outra ({SKIP_COST} ficha)
               </ActionButton>
               <ActionButton
                 id="buy"
@@ -170,7 +170,7 @@ export function CardInPlay({
                 reason={offline ?? disabledReason(view, you, "buy")}
                 onClick={onBuy}
               >
-                Comprar carta ({BUY_COST})
+                Comprar carta ({BUY_COST} fichas)
               </ActionButton>
             </div>
           </>

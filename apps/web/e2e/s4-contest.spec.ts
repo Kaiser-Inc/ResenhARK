@@ -37,7 +37,7 @@ test("skip shows the discarded card and costs a token", async ({ browser }) => {
   const { turn, other, turnName } = await startTwoPlayerGame(browser);
   await turn.getByRole("button", { name: "Puxar carta" }).click();
   await expect(row(turn, turnName)).toContainText("2 fichas");
-  await turn.getByRole("button", { name: "Sortear outra (1)" }).click();
+  await turn.getByRole("button", { name: "Sortear outra (1 ficha)" }).click();
   for (const page of [turn, other]) {
     await expect(page.getByText(/Carta descartada: \d{4}/)).toBeVisible();
     await expect(row(page, turnName)).toContainText("1 ficha");
@@ -46,7 +46,7 @@ test("skip shows the discarded card and costs a token", async ({ browser }) => {
 
 test("buy is disabled with a reason after one purchase", async ({ browser }) => {
   const { code, turn, other, turnName } = await startTwoPlayerGame(browser);
-  const buy = turn.getByRole("button", { name: "Comprar carta (3)" });
+  const buy = turn.getByRole("button", { name: "Comprar carta (3 fichas)" });
   await expect(buy).toBeDisabled();
   await expect(buy).toHaveAccessibleDescription("Sem fichas");
 
