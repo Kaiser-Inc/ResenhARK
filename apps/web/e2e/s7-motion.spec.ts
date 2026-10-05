@@ -45,6 +45,12 @@ test("reduced motion: reveal does not rotate, translate or scale", async ({ brow
   expect(samples.length).toBeGreaterThan(0);
   for (const t of samples) expect(t).toMatch(IDENTITY);
   await expect(page.locator("[data-expression]").first()).toBeVisible();
+  // Final state is reached without movement: the odometer reads the year, the card shows its outcome.
+  const reveal = page.getByRole("region", { name: "Virada" });
+  const year = (await reveal.locator(".sr-only").first().innerText()).trim();
+  await expect(reveal.getByTestId("odometer")).toHaveText(year);
+  await expect(reveal.getByText(/^[✓✗]$/)).toBeVisible();
+  await expect(reveal.getByText("?", { exact: true })).toBeHidden();
 });
 
 test("full motion: reveal rotates the card", async ({ page }) => {

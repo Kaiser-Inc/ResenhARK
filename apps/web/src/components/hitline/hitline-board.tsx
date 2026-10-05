@@ -122,7 +122,13 @@ export function HitlineBoard({
         {notice}
       </output>
       {view.phase === "game-over" ? (
-        <ResultPanel view={view} members={room.members} isOwner={isOwner} onNewGame={onNewGame} />
+        <ResultPanel
+          view={view}
+          members={room.members}
+          isOwner={isOwner}
+          onNewGame={onNewGame}
+          celebrate={events.some((e) => e.type === "game-over")}
+        />
       ) : (
         <>
           <CardInPlay

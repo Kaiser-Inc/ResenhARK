@@ -37,7 +37,8 @@ export function shapeTrait(shape: Shape): number {
 export function expressionFor(memberId: string, view: HitlineView): MemberExpression {
   if (view.phase === "game-over") return view.winners.includes(memberId) ? "love" : "idle";
   if (view.phase === "guessing" && view.turnPlayerId === memberId) return "thinking";
-  const reveal = view.lastReveal;
+  // The reveal reaction lasts until the next card is drawn.
+  const reveal = view.phase === "turn-start" ? view.lastReveal : null;
   if (!reveal) return "idle";
   if (reveal.receiverId === memberId) return "happy";
   if (reveal.turnPlayerId === memberId) return reveal.receiverId ? "mad" : "sad";

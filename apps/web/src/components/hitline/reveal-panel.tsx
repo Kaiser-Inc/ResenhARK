@@ -75,12 +75,15 @@ function FlipCard({ hit }: { hit: boolean }) {
         animate={reduce ? { opacity: 1 } : { rotateY: 180 }}
         transition={reduce ? FADE : SPRING}
       >
-        <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] font-semibold text-primary-text [backface-visibility:hidden]">
-          ?
-        </div>
+        {reduce ? null : (
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] font-semibold text-primary-text [backface-visibility:hidden]">
+            ?
+          </div>
+        )}
         <div
           className={cn(
-            "absolute inset-0 flex [transform:rotateY(180deg)] items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] font-semibold [backface-visibility:hidden]",
+            "absolute inset-0 flex items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] font-semibold [backface-visibility:hidden]",
+            reduce ? "" : "[transform:rotateY(180deg)]",
             hit ? "text-success" : "text-destructive",
           )}
         >

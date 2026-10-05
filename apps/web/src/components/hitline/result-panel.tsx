@@ -3,7 +3,7 @@
 import type { Ack, HitlineView, MemberView } from "@resenhark/shared";
 
 import { motion } from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
@@ -23,15 +23,20 @@ type ResultPanelProps = {
   members: MemberView[];
   isOwner: boolean;
   onNewGame: () => Promise<Ack>;
+  /** True only when the game-over event just arrived (not on a reload into a finished game). */
+  celebrate: boolean;
 };
 
-export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelProps) {
+export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: ResultPanelProps) {
   const [loading, setLoading] = useState(false);
   const reduce = useReduced();
   // One burst when the result appears; skipped entirely under reduced motion.
+  const fired = useRef(false);
   // biome-ignore lint/correctness/useExhaustiveDependencies: fires once per mount
   useEffect(() => {
-    if (!reduce && view.winners.length > 0) fireConfetti();
+    if (fired.current) return; // dev StrictMode runs effects twice
+    fired.current = true;
+    if (celebrate && !reduce && view.winners.length > 0) fireConfetti();
   }, []);
   async function newGame() {
     setLoading(true);

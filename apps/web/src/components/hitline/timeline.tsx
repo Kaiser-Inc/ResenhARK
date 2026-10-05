@@ -47,7 +47,10 @@ export function Timeline({
   const reduce = useReduced();
   const [flashId, setFlashId] = useState<string | null>(null);
   useEffect(() => {
-    if (!highlightCardId) return;
+    if (!highlightCardId) {
+      setFlashId(null);
+      return;
+    }
     setFlashId(highlightCardId);
     const id = setTimeout(() => setFlashId(null), 1000);
     return () => clearTimeout(id);
