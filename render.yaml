@@ -4,6 +4,7 @@ services:
     name: resenhark-api
     runtime: docker
     plan: free
+    region: oregon # pick the same region in Upstash
     dockerfilePath: ./apps/api/Dockerfile
     dockerContext: .
     healthCheckPath: /health

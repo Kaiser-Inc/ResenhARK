@@ -8,3 +8,5 @@ playwright-report
 .serena/
 next-env.d.ts
 *.tsbuildinfo
+
+.env*.local

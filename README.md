@@ -65,11 +65,14 @@ Multi-stage on `node:22-alpine`, runs as the non-root `node` user. `@resenhark/s
 
 Do these in order. Nothing here is automated; each account is yours.
 
-1. **Upstash Redis.** Create a free Redis database, pick the region closest to Render's. Copy the `rediss://default:<password>@<host>:6379` URL.
-2. **Render API.** New > Blueprint > this repo (`render.yaml`). Fill the `sync: false` variables: `ADMIN_PASSWORD`, `REDIS_URL`, `SPOTIFY_*`, and placeholders for `PUBLIC_API_URL`, `CORS_ORIGIN`, `WEB_URL` (fixed in step 5). `SESSION_SECRET` is generated. Health check is `/health`. After the first deploy, note the URL `https://<service>.onrender.com` and set `PUBLIC_API_URL` and `SPOTIFY_REDIRECT_URI=https://<service>.onrender.com/admin/spotify/callback`.
-3. **Spotify app.** [developer.spotify.com](https://developer.spotify.com/dashboard) > Create app. Keep it in Development Mode. Add the redirect URI from step 2 exactly. The account that owns the app must have Premium (a Development Mode requirement). Only the admin ever logs in to Spotify; players never do, so the 5-user Development Mode cap does not affect the room. Add collaborators under User Management only if someone else will connect Spotify. Put Client ID and Secret into Render.
-4. **Vercel web.** Import the repo, Root Directory `apps/web`, env `NEXT_PUBLIC_API_URL=https://<service>.onrender.com`. Deploy and copy the Vercel URL.
-5. **Back on Render.** Set `CORS_ORIGIN` and `WEB_URL` to the Vercel URL (no trailing slash). Render redeploys.
+Render's blueprint pins `region: oregon`; pick the same region in Upstash (or change both together). Because the API refuses to boot in production without every variable, the order below matters. To smoke the deploy before Spotify exists, set `PLAYLIST_SOURCE=fixture` on Render (the `SPOTIFY_*` variables are then not required) and switch back later.
+
+1. **Upstash Redis.** Create a free Redis database in the region matching Render's. Copy the `rediss://default:<password>@<host>:6379` URL.
+2. **Spotify app.** [developer.spotify.com](https://developer.spotify.com/dashboard) > Create app, keep it in Development Mode, no redirect URI yet. The account that owns the app must have Premium (a Development Mode requirement). Copy Client ID and Secret. Only the admin ever logs in to Spotify; players never do, so the 5-user Development Mode cap does not affect the room. Add collaborators under User Management only if someone else will connect Spotify.
+3. **Render API.** New > Blueprint > this repo (`render.yaml`). Fill the `sync: false` variables: `ADMIN_PASSWORD`, `REDIS_URL`, `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`. `SESSION_SECRET` is generated. `PUBLIC_API_URL`, `CORS_ORIGIN`, `WEB_URL` and `SPOTIFY_REDIRECT_URI` must be non-empty to boot, so use placeholders (`https://placeholder.invalid`) for now. Health check is `/health`. After the first deploy, read the real hostname `https://<service>.onrender.com` from the dashboard.
+4. **Connect the two.** Set `PUBLIC_API_URL=https://<service>.onrender.com` and `SPOTIFY_REDIRECT_URI=https://<service>.onrender.com/admin/spotify/callback` on Render. Add that same redirect URI in the Spotify app settings, exactly.
+5. **Vercel web.** Import the repo, framework preset Next.js, Root Directory `apps/web`, keep "Include files outside of the Root Directory in the Build Step" on (the web imports `packages/shared`), Node.js 22.x, env `NEXT_PUBLIC_API_URL=https://<service>.onrender.com`. Deploy and copy the Vercel URL.
+6. **Back-fill Render.** Set `CORS_ORIGIN` and `WEB_URL` to the Vercel URL (no trailing slash). Render redeploys.
 
 ### First-use checklist
 

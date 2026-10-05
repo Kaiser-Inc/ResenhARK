@@ -6,16 +6,16 @@ const envSchema = z
   .object({
     PORT: z.coerce.number().default(3333),
     NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-    CORS_ORIGIN: z.string().default("http://localhost:4000"),
+    CORS_ORIGIN: z.string().optional(),
     REDIS_URL: z.string().default("redis://localhost:6379/0"),
     SESSION_SECRET: z.string().min(32).optional(),
     ADMIN_PASSWORD: z.string().optional(),
     TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
-    PUBLIC_API_URL: z.string().default("http://127.0.0.1:3333"),
+    PUBLIC_API_URL: z.string().optional(),
     SPOTIFY_CLIENT_ID: z.string().optional(),
     SPOTIFY_CLIENT_SECRET: z.string().optional(),
     SPOTIFY_REDIRECT_URI: z.string().optional(),
-    WEB_URL: z.string().default("http://localhost:4000"),
+    WEB_URL: z.string().optional(),
     PLAYLIST_SOURCE: z.enum(["spotify", "fixture"]).optional(),
     AUDIO_SOURCE: z.enum(["real", "fixture"]).default("real"),
     E2E_SEED: z.coerce.number().int().optional(),
@@ -38,6 +38,16 @@ const envSchema = z
       });
       return z.NEVER;
     }
+    for (const key of ["CORS_ORIGIN", "WEB_URL", "PUBLIC_API_URL"] as const) {
+      if (production && !env[key]) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: [key],
+          message: `${key} is required in production`,
+        });
+        return z.NEVER;
+      }
+    }
     const playlistSource = env.PLAYLIST_SOURCE ?? (production ? "spotify" : "fixture");
     if (playlistSource === "spotify") {
       for (const key of [
@@ -57,6 +67,9 @@ const envSchema = z
     }
     return {
       ...env,
+      CORS_ORIGIN: env.CORS_ORIGIN ?? "http://localhost:4000",
+      WEB_URL: env.WEB_URL ?? "http://localhost:4000",
+      PUBLIC_API_URL: env.PUBLIC_API_URL ?? "http://127.0.0.1:3333",
       ADMIN_PASSWORD: env.ADMIN_PASSWORD ?? "dev",
       SESSION_SECRET: env.SESSION_SECRET ?? DEV_SESSION_SECRET,
       // Seeds the rng (turn order, deck shuffle) for e2e; ignored outside NODE_ENV=test.

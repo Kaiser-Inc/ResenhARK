@@ -4,6 +4,11 @@ import { parseSettings } from "./parse-settings.js";
 
 const secret = "x".repeat(32);
 const adminPassword = "p".repeat(12);
+const urls = {
+  CORS_ORIGIN: "https://web.example.com",
+  WEB_URL: "https://web.example.com",
+  PUBLIC_API_URL: "https://api.example.com",
+};
 const spotify = {
   SPOTIFY_CLIENT_ID: "id",
   SPOTIFY_CLIENT_SECRET: "secret",
@@ -33,6 +38,7 @@ test("production with a 32+ char SESSION_SECRET passes and keeps it", () => {
     SESSION_SECRET: secret,
     ADMIN_PASSWORD: adminPassword,
     ...spotify,
+    ...urls,
   });
   assert.ok(result.success);
   assert.equal(result.data.SESSION_SECRET, secret);
@@ -76,7 +82,12 @@ test("TRUST_PROXY_HOPS defaults to 0", () => {
 });
 
 test("PLAYLIST_SOURCE=spotify fails fast when any SPOTIFY_* is missing", () => {
-  const base = { NODE_ENV: "production", SESSION_SECRET: secret, ADMIN_PASSWORD: adminPassword };
+  const base = {
+    NODE_ENV: "production",
+    SESSION_SECRET: secret,
+    ADMIN_PASSWORD: adminPassword,
+    ...urls,
+  };
   for (const key of Object.keys(spotify) as (keyof typeof spotify)[]) {
     const { [key]: _omitted, ...rest } = spotify;
     const result = parseSettings({ ...base, ...rest });
@@ -92,6 +103,27 @@ test("PLAYLIST_SOURCE=fixture needs no Spotify credentials, even in production",
     SESSION_SECRET: secret,
     ADMIN_PASSWORD: adminPassword,
     PLAYLIST_SOURCE: "fixture",
+    ...urls,
   });
   assert.ok(result.success);
+});
+
+test("production requires CORS_ORIGIN, WEB_URL and PUBLIC_API_URL; development defaults them", () => {
+  const base = {
+    NODE_ENV: "production",
+    SESSION_SECRET: secret,
+    ADMIN_PASSWORD: adminPassword,
+    ...spotify,
+  };
+  for (const key of Object.keys(urls) as (keyof typeof urls)[]) {
+    const { [key]: _omitted, ...rest } = urls;
+    const result = parseSettings({ ...base, ...rest });
+    assert.equal(result.success, false, key);
+    assert.ok(result.error?.flatten().fieldErrors[key]);
+  }
+  assert.ok(parseSettings({ ...base, ...urls }).success);
+  const dev = parseSettings({ NODE_ENV: "development" });
+  assert.ok(dev.success);
+  assert.equal(dev.data.CORS_ORIGIN, "http://localhost:4000");
+  assert.equal(dev.data.PUBLIC_API_URL, "http://127.0.0.1:3333");
 });
