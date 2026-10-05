@@ -41,7 +41,9 @@ test("lobby shows the no access and empty messages", async ({ page }) => {
   await createRoomAs(page, "Ana");
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/private");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByText(/^Sem acesso a esta playlist/)).toBeVisible();
+  await expect(
+    page.getByText("Sem acesso a esta playlist. Adicione Kaiser como colaborador."),
+  ).toBeVisible();
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/empty");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(page.getByText(/^Playlist vazia/)).toBeVisible();
@@ -68,4 +70,42 @@ test("reveal shows a QR code next to the Spotify link when the card has one", as
   const qr = reveal.getByRole("img", { name: "QR code para ouvir no Spotify" });
   await expect(qr).toBeVisible();
   expect(await qr.boundingBox()).toMatchObject({ width: 96, height: 96 });
+});
+
+async function loggedInWithMocks(page: import("@playwright/test").Page, authorizeUrl: string) {
+  await page.addInitScript(() => sessionStorage.setItem("resenhark:admin-token", "mock"));
+  await page.route("**/admin/spotify/status", (route) =>
+    route.fulfill({ json: { connected: false, configured: true } }),
+  );
+  await page.route("**/admin/spotify/authorize", (route) =>
+    route.fulfill({ json: { authorizeUrl } }),
+  );
+}
+
+test("connect refuses an authorize url that is not the Spotify consent page", async ({ page }) => {
+  await loggedInWithMocks(page, "https://evil.example/authorize");
+  await page.goto("/admin/spotify");
+  await page.getByRole("button", { name: "Conectar Spotify" }).click();
+  await expect(page.getByText("Não deu para conectar. Tenta de novo.")).toBeVisible();
+  await expect(page).toHaveURL(/localhost:4000\/admin\/spotify$/);
+});
+
+test("connect follows a Spotify authorize url", async ({ page }) => {
+  await loggedInWithMocks(page, "https://accounts.spotify.com/authorize?client_id=x");
+  await page.route("https://accounts.spotify.com/**", (route) =>
+    route.fulfill({ body: "spotify consent", contentType: "text/plain" }),
+  );
+  await page.goto("/admin/spotify");
+  await page.getByRole("button", { name: "Conectar Spotify" }).click();
+  await expect(page).toHaveURL(/^https:\/\/accounts\.spotify\.com\/authorize/);
+});
+
+test("a 401 on status clears the token and shows the login form", async ({ page }) => {
+  await page.addInitScript(() => sessionStorage.setItem("resenhark:admin-token", "stale"));
+  await page.route("**/admin/spotify/status", (route) =>
+    route.fulfill({ status: 401, json: { error: "unauthorized" } }),
+  );
+  await page.goto("/admin/spotify");
+  await expect(page.getByLabel("Senha", { exact: true })).toBeVisible();
+  expect(await page.evaluate(() => sessionStorage.getItem("resenhark:admin-token"))).toBeNull();
 });

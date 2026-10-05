@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 
 const IMPORT_ERRORS: Partial<Record<ErrorCode, string>> = {
   "playlist-invalid-link": "Link inválido. Cole o link de uma playlist do Spotify.",
-  "playlist-no-access": "Sem acesso a esta playlist. Deixe-a pública ou conecte a conta dona dela.",
+  "playlist-no-access": "Sem acesso a esta playlist. Adicione Kaiser como colaborador.",
   "playlist-empty": "Playlist vazia",
   "spotify-disconnected": "Spotify desconectado. Um admin precisa conectar em /admin/spotify",
   "invalid-input": "Link inválido. Cole o link de uma playlist do Spotify.",

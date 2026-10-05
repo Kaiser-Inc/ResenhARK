@@ -83,7 +83,12 @@ export async function adminAuthorize(token: string): Promise<string> {
   const { authorizeUrl } = (await (
     await adminRequest("/admin/spotify/authorize", token, "POST")
   ).json()) as { authorizeUrl: string };
-  return authorizeUrl;
+  // Only ever follow the Spotify consent page, whatever the server (or a proxy) returns.
+  const url = new URL(authorizeUrl);
+  if (url.protocol !== "https:" || url.hostname !== "accounts.spotify.com") {
+    throw new ApiError("invalid-authorize-url", 0);
+  }
+  return url.href;
 }
 
 export async function adminDisconnect(token: string): Promise<void> {
