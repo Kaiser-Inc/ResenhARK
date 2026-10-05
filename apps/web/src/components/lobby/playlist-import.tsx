@@ -42,7 +42,7 @@ export function PlaylistImport({ playlist, warning, disabled, onImport }: Playli
 
   const errorId = `${id}-error`;
   return (
-    <form onSubmit={submit} className="flex flex-col gap-3">
+    <form onSubmit={submit} noValidate className="flex flex-col gap-3">
       <Field data-invalid={!!error}>
         <FieldLabel htmlFor={id}>Link da playlist</FieldLabel>
         <div className="flex flex-col gap-2 sm:flex-row">
