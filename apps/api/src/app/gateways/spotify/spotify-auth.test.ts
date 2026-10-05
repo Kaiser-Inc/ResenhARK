@@ -87,3 +87,29 @@ test("refresh stores a rotated refresh token", async () => {
   await auth.accessToken();
   assert.equal(store.value, "r2");
 });
+
+test("concurrent accessToken calls share one refresh", async () => {
+  let calls = 0;
+  const auth = mk(memStore("r"), async () => {
+    calls++;
+    await new Promise((r) => setTimeout(r, 5));
+    return Response.json({ access_token: "a", expires_in: 3600 });
+  });
+  const [a, b] = await Promise.all([auth.accessToken(), auth.accessToken()]);
+  assert.equal(a, "a");
+  assert.equal(b, "a");
+  assert.equal(calls, 1);
+});
+
+test("exchangeCode throws on a non-OK response or a missing refresh_token", async () => {
+  const store = memStore();
+  await assert.rejects(
+    mk(store, async () => Response.json({ error: "invalid_grant" }, { status: 400 })).exchangeCode(
+      "c",
+    ),
+  );
+  await assert.rejects(
+    mk(store, async () => Response.json({ access_token: "a", expires_in: 60 })).exchangeCode("c"),
+  );
+  assert.equal(store.value, null);
+});

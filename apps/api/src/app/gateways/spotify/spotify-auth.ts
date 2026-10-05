@@ -4,9 +4,11 @@ export interface SpotifyTokenStore {
 }
 
 const TOKEN_URL = "https://accounts.spotify.com/api/token";
+const TIMEOUT_MS = 10_000;
 const SCOPE = "playlist-read-private playlist-read-collaborative";
 
 export class SpotifyAuth {
+  private inflight: Promise<string | null> | null = null;
   private cached: { token: string; expiresAt: number } | null = null;
 
   constructor(
@@ -47,6 +49,13 @@ export class SpotifyAuth {
 
   async accessToken(): Promise<string | null> {
     if (this.cached && this.deps.now() < this.cached.expiresAt) return this.cached.token;
+    this.inflight ??= this.refresh().finally(() => {
+      this.inflight = null;
+    });
+    return this.inflight;
+  }
+
+  private async refresh(): Promise<string | null> {
     const refresh = await this.deps.store.getRefreshToken();
     if (!refresh) return null;
     const res = await this.tokenRequest({ grant_type: "refresh_token", refresh_token: refresh });
@@ -87,6 +96,7 @@ export class SpotifyAuth {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: new URLSearchParams(params).toString(),
+      signal: AbortSignal.timeout(TIMEOUT_MS),
     });
   }
 }

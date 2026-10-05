@@ -150,3 +150,77 @@ test("no refresh token means spotify-disconnected", async () => {
   const r = await setup(happy, null).source.load(link);
   assert.deepEqual(r, { ok: false, error: "spotify-disconnected" });
 });
+
+const rateLimited = (retryAfter?: string) =>
+  setup(() =>
+    retryAfter === undefined
+      ? new Response("", { status: 429 })
+      : new Response("", { status: 429, headers: { "Retry-After": retryAfter } }),
+  );
+
+test("429 fails fast when Retry-After exceeds the cap and falls back to 1 s when unusable", async () => {
+  const huge = rateLimited("3600");
+  await assert.rejects(huge.source.load(link));
+  assert.deepEqual(huge.sleeps, []);
+  for (const v of [undefined, "Wed, 21 Oct 2026 07:28:00 GMT"]) {
+    const t = rateLimited(v);
+    await assert.rejects(t.source.load(link));
+    assert.deepEqual(t.sleeps, [1000, 2000, 4000]);
+  }
+});
+
+test("429 stops when the total wait budget is exhausted", async () => {
+  const t = rateLimited("10");
+  await assert.rejects(t.source.load(link));
+  assert.deepEqual(t.sleeps, [10000, 20000]);
+});
+
+test("tracks with a missing or invalid release_date are skipped", async () => {
+  const mk = (id: string, release_date?: string) => ({
+    item: {
+      type: "track",
+      id,
+      name: id,
+      artists: [{ name: "a" }],
+      album: release_date === undefined ? {} : { release_date },
+      external_urls: { spotify: "u" },
+    },
+  });
+  const t = setup((url) =>
+    url.includes("fields=name")
+      ? Response.json({ name: "x" })
+      : Response.json({
+          next: null,
+          items: [mk("a"), mk("b", "abcd"), mk("c", "0"), mk("d", "2001-01-01")],
+        }),
+  );
+  const r = await t.source.load(link);
+  assert.ok(r.ok);
+  assert.deepEqual(
+    r.playlist.cards.map((c) => c.title),
+    ["d"],
+  );
+});
+
+test("a next link on a foreign origin is rejected and never fetched", async () => {
+  const t = setup((url) =>
+    url.includes("fields=name")
+      ? Response.json({ name: "x" })
+      : Response.json({ next: "https://evil.example/steal", items: [] }),
+  );
+  await assert.rejects(t.source.load(link));
+  assert.ok(!t.urls.some((u) => u.includes("evil.example")));
+});
+
+test("pagination is capped", async () => {
+  const t = setup((url) =>
+    url.includes("fields=name")
+      ? Response.json({ name: "x" })
+      : Response.json({
+          next: `https://api.spotify.com/v1/playlists/${ID}/items?offset=1`,
+          items: [],
+        }),
+  );
+  await assert.rejects(t.source.load(link));
+  assert.ok(t.urls.length <= 52);
+});
