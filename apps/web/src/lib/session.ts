@@ -39,3 +39,23 @@ export function clearSession(code: string): void {
     // Nothing to clear if storage is unavailable.
   }
 }
+
+const ADMIN_KEY = "resenhark:admin-token";
+
+// sessionStorage only: the admin token must not outlive the tab.
+export function loadAdminToken(): string | null {
+  try {
+    return sessionStorage.getItem(ADMIN_KEY);
+  } catch {
+    return null;
+  }
+}
+
+export function saveAdminToken(token: string | null): void {
+  try {
+    if (token) sessionStorage.setItem(ADMIN_KEY, token);
+    else sessionStorage.removeItem(ADMIN_KEY);
+  } catch {
+    // Storage blocked: the admin logs in again after a reload.
+  }
+}

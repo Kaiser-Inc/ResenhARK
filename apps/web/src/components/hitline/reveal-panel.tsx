@@ -1,5 +1,6 @@
 import type { MemberView, RevealView } from "@resenhark/shared";
 import { CheckIcon, XIcon } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 import { cn } from "@/lib/utils";
 
@@ -44,15 +45,27 @@ export function RevealPanel({ reveal, members }: { reveal: RevealView; members: 
         {card.title} · {artists}
       </p>
       {card.spotifyUrl ? (
-        <a
-          href={card.spotifyUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="w-fit text-sm text-primary-text underline-offset-4 outline-hidden hover:underline focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring"
-        >
-          Ouvir no Spotify
-          <span className="sr-only"> (abre em nova aba)</span>
-        </a>
+        <div className="flex items-center gap-4">
+          <a
+            href={card.spotifyUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="w-fit text-sm text-primary-text underline-offset-4 outline-hidden hover:underline focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring"
+          >
+            Ouvir no Spotify
+            <span className="sr-only"> (abre em nova aba)</span>
+          </a>
+          {/* Dark modules on a light tile in both themes (scanners expect that polarity): the tile is the
+              light token and the modules the dark one, set by CSS because attributes cannot use var(). */}
+          <QRCodeSVG
+            value={card.spotifyUrl}
+            size={96}
+            marginSize={2}
+            role="img"
+            aria-label="QR code para ouvir no Spotify"
+            className="shrink-0 rounded-sm [&>path:first-child]:fill-background dark:[&>path:first-child]:fill-foreground [&>path:last-child]:fill-foreground dark:[&>path:last-child]:fill-background"
+          />
+        </div>
       ) : null}
       <div className="flex flex-col gap-1">
         {guess ? (

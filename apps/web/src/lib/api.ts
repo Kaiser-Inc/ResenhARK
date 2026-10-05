@@ -55,3 +55,37 @@ export async function roomExists(code: string): Promise<boolean> {
   if (response.status === 404) return false;
   throw new ApiError("unknown", response.status);
 }
+
+async function adminRequest(path: string, token: string, method: "GET" | "POST") {
+  const response = await request(path, { method, headers: { authorization: `Bearer ${token}` } });
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as { error?: unknown } | null;
+    throw new ApiError(
+      typeof payload?.error === "string" ? payload.error : "unknown",
+      response.status,
+    );
+  }
+  return response;
+}
+
+export async function adminLogin(password: string): Promise<string> {
+  const { adminToken } = await postJson<{ adminToken: string }>("/admin/login", { password });
+  return adminToken;
+}
+
+export async function adminStatus(
+  token: string,
+): Promise<{ connected: boolean; configured: boolean }> {
+  return (await adminRequest("/admin/spotify/status", token, "GET")).json();
+}
+
+export async function adminAuthorize(token: string): Promise<string> {
+  const { authorizeUrl } = (await (
+    await adminRequest("/admin/spotify/authorize", token, "POST")
+  ).json()) as { authorizeUrl: string };
+  return authorizeUrl;
+}
+
+export async function adminDisconnect(token: string): Promise<void> {
+  await adminRequest("/admin/spotify/disconnect", token, "POST");
+}
