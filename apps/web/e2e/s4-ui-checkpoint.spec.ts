@@ -77,7 +77,8 @@ for (const viewport of VIEWPORTS) {
         .getByRole("button", { name: /Inserir/ })
         .last()
         .click();
-      await expect(y.getByText(/contestou/)).toBeVisible();
+      // The sr-only Announcer live region repeats this text; assert the visible one.
+      await expect(y.getByText(/contestou/).and(y.locator(":not(.sr-only)"))).toBeVisible();
       await shot(y, name("contest-occupied"));
       if (viewport.name === "390") {
         await y.getByRole("tab", { name: "Chat" }).click();

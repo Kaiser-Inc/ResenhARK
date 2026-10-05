@@ -1,8 +1,8 @@
 import { createRequire } from "node:module";
 import path from "node:path";
 
-const WEB_URL = process.env.E2E_BASE_URL ?? "http://localhost:4000";
-const API_URL = "http://localhost:3333";
+const WEB_URL = process.env.E2E_BASE_URL ?? "http://localhost:4001";
+const API_URL = "http://localhost:3334";
 
 async function warm(url: string): Promise<void> {
   const deadline = Date.now() + 120_000;
