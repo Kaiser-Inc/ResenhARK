@@ -76,6 +76,11 @@ export class SpotifyAuth {
     this.cached = null;
   }
 
+  async disconnect(): Promise<void> {
+    this.cached = null;
+    await this.deps.store.setRefreshToken(null);
+  }
+
   async isConnected(): Promise<boolean> {
     return (await this.deps.store.getRefreshToken()) !== null;
   }

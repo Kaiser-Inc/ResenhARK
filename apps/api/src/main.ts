@@ -9,11 +9,24 @@ import { createFetchAudio } from "./app/gateways/audio/fetch-audio.js";
 import { FixturePreview } from "./app/gateways/audio/fixture-preview.js";
 import { ItunesPreview } from "./app/gateways/audio/itunes-preview.js";
 import { FixturePlaylistSource } from "./app/gateways/fixture/fixture-playlist-source.js";
+import { SpotifyAuth } from "./app/gateways/spotify/spotify-auth.js";
 import { RedisRoomStore } from "./app/repositories/redis-room-store.js";
+import { RedisSpotifyTokenStore } from "./app/repositories/redis-spotify-token-store.js";
 
 async function bootstrap(): Promise<void> {
   const redis = createRedis(settings.REDIS_URL);
+  const spotifyAuth =
+    settings.SPOTIFY_CLIENT_ID && settings.SPOTIFY_CLIENT_SECRET && settings.SPOTIFY_REDIRECT_URI
+      ? new SpotifyAuth({
+          clientId: settings.SPOTIFY_CLIENT_ID,
+          clientSecret: settings.SPOTIFY_CLIENT_SECRET,
+          redirectUri: settings.SPOTIFY_REDIRECT_URI,
+          store: new RedisSpotifyTokenStore(redis),
+          now: () => Date.now(),
+        })
+      : undefined;
   const { fastify, hub } = await createServer({
+    spotifyAuth,
     store: new RedisRoomStore(redis),
     redis,
     now: () => Date.now(),
