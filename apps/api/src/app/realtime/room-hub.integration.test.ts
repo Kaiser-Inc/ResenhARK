@@ -1,7 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { DEFAULT_HITLINE_CONFIG } from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { createRoomVia, startTestServer } from "../../test/helpers.js";
+import { create } from "../games/hitline/engine.js";
+import { deckOf, fixedCtx } from "../games/hitline/test-deck.js";
 import { RoomHub } from "./room-hub.js";
 
 const failingIo = {
@@ -67,4 +70,49 @@ test("a failure before save rejects and leaves the queue usable", async (t) => {
     /boom/,
   );
   assert.deepEqual(await hub.mutate(code, rename("Next")), { ok: true });
+});
+
+test("a touch failure does not skip the broadcast", async (t) => {
+  const { code, errors, deps, onError } = await setup(t);
+  const store = Object.create(deps.store, {
+    touch: {
+      value: async () => {
+        throw new Error("touch down");
+      },
+    },
+  });
+  let broadcasts = 0;
+  const io = {
+    in: () => ({
+      fetchSockets: async () => {
+        broadcasts += 1;
+        return [];
+      },
+    }),
+  } as unknown as Server;
+  const hub = new RoomHub({ ...deps, store, io, onError });
+  assert.deepEqual(await hub.mutate(code, rename("Renamed")), { ok: true });
+  assert.equal(broadcasts, 1);
+  assert.match(String(errors[0]), /touch down/);
+});
+
+test("an all-offline game room is left alone by timers so it can expire", async (t) => {
+  const { app, code, deps } = await setup(t);
+  const hub = new RoomHub(deps);
+  t.after(() => hub.dispose());
+  const room = (await app.store.load(code)) as NonNullable<
+    Awaited<ReturnType<typeof app.store.load>>
+  >;
+  const { state } = create(DEFAULT_HITLINE_CONFIG, [room.ownerId, "p2"], deckOf(20), fixedCtx());
+  for (const p of state.players) p.online = false;
+  const seeded = {
+    ...room,
+    game: { type: "hitline" as const, state, playerIds: [room.ownerId, "p2"] },
+  };
+  await app.store.save(seeded);
+  assert.deepEqual(await hub.mutate(code, (r) => ({ ok: true as const, room: r })), { ok: true });
+  assert.equal(hub.pendingTimers(), 0);
+  app.clock.set(app.clock.now() + 10 * 60 * 60 * 1000);
+  await hub.runDueTimers();
+  assert.deepEqual((await app.store.load(code))?.game?.state, state);
 });

@@ -274,6 +274,8 @@ export function apply(
     if (system) return { ok: false, error: "wrong-phase" };
     const me = s.players.find((p) => p.id === actorId) as Player;
     if (action.online) {
+      // Nobody was online, so the room was paused: the returning player gets a fresh turn timer.
+      if (!s.players.some((p) => p.online)) s.turnDeadline = ctx.now + s.config.guessSeconds * 1000;
       me.online = true;
       me.offlineSince = null;
     } else if (me.online) {
@@ -416,6 +418,8 @@ export function tick(
 ): { state: HitlineState; events: HitlineEvent[] } {
   const s = structuredClone(state);
   const events: HitlineEvent[] = [];
+  // Paused: with nobody online nothing ticks, so an abandoned room can expire (Ruling R26).
+  if (!s.players.some((p) => p.online)) return { state: s, events };
   for (let i = 0; i < 50 && s.phase !== "game-over"; i++) {
     const pid = s.players[s.turn].id;
     if (s.phase === "contest") {
@@ -449,7 +453,7 @@ export function tick(
 }
 
 export function nextDeadline(state: HitlineState): number | null {
-  if (state.phase === "game-over") return null;
+  if (state.phase === "game-over" || !state.players.some((p) => p.online)) return null;
   if (state.phase === "contest") return state.contestDeadline;
   return Math.min(state.turnDeadline, offlineExpiry(state) ?? Number.POSITIVE_INFINITY);
 }

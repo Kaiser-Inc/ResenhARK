@@ -48,6 +48,8 @@ export function createFetchAudio(
     const res = await fetchFn(url, { redirect: "error", signal: AbortSignal.timeout(timeoutMs) });
     if (!res.ok) return new Response(null, { status: 404 });
     const body = await readCapped(res, max);
+    // An empty file is a missing preview: 404 so the card is auto-skipped.
+    if (body.length === 0) return new Response(null, { status: 404 });
     return new Response(new Uint8Array(body), {
       headers: { "content-type": res.headers.get("content-type") ?? "audio/mpeg" },
     });

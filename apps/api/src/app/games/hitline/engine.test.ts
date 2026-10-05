@@ -677,11 +677,24 @@ test("tick resets the clock after a pass instead of looping forever", () => {
   assert.equal(r.events.length, 1);
   assert.equal(r.state.turnDeadline, 10_120_000);
 });
-test("an all-offline table only runs on the guess timer", () => {
+test("an all-offline table is paused: no deadline, tick does nothing", () => {
   const { state, tp, o1 } = table(2, 2000);
   const off = setOnline(setOnline(state, tp, false, 0), o1, false, 0);
   assert.equal(tick(off, fixedCtx(60_000)).events.length, 0);
-  assert.equal(nextDeadline(off), 120_000);
+  assert.equal(nextDeadline(off), null);
+  const far = tick(off, fixedCtx(10_000_000));
+  assert.deepEqual(far.events, []);
+  assert.deepEqual(far.state, off);
+});
+test("the first player back online restarts the turn timer", () => {
+  const { state, tp, o1 } = table(2, 2000);
+  const off = setOnline(setOnline(state, tp, false, 0), o1, false, 0);
+  const back = setOnline(off, tp, true, 500_000);
+  assert.equal(back.turnDeadline, 500_000 + 120_000);
+  assert.equal(tick(back, fixedCtx(500_001)).events.length, 0);
+  // a second player joining later must not push the deadline again
+  const both = setOnline(back, o1, true, 510_000);
+  assert.equal(both.turnDeadline, 620_000);
 });
 test("removing the turn player passes the turn and returns the drawn card unrevealed", () => {
   const { state, tp, o1 } = drawnTable(3, 2000);

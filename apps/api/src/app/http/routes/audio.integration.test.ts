@@ -24,11 +24,17 @@ const card: Card = {
 let app: TestServer;
 let owner: TestSession;
 const fetched: string[] = [];
+let lookups = 0;
 let failBody = false;
 
 before(async () => {
   app = await startTestServer({
-    audio: { findPreviewUrl: async () => PROVIDER_URL },
+    audio: {
+      findPreviewUrl: async () => {
+        lookups += 1;
+        return PROVIDER_URL;
+      },
+    },
     fetchAudio: async (url) => {
       fetched.push(url);
       if (failBody) {
@@ -111,5 +117,45 @@ test("a failing upstream body stream returns 404", async () => {
     assert.deepEqual(res.json(), { error: "not-found" });
   } finally {
     failBody = false;
+  }
+});
+
+test("many viewers of one draw cost a single provider lookup and fetch", async () => {
+  await seedDraw("d5");
+  const [lookupsBefore, fetchedBefore] = [lookups, fetched.length];
+  const responses = await Promise.all(Array.from({ length: 8 }, () => get(ticketPath("d5"))));
+  for (const res of responses) assert.deepEqual(res.rawPayload, BODY);
+  await get(ticketPath("d5"));
+  assert.equal(lookups - lookupsBefore, 1);
+  assert.equal(fetched.length - fetchedBefore, 1);
+});
+
+const range = (drawId: string, value: string) =>
+  app.fastify.inject({ method: "GET", url: ticketPath(drawId), headers: { range: value } });
+
+test("a Range request is served as 206 with the right slice from the buffer", async () => {
+  await seedDraw("d6");
+  const fetchedBefore = fetched.length;
+  const res = await range("d6", "bytes=2-5");
+  assert.equal(res.statusCode, 206);
+  assert.equal(res.headers["content-range"], `bytes 2-5/${BODY.length}`);
+  assert.equal(res.headers["accept-ranges"], "bytes");
+  assert.equal(res.headers["content-length"], "4");
+  assert.equal(res.headers["cache-control"], "no-store");
+  assert.deepEqual(res.rawPayload, BODY.subarray(2, 6));
+  const open = await range("d6", "bytes=10-");
+  assert.deepEqual(open.rawPayload, BODY.subarray(10));
+  assert.equal(open.headers["content-range"], `bytes 10-${BODY.length - 1}/${BODY.length}`);
+  const suffix = await range("d6", "bytes=-3");
+  assert.deepEqual(suffix.rawPayload, BODY.subarray(BODY.length - 3));
+  assert.equal(fetched.length - fetchedBefore, 1);
+});
+
+test("an unsatisfiable or invalid Range returns 416", async () => {
+  await seedDraw("d7");
+  for (const value of [`bytes=${BODY.length}-`, "bytes=5-2", "bytes=-0", "bytes=a-b"]) {
+    const res = await range("d7", value);
+    assert.equal(res.statusCode, 416, value);
+    assert.equal(res.headers["content-range"], `bytes */${BODY.length}`);
   }
 });

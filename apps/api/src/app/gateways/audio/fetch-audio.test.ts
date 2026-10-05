@@ -55,3 +55,10 @@ test("fetch is called with redirect error and a timeout signal", async () => {
   assert.equal(init?.redirect, "error");
   assert.ok(init?.signal instanceof AbortSignal);
 });
+
+test("an empty or missing upstream body is treated as missing (404)", async () => {
+  const url = "https://x.dzcdn.net/a.mp3";
+  assert.equal((await createFetchAudio(ok(""))(url)).status, 404);
+  const noBody = (async () => new Response(null, { status: 200 })) as typeof fetch;
+  assert.equal((await createFetchAudio(noBody)(url)).status, 404);
+});

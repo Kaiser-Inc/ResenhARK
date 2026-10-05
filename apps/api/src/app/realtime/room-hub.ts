@@ -59,6 +59,11 @@ export class RoomHub {
     this.timers.set(code, { timer, deadline });
   }
 
+  /** Test hook: how many rooms have an armed timer. */
+  pendingTimers(): number {
+    return this.timers.size;
+  }
+
   /** Test hook: ticks every room whose deadline is due on the injected clock, without sleeping. */
   async runDueTimers(): Promise<void> {
     const due = [...this.timers].filter(([, { deadline }]) => deadline <= this.deps.now());
@@ -249,13 +254,22 @@ export class RoomHub {
     await store.save(room);
     this.schedule(room.code, room);
     // Commit boundary: the room is saved, so the mutation succeeded whatever happens next.
+    // Separate steps: a chat or touch failure must never hide the committed state from clients.
     try {
       for (const text of system) {
         const message = systemMessage(text, newId(), now());
         await store.appendChat(room.code, message);
         io.to(socketRoom(room.code)).emit(SOCKET_EVENTS.chatMessage, message);
       }
+    } catch (err) {
+      this.deps.onError?.(err);
+    }
+    try {
       await store.touch(room.code);
+    } catch (err) {
+      this.deps.onError?.(err);
+    }
+    try {
       await this.broadcast(room.code, room, events);
     } catch (err) {
       this.deps.onError?.(err);
