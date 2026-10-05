@@ -1,0 +1,166 @@
+{
+  "href": "x",
+  "limit": 2,
+  "offset": 0,
+  "total": 7,
+  "previous": null,
+  "next": "https://api.spotify.com/v1/playlists/37i9dQZF1DXcBWIGoYBM5M/items?offset=3&limit=50&additional_types=track",
+  "items": [
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": false,
+      "item": {
+        "type": "track",
+        "id": "t1",
+        "name": "Mr. Brightside",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "The Killers"
+          }
+        ],
+        "album": {
+          "release_date": "2004-06-07"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t1"
+        },
+        "external_ids": {
+          "isrc": "ISRCt1"
+        }
+      },
+      "track": {
+        "type": "track",
+        "id": "t1",
+        "name": "Mr. Brightside",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "The Killers"
+          }
+        ],
+        "album": {
+          "release_date": "2004-06-07"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t1"
+        },
+        "external_ids": {
+          "isrc": "ISRCt1"
+        }
+      }
+    },
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": false,
+      "item": {
+        "type": "episode",
+        "id": "e1",
+        "name": "Podcast ep",
+        "is_local": false,
+        "release_date": "2020-01-01"
+      },
+      "track": {
+        "type": "episode",
+        "id": "e1",
+        "name": "Podcast ep",
+        "is_local": false,
+        "release_date": "2020-01-01"
+      }
+    },
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": true,
+      "item": {
+        "type": "track",
+        "id": "t3",
+        "name": "Local Song",
+        "is_local": true,
+        "artists": [
+          {
+            "name": "Me"
+          }
+        ],
+        "album": {
+          "release_date": "2000"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t3"
+        },
+        "external_ids": {
+          "isrc": "ISRCt3"
+        }
+      },
+      "track": {
+        "type": "track",
+        "id": "t3",
+        "name": "Local Song",
+        "is_local": true,
+        "artists": [
+          {
+            "name": "Me"
+          }
+        ],
+        "album": {
+          "release_date": "2000"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t3"
+        },
+        "external_ids": {
+          "isrc": "ISRCt3"
+        }
+      }
+    },
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": false,
+      "item": null,
+      "track": null
+    },
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": false,
+      "item": {
+        "type": "track",
+        "id": "t2",
+        "name": "Bohemian Rhapsody",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "Queen"
+          }
+        ],
+        "album": {
+          "release_date": "1975"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t2"
+        },
+        "external_ids": {
+          "isrc": "ISRCt2"
+        }
+      },
+      "track": {
+        "type": "track",
+        "id": "t2",
+        "name": "Bohemian Rhapsody",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "Queen"
+          }
+        ],
+        "album": {
+          "release_date": "1975"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t2"
+        },
+        "external_ids": {
+          "isrc": "ISRCt2"
+        }
+      }
+    }
+  ]
+}

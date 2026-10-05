@@ -1,0 +1,36 @@
+# Render Blueprint. Create it from the dashboard: New > Blueprint > pick this repo.
+services:
+  - type: web
+    name: resenhark-api
+    runtime: docker
+    plan: free
+    region: oregon # pick the same region in Upstash
+    dockerfilePath: ./apps/api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TRUST_PROXY_HOPS
+        value: "1"
+      - key: PLAYLIST_SOURCE
+        value: spotify
+      - key: SESSION_SECRET
+        generateValue: true
+      # Set these in the dashboard (sync: false = never stored in the repo).
+      - key: ADMIN_PASSWORD # 12+ chars
+        sync: false
+      - key: REDIS_URL # Upstash, rediss://default:<password>@<host>:6379
+        sync: false
+      - key: PUBLIC_API_URL # https://<service>.onrender.com
+        sync: false
+      - key: CORS_ORIGIN # Vercel URL, no trailing slash
+        sync: false
+      - key: WEB_URL # Vercel URL, no trailing slash
+        sync: false
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
+      - key: SPOTIFY_REDIRECT_URI # https://<service>.onrender.com/admin/spotify/callback
+        sync: false

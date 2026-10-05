@@ -1,0 +1,117 @@
+{
+  "next": null,
+  "items": [
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": false,
+      "item": {
+        "type": "track",
+        "id": "t4",
+        "name": "No ISRC",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "A"
+          },
+          {
+            "name": "B"
+          }
+        ],
+        "album": {
+          "release_date": "2007-04-22"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t4"
+        }
+      },
+      "track": {
+        "type": "track",
+        "id": "t4",
+        "name": "No ISRC",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "A"
+          },
+          {
+            "name": "B"
+          }
+        ],
+        "album": {
+          "release_date": "2007-04-22"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t4"
+        }
+      }
+    },
+    {
+      "added_at": "2024-01-01T00:00:00Z",
+      "is_local": false,
+      "item": {
+        "type": "track",
+        "id": "t1",
+        "name": "Mr. Brightside",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "The Killers"
+          }
+        ],
+        "album": {
+          "release_date": "2004-06-07"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t1"
+        },
+        "external_ids": {
+          "isrc": "ISRCt1"
+        }
+      },
+      "track": {
+        "type": "track",
+        "id": "t1",
+        "name": "Mr. Brightside",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "The Killers"
+          }
+        ],
+        "album": {
+          "release_date": "2004-06-07"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t1"
+        },
+        "external_ids": {
+          "isrc": "ISRCt1"
+        }
+      }
+    },
+    {
+      "added_at": "x",
+      "is_local": false,
+      "track": {
+        "type": "track",
+        "id": "t5",
+        "name": "Legacy Track Field",
+        "is_local": false,
+        "artists": [
+          {
+            "name": "C"
+          }
+        ],
+        "album": {
+          "release_date": "1999-12-31"
+        },
+        "external_urls": {
+          "spotify": "https://open.spotify.com/track/t5"
+        },
+        "external_ids": {
+          "isrc": "ISRCt5"
+        }
+      }
+    }
+  ]
+}

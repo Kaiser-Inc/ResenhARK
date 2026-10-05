@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/.env
+.git
+.superpowers
+.dev-flow
+apps/web
+**/.env*.local

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 60" role="img" aria-label="ResenhARK">
+  <g fill="oklch(0.93 0.004 286)">
+    <g data-logo-piece="bubble"><path d="M16 2h32a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6H38l-6 8-6-8H16a6 6 0 0 1-6-6V8a6 6 0 0 1 6-6Z"/></g>
+    <g data-logo-piece="hull-left"><path d="M3 44h27v16H14Z"/></g>
+  </g>
+  <g data-logo-piece="hull-right" fill="oklch(0.74 0.12 293)"><path d="M34 44h27L50 60H34Z"/></g>
+</svg>

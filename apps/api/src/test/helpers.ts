@@ -1,0 +1,201 @@
+import assert from "node:assert/strict";
+import type { AddressInfo } from "node:net";
+import { type ChatMessage, type RoomStatePayload, SOCKET_EVENTS } from "@resenhark/shared";
+import type { FastifyInstance } from "fastify";
+import { Redis } from "ioredis";
+import type { Server } from "socket.io";
+import { type Socket, io as connect } from "socket.io-client";
+import { type ServerDependencies, createServer } from "../app/core/server.js";
+import { FixturePlaylistSource } from "../app/gateways/fixture/fixture-playlist-source.js";
+import type { RoomHub } from "../app/realtime/room-hub.js";
+import { RedisRoomStore } from "../app/repositories/redis-room-store.js";
+
+export const TEST_REDIS_URL = "redis://localhost:6379/15";
+
+export type TestServer = {
+  fastify: FastifyInstance;
+  io: Server;
+  hub: RoomHub;
+  store: RedisRoomStore;
+  clock: { now: () => number; set: (ms: number) => void };
+  url: string;
+  close: () => Promise<void>;
+};
+
+// Deterministic LCG so generated room codes are reproducible and still distinct.
+function seededRng(seed: number): () => number {
+  let state = seed;
+  return () => {
+    state = (state * 1664525 + 1013904223) % 2 ** 32;
+    return state / 2 ** 32;
+  };
+}
+
+export async function startTestServer(
+  overrides: Partial<
+    Pick<
+      ServerDependencies,
+      "audio" | "fetchAudio" | "playlists" | "spotifyAuth" | "trustProxyHops" | "redis"
+    >
+  > & {
+    /** Keeps the db's contents, to simulate a second API instance on the same Redis. */
+    keepData?: boolean;
+  } = {},
+): Promise<TestServer> {
+  const { keepData, ...deps } = overrides;
+  const redis = new Redis(TEST_REDIS_URL);
+  if (!keepData) await redis.flushdb();
+  const store = new RedisRoomStore(redis);
+
+  let current = 1_000_000;
+  const clock = {
+    now: () => current,
+    set: (ms: number) => {
+      current = ms;
+    },
+  };
+  let counter = 0;
+
+  const { fastify, io, hub } = await createServer({
+    store,
+    redis,
+    now: clock.now,
+    rng: seededRng(42),
+    newId: () => `id-${++counter}`,
+    audio: { findPreviewUrl: async () => null },
+    playlists: new FixturePlaylistSource(() => `id-${++counter}`),
+    fetchAudio: async () => new Response(null, { status: 404 }),
+    ...deps,
+    logger: false,
+  });
+  await fastify.listen({ port: 0, host: "127.0.0.1" });
+  const { port } = fastify.server.address() as AddressInfo;
+
+  return {
+    fastify,
+    io,
+    hub,
+    store,
+    clock,
+    url: `http://127.0.0.1:${port}`,
+    // io.close() also closes the shared http server, so fastify.close() only runs its hooks.
+    close: async () => {
+      await io.close();
+      await fastify.close();
+      redis.disconnect();
+    },
+  };
+}
+
+const defaultAvatar = { hue: 275, shape: "organic" } as const;
+
+export type TestSession = { code: string; memberId: string; sessionToken: string };
+
+export async function createRoomVia(app: TestServer, name: string): Promise<TestSession> {
+  const res = await app.fastify.inject({
+    method: "POST",
+    url: "/rooms",
+    payload: { name, avatar: defaultAvatar },
+  });
+  assert.equal(res.statusCode, 201);
+  return res.json();
+}
+
+export async function joinRoomVia(
+  app: TestServer,
+  code: string,
+  name: string,
+): Promise<TestSession> {
+  const res = await app.fastify.inject({
+    method: "POST",
+    url: `/rooms/${code}/members`,
+    payload: { name, avatar: defaultAvatar },
+  });
+  assert.equal(res.statusCode, 201);
+  return { code, ...res.json() };
+}
+
+// room:state events seen per client, recorded from socket creation so none is missed.
+const stateBuffers = new WeakMap<Socket, RoomStatePayload[]>();
+// chat:history and chat:message payloads per client, recorded the same way.
+const chatBuffers = new WeakMap<Socket, Record<string, unknown[]>>();
+const chatEvents = [SOCKET_EVENTS.chatHistory, SOCKET_EVENTS.chatMessage];
+
+/** Resolves once connected; rejects with the server's connect_error. */
+export function connectClient(url: string, sessionToken: string): Promise<Socket> {
+  return new Promise((resolve, reject) => {
+    const socket = connect(url, {
+      auth: { sessionToken },
+      transports: ["websocket"],
+      reconnection: false,
+    });
+    const buffer: RoomStatePayload[] = [];
+    stateBuffers.set(socket, buffer);
+    socket.on(SOCKET_EVENTS.state, (state: RoomStatePayload) => buffer.push(state));
+    const chat: Record<string, unknown[]> = {};
+    chatBuffers.set(socket, chat);
+    for (const event of chatEvents) {
+      chat[event] = [];
+      socket.on(event, (payload: unknown) => chat[event].push(payload));
+    }
+    socket.once("connect", () => resolve(socket));
+    socket.once("connect_error", (err) => {
+      socket.close();
+      reject(err);
+    });
+  });
+}
+
+/**
+ * Resolves with the first `room:state` that satisfies the predicate, consuming events
+ * received since the previous call (or since connecting) before waiting for new ones.
+ */
+export function stateWhere(
+  socket: Socket,
+  predicate: (state: RoomStatePayload) => boolean,
+  timeoutMs = 2000,
+): Promise<RoomStatePayload> {
+  const buffer = stateBuffers.get(socket);
+  if (!buffer) throw new Error("socket was not created by connectClient");
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      socket.off(SOCKET_EVENTS.state, check);
+      reject(new Error(`no matching ${SOCKET_EVENTS.state} within ${timeoutMs}ms`));
+    }, timeoutMs);
+    // Registered after connectClient's recorder, so the buffer is already up to date here.
+    function check() {
+      while (buffer?.length) {
+        const state = buffer.shift() as RoomStatePayload;
+        if (!predicate(state)) continue;
+        clearTimeout(timer);
+        socket.off(SOCKET_EVENTS.state, check);
+        resolve(state);
+        return;
+      }
+    }
+    socket.on(SOCKET_EVENTS.state, check);
+    check();
+  });
+}
+
+export function nextState(socket: Socket, timeoutMs = 2000): Promise<RoomStatePayload> {
+  return stateWhere(socket, () => true, timeoutMs);
+}
+
+/** Resolves with the oldest unread payload of a chat event, waiting for one if none is buffered. */
+async function nextChatEvent<T>(socket: Socket, event: string, timeoutMs: number): Promise<T> {
+  const buffer = chatBuffers.get(socket)?.[event];
+  if (!buffer) throw new Error("socket was not created by connectClient");
+  const deadline = Date.now() + timeoutMs;
+  while (!buffer.length) {
+    if (Date.now() > deadline) throw new Error(`no ${event} within ${timeoutMs}ms`);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+  return buffer.shift() as T;
+}
+
+export const nextChatHistory = (socket: Socket, timeoutMs = 2000) =>
+  nextChatEvent<ChatMessage[]>(socket, SOCKET_EVENTS.chatHistory, timeoutMs);
+
+export const nextChatMessage = (socket: Socket, timeoutMs = 2000) =>
+  nextChatEvent<ChatMessage>(socket, SOCKET_EVENTS.chatMessage, timeoutMs);
