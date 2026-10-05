@@ -112,6 +112,47 @@ test("import errors from the source are returned", async (t) => {
   });
 });
 
+test("each playlist error reaches the owner as a distinct ack", async (t) => {
+  const errors = [
+    "spotify-disconnected",
+    "playlist-invalid-link",
+    "playlist-no-access",
+    "playlist-empty",
+  ] as const;
+  let i = 0;
+  const { owner } = await room(t, ["Ana"], {
+    playlists: { load: async () => ({ ok: false, error: errors[i++] }) },
+  });
+  for (const error of errors)
+    assert.deepEqual(await emit(owner, "lobby:import", { link: "x" }), { ok: false, error });
+});
+
+test("a failed or throwing import keeps the previous deck", async (t) => {
+  let mode: "ok" | "error" | "throw" = "ok";
+  const { owner } = await room(t, ["Ana"], {
+    playlists: {
+      load: async () => {
+        if (mode === "throw") throw new Error("boom");
+        if (mode === "error") return { ok: false, error: "playlist-no-access" };
+        return { ok: true, playlist: { name: "Fake", cards: cards(20) } };
+      },
+    },
+  });
+  assert.deepEqual(await emit(owner, "lobby:import", { link: "x" }), { ok: true });
+  mode = "error";
+  assert.deepEqual(await emit(owner, "lobby:import", { link: "x" }), {
+    ok: false,
+    error: "playlist-no-access",
+  });
+  mode = "throw";
+  assert.deepEqual(await emit(owner, "lobby:import", { link: "x" }), {
+    ok: false,
+    error: "server-error",
+  });
+  const s = await stateWhere(owner, () => true);
+  assert.deepEqual(s.room.lobby.playlist, { name: "Fake", count: 20 });
+});
+
 test("start twice is game-running, configure during a game too, end then restart works", async (t) => {
   const { owner } = await room(t, ["Ana", "Bia"]);
   await ready(owner);
