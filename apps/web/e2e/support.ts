@@ -111,7 +111,9 @@ export async function importDeckAndStart(page: Page, targetCards = "2") {
 }
 
 /** Reads the hidden drawn card straight from the e2e Redis (db 14), so tests can answer it right. */
-export async function peekDraw(code: string): Promise<{ title: string; artists: string[] }> {
+export async function peekDraw(
+  code: string,
+): Promise<{ title: string; artists: string[]; year: number }> {
   const send = (socket: net.Socket, ...args: string[]) =>
     socket.write(
       `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
@@ -135,7 +137,7 @@ export async function peekDraw(code: string): Promise<{ title: string; artists: 
     send(socket, "GET", `room:${code}`);
   });
   const card = JSON.parse(raw).game.state.draw.card;
-  return { title: card.title, artists: card.artists };
+  return { title: card.title, artists: card.artists, year: card.year };
 }
 
 /** Ana and Bia in a started 2-player game (N=10); returns who plays first, found by the "Puxar carta" button. */

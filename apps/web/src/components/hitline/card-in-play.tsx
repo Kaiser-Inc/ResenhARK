@@ -1,7 +1,9 @@
 "use client";
 
 import type { HitlineView } from "@resenhark/shared";
+import { motion } from "motion/react";
 
+import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
 import { SnippetPlayer } from "@/components/hitline/snippet-player";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -79,17 +81,27 @@ export function CardInPlay({
   onPass,
 }: CardInPlayProps) {
   const { draw, phase } = view;
+  const reduce = useReduced();
   const offline = connected ? null : "Reconectando…";
   const isPlayer = view.players.some((p) => p.id === you);
   const contestReason = disabledReason(view, you, "contest");
   const decided = view.passed.includes(you) || view.contests.some((c) => c.playerId === you);
   return (
     <section aria-label="Carta em jogo" className="flex items-start gap-4">
-      <div
-        aria-hidden="true"
-        className="flex h-24 w-[68px] shrink-0 items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] leading-none font-semibold text-primary-text"
-      >
-        ?
+      {/* A new draw flips in from the deck: rotateY 180 to 0 on a spring, or a fade when reduced. */}
+      <div className="shrink-0 [perspective:600px]">
+        <motion.div
+          key={draw?.id ?? "deck"}
+          data-motion="draw-card"
+          aria-hidden="true"
+          className="flex h-24 w-[68px] items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] leading-none font-semibold text-primary-text
+ [backface-visibility:hidden]"
+          initial={draw ? (reduce ? { opacity: 0 } : { rotateY: 180 }) : false}
+          animate={reduce ? { opacity: 1 } : { rotateY: 0 }}
+          transition={reduce ? FADE : SPRING}
+        >
+          ?
+        </motion.div>
       </div>
       <div className="flex min-w-0 flex-1 flex-col items-start gap-3">
         {draw?.audioUrl ? (

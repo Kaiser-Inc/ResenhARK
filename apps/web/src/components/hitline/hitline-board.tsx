@@ -156,6 +156,9 @@ export function HitlineBoard({
               selectable={!canContest}
               selectedSlot={chosenSlot}
               taken={taken}
+              highlightCardId={
+                reveal && reveal.receiverId === reveal.turnPlayerId ? reveal.card.id : null
+              }
               onSelect={(slot) =>
                 canContest
                   ? void act("contest", { type: "contest", slot })

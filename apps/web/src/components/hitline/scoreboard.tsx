@@ -2,9 +2,11 @@
 
 import type { HitlineView, MemberView } from "@resenhark/shared";
 import { ChevronDownIcon } from "lucide-react";
+import { motion } from "motion/react";
 import { useState } from "react";
 
-import { MemberAvatar } from "@/components/avatar/member-avatar";
+import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
+import { useReduced } from "@/components/hitline/motion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -13,8 +15,25 @@ type ScoreboardProps = {
   members: MemberView[];
 };
 
+/** "+1" that floats up and fades out next to a number that just grew. Decorative. */
+function Gain() {
+  const reduce = useReduced();
+  return (
+    <motion.span
+      aria-hidden="true"
+      className="pointer-events-none absolute -top-3 right-0 font-mono text-xs font-semibold text-success"
+      initial={reduce ? { opacity: 0 } : { opacity: 1, y: 0 }}
+      animate={reduce ? { opacity: [0, 1, 1, 0] } : { opacity: [1, 1, 0], y: -14 }}
+      transition={reduce ? { duration: 1 } : { duration: 1, ease: "easeOut" }}
+    >
+      +1
+    </motion.span>
+  );
+}
+
 export function Scoreboard({ view, members }: ScoreboardProps) {
   const [open, setOpen] = useState<string | null>(null);
+  const reveal = view.lastReveal;
   return (
     <section aria-label="Placar">
       <ul className="flex flex-col">
@@ -34,18 +53,23 @@ export function Scoreboard({ view, members }: ScoreboardProps) {
                   name={member.name}
                   avatar={member.avatar}
                   size={32}
+                  expression={expressionFor(player.id, view)}
                   className={cn(!player.online && "opacity-50")}
                 />
                 <span title={member.name} className="min-w-0 flex-1 truncate font-medium">
                   {member.name}
                 </span>
                 {player.online ? null : <Badge>offline</Badge>}
-                <span className="font-mono tabular-nums">
+                <span className="relative font-mono tabular-nums">
                   <span className="sr-only">cartas </span>
                   {player.timeline.length}/{view.config.targetCards}
+                  {reveal?.receiverId === player.id ? <Gain key={reveal.card.id} /> : null}
                 </span>
-                <span className="w-16 text-right text-muted-foreground">
+                <span className="relative w-16 text-right text-muted-foreground">
                   {player.tokens} {player.tokens === 1 ? "ficha" : "fichas"}
+                  {reveal?.tokenAwarded && reveal.turnPlayerId === player.id ? (
+                    <Gain key={reveal.card.id} />
+                  ) : null}
                 </span>
                 <ChevronDownIcon
                   aria-hidden="true"

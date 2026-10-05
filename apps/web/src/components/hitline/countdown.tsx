@@ -1,6 +1,9 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
+
+import { useReduced } from "@/components/hitline/motion";
 
 import type { ServerClock } from "@/lib/server-clock";
 
@@ -19,15 +22,44 @@ export function useSecondsLeft(deadline: number, clock: ServerClock): number {
   return secondsLeft(deadline, clock);
 }
 
+const RING = 18;
+const CIRCUMFERENCE = 2 * Math.PI * RING;
+
+/** Seconds text inside an SVG ring that empties with the time; pulses in the last 5 s. */
 export function Countdown({ deadline, clock }: { deadline: number; clock: ServerClock }) {
   const seconds = useSecondsLeft(deadline, clock);
+  const reduce = useReduced();
+  // The ring is relative to the time left when the countdown appeared (the parent keys it by deadline).
+  const [total] = useState(() => Math.max(1, secondsLeft(deadline, clock)));
+  const pulse = !reduce && seconds > 0 && seconds <= 5;
   return (
-    <span
-      role="timer"
-      aria-label="Tempo restante"
-      className="font-mono text-base font-semibold tabular-nums"
+    <motion.span
+      className="relative inline-flex size-12 shrink-0 items-center justify-center"
+      animate={pulse ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+      transition={pulse ? { duration: 1, repeat: Number.POSITIVE_INFINITY } : { duration: 0.12 }}
     >
-      {seconds}s
-    </span>
+      <svg aria-hidden="true" viewBox="0 0 44 44" className="absolute inset-0 -rotate-90">
+        <circle cx="22" cy="22" r={RING} fill="none" strokeWidth="3" className="stroke-border" />
+        <circle
+          cx="22"
+          cy="22"
+          r={RING}
+          fill="none"
+          strokeWidth="3"
+          strokeLinecap="round"
+          className="stroke-primary-text"
+          strokeDasharray={CIRCUMFERENCE}
+          strokeDashoffset={CIRCUMFERENCE * (1 - Math.min(1, seconds / total))}
+          style={reduce ? undefined : { transition: "stroke-dashoffset 250ms linear" }}
+        />
+      </svg>
+      <span
+        role="timer"
+        aria-label="Tempo restante"
+        className={`font-mono font-semibold tabular-nums ${seconds > 99 ? "text-xs" : "text-sm"}`}
+      >
+        {seconds}s
+      </span>
+    </motion.span>
   );
 }

@@ -1,6 +1,6 @@
 import type { HitlineView, MemberView } from "@resenhark/shared";
 
-import { MemberAvatar } from "@/components/avatar/member-avatar";
+import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
 import { Countdown, useSecondsLeft } from "@/components/hitline/countdown";
 import type { ServerClock } from "@/lib/server-clock";
 
@@ -46,7 +46,7 @@ export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProp
           name={turnMember.name}
           avatar={turnMember.avatar}
           size={40}
-          expression="thinking"
+          expression={expressionFor(turnMember.id, view)}
           animate
           className={waiting ? "opacity-50" : undefined}
         />
@@ -67,7 +67,7 @@ export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProp
           )}
         </p>
       </div>
-      {showTimer ? <Countdown deadline={deadline} clock={clock} /> : null}
+      {showTimer ? <Countdown key={deadline} deadline={deadline} clock={clock} /> : null}
     </div>
   );
 }

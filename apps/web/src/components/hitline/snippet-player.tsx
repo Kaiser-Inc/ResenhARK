@@ -3,6 +3,7 @@
 import { PauseIcon, PlayIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
+import { Equalizer } from "@/components/hitline/equalizer";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { API_URL } from "@/lib/api";
@@ -61,6 +62,7 @@ export function SnippetPlayer({ audioUrl }: SnippetPlayerProps) {
         )}
         {playing ? "Pausar" : "Tocar"}
       </Button>
+      <Equalizer playing={playing} />
       {loading && !failed ? <Spinner label="Carregando trecho" /> : null}
       {/* biome-ignore lint/a11y/useFocusableInteractive: a progressbar is read-only, not a widget */}
       <div

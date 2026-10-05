@@ -1,10 +1,12 @@
 "use client";
 
 import type { ChatMessage } from "@resenhark/shared";
+import { motion } from "motion/react";
 import { useEffect, useLayoutEffect, useRef } from "react";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { linkify } from "@/components/chat/linkify";
+import { FADE, useReduced } from "@/components/hitline/motion";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
@@ -60,6 +62,7 @@ export function ChatThread({ messages, loading }: { messages: ChatMessage[]; loa
   const following = useRef(true);
   // Ids on screen when the history arrived: only later messages animate in.
   const known = useRef<Set<string> | null>(null);
+  const reduce = useReduced();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: the scroll follows the message count
   useLayoutEffect(() => {
@@ -86,7 +89,15 @@ export function ChatThread({ messages, loading }: { messages: ChatMessage[]; loa
   if (loading) return <ChatSkeleton />;
 
   const isNew = (id: string) => known.current !== null && !known.current.has(id);
-  const enter = "motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1";
+  // New message: 4 px up and fade in over 120 ms; opacity only when reduced.
+  const enter = (id: string) =>
+    isNew(id)
+      ? {
+          initial: reduce ? { opacity: 0 } : { opacity: 0, y: 4 },
+          animate: reduce ? { opacity: 1 } : { opacity: 1, y: 0 },
+          transition: FADE,
+        }
+      : { initial: false as const };
 
   return (
     <div
@@ -107,13 +118,8 @@ export function ChatThread({ messages, loading }: { messages: ChatMessage[]; loa
         <ul className="flex flex-col gap-3">
           {group(messages).map((item) =>
             item.kind === "system" ? (
-              <li
-                key={item.message.id}
-                className={cn(
-                  "py-1 text-center text-xs text-muted-foreground",
-                  isNew(item.message.id) && enter,
-                )}
-              >
+              // System lines (joined, left) stay still: they are status, not conversation.
+              <li key={item.message.id} className="py-1 text-center text-xs text-muted-foreground">
                 {item.message.text}
               </li>
             ) : (
@@ -134,15 +140,13 @@ export function ChatThread({ messages, loading }: { messages: ChatMessage[]; loa
                     </time>
                   </div>
                   {item.messages.map((message) => (
-                    <p
+                    <motion.p
                       key={message.id}
-                      className={cn(
-                        "text-sm leading-[22px] whitespace-pre-wrap [overflow-wrap:anywhere]",
-                        isNew(message.id) && enter,
-                      )}
+                      {...enter(message.id)}
+                      className="text-sm leading-[22px] whitespace-pre-wrap [overflow-wrap:anywhere]"
                     >
                       {linkify(message.text)}
-                    </p>
+                    </motion.p>
                   ))}
                 </div>
               </li>

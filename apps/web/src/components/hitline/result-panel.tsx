@@ -2,9 +2,13 @@
 
 import type { Ack, HitlineView, MemberView } from "@resenhark/shared";
 
-import { useState } from "react";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
+import { fireConfetti } from "@/components/hitline/confetti";
+import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
 import { Button } from "@/components/ui/button";
 import { gameErrorMessage } from "@/lib/game-errors";
 
@@ -23,6 +27,12 @@ type ResultPanelProps = {
 
 export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelProps) {
   const [loading, setLoading] = useState(false);
+  const reduce = useReduced();
+  // One burst when the result appears; skipped entirely under reduced motion.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: fires once per mount
+  useEffect(() => {
+    if (!reduce && view.winners.length > 0) fireConfetti();
+  }, []);
   async function newGame() {
     setLoading(true);
     const ack = await onNewGame();
@@ -33,6 +43,29 @@ export function ResultPanel({ view, members, isOwner, onNewGame }: ResultPanelPr
   const standings = [...view.players].sort((a, b) => b.timeline.length - a.timeline.length);
   return (
     <section aria-label="Resultado" className="flex flex-col gap-4">
+      {view.winners.length > 0 ? (
+        <motion.div
+          data-motion="winner"
+          className="flex gap-3"
+          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
+          animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+          transition={reduce ? FADE : SPRING}
+        >
+          {view.winners.map((id) => {
+            const member = members.find((m) => m.id === id);
+            return member ? (
+              <MemberAvatar
+                key={id}
+                name={member.name}
+                avatar={member.avatar}
+                size={96}
+                expression={expressionFor(id, view)}
+                animate
+              />
+            ) : null;
+          })}
+        </motion.div>
+      ) : null}
       <h2 className="text-[28px] leading-8 font-semibold tracking-[-0.03em]">
         {view.winners.length === 0
           ? "Sem vencedor"

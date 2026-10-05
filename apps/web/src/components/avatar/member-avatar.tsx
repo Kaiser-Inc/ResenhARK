@@ -1,7 +1,11 @@
 import { Blobatar } from "@blobatar/react";
 import type { Avatar, Shape } from "@resenhark/shared";
+import type { HitlineView } from "@resenhark/shared";
 import { type Expression, happy, idle, love, mad, sad, thinking } from "blobatar/expression";
 
+import { motion } from "motion/react";
+
+import { useReduced } from "@/components/hitline/motion";
 import { cn } from "@/lib/utils";
 
 const EXPRESSIONS = { idle, happy, sad, mad, thinking, love } satisfies Record<string, Expression>;
@@ -29,6 +33,17 @@ export function shapeTrait(shape: Shape): number {
   return SHAPE_TRAIT[shape];
 }
 
+/** What a member's face says about the game right now. First matching rule wins. */
+export function expressionFor(memberId: string, view: HitlineView): MemberExpression {
+  if (view.phase === "game-over") return view.winners.includes(memberId) ? "love" : "idle";
+  if (view.phase === "guessing" && view.turnPlayerId === memberId) return "thinking";
+  const reveal = view.lastReveal;
+  if (!reveal) return "idle";
+  if (reveal.receiverId === memberId) return "happy";
+  if (reveal.turnPlayerId === memberId) return reveal.receiverId ? "mad" : "sad";
+  return "idle";
+}
+
 type MemberAvatarProps = {
   name: string;
   avatar: Avatar;
@@ -48,11 +63,16 @@ export function MemberAvatar({
   online,
   className,
 }: MemberAvatarProps) {
+  const reduce = useReduced();
+  const jump = expression === "happy" && !reduce;
   return (
-    <span
+    <motion.span
       aria-hidden="true"
+      data-expression={expression}
       className={cn("relative inline-flex shrink-0", className)}
       style={{ width: size, height: size }}
+      animate={jump ? { y: [0, -6, 0] } : undefined}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       <Blobatar
         name={name}
@@ -60,7 +80,7 @@ export function MemberAvatar({
         hue={avatar.hue}
         traits={{ shape: shapeTrait(avatar.shape) }}
         expression={EXPRESSIONS[expression]}
-        animate={animate ? "always" : undefined}
+        animate={animate && !reduce ? "always" : undefined}
         background="circle"
         aria-hidden="true"
       />
@@ -73,6 +93,6 @@ export function MemberAvatar({
           )}
         />
       )}
-    </span>
+    </motion.span>
   );
 }
