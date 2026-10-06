@@ -126,3 +126,16 @@ test("game over: no future color, round stays at the last one, winners and reaso
   const done = tick(start().state, fixedCtx(10 ** 9)).state; // hint timeout -> reveal
   assert.equal(project(done, "a").rounds[0].outcome, "no-hint");
 });
+
+test("solo: memorize shows the color to the player only, then guessing hides it", () => {
+  const { state } = create(DEFAULT_HUEHINT_CONFIG, ["a"], fixedCtx());
+  state.schedule[0].color = TARGET;
+  const view = project(state, "a");
+  assert.equal(view.mode, "solo");
+  assert.deepEqual(view.color, TARGET);
+  assert.equal(view.giverId, null);
+  assert.equal(leaks(project(state, "spectator"), TARGET), false);
+  const open = tick(state, fixedCtx(3000)).state;
+  assert.equal(project(open, "a").phase, "guessing");
+  assert.equal(leaks(project(open, "a"), TARGET), false);
+});

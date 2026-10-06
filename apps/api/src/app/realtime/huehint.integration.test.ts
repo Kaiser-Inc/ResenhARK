@@ -315,3 +315,18 @@ test("an api restart mid-round keeps the Huehint game", async (t) => {
   assert.equal(hue(s)?.hint, "Verde Musgo");
   assert.deepEqual(hue(s)?.color, color);
 });
+
+test("starting Huehint with one online member runs solo", async (t) => {
+  const { app, clients, owner } = await room(t, ["Ana"]);
+  assert.deepEqual(await emit(owner, "lobby:select-game", { game: "huehint" }), { ok: true });
+  assert.deepEqual(await emit(owner, "game:start"), { ok: true });
+  const s = await stateWhere(owner, (x) => hue(x)?.phase === "memorize");
+  assert.equal(hue(s)?.mode, "solo");
+  assert.equal(hue(s)?.totalRounds, 5);
+  assert.ok(hue(s)?.color);
+  app.clock.set(app.clock.now() + 3000);
+  await app.hub.runDueTimers();
+  const open = await stateWhere(clients[0], (x) => hue(x)?.phase === "guessing");
+  assert.equal(hue(open)?.color, null);
+  assert.ok(open.events.some((e) => e.type === "memorize-ended"));
+});

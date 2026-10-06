@@ -293,3 +293,61 @@ test("only the system removes or ends; only players toggle their presence", () =
   assert.equal(err(group(), SYSTEM_ACTOR, { type: "set-online", online: false }), "wrong-phase");
   assert.equal(err(group(), SYSTEM_ACTOR, { type: "remove", playerId: "zed" }), "not-a-player");
 });
+
+test("create with one player starts solo: 5 rounds, a 3 s memorize phase, no giver", () => {
+  const { state, events } = create(cfg, ["a"], fixedCtx(1000));
+  assert.equal(state.mode, "solo");
+  assert.equal(state.schedule.length, 5);
+  assert.ok(state.schedule.every((r) => r.giverId === null));
+  assert.equal(state.phase, "memorize");
+  assert.equal(state.deadline, 1000 + 3000);
+  assert.deepEqual(events.at(-1), { type: "round-started", round: 1, giverId: null });
+});
+
+test("solo: memorize ends into guessing; a hint is never accepted", () => {
+  const { state } = create(cfg, ["a"], fixedCtx());
+  assert.equal(err(state, "a", hint()), "wrong-phase");
+  assert.equal(err(state, "a", guess()), "wrong-phase");
+  const { state: open, events } = tick(state, fixedCtx(3000));
+  assert.equal(open.phase, "guessing");
+  assert.equal(open.deadline, 3000 + GUESS_MS);
+  assert.deepEqual(events, [{ type: "memorize-ended" }]);
+});
+
+test("solo: the guess reveals at once; the deadline reveals without a guess", () => {
+  const open = tick(create(cfg, ["a"], fixedCtx()).state, fixedCtx(3000)).state;
+  const target = open.schedule[0].color;
+  const guessed = act(open, "a", guess(target), 4000).state;
+  assert.equal(guessed.phase, "reveal");
+  assert.deepEqual(guessed.results[0].guesses[0].score, 1000);
+  assert.equal(guessed.results[0].giverScore, null);
+
+  const missed = tick(open, fixedCtx(3000 + GUESS_MS)).state;
+  assert.equal(missed.phase, "reveal");
+  assert.deepEqual(missed.results[0].guesses, []);
+});
+
+test("solo: 5 rounds then game over with the player as winner", () => {
+  let s = create(cfg, ["a"], fixedCtx()).state;
+  let now = 0;
+  for (let round = 0; round < 5; round++) {
+    now += 3000;
+    s = tick(s, fixedCtx(now)).state;
+    s = act(s, "a", guess(s.schedule[s.round].color), now).state;
+    now += REVEAL_MS;
+    s = tick(s, fixedCtx(now)).state;
+  }
+  assert.equal(s.phase, "game-over");
+  assert.equal(s.endReason, "rounds-done");
+  assert.deepEqual(s.winners, ["a"]);
+  assert.equal(totals(s).get("a")?.guess, 5000);
+});
+
+test("solo: the player leaving ends the game", () => {
+  const { state } = act(create(cfg, ["a"], fixedCtx()).state, SYSTEM_ACTOR, {
+    type: "remove",
+    playerId: "a",
+  });
+  assert.equal(state.phase, "game-over");
+  assert.equal(state.endReason, "ended");
+});
