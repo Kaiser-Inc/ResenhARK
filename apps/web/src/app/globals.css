@@ -171,6 +171,113 @@
   }
 }
 
+.hero-boat-logo {
+  width: 260px;
+  height: 244px;
+}
+
+.hero-boat-sway {
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: boat-sway 6s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+}
+
+.hero-boat-waves {
+  animation: boat-waves 6s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+}
+
+@keyframes boat-sway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes boat-waves {
+  0%,
+  100% {
+    transform: translateY(2px);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+.game-card {
+  --game-angle: -1deg;
+  min-width: 0;
+  perspective: 1000px;
+  transform: rotate(var(--game-angle));
+  transition: transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.game-card[data-game="huehint"] {
+  --game-angle: 1deg;
+}
+
+.game-card-inner {
+  display: grid;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.game-card-face {
+  grid-area: 1 / 1;
+  padding: 24px;
+  backface-visibility: hidden;
+}
+
+.game-card-back {
+  transform: rotateY(180deg);
+}
+.game-card[aria-pressed="true"] .game-card-inner {
+  transform: rotateY(180deg);
+}
+.game-card:focus-visible {
+  transform: rotate(0deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-card:hover {
+    transform: rotate(0deg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .game-card {
+    --game-angle: -2deg;
+  }
+  .game-card[data-game="huehint"] {
+    --game-angle: 2deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-boat-sway,
+  .hero-boat-waves {
+    animation: none;
+  }
+  .game-card,
+  .game-card-inner,
+  .game-card-face {
+    transform: none !important;
+  }
+  .game-card-face {
+    transition: opacity 120ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+  }
+  .game-card-face[aria-hidden="true"] {
+    opacity: 0;
+    pointer-events: none;
+  }
+  .game-card-face[aria-hidden="false"] {
+    opacity: 1;
+  }
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

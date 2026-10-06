@@ -61,20 +61,20 @@ export function HomeActions() {
           />
         </section>
       ) : (
-        // One grid, three explicit rows on sm+: label / controls / feedback. The form and the Field
-        // are `display: contents`, so their children sit in the grid and the error row never
-        // moves the controls. Below sm everything stacks in DOM order.
-        <div className="grid grid-cols-1 gap-y-1.5 sm:grid-cols-[auto_10rem_auto] sm:grid-rows-[auto_auto_auto] sm:items-center sm:gap-x-6">
+        <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 sm:grid-cols-[auto_minmax(0,10rem)_auto] sm:grid-rows-[auto_auto_auto] sm:gap-x-4">
           <Button
             ref={createRef}
-            className="mb-6 justify-self-start sm:col-start-1 sm:row-start-2 sm:mb-0"
+            className="col-span-2 row-start-1 mb-4 justify-self-start sm:col-span-1 sm:col-start-1 sm:row-start-2 sm:mb-0"
             onClick={() => setCreating(true)}
           >
             Criar sala
           </Button>
           <form onSubmit={enterWithCode} noValidate className="contents">
             <Field data-invalid={!!codeError} className="contents">
-              <FieldLabel htmlFor={codeId} className="sm:col-start-2 sm:row-start-1">
+              <FieldLabel
+                htmlFor={codeId}
+                className="col-span-2 col-start-1 row-start-2 sm:col-span-1 sm:col-start-2 sm:row-start-1"
+              >
                 Código da sala
               </FieldLabel>
               <Input
@@ -88,7 +88,7 @@ export function HomeActions() {
                 autoComplete="off"
                 spellCheck={false}
                 placeholder="ABCDE"
-                className="font-mono uppercase sm:col-start-2 sm:row-start-2"
+                className="col-start-1 row-start-3 min-w-0 font-mono uppercase sm:col-start-2 sm:row-start-2"
                 aria-invalid={!!codeError || undefined}
                 aria-describedby={codeError ? `${codeId}-error` : undefined}
                 onChange={(event) => {
@@ -99,7 +99,7 @@ export function HomeActions() {
               {codeError ? (
                 <FieldError
                   id={`${codeId}-error`}
-                  className="sm:col-span-2 sm:col-start-2 sm:row-start-3"
+                  className="col-span-2 col-start-1 row-start-4 sm:col-start-2 sm:row-start-3"
                 >
                   {codeError}
                 </FieldError>
@@ -108,9 +108,9 @@ export function HomeActions() {
             <Button
               type="submit"
               variant="outline"
-              className="mt-4 justify-self-start sm:col-start-3 sm:row-start-2 sm:mt-0"
+              className="col-start-2 row-start-3 justify-self-start sm:col-start-3 sm:row-start-2"
             >
-              Entrar com código
+              Entrar
             </Button>
           </form>
         </div>

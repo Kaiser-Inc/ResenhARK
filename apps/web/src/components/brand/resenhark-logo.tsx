@@ -1,15 +1,19 @@
 type ResenharkLogoProps = {
   className?: string;
   title?: string;
+  width?: number;
+  height?: number;
 };
 
 // "Arca de conversa": a speech bubble above a hull split in two halves.
 // The tail of the bubble points into the split; the right half is the accent.
-export function ResenharkLogo({ className, title }: ResenharkLogoProps) {
+export function ResenharkLogo({ className, title, width, height }: ResenharkLogoProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 64 60"
+      width={width}
+      height={height}
       className={className}
       role={title ? "img" : undefined}
       aria-label={title}
