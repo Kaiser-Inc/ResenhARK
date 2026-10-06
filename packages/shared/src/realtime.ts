@@ -1,5 +1,11 @@
+import { z } from "zod";
 import type { HitlineConfig, HitlineEvent, HitlineView } from "./hitline.js";
+import type { HuehintConfig, HuehintEvent, HuehintView } from "./huehint.js";
 import type { Avatar } from "./room.js";
+
+export const GAME_TYPES = ["hitline", "huehint"] as const;
+export type GameType = (typeof GAME_TYPES)[number];
+export const selectGameInputSchema = z.object({ game: z.enum(GAME_TYPES) });
 
 export type ErrorCode =
   | "invalid-session"
@@ -27,6 +33,8 @@ export type ErrorCode =
   | "invalid-slot"
   | "already-decided"
   | "not-a-player"
+  | "invalid-hint"
+  | "already-guessed"
   | "server-error"
   // Client-side only: an emit that got no ack in time.
   | "timeout";
@@ -43,15 +51,21 @@ export type MemberView = {
 };
 
 export type LobbyView = {
+  /** The game `game:start` starts. */
+  selectedGame: GameType;
+  /** Hitline config (kept under this name for compatibility). */
   config: HitlineConfig;
+  huehintConfig: HuehintConfig;
   playlist: { name: string; count: number } | null;
   /** Songs not yet played in this room (null without a playlist); below `count` once rounds were played. */
   remaining: number | null;
   /** True when the playlist is likely too short for the players and target. */
   smallPlaylist: boolean;
 };
-export type GameView = { type: "hitline"; view: HitlineView };
-export type GameEvent = HitlineEvent;
+export type GameView =
+  | { type: "hitline"; view: HitlineView }
+  | { type: "huehint"; view: HuehintView };
+export type GameEvent = HitlineEvent | HuehintEvent;
 
 export const CHAT_MAX_LENGTH = 500;
 export const CHAT_HISTORY = 200;
