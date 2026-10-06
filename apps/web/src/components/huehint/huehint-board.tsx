@@ -104,21 +104,27 @@ function RoundReveal({
       aria-label={`Revelação da rodada ${round.round}`}
       className="flex flex-col gap-4 rounded-xl bg-muted p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300 sm:p-6"
     >
-      <h3 className="text-lg font-semibold">Rodada {round.round}</h3>
+      <h2 className="text-lg font-semibold">Rodada {round.round}</h2>
       {round.outcome === "no-hint" ? (
         <p>{name(round.giverId)} não deu dica</p>
       ) : round.hint ? (
         <p className="text-lg font-medium">“{round.hint}”</p>
       ) : null}
-      <ColorSwatch color={round.color} label="Cor real" />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {round.outcome === "no-hint" || round.guesses.length === 0 ? (
+        <ColorSwatch color={round.color} label="Cor real" />
+      ) : null}
+      {round.outcome === "revealed" ? (
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {guesserIds.map((id) => {
           const guess = round.guesses.find((g) => g.playerId === id);
           return (
             <div key={id} className="flex flex-col gap-2 rounded-xl bg-background p-4">
               {guess ? (
                 <>
-                  <ColorSwatch color={guess.color} label={`Palpite de ${name(id)}`} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <ColorSwatch color={round.color} label="Cor real" />
+                    <ColorSwatch color={guess.color} label={`Palpite de ${name(id)}`} />
+                  </div>
                   <p className="font-semibold">Nota: {formatScore(guess.score)} / 10,00</p>
                 </>
               ) : (
@@ -130,7 +136,8 @@ function RoundReveal({
             </div>
           );
         })}
-      </div>
+        </div>
+      ) : null}
       {round.giverScore !== null ? (
         <p className="text-sm font-medium">
           Nota do dador ({name(round.giverId)}): {formatScore(round.giverScore)}
@@ -218,11 +225,15 @@ export function HuehintBoard({
     view.phase === "game-over"
       ? winnerText
       : view.phase === "reveal"
-        ? `Rodada ${view.round} revelada.${lastRound ? ` ${lastRound.guesses.map((g) => `${name(g.playerId)}: ${formatScore(g.score)}`).join(". ")}` : ""}`
+        ? `Rodada ${view.round} revelada.${lastRound ? ` Cor real: ${describeHsb(lastRound.color)}. ${lastRound.outcome === "no-hint" ? `${name(lastRound.giverId)} não deu dica` : lastRound.guesses.map((g) => `${name(g.playerId)}: ${formatScore(g.score)}`).join(". ")}${lastRound.giverScore !== null ? `. Nota do dador: ${formatScore(lastRound.giverScore)}` : ""}` : ""}`
         : view.phase === "memorize"
-          ? "Memorize a cor. Você tem 3 segundos."
+          ? screen === "memorize"
+            ? "Memorize a cor. Você tem 3 segundos."
+            : `${name(view.players[0]?.id ?? null)} está memorizando a cor`
           : view.phase === "hint"
-            ? `${name(view.giverId)} está pensando na dica`
+            ? view.giverId === room.you
+              ? "Sua vez: dê uma dica para a cor"
+              : `${name(view.giverId)} está pensando na dica`
             : view.mode === "solo"
               ? "Recrie a cor de memória"
               : `Hora dos palpites. Dica: ${view.hint ?? ""}`;
@@ -234,7 +245,12 @@ export function HuehintBoard({
     if (!ack.ok) toast.error(gameErrorMessage(ack.error));
   }
   return (
-    <section aria-label="Huehint" className="flex flex-col gap-6">
+    <section
+      aria-label="Huehint"
+      // biome-ignore lint/a11y/noNoninteractiveTabindex: waiting game content must remain keyboard reachable inside the scrolling room main
+      tabIndex={0}
+      className="flex flex-col gap-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+    >
       <h1 className="text-2xl font-semibold tracking-tight">
         Huehint{view.mode === "solo" ? " · treino solo" : ""}
       </h1>

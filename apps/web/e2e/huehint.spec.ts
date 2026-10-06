@@ -96,7 +96,9 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
       ).toHaveAttribute("aria-label", secret as string);
       await giver.getByLabel("Sua dica", { exact: true }).fill("azul 123");
       await expect(giver.getByRole("button", { name: "Enviar dica" })).toBeDisabled();
-      await expect(giver.getByRole("alert")).toContainText("Essa dica não vale");
+      await expect(
+        giver.getByRole("region", { name: "Huehint", exact: true }).getByRole("alert"),
+      ).toContainText("Essa dica não vale");
     }
     await giver.getByLabel("Sua dica", { exact: true }).fill("Vermelho McQueen");
     await giver.getByRole("button", { name: "Enviar dica" }).click();
@@ -148,8 +150,11 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
       await expect(reveal).toContainText("Cor real");
       await expect(reveal).toContainText(/Nota: \d+,\d{2} \/ 10,00/);
       await expect(reveal).toContainText("Nota do dador");
-      await expect(reveal.getByRole("img")).toHaveCount(3);
+      await expect(reveal.getByRole("img")).toHaveCount(4);
       await expect(p.getByRole("region", { name: "Cor secreta" })).toHaveCount(0);
+      await expect(
+        p.getByRole("region", { name: "Huehint", exact: true }).locator('[aria-live="polite"]'),
+      ).toContainText(`Rodada ${round} revelada`);
     }
     if (round === 1) await checkAxe(page);
   }
@@ -185,7 +190,9 @@ test("Huehint solo: memorize for three seconds, keyboard recreation, immediate r
     await expect(page.getByRole("region", { name: "Cor secreta" })).toHaveCount(0, {
       timeout: 5_000,
     });
-    await expect(page.getByText("Recrie a cor de memória", { exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("paragraph").filter({ hasText: /^Recrie a cor de memória$/ }),
+    ).toBeVisible();
     if (round === 1) await checkAxe(page);
     await keyboardGuess(page);
     const reveal = page
@@ -225,4 +232,41 @@ test("Huehint spectator has no target or selector and owner can end the game", a
     "Partida encerrada",
   );
   await checkAxe(spectator);
+});
+
+test("Huehint selector accepts mouse drags and touch taps with integer HSB values", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ hasTouch: true });
+  const page = await context.newPage();
+  await createRoomAs(page, "Ana");
+  await configureHuehint(page);
+  await page.getByRole("button", { name: "Iniciar partida" }).click();
+  const hue = page.getByRole("slider", { name: "Matiz", exact: true });
+  await expect(hue).toBeVisible();
+  const hueRect = await hue.boundingBox();
+  if (!hueRect) throw new Error("Missing hue slider bounds");
+  await page.mouse.move(hueRect.x + hueRect.width / 2, hueRect.y + hueRect.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(hueRect.x + hueRect.width / 2, hueRect.y + hueRect.height / 4);
+  await page.mouse.up();
+  await expect
+    .poll(async () => Number(await hue.getAttribute("aria-valuenow")))
+    .toBeGreaterThan(260);
+  const saturation = page.getByRole("slider", { name: "Saturação", exact: true });
+  const saturationRect = await saturation.boundingBox();
+  if (!saturationRect) throw new Error("Missing saturation slider bounds");
+  await page.touchscreen.tap(
+    saturationRect.x + saturationRect.width / 2,
+    saturationRect.y + saturationRect.height / 4,
+  );
+  await expect
+    .poll(async () => Number(await saturation.getAttribute("aria-valuenow")))
+    .toBeGreaterThan(70);
+  for (const slider of [hue, saturation])
+    expect(Number.isInteger(Number(await slider.getAttribute("aria-valuenow")))).toBe(true);
+  await page.getByRole("button", { name: "Confirmar palpite" }).click();
+  await expect(
+    page.getByRole("region", { name: "Revelação da rodada 1", exact: true }).first(),
+  ).toContainText(/Nota: \d+,\d{2}/);
 });
