@@ -1,4 +1,10 @@
-import { type Ack, SOCKET_EVENTS, hitlineConfigSchema } from "@resenhark/shared";
+import {
+  type Ack,
+  SOCKET_EVENTS,
+  hitlineConfigSchema,
+  huehintConfigSchema,
+  selectGameInputSchema,
+} from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
 import { RateLimiter } from "../domain/room/rate-limiter.js";
@@ -230,6 +236,40 @@ export function registerSocketGateway(
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           if (running(room)) return { ok: false, error: "game-running" };
           return { ok: true, room: { ...room, lobby: { ...room.lobby, config: parsed.data } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:select-game",
+      intent(async (payload) => {
+        const parsed = selectGameInputSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return {
+            ok: true,
+            room: { ...room, lobby: { ...room.lobby, game: parsed.data.game } },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:configure-huehint",
+      intent(async (payload) => {
+        const parsed = huehintConfigSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return {
+            ok: true,
+            room: { ...room, lobby: { ...room.lobby, huehintConfig: parsed.data } },
+          };
         });
         return { ack };
       }),
