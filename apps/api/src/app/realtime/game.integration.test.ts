@@ -7,6 +7,7 @@ import {
   type TestSession,
   connectClient,
   createRoomVia,
+  hitlineView,
   joinRoomVia,
   nextChatMessage,
   startTestServer,
@@ -66,8 +67,8 @@ test("owner imports, configures and starts; members get 1 card and 2 tokens", as
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
   const s = await stateWhere(clients[1], (x) => x.room.game !== null);
   assert.ok(s.events.some((e) => e.type === "game-started"));
-  assert.equal(s.room.game?.view.players.length, 2);
-  for (const p of s.room.game?.view.players ?? []) {
+  assert.equal(hitlineView(s)?.players.length, 2);
+  for (const p of hitlineView(s)?.players ?? []) {
     assert.equal(p.timeline.length, 1);
     assert.equal(p.tokens, 2);
   }
@@ -163,7 +164,7 @@ test("start twice is game-running, configure during a game too, end then restart
     error: "game-running",
   });
   assert.deepEqual(await emit(owner, "game:end"), { ok: true });
-  const ended = await stateWhere(owner, (x) => x.room.game?.view.phase === "game-over");
+  const ended = await stateWhere(owner, (x) => hitlineView(x)?.phase === "game-over");
   assert.ok(ended.room.members.every((m) => m.role === "member"));
   assert.deepEqual(await emit(owner, "game:end"), { ok: false, error: "no-game" });
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
@@ -175,7 +176,7 @@ test("game:reset returns every client to the lobby and keeps the deck", async (t
   await emit(owner, "game:start");
   assert.deepEqual(await emit(owner, "game:reset"), { ok: false, error: "no-game" }); // still running
   await emit(owner, "game:end");
-  await stateWhere(clients[1], (x) => x.room.game?.view.phase === "game-over");
+  await stateWhere(clients[1], (x) => hitlineView(x)?.phase === "game-over");
   assert.deepEqual(await emit(clients[1], "game:reset"), { ok: false, error: "not-owner" });
   assert.deepEqual(await emit(owner, "game:reset"), { ok: true });
   const s = await stateWhere(clients[1], (x) => x.room.game === null);
@@ -213,16 +214,16 @@ test("a card without audio is skipped with an audio-missing event", async (t) =>
   await ready(owner);
   await emit(owner, "game:start");
   const started = await stateWhere(owner, (x) => x.room.game !== null);
-  const turn = started.room.game?.view.turnPlayerId;
+  const turn = hitlineView(started)?.turnPlayerId;
   const driver = clients[turn === started.room.you ? 0 : 1];
   assert.deepEqual(await emit(driver, "game:action", { type: "draw" }), { ok: true });
-  const first = await stateWhere(owner, (x) => x.room.game?.view.draw != null);
+  const first = await stateWhere(owner, (x) => hitlineView(x)?.draw != null);
   const missing = await stateWhere(owner, (x) => x.events.some((e) => e.type === "audio-missing"));
   assert.ok(missing.events.some((e) => e.type === "card-drawn"));
-  assert.notEqual(missing.room.game?.view.draw?.id, first.room.game?.view.draw?.id);
+  assert.notEqual(hitlineView(missing)?.draw?.id, hitlineView(first)?.draw?.id);
   assert.equal(calls, 2);
-  assert.match(missing.room.game?.view.draw?.audioUrl ?? "", /^\/audio\/.+\?m=.+&t=.+/);
-  const drawId = missing.room.game?.view.draw?.id as string;
+  assert.match(hitlineView(missing)?.draw?.audioUrl ?? "", /^\/audio\/.+\?m=.+&t=.+/);
+  const drawId = hitlineView(missing)?.draw?.id as string;
   assert.equal(await app.store.roomOfDraw(drawId), sessions[0].code);
 });
 
@@ -240,8 +241,8 @@ test("ten consecutive misses are tolerated, the next one ends by deck-empty", as
   await ready(owner);
   await emit(owner, "game:start");
   assert.deepEqual(await emit(owner, "game:action", { type: "draw" }), { ok: true });
-  const over = await stateWhere(owner, (x) => x.room.game?.view.phase === "game-over", 4000);
-  assert.equal(over.room.game?.view.endReason, "deck-empty");
+  const over = await stateWhere(owner, (x) => hitlineView(x)?.phase === "game-over", 4000);
+  assert.equal(hitlineView(over)?.endReason, "deck-empty");
   assert.equal(over.room.members[0].role, "member");
   assert.equal(lookups, 11);
   for (let i = 0; ; i++) {
@@ -263,7 +264,7 @@ test("projection to a spectator equals a non-turn player's except for `you`", as
   await emit(owner, "game:start");
   const states: RoomStatePayload[] = [];
   for (const c of clients) states.push(await stateWhere(c, (x) => x.room.game !== null));
-  const turn = states[0].room.game?.view.turnPlayerId;
+  const turn = hitlineView(states[0])?.turnPlayerId;
   const other = states.findIndex((s, i) => i < 2 && s.room.you !== turn);
   const spectator = states[2];
   assert.equal(spectator.room.members[2].role, "spectator");
@@ -309,11 +310,11 @@ test("a draw that cannot be indexed fails the mutation and is not saved", async 
 });
 
 const titles = (s: RoomStatePayload) =>
-  (s.room.game?.view.players ?? []).flatMap((p) => p.timeline.map((c) => c.title));
+  (hitlineView(s)?.players ?? []).flatMap((p) => p.timeline.map((c) => c.title));
 
 async function finishRound(owner: Socket, watcher: Socket) {
   assert.deepEqual(await emit(owner, "game:end"), { ok: true });
-  await stateWhere(watcher, (x) => x.room.game?.view.phase === "game-over");
+  await stateWhere(watcher, (x) => hitlineView(x)?.phase === "game-over");
   assert.deepEqual(await emit(owner, "game:reset"), { ok: true });
   return stateWhere(watcher, (x) => x.room.game === null);
 }
@@ -329,7 +330,7 @@ test("another round never deals a song already played in the room", async (t) =>
   assert.equal(lobby.room.lobby.playlist?.count, 8);
   await emit(owner, "game:start");
   const second = await stateWhere(clients[1], (x) => x.room.game !== null);
-  assert.equal(second.room.game?.view.deckCount, 4);
+  assert.equal(hitlineView(second)?.deckCount, 4);
   for (const title of titles(second)) assert.ok(!first.includes(title), `${title} repeated`);
 });
 
@@ -338,10 +339,10 @@ test("starting straight from a finished game also counts its songs as played", a
   await ready(owner);
   await emit(owner, "game:start");
   await emit(owner, "game:end");
-  await stateWhere(clients[1], (x) => x.room.game?.view.phase === "game-over");
+  await stateWhere(clients[1], (x) => hitlineView(x)?.phase === "game-over");
   await emit(owner, "game:start");
-  const s = await stateWhere(clients[1], (x) => x.room.game?.view.phase === "turn-start");
-  assert.equal(s.room.game?.view.deckCount, 4);
+  const s = await stateWhere(clients[1], (x) => hitlineView(x)?.phase === "turn-start");
+  assert.equal(hitlineView(s)?.deckCount, 4);
 });
 
 test("importing a playlist resets the played songs", async (t) => {
@@ -402,10 +403,10 @@ test("a drawn card counts as played even when the owner ends before the reveal",
   await ready(owner);
   await emit(owner, "game:start");
   const started = await stateWhere(clients[1], (x) => x.room.game !== null);
-  const turn = started.room.game?.view.turnPlayerId;
+  const turn = hitlineView(started)?.turnPlayerId;
   const turnClient = clients[started.room.members.findIndex((m) => m.id === turn)];
   assert.deepEqual(await emit(turnClient, "game:action", { type: "draw" }), { ok: true });
-  await stateWhere(clients[1], (x) => x.room.game?.view.phase === "guessing");
+  await stateWhere(clients[1], (x) => hitlineView(x)?.phase === "guessing");
   const lobby = await finishRound(owner, clients[1]);
   assert.equal(lobby.room.lobby.remaining, 5); // 2 dealt + 1 drawn
 });

@@ -1,9 +1,4 @@
-import {
-  type Ack,
-  SOCKET_EVENTS,
-  hitlineConfigSchema,
-  hitlineIntentSchema,
-} from "@resenhark/shared";
+import { type Ack, SOCKET_EVENTS, hitlineConfigSchema } from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
 import { RateLimiter } from "../domain/room/rate-limiter.js";
@@ -15,7 +10,8 @@ import {
   leave,
   unplayedCards,
 } from "../domain/room/room.js";
-import { SYSTEM_ACTOR, apply, create } from "../games/hitline/engine.js";
+import { SYSTEM_ACTOR, create } from "../games/hitline/engine.js";
+import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { type MutationResult, type RoomHub, socketRoom } from "./room-hub.js";
@@ -36,7 +32,7 @@ export function registerSocketGateway(
 ): void {
   const { store, hub, playlists, now, rng, newId, onError } = deps;
   const ctx = () => ({ now: now(), rng, newId });
-  const running = (room: Room) => !!room.game && room.game.state.phase !== "game-over";
+  const running = (room: Room) => isRunning(room.game);
   const chatLimiter = new RateLimiter(5, 5000);
 
   io.use(async (socket, next) => {
@@ -88,33 +84,22 @@ export function registerSocketGateway(
   /** Mirrors a member's presence into the running game, when they are a player. */
   const setPresence = (room: Room, memberId: string, online: boolean) => {
     const game = room.game;
-    if (!game || !running(room) || !game.state.players.some((p) => p.id === memberId)) {
-      return { room, events: [] };
-    }
-    const result = apply(game.state, memberId, { type: "set-online", online }, ctx());
+    if (!isRunning(game) || !isGamePlayer(game, memberId)) return { room, events: [] };
+    const result = applyGame(game, memberId, { type: "set-online", online }, ctx());
     if (!result.ok) return { room, events: [] };
-    return {
-      room: { ...room, game: { ...game, state: result.state } },
-      events: result.events,
-    };
+    return { room: { ...room, game: result.game }, events: result.events };
   };
 
   /** A kicked or departed player leaves the running game; the turn passes if it was theirs. */
   const removeFromGame = (room: Room, memberId: string) => {
     const game = room.game;
-    if (!game || !running(room) || !game.state.players.some((p) => p.id === memberId)) {
-      return { room, events: [] };
-    }
-    const result = apply(game.state, SYSTEM_ACTOR, { type: "remove", playerId: memberId }, ctx());
+    if (!isRunning(game) || !isGamePlayer(game, memberId)) return { room, events: [] };
+    const result = applyGame(game, SYSTEM_ACTOR, { type: "remove", playerId: memberId }, ctx());
     if (!result.ok) return { room, events: [] };
     return {
       room: {
         ...room,
-        game: {
-          ...game,
-          state: result.state,
-          playerIds: game.playerIds.filter((id) => id !== memberId),
-        },
+        game: { ...result.game, playerIds: game.playerIds.filter((id) => id !== memberId) },
       },
       events: result.events,
     };
@@ -331,14 +316,10 @@ export function registerSocketGateway(
         const ack = await hub.mutate(code, (room) => {
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           const game = room.game;
-          if (!game || !running(room)) return { ok: false, error: "no-game" };
-          const result = apply(game.state, SYSTEM_ACTOR, { type: "end" }, ctx());
+          if (!isRunning(game)) return { ok: false, error: "no-game" };
+          const result = applyGame(game, SYSTEM_ACTOR, { type: "end" }, ctx());
           if (!result.ok) return result;
-          return {
-            ok: true,
-            room: { ...room, game: { ...game, state: result.state } },
-            events: result.events,
-          };
+          return { ok: true, room: { ...room, game: result.game }, events: result.events };
         });
         return { ack };
       }),
@@ -359,18 +340,15 @@ export function registerSocketGateway(
     socket.on(
       "game:action",
       intent(async (payload) => {
-        const parsed = hitlineIntentSchema.safeParse(payload);
-        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
         const ack = await hub.mutate(code, (room) => {
           const game = room.game;
           if (!game) return { ok: false, error: "no-game" };
-          const result = apply(game.state, memberId, parsed.data, ctx());
+          // Validated against the active game's intents, which only the loaded room knows.
+          const parsed = parseIntent(game, payload);
+          if (!parsed.ok) return { ok: false, error: "invalid-input" };
+          const result = applyGame(game, memberId, parsed.action, ctx());
           if (!result.ok) return result;
-          return {
-            ok: true,
-            room: { ...room, game: { ...game, state: result.state } },
-            events: result.events,
-          };
+          return { ok: true, room: { ...room, game: result.game }, events: result.events };
         });
         return { ack };
       }),

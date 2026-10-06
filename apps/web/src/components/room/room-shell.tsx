@@ -339,7 +339,9 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         chat={chatSlot}
         reconnecting={status === "reconnecting"}
         contest={
-          room?.game?.view.phase === "contest" && room.game.view.contestDeadline !== null
+          room?.game?.type === "hitline" &&
+          room.game.view.phase === "contest" &&
+          room.game.view.contestDeadline !== null
             ? { deadline: room.game.view.contestDeadline, clock }
             : null
         }

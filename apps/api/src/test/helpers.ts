@@ -199,3 +199,7 @@ export const nextChatHistory = (socket: Socket, timeoutMs = 2000) =>
 
 export const nextChatMessage = (socket: Socket, timeoutMs = 2000) =>
   nextChatEvent<ChatMessage>(socket, SOCKET_EVENTS.chatMessage, timeoutMs);
+
+/** The Hitline view of a state, or undefined when no Hitline game is active. */
+export const hitlineView = (s: RoomStatePayload) =>
+  s.room.game?.type === "hitline" ? s.room.game.view : undefined;
