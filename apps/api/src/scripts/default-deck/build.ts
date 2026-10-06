@@ -46,12 +46,17 @@ async function getJson(url: string, pauseMs: number): Promise<unknown> {
   throw new Error(`GET ${url} kept failing`);
 }
 
-async function deezerHits(c: Candidate): Promise<DeezerHit[]> {
-  const q = encodeURIComponent(`${c.artists[0]} ${c.title}`);
-  const body = (await getJson(`https://api.deezer.com/search?q=${q}&limit=25`, 150)) as {
+/** Search results and artist top lists share this track list shape. */
+async function trackList(url: string): Promise<DeezerHit[]> {
+  const body = (await getJson(url, 150)) as {
     data?: { id: number; title: string; artist: { name: string } }[];
   } | null;
   return (body?.data ?? []).map((t) => ({ id: t.id, title: t.title, artist: t.artist.name }));
+}
+
+function deezerHits(c: Candidate): Promise<DeezerHit[]> {
+  const q = encodeURIComponent(`${c.artists[0]} ${c.title}`);
+  return trackList(`https://api.deezer.com/search?q=${q}&limit=25`);
 }
 
 /** The artist's 100 most played tracks: the studio version often ranks below live ones in search. */
@@ -62,13 +67,10 @@ async function artistTop(name: string): Promise<DeezerHit[]> {
   )) as { data?: { id: number; name: string }[] } | null;
   const artist = found?.data?.find((a) => artistKey(a.name) === artistKey(name));
   if (!artist) return [];
-  const top = (await getJson(`https://api.deezer.com/artist/${artist.id}/top?limit=100`, 150)) as {
-    data?: { id: number; title: string; artist: { name: string } }[];
-  } | null;
-  return (top?.data ?? []).map((t) => ({ id: t.id, title: t.title, artist: t.artist.name }));
+  return trackList(`https://api.deezer.com/artist/${artist.id}/top?limit=100`);
 }
 
-async function deezerTrack(id: number): Promise<DeezerTrack | null> {
+async function deezerTrack(id: number): Promise<Omit<DeezerTrack, "title"> | null> {
   const t = (await getJson(`https://api.deezer.com/track/${id}`, 150)) as {
     id?: number;
     isrc?: string;
@@ -101,7 +103,8 @@ async function main() {
       ...(await cached(cache, `top:${c.artists[0]}`, () => artistTop(c.artists[0]))),
     ];
     const hit = pickTrack(c, hits);
-    const track = hit ? await cached(cache, `track:${hit.id}`, () => deezerTrack(hit.id)) : null;
+    const found = hit ? await cached(cache, `track:${hit.id}`, () => deezerTrack(hit.id)) : null;
+    const track = hit && found ? { ...found, title: hit.title } : null;
     const mbYear = track?.isrc
       ? await cached(cache, `mb:${track.isrc}`, () => firstReleaseYear(track.isrc))
       : null;

@@ -2,7 +2,7 @@
 
 export type Candidate = { title: string; artists: string[]; year: number; br: boolean };
 export type DeezerHit = { id: number; title: string; artist: string };
-export type DeezerTrack = { id: number; isrc: string; preview: string };
+export type DeezerTrack = { id: number; isrc: string; preview: string; title: string };
 export type RemovedReason = "no-track" | "no-preview" | "no-isrc";
 export type Outcome =
   | { kind: "removed"; candidate: Candidate; reason: RemovedReason }
@@ -11,6 +11,8 @@ export type Outcome =
       candidate: Candidate;
       deezerId: number;
       isrc: string;
+      /** Deezer's title, which tells a live recording apart. */
+      trackTitle: string;
       mbYear: number | null;
       /** The list year and the MusicBrainz first release differ by more than one year. */
       divergent: boolean;
@@ -89,6 +91,7 @@ export function decide(
     candidate,
     deezerId: track.id,
     isrc: track.isrc,
+    trackTitle: track.title,
     mbYear,
     divergent: mbYear !== null && Math.abs(mbYear - candidate.year) > 1,
   };
@@ -114,10 +117,16 @@ export function select(outcomes: Outcome[], max: number): DeckSong[] {
     const { title, artists, year, br } = o.candidate;
     songs.push({ title, artists, year, isrc: o.isrc, deezerId: o.deezerId, br });
   }
-  const br = songs.filter((s) => s.br);
-  const intl = songs.filter((s) => !s.br);
-  const brCount = Math.min(br.length, Math.max(Math.round(max * BR_SHARE), max - intl.length));
-  const keep = new Set([...spread(br, brCount), ...spread(intl, max - brCount)]);
+  const brazilian = songs.filter((s) => s.br);
+  const international = songs.filter((s) => !s.br);
+  const brazilianCount = Math.min(
+    brazilian.length,
+    Math.max(Math.round(max * BR_SHARE), max - international.length),
+  );
+  const keep = new Set([
+    ...spread(brazilian, brazilianCount),
+    ...spread(international, max - brazilianCount),
+  ]);
   return songs.filter((s) => keep.has(s));
 }
 
@@ -125,6 +134,9 @@ export function report(outcomes: Outcome[], deckSize: number): string {
   const label = (c: Candidate) => `${c.title} · ${c.artists.join(", ")}`;
   const removed = outcomes.filter((o) => o.kind === "removed");
   const divergent = outcomes.filter((o) => o.kind === "accepted" && o.divergent);
+  const live = outcomes.filter(
+    (o) => o.kind === "accepted" && LIVE.test(normalize(extras(o.trackTitle))),
+  );
   return [
     "# Default deck report",
     "",
@@ -141,8 +153,12 @@ export function report(outcomes: Outcome[], deckSize: number): string {
     "",
     ...divergent.map(
       (o) =>
-        `- ${label(o.candidate)}: lista ${o.candidate.year}, MusicBrainz ${o.kind === "accepted" ? o.mbYear : ""}`,
+        `- ${label(o.candidate)}: list ${o.candidate.year}, MusicBrainz ${o.kind === "accepted" ? o.mbYear : ""}`,
     ),
+    "",
+    "## Live recordings (Brazilian songs with no studio version on Deezer)",
+    "",
+    ...live.map((o) => `- ${label(o.candidate)}: ${o.kind === "accepted" ? o.trackTitle : ""}`),
     "",
   ].join("\n");
 }

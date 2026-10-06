@@ -79,7 +79,12 @@ test("pickTrack ignores accents, case and a featured artist", () => {
 });
 
 test("decide removes a song without a track, a clip or an ISRC and flags a year off by more than one", () => {
-  const track = { id: 3, isrc: "GBUM71029604", preview: "https://x/p.mp3" };
+  const track = {
+    id: 3,
+    isrc: "GBUM71029604",
+    preview: "https://x/p.mp3",
+    title: "Bohemian Rhapsody",
+  };
   assert.deepEqual(decide(queen, null, null), {
     kind: "removed",
     candidate: queen,
@@ -108,6 +113,7 @@ const accepted = (n: number, br: boolean): Outcome[] =>
     candidate: { title: `T${br ? "b" : "i"}${i}`, artists: ["A"], year: 1990, br },
     deezerId: i + 1,
     isrc: `X${i}`,
+    trackTitle: `T${br ? "b" : "i"}${i}`,
     mbYear: 1990,
     divergent: false,
   }));
@@ -146,6 +152,29 @@ test("select drops a repeated title and artist", () => {
   assert.equal(select([a, b], 10).length, 1);
 });
 
+test("report lists the Brazilian songs that went in as a live recording", () => {
+  const infiel: Candidate = {
+    title: "Infiel",
+    artists: ["Marília Mendonça"],
+    year: 2016,
+    br: true,
+  };
+  const live = decide(
+    infiel,
+    { id: 31, isrc: "BRX", preview: "p", title: "Infiel (Ao Vivo)" },
+    2016,
+  );
+  const studio = decide(
+    queen,
+    { id: 3, isrc: "GBX", preview: "p", title: "Bohemian Rhapsody" },
+    1975,
+  );
+  const md = report([live, studio], 2);
+  assert.match(md, /## Live recordings/);
+  assert.match(md, /- Infiel · Marília Mendonça: Infiel \(Ao Vivo\)/);
+  assert.doesNotMatch(md, /- Bohemian Rhapsody · Queen: Bohemian Rhapsody/);
+});
+
 test("report lists every removed song with its reason and every divergent year", () => {
   const outcomes: Outcome[] = [
     { kind: "removed", candidate: queen, reason: "no-preview" },
@@ -157,5 +186,5 @@ test("report lists every removed song with its reason and every divergent year",
   ];
   const md = report(outcomes, 1);
   assert.match(md, /Bohemian Rhapsody · Queen \(1975\): no-preview/);
-  assert.match(md, /Ti0 · A: lista 1990, MusicBrainz 2001/);
+  assert.match(md, /Ti0 · A: list 1990, MusicBrainz 2001/);
 });

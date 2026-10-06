@@ -4,7 +4,7 @@ These are the rules as the server implements them in `apps/api/src/app/games/hit
 
 ## Setup
 
-- Every room starts with the built-in deck, "Baralho ResenhARK" (`apps/api/src/app/games/hitline/default-deck.json`, about 500 songs from 1960 to 2026, see [Rebuild the built-in deck](../how-to/rebuild-default-deck.md)). The owner can import a Spotify playlist instead, go back to the built-in deck with `lobby:use-default-deck`, set the options (see below) and start the game.
+- Every room starts with the built-in deck, "Baralho ResenhARK" (`apps/api/src/app/games/hitline/default-deck.json`, 500 songs from 1960 to 2025, see [Rebuild the built-in deck](../how-to/rebuild-default-deck.md)). The owner can import a Spotify playlist instead, go back to the built-in deck with `lobby:use-default-deck`, set the options (see below) and start the game.
 - Players are the online members, in join order, up to `maxPlayers`. Everyone else is a spectator. A member who joins during a game is a spectator and can play the next one.
 - The deck is shuffled, and the turn order is random.
 - Each player starts with 1 revealed card from the deck and 2 tokens.

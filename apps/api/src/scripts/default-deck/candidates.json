@@ -4740,6 +4740,18 @@
     "br": true
   },
   {
+    "title": "Femininomenon",
+    "artists": ["Chappell Roan"],
+    "year": 2022,
+    "br": false
+  },
+  {
+    "title": "End of Beginning",
+    "artists": ["Djo"],
+    "year": 2022,
+    "br": false
+  },
+  {
     "title": "Flowers",
     "artists": ["Miley Cyrus"],
     "year": 2023,
@@ -4862,6 +4874,42 @@
   {
     "title": "Tubarões",
     "artists": ["Diego & Victor Hugo"],
+    "year": 2023,
+    "br": true
+  },
+  {
+    "title": "get him back!",
+    "artists": ["Olivia Rodrigo"],
+    "year": 2023,
+    "br": false
+  },
+  {
+    "title": "HOT TO GO!",
+    "artists": ["Chappell Roan"],
+    "year": 2023,
+    "br": false
+  },
+  {
+    "title": "Seven",
+    "artists": ["Jung Kook", "Latto"],
+    "year": 2023,
+    "br": false
+  },
+  {
+    "title": "Water",
+    "artists": ["Tyla"],
+    "year": 2023,
+    "br": false
+  },
+  {
+    "title": "Agora Hills",
+    "artists": ["Doja Cat"],
+    "year": 2023,
+    "br": false
+  },
+  {
+    "title": "Canudinho",
+    "artists": ["Gusttavo Lima", "Ana Castela"],
     "year": 2023,
     "br": true
   },
@@ -5016,6 +5064,60 @@
     "br": true
   },
   {
+    "title": "we can't be friends (wait for your love)",
+    "artists": ["Ariana Grande"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "yes, and?",
+    "artists": ["Ariana Grande"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "TEXAS HOLD 'EM",
+    "artists": ["Beyoncé"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "360",
+    "artists": ["Charli xcx"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "I Love You, I'm Sorry",
+    "artists": ["Gracie Abrams"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "I Had Some Help",
+    "artists": ["Post Malone", "Morgan Wallen"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "LUNCH",
+    "artists": ["Billie Eilish"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "Bed Chem",
+    "artists": ["Sabrina Carpenter"],
+    "year": 2024,
+    "br": false
+  },
+  {
+    "title": "Stargazing",
+    "artists": ["Myles Smith"],
+    "year": 2024,
+    "br": false
+  },
+  {
     "title": "Abracadabra",
     "artists": ["Lady Gaga"],
     "year": 2025,
@@ -5054,6 +5156,60 @@
   {
     "title": "Gabriela",
     "artists": ["KATSEYE"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "Mystical Magical",
+    "artists": ["Benson Boone"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "DtMF",
+    "artists": ["Bad Bunny"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "BAILE INoLVIDABLE",
+    "artists": ["Bad Bunny"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "Sapphire",
+    "artists": ["Ed Sheeran"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "Azizam",
+    "artists": ["Ed Sheeran"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "Sports car",
+    "artists": ["Tate McRae"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "like JENNIE",
+    "artists": ["JENNIE"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "DAISIES",
+    "artists": ["Justin Bieber"],
+    "year": 2025,
+    "br": false
+  },
+  {
+    "title": "End of the World",
+    "artists": ["Miley Cyrus"],
     "year": 2025,
     "br": false
   }

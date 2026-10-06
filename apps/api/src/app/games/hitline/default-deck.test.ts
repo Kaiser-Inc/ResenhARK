@@ -12,7 +12,7 @@ test("the built-in deck has 450 to 500 songs from 1960 to 2026, each with a Deez
   }
 });
 
-test("the built-in deck has no repeated song and a fifth to a third of Brazilian songs", () => {
+test("the built-in deck has no repeated song and 20% to 30% of Brazilian songs", () => {
   const keys = songs.map((s) => `${s.title.toLowerCase()}|${s.artists.join(",").toLowerCase()}`);
   assert.equal(new Set(keys).size, keys.length);
   const share = songs.filter((s) => s.br).length / songs.length;
