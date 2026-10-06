@@ -3,6 +3,7 @@
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { Countdown } from "@/components/hitline/countdown";
 import { ColorSelector } from "@/components/huehint/color-selector";
+import { NextColorButton } from "@/components/huehint/next-color-button";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -257,9 +258,7 @@ export function HuehintBoard({
       tabIndex={0}
       className="flex flex-col gap-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
     >
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Huehint{view.mode === "solo" ? " · treino solo" : ""}
-      </h1>
+      <h1 className="sr-only">Huehint{view.mode === "solo" ? " · treino solo" : ""}</h1>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {phaseText}
         {canceled?.type === "round-canceled"
@@ -400,6 +399,9 @@ export function HuehintBoard({
           ) : null}
         </>
       )}
+      {view.mode === "solo" && view.phase === "reveal" && player ? (
+        <NextColorButton key={view.round} send={send} connected={connected} />
+      ) : null}
       <Scoreboard view={view} members={room.members} />
       {galleryRounds.length > 0 ? (
         <section aria-label="Galeria de rodadas" className="flex flex-col gap-3">

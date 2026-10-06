@@ -206,3 +206,12 @@ test("game over hides the giver line and explains a guess-points tiebreak", () =
   });
   assert.doesNotMatch(clear, /desempate/);
 });
+
+test("next color is only available to the solo player during reveal", () => {
+  assert.match(render({ mode: "solo", phase: "reveal" }), /Próxima cor/);
+  assert.doesNotMatch(render({ mode: "solo", phase: "reveal" }, "spectator"), /Próxima cor/);
+  assert.doesNotMatch(render({ mode: "group", phase: "reveal" }), /Próxima cor/);
+  for (const phase of ["memorize", "guessing", "game-over"] as const) {
+    assert.doesNotMatch(render({ mode: "solo", phase }), /Próxima cor/);
+  }
+});

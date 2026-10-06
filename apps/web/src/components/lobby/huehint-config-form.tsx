@@ -8,20 +8,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { HUEHINT_OPTIONS } from "@/lib/config-options";
 import type { HuehintConfig } from "@resenhark/shared";
 import { useId } from "react";
 
 const FIELDS: {
   key: keyof HuehintConfig;
   label: string;
-  min: number;
-  max: number;
   unit?: string;
 }[] = [
-  { key: "turnsPerPlayer", label: "Voltas por jogador", min: 1, max: 3 },
-  { key: "hintSeconds", label: "Tempo da dica", min: 15, max: 90, unit: " s" },
-  { key: "guessSeconds", label: "Tempo de palpite", min: 20, max: 120, unit: " s" },
-  { key: "maxPlayers", label: "Máximo de jogadores", min: 2, max: 15 },
+  { key: "turnsPerPlayer", label: "Voltas por jogador" },
+  { key: "hintSeconds", label: "Tempo da dica", unit: " s" },
+  { key: "guessSeconds", label: "Tempo de palpite", unit: " s" },
+  { key: "maxPlayers", label: "Máximo de jogadores" },
 ];
 
 export function HuehintConfigForm({
@@ -51,9 +50,9 @@ export function HuehintConfigForm({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {FIELDS.map((field) => {
-        const options = Array.from({ length: field.max - field.min + 1 }, (_, i) => ({
-          value: String(field.min + i),
-          label: `${field.min + i}${field.unit ?? ""}`,
+        const options = HUEHINT_OPTIONS[field.key].map((value) => ({
+          value: String(value),
+          label: `${value}${field.unit ?? ""}`,
         }));
         return (
           <Field key={field.key}>
