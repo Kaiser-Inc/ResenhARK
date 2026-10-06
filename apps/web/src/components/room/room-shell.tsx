@@ -327,6 +327,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         ? {
             youId: room.you,
             isOwner: room.ownerId === room.you,
+            gameRunning: room.game !== null && room.game.view.phase !== "game-over",
             disabled: !connected,
             onRemove: (member) => {
               setRemoveTarget(member);

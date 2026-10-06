@@ -6,6 +6,7 @@ import { toast } from "sonner";
 
 import { ResenharkLogo } from "@/components/brand/resenhark-logo";
 import { PeopleList } from "@/components/room/people-list";
+import { RoomHomeLink } from "@/components/room/room-home-link";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -18,6 +19,7 @@ export type RoomActions = {
   disabled: boolean;
   onRemove: (member: MemberView) => void;
   onLeave: () => Promise<void>;
+  gameRunning: boolean;
 };
 
 async function copyLink(code: string) {
@@ -109,10 +111,12 @@ export function RoomSidebar({
       className={`hidden w-60 shrink-0 flex-col border-border border-r bg-background lg:flex ${className ?? ""}`}
     >
       <div className="flex h-14 shrink-0 items-center gap-2 px-4">
-        <ResenharkLogo className="h-6 w-auto shrink-0" />
-        <span translate="no" className="text-base font-semibold tracking-tight">
-          <span className="font-normal">Resenh</span>ARK
-        </span>
+        <RoomHomeLink code={code} gameRunning={actions?.gameRunning}>
+          <ResenharkLogo className="h-6 w-auto shrink-0" />
+          <span translate="no" className="text-base font-semibold tracking-tight">
+            <span className="font-normal">Resenh</span>ARK
+          </span>
+        </RoomHomeLink>
       </div>
       <div className="px-4 py-4">
         <RoomCode code={code} />
