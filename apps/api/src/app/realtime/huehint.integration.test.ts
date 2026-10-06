@@ -212,3 +212,106 @@ test("starting Huehint after a Hitline game keeps that game's songs as played", 
   const s = await stateWhere(clients[1], (x) => !!hue(x));
   assert.equal(s.room.lobby.remaining, 8, "the 2 dealt cards stay played");
 });
+
+const giveHint = async (giver: Socket) =>
+  assert.deepEqual(await emit(giver, "game:action", { type: "give-hint", hint: "Verde Musgo" }), {
+    ok: true,
+  });
+const guessOf = (color = { h: 100, s: 50, b: 40 }) => ({ type: "guess", color });
+
+test("reconnecting mid-round: the giver gets the color back, a guesser gets myGuess back", async (t) => {
+  const { app, sessions, clients } = await room(t, ["Ana", "Bia", "Cid"]);
+  const { states, giver } = await startHuehint(sessions, clients);
+  const color = hue(states[giver])?.color;
+  await giveHint(clients[giver]);
+  const g = [0, 1, 2].find((i) => i !== giver) as number;
+  assert.deepEqual(await emit(clients[g], "game:action", guessOf()), { ok: true });
+  clients[giver].close();
+  clients[g].close();
+  const giverAgain = await connectClient(app.url, sessions[giver].sessionToken);
+  const guesserAgain = await connectClient(app.url, sessions[g].sessionToken);
+  t.after(() => {
+    giverAgain.close();
+    guesserAgain.close();
+  });
+  const gs = await stateWhere(giverAgain, (s) => hue(s)?.phase === "guessing");
+  assert.deepEqual(hue(gs)?.color, color);
+  const us = await stateWhere(guesserAgain, (s) => hue(s)?.phase === "guessing");
+  assert.deepEqual(hue(us)?.myGuess, { h: 100, s: 50, b: 40 });
+  assert.equal(hue(us)?.color, null);
+});
+
+test("duplicate concurrent guesses from one player: exactly one ok, the rest already-guessed", async (t) => {
+  const { sessions, clients } = await room(t, ["Ana", "Bia", "Cid"]);
+  const { giver } = await startHuehint(sessions, clients);
+  await giveHint(clients[giver]);
+  const g = clients[[0, 1, 2].find((i) => i !== giver) as number];
+  const acks = await Promise.all(
+    Array.from({ length: 5 }, () => emit(g, "game:action", guessOf())),
+  );
+  assert.equal(acks.filter((a) => a.ok).length, 1);
+  assert.equal(acks.filter((a) => !a.ok && a.error === "already-guessed").length, 4);
+});
+
+test("concurrent guesses from different players are all recorded and the round reveals once", async (t) => {
+  const { sessions, clients } = await room(t, ["Ana", "Bia", "Cid", "Dan"]);
+  const { giver } = await startHuehint(sessions, clients);
+  let reveals = 0;
+  clients[giver].on("room:state", (s: RoomStatePayload) => {
+    reveals += s.events.filter((e) => e.type === "round-revealed").length;
+  });
+  await giveHint(clients[giver]);
+  const guessers = clients.filter((_, i) => i !== giver);
+  const acks = await Promise.all(guessers.map((c) => emit(c, "game:action", guessOf())));
+  assert.deepEqual(acks, [{ ok: true }, { ok: true }, { ok: true }]);
+  const s = await stateWhere(clients[giver], (x) => hue(x)?.phase === "reveal");
+  assert.equal(hue(s)?.rounds[0].guesses.length, 3);
+  await new Promise((resolve) => setTimeout(resolve, 100));
+  assert.equal(reveals, 1);
+});
+
+test("giver leaving during the hint cancels the round and drops their future rounds", async (t) => {
+  const { sessions, clients } = await room(t, ["Ana", "Bia", "Cid"]);
+  const { giver } = await startHuehint(sessions, clients);
+  const watcher = clients[(giver + 1) % 3];
+  assert.deepEqual(await emit(clients[giver], "room:leave"), { ok: true });
+  const s = await stateWhere(watcher, (x) => x.events.some((e) => e.type === "round-canceled"));
+  const view = hue(s);
+  assert.equal(view?.phase, "hint");
+  assert.equal(view?.round, 2);
+  assert.equal(view?.totalRounds, 5, "6 rounds minus the leaver's second turn");
+  assert.equal(view?.rounds.length, 0);
+});
+
+test("a guesser disconnecting lets the round reveal when the others are in", async (t) => {
+  const { sessions, clients } = await room(t, ["Ana", "Bia", "Cid"]);
+  const { giver } = await startHuehint(sessions, clients);
+  await giveHint(clients[giver]);
+  const [g1, g2] = [0, 1, 2].filter((i) => i !== giver);
+  assert.deepEqual(await emit(clients[g1], "game:action", guessOf()), { ok: true });
+  clients[g2].close();
+  const s = await stateWhere(clients[giver], (x) => hue(x)?.phase === "reveal");
+  assert.deepEqual(
+    hue(s)?.rounds[0].guesses.map((g) => g.playerId),
+    [sessions[g1].memberId],
+  );
+});
+
+test("an api restart mid-round keeps the Huehint game", async (t) => {
+  const { app, sessions, clients } = await room(t, ["Ana", "Bia"]);
+  const { states, giver } = await startHuehint(sessions, clients);
+  const color = hue(states[giver])?.color;
+  await giveHint(clients[giver]);
+  app.store.redis.disconnect();
+  for (const c of clients) c.close();
+  await app.close();
+
+  const app2 = await startTestServer({ playlists, keepData: true });
+  t.after(() => app2.close());
+  await app2.hub.rehydrate();
+  const back = await connectClient(app2.url, sessions[giver].sessionToken);
+  t.after(() => back.close());
+  const s = await stateWhere(back, (x) => hue(x)?.phase === "guessing");
+  assert.equal(hue(s)?.hint, "Verde Musgo");
+  assert.deepEqual(hue(s)?.color, color);
+});
