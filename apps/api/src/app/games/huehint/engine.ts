@@ -260,6 +260,11 @@ export function apply(
       events.push({ type: "guess-submitted", playerId: actorId });
       if (allIn(s)) reveal(s, "revealed", ctx, events);
       break;
+    case "next-round":
+      // Solo only: in a group, the reveal is when everyone reads the scores together.
+      if (system || s.mode !== "solo" || s.phase !== "reveal") return fail("wrong-phase");
+      advance(s, ctx, events);
+      break;
   }
   return { ok: true, state: s, events };
 }

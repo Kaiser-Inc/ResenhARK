@@ -355,6 +355,38 @@ test("solo: 5 rounds then game over with the player as winner", () => {
   assert.equal(totals(s).get("a")?.guess, 5000);
 });
 
+const next = { type: "next-round" as const };
+
+test("solo: next-round skips the rest of the reveal; after the last round it ends the game", () => {
+  let s = create(cfg, ["a"], fixedCtx()).state;
+  s = tick(s, fixedCtx(5000)).state;
+  s = act(s, "a", guess(), 6000).state;
+  const { state, events } = act(s, "a", next, 7000);
+  assert.equal(state.phase, "memorize");
+  assert.equal(state.round, 1);
+  assert.equal(state.deadline, 7000 + 5000);
+  assert.deepEqual(events.at(-1), { type: "round-started", round: 2, giverId: null });
+
+  s = state;
+  for (let round = 1; round < 5; round++) {
+    s = tick(s, fixedCtx(s.deadline)).state;
+    s = act(s, "a", guess(), s.deadline - 1).state;
+    s = act(s, "a", next, s.deadline - 1).state;
+  }
+  assert.equal(s.phase, "game-over");
+  assert.equal(s.endReason, "rounds-done");
+});
+
+test("next-round is refused outside a solo reveal", () => {
+  const solo = create(cfg, ["a"], fixedCtx()).state;
+  assert.equal(err(solo, "a", next), "wrong-phase");
+  assert.equal(err(tick(solo, fixedCtx(5000)).state, "a", next), "wrong-phase");
+  const groupReveal = act(guessing(["a", "b"]), "b", guess()).state;
+  assert.equal(groupReveal.phase, "reveal");
+  assert.equal(err(groupReveal, "a", next), "wrong-phase");
+  assert.equal(err(groupReveal, "b", next), "wrong-phase");
+});
+
 test("solo: the player leaving ends the game", () => {
   const { state } = act(create(cfg, ["a"], fixedCtx()).state, SYSTEM_ACTOR, {
     type: "remove",

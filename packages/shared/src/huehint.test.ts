@@ -64,7 +64,7 @@ test("huehintConfigSchema enforces the ranges and the default is valid", () => {
     );
 });
 
-test("huehintIntentSchema parses give-hint and guess", () => {
+test("huehintIntentSchema parses give-hint, guess and next-round", () => {
   assert.equal(huehintIntentSchema.safeParse({ type: "give-hint", hint: "Azul" }).success, true);
   assert.equal(
     huehintIntentSchema.safeParse({ type: "guess", color: { h: 1, s: 2, b: 3 } }).success,
@@ -74,6 +74,7 @@ test("huehintIntentSchema parses give-hint and guess", () => {
     huehintIntentSchema.safeParse({ type: "guess", color: { h: 400, s: 2, b: 3 } }).success,
     false,
   );
+  assert.equal(huehintIntentSchema.safeParse({ type: "next-round" }).success, true);
   assert.equal(huehintIntentSchema.safeParse({ type: "draw" }).success, false);
 });
 
