@@ -99,6 +99,7 @@ export type HuehintEvent =
 export type HuehintIntent = { type: "give-hint"; hint: string } | { type: "guess"; color: Hsb };
 // The hint rules are checked by the engine, so a bad hint gets `invalid-hint`, not `invalid-input`.
 export const huehintIntentSchema: z.ZodType<HuehintIntent> = z.discriminatedUnion("type", [
-  z.object({ type: z.literal("give-hint"), hint: z.string().max(200) }),
+  // No max here: Socket.IO caps the payload, and a long hint must get invalid-hint.
+  z.object({ type: z.literal("give-hint"), hint: z.string() }),
   z.object({ type: z.literal("guess"), color: hsbSchema }),
 ]);

@@ -351,3 +351,13 @@ test("solo: the player leaving ends the game", () => {
   assert.equal(state.phase, "game-over");
   assert.equal(state.endReason, "ended");
 });
+
+test("everyone going offline mid-guessing pauses the round instead of revealing it", () => {
+  let s = act(guessing(), "b", guess()).state;
+  for (const id of ["a", "b", "c"]) s = act(s, id, { type: "set-online", online: false }).state;
+  assert.equal(s.phase, "guessing");
+  assert.equal(nextDeadline(s), null);
+  s = act(s, "c", { type: "set-online", online: true }, 90_000).state;
+  assert.equal(s.phase, "guessing");
+  assert.equal(s.deadline, 90_000 + GUESS_MS);
+});

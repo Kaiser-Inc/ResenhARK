@@ -112,11 +112,15 @@ function startRound(s: HuehintState, ctx: Ctx, events: HuehintEvent[]): void {
   events.push({ type: "round-started", round: s.round + 1, giverId: giverOf(s) });
 }
 
-/** At least one guess, and every guesser either guessed or is offline. */
+/**
+ * At least one guess, someone still online (nobody online means paused), and every guesser either
+ * guessed or is offline.
+ */
 function allIn(s: HuehintState): boolean {
   const giver = giverOf(s);
   return (
     s.guesses.length > 0 &&
+    s.players.some((p) => p.online) &&
     s.players.every(
       (p) => p.id === giver || !p.online || s.guesses.some((g) => g.playerId === p.id),
     )

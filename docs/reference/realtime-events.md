@@ -86,7 +86,7 @@ Sent in `game:action`. A color is `Hsb`: `{ h: 0 to 359, s: 0 to 100, b: 0 to 10
 
 | `type` | Extra fields | Rule |
 |---|---|---|
-| `give-hint` | `hint: string` (up to 200 in the payload) | Giver, phase `hint`, once. The hint must pass `isValidHint`: 1 to 30 characters after trim, at most 4 words, no digit and no `#` |
+| `give-hint` | `hint: string` | Giver, phase `hint`, once. The hint must pass `isValidHint`: 1 to 30 characters after trim, at most 4 words, no digit and no `#` |
 | `guess` | `color: Hsb` | Players except the giver, phase `guessing`, once |
 
 Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `already-guessed`. The full rules are in [Huehint rules](huehint-rules.md).

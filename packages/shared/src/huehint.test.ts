@@ -72,3 +72,8 @@ test("huehintIntentSchema parses give-hint and guess", () => {
   );
   assert.equal(huehintIntentSchema.safeParse({ type: "draw" }).success, false);
 });
+
+test("huehintIntentSchema leaves the hint rules to the engine, so a long hint still parses", () => {
+  const long = { type: "give-hint", hint: "x".repeat(500) };
+  assert.equal(huehintIntentSchema.safeParse(long).success, true);
+});
