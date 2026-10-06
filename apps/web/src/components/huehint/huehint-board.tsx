@@ -221,6 +221,11 @@ export function HuehintBoard({
     ? `${view.winners.map(name).join(" e ")} ${view.winners.length > 1 ? "venceram" : "venceu"}!`
     : "Partida encerrada";
   const lastRound = view.rounds.at(-1);
+  // The server breaks equal totals by guess points; show why when a loser has the winners' total.
+  const winnerTotal = view.players.find((p) => view.winners.includes(p.id))?.total;
+  const wonOnTiebreak = view.players.some(
+    (p) => !view.winners.includes(p.id) && p.total === winnerTotal,
+  );
   const galleryRounds = view.phase === "reveal" ? view.rounds.slice(0, -1) : view.rounds;
   const phaseText =
     view.phase === "game-over"
@@ -266,11 +271,13 @@ export function HuehintBoard({
           <p className="font-semibold">
             Rodada {view.round} / {view.totalRounds}
           </p>
-          <p className="text-sm text-muted-foreground">
-            {view.mode === "solo"
-              ? "Sem dador · treino de memória"
-              : `Dador: ${name(view.giverId)} · Próximo: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}`}
-          </p>
+          {view.phase === "game-over" ? null : (
+            <p className="text-sm text-muted-foreground">
+              {view.mode === "solo"
+                ? "Sem dador · treino de memória"
+                : `Dador: ${name(view.giverId)} · Próximo: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}`}
+            </p>
+          )}
         </div>
         {view.deadline !== null ? (
           <Countdown key={view.deadline} deadline={view.deadline} clock={clock} />
@@ -295,6 +302,9 @@ export function HuehintBoard({
                 ? "O dono encerrou a partida."
                 : "Todas as rodadas foram jogadas."}
           </p>
+          {wonOnTiebreak ? (
+            <p className="text-sm font-medium">Venceu no desempate pelos palpites.</p>
+          ) : null}
           {isOwner ? (
             <Button
               type="button"

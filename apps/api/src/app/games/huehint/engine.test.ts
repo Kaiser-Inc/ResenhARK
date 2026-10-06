@@ -205,6 +205,18 @@ test("the last reveal ends the game with rounds-done; highest total wins; exact 
   assert.deepEqual(end.winners, ["b"]);
 });
 
+test("equal totals are broken by guess points, so a two-player game has a winner", () => {
+  const duo = group(["a", "b"]);
+  duo.schedule[1].color = RED;
+  const r1 = playRound(duo, { b: RED }, 0).state;
+  const end = playRound(r1, { a: ORANGE }, 100_000);
+  const t = totals(end.state);
+  const total = (id: string) => (t.get(id)?.guess ?? 0) + (t.get(id)?.giver ?? 0);
+  assert.equal(total("a"), total("b"), "two players mirror each other's totals");
+  assert.deepEqual(end.state.winners, ["b"], "b guessed better");
+  assert.deepEqual(end.events.at(-1), { type: "game-over", winners: ["b"], reason: "rounds-done" });
+});
+
 test("with nobody online nothing ticks and nextDeadline is null; the first one back gets a fresh deadline", () => {
   let s = group();
   for (const id of ["a", "b", "c"]) s = act(s, id, { type: "set-online", online: false }).state;

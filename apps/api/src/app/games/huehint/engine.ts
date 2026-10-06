@@ -186,8 +186,12 @@ function finish(s: HuehintState, reason: HuehintEndReason, events: HuehintEvent[
   if (reason !== "ended" && s.players.length > 0) {
     const t = totals(s);
     const total = (id: string) => (t.get(id)?.guess ?? 0) + (t.get(id)?.giver ?? 0);
+    const guessed = (id: string) => t.get(id)?.guess ?? 0;
+    // Highest total; equal totals (always the case with two players) go to the better guesser.
     const best = Math.max(...s.players.map((p) => total(p.id)));
-    s.winners = s.players.filter((p) => total(p.id) === best).map((p) => p.id);
+    const top = s.players.filter((p) => total(p.id) === best);
+    const bestGuess = Math.max(...top.map((p) => guessed(p.id)));
+    s.winners = top.filter((p) => guessed(p.id) === bestGuess).map((p) => p.id);
   }
   events.push({ type: "game-over", winners: [...s.winners], reason });
 }
