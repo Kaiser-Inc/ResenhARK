@@ -43,8 +43,12 @@ test("hsbSchema accepts integers in range only", () => {
 
 test("huehintConfigSchema enforces the ranges and the default is valid", () => {
   assert.equal(huehintConfigSchema.safeParse(DEFAULT_HUEHINT_CONFIG).success, true);
+  assert.equal(
+    huehintConfigSchema.safeParse({ ...DEFAULT_HUEHINT_CONFIG, turnsPerPlayer: 5 }).success,
+    true,
+  );
   for (const patch of [
-    { turnsPerPlayer: 4 },
+    { turnsPerPlayer: 6 },
     { turnsPerPlayer: 0 },
     { hintSeconds: 14 },
     { hintSeconds: 91 },

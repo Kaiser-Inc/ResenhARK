@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const huehintConfigSchema = z.object({
-  turnsPerPlayer: z.number().int().min(1).max(3),
+  turnsPerPlayer: z.number().int().min(1).max(5),
   hintSeconds: z.number().int().min(15).max(90),
   guessSeconds: z.number().int().min(20).max(120),
   maxPlayers: z.number().int().min(2).max(15),

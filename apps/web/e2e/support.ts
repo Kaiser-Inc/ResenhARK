@@ -101,41 +101,62 @@ export async function chooseOption(page: Page, label: string, option: string) {
   await page.getByRole("option", { name: option, exact: true }).click();
 }
 
-/** Owner flow up to the first drawn card: import the dev deck, set N and start. */
+/**
+ * Owner flow up to the first drawn card: import the dev deck, set N and start.
+ * The lobby only offers 5 or more cards to win; a smaller N (a quick solo win) is
+ * written straight into the running game in the e2e Redis.
+ */
 export async function importDeckAndStart(page: Page, targetCards = "2") {
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(page.getByText("40 faixas prontas")).toBeVisible();
-  await chooseOption(page, "Cartas para vencer", targetCards);
+  const quick = Number(targetCards) < 5;
+  await chooseOption(page, "Cartas para vencer", quick ? "5" : targetCards);
   await page.getByRole("button", { name: "Iniciar partida" }).click();
+  if (!quick) return;
+  const code = new URL(page.url()).pathname.split("/").pop() as string;
+  await expect.poll(async () => (await peekRoom(code)).game !== null).toBe(true);
+  const room = await peekRoom(code);
+  room.game.state.config.targetCards = Number(targetCards);
+  await redis("SET", `room:${code}`, JSON.stringify(room), "KEEPTTL");
 }
 
-/** Reads the stored room straight from the e2e Redis (db 14); hidden game data included. */
-// biome-ignore lint/suspicious/noExplicitAny: test-only peek at the raw stored room
-export async function peekRoom(code: string): Promise<any> {
+/** One command against the e2e Redis (db 14); returns the bulk reply, or null for a simple one. */
+function redis(...command: string[]): Promise<string | null> {
   const send = (socket: net.Socket, ...args: string[]) =>
     socket.write(
       `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
     );
-  const raw = await new Promise<string>((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     const socket = net.connect(6379, "localhost");
     let data = "";
     socket.on("error", reject);
     socket.on("data", (chunk) => {
       data += chunk.toString();
-      // +OK\r\n then $<len>\r\n<payload>\r\n
-      const match = /\+OK\r\n\$(\d+)\r\n/.exec(data);
-      if (!match) return;
-      const start = match.index + match[0].length;
-      if (Buffer.byteLength(data.slice(start)) >= Number(match[1]) + 2) {
+      // +OK\r\n (SELECT) then either +OK\r\n or $<len>\r\n<payload>\r\n
+      const rest = data.startsWith("+OK\r\n") ? data.slice(5) : "";
+      if (rest.startsWith("+")) {
         socket.end();
-        resolve(data.slice(start, start + Number(match[1])));
+        resolve(null);
+        return;
+      }
+      const match = /^\$(\d+)\r\n/.exec(rest);
+      if (!match) return;
+      const start = match[0].length;
+      if (Buffer.byteLength(rest.slice(start)) >= Number(match[1]) + 2) {
+        socket.end();
+        resolve(rest.slice(start, start + Number(match[1])));
       }
     });
     send(socket, "SELECT", "14");
-    send(socket, "GET", `room:${code}`);
+    send(socket, ...command);
   });
-  return JSON.parse(raw);
+}
+
+/** Reads the stored room straight from the e2e Redis (db 14); hidden game data included. */
+// biome-ignore lint/suspicious/noExplicitAny: test-only peek at the raw stored room
+export async function peekRoom(code: string): Promise<any> {
+  return JSON.parse((await redis("GET", `room:${code}`)) as string);
 }
 
 /** Overwrites `tokens` of every player in the stored e2e room (db 14); a reload then shows the new balance. */
