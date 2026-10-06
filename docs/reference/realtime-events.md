@@ -1,6 +1,6 @@
 # Realtime events and HTTP routes
 
-The contracts live in `packages/shared/src` (`realtime.ts`, `hitline.ts`, `room.ts`). The handlers are in `apps/api/src/app/realtime/socket-gateway.ts` and `apps/api/src/app/http/routes`.
+The contracts live in `packages/shared/src` (`realtime.ts`, `hitline.ts`, `huehint.ts`, `room.ts`). The handlers are in `apps/api/src/app/realtime/socket-gateway.ts` and `apps/api/src/app/http/routes`.
 
 ## Join flow
 
@@ -25,13 +25,15 @@ A failed intent never changes state. The state comes back through `room:state`, 
 | `chat:send` | `{ text: string }`, 1 to 500 characters after trim | Any member | `invalid-message`, `rate-limited`, `invalid-session`, `server-error` |
 | `room:leave` | none | Any member | `invalid-session` |
 | `room:kick` | `{ targetId: string }` | Owner | `invalid-input`, `not-owner`, `invalid-target` |
+| `lobby:select-game` | `{ game: "hitline" \| "huehint" }` | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `lobby:configure` | `HitlineConfig` (below) | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
+| `lobby:configure-huehint` | `HuehintConfig` (below) | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `lobby:import` | `{ link: string }`, 1 to 500 characters | Owner, no game running | `invalid-input`, `room-not-found`, `not-owner`, `game-running`, `playlist-invalid-link`, `playlist-no-access`, `playlist-empty`, `spotify-disconnected` |
 | `lobby:reset-played` | none | Owner, no game running | `not-owner`, `game-running` |
-| `game:start` | none | Owner, no game running | `not-owner`, `game-running`, `no-deck`, `playlist-empty`, `playlist-exhausted` |
+| `game:start` | none | Owner, no game running. Starts the selected game | `not-owner`, `game-running`, and for Hitline only `no-deck`, `playlist-empty`, `playlist-exhausted` |
 | `game:end` | none | Owner, game running | `not-owner`, `no-game` |
 | `game:reset` | none | Owner, game finished | `not-owner`, `no-game` |
-| `game:action` | `HitlineIntent` (below) | Players | `invalid-input`, `no-game`, and the rule errors below |
+| `game:action` | `HitlineIntent` or `HuehintIntent` (below), validated against the running game | Players | `invalid-input`, `no-game`, and the rule errors below |
 
 `lobby:import` replaces the deck, clears the played set and removes a finished game. `game:reset` is the "Outra rodada" button: it clears the finished game and keeps the playlist and the played set. `lobby:reset-played` is "Recomeçar músicas".
 
@@ -65,6 +67,30 @@ Sent in `game:action`.
 
 Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `insufficient-tokens`, `already-bought`, `slot-taken`, `invalid-slot`, `already-decided`. The full rules are in [Hitline rules](hitline-rules.md).
 
+### `HuehintConfig`
+
+```ts
+{
+  turnsPerPlayer: number; // 1 to 3, default 2
+  hintSeconds: number;    // 15 to 90, default 30
+  guessSeconds: number;   // 20 to 120, default 45
+  maxPlayers: number;     // 2 to 15, default 15
+}
+```
+
+All four values are integers.
+
+### `HuehintIntent`
+
+Sent in `game:action`. A color is `Hsb`: `{ h: 0 to 359, s: 0 to 100, b: 0 to 100 }`, integers.
+
+| `type` | Extra fields | Rule |
+|---|---|---|
+| `give-hint` | `hint: string` (up to 200 in the payload) | Giver, phase `hint`, once. The hint must pass `isValidHint`: 1 to 30 characters after trim, at most 4 words, no digit and no `#` |
+| `guess` | `color: Hsb` | Players except the giver, phase `guessing`, once |
+
+Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `already-guessed`. The full rules are in [Huehint rules](huehint-rules.md).
+
 ## Server to client
 
 | Event | Payload | Meaning |
@@ -83,11 +109,15 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `insufficient-token
   ownerId: string;
   members: { id; name; avatar; online: boolean; isOwner: boolean;
              role: "player" | "spectator" | "member" }[];
-  lobby: { config: HitlineConfig;
+  lobby: { selectedGame: "hitline" | "huehint";
+           config: HitlineConfig;
+           huehintConfig: HuehintConfig;
            playlist: { name: string; count: number } | null;
            remaining: number | null;   // songs not played yet in this room
            smallPlaylist: boolean };   // remaining < min(online, maxPlayers) x targetCards x 2
-  game: { type: "hitline"; view: HitlineView } | null;
+  game: { type: "hitline"; view: HitlineView }
+      | { type: "huehint"; view: HuehintView }
+      | null;
   serverNow: number;    // server clock in ms, for deadline countdowns
 }
 ```
@@ -115,7 +145,29 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `insufficient-token
 
 A `PublicCard` is `{ id, title, artists, year, spotifyUrl }`. A `RevealView` holds the card, `turnPlayerId`, `reason` (`resolved` or `timeout`), the turn player's `guess` with `correct`, `titleOk` and `artistOk`, the `contests` with `correct`, `receiverId` and `tokenAwarded`.
 
+### `HuehintView`
+
+| Field | Meaning |
+|---|---|
+| `mode` | `group` or `solo` |
+| `phase` | `hint`, `memorize` (solo), `guessing`, `reveal` or `game-over` |
+| `config` | The game's `HuehintConfig` |
+| `round`, `totalRounds` | 1-based current round and the round count. Departures can lower `totalRounds` |
+| `giverId`, `nextGiverId` | Current and next giver. `null` in solo and after game over |
+| `color` | The secret color. Set only for the giver in `hint` and `guessing`, and for the solo player in `memorize`. `null` for everyone else |
+| `hint` | The hint once given, else `null` |
+| `submitted[]` | Ids of who guessed this round. Never their colors |
+| `myGuess` | Your own guess during `guessing`, else `null` |
+| `deadline` | When the current phase ends, in ms. `null` while paused or after game over |
+| `players[]` | `id`, `online`, `guessPoints`, `giverPoints`, `total`, in points with 2 decimals |
+| `rounds[]` | Revealed rounds, oldest first (`HuehintRoundView`) |
+| `winners[]`, `endReason` | Set at game over. `endReason` is `rounds-done`, `ended` or `not-enough-players` |
+
+A `HuehintRoundView` is `{ round, giverId, color, hint, outcome, guesses, giverScore }`. `outcome` is `revealed` or `no-hint`. `guesses` holds `{ playerId, color, score }`, with scores from 0 to 10. `giverScore` is the mean of the guesses (0 with none), or `null` for a `no-hint` round and in solo.
+
 ### `GameEvent`
+
+Hitline events:
 
 | `type` | Fields |
 |---|---|
@@ -130,6 +182,19 @@ A `PublicCard` is `{ id, title, artists, year, spotifyUrl }`. A `RevealView` hol
 | `card-revealed` | `reveal` |
 | `turn-passed` | `playerId`, `reason` (`timeout`, `offline` or `removed`) |
 | `audio-missing` | none |
+| `game-over` | `winners`, `reason` |
+
+Huehint events. None carries the secret color or a guess before the reveal, because every member receives the same events:
+
+| `type` | Fields |
+|---|---|
+| `game-started` | none |
+| `round-started` | `round` (1-based), `giverId` (`null` in solo) |
+| `hint-given` | `hint` |
+| `memorize-ended` | none (solo: the color hides and guessing opens) |
+| `guess-submitted` | `playerId` |
+| `round-revealed` | `round` (`HuehintRoundView`) |
+| `round-canceled` | `giverId` (the giver left during the hint) |
 | `game-over` | `winners`, `reason` |
 
 ### `ChatMessage`
@@ -162,7 +227,7 @@ System messages announce joins, leaves, kicks, a new owner, the start of a game 
 | `no-deck` | The room has no playlist yet |
 | `game-running` | The action needs no running game |
 | `no-game` | The action needs a game |
-| `not-your-turn` | Only the turn player can do this |
+| `not-your-turn` | Only the turn player (Hitline) or the giver (Huehint hint) can do this, or the giver tried to guess |
 | `wrong-phase` | The action does not apply in the current phase |
 | `insufficient-tokens` | Not enough tokens |
 | `already-bought` | One purchase per turn |
@@ -170,6 +235,8 @@ System messages announce joins, leaves, kicks, a new owner, the start of a game 
 | `invalid-slot` | The slot does not exist |
 | `already-decided` | You already contested or passed |
 | `not-a-player` | You are a spectator |
+| `invalid-hint` | Huehint: the hint breaks the length, word, digit or `#` rule |
+| `already-guessed` | Huehint: you already guessed this round |
 | `server-error` | Unexpected failure on the server |
 | `timeout` | Client only: no ack arrived in time |
 
