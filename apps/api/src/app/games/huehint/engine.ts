@@ -14,7 +14,7 @@ import { drawColors } from "./palette.js";
 import { toRoundView } from "./project.js";
 
 export const REVEAL_MS = 12_000;
-export const MEMORIZE_MS = 3_000;
+export const MEMORIZE_MS = 5_000;
 export const SOLO_ROUNDS = 5;
 
 export type Player = { id: string; online: boolean };

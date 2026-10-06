@@ -143,7 +143,7 @@ export function LobbyPanel({
               }
             />
             <p className="text-sm text-muted-foreground">
-              Com uma pessoa online: treino solo de 5 rodadas. A cor aparece por 3 segundos.
+              Com uma pessoa online: treino solo de 5 rodadas. A cor aparece por 5 segundos.
             </p>
           </>
         )}

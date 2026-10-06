@@ -234,7 +234,7 @@ export function HuehintBoard({
         ? `Rodada ${view.round} revelada.${lastRound ? ` Cor real: ${describeHsb(lastRound.color)}. ${lastRound.outcome === "no-hint" ? `${name(lastRound.giverId)} não deu dica` : lastRound.guesses.map((g) => `${name(g.playerId)}: ${formatScore(g.score)}`).join(". ")}${lastRound.giverScore !== null ? `. Nota do dador: ${formatScore(lastRound.giverScore)}` : ""}` : ""}`
         : view.phase === "memorize"
           ? screen === "memorize"
-            ? "Memorize a cor. Você tem 3 segundos."
+            ? "Memorize a cor. Você tem 5 segundos."
             : `${name(view.players[0]?.id ?? null)} está memorizando a cor`
           : view.phase === "hint"
             ? view.giverId === room.you
@@ -349,7 +349,7 @@ export function HuehintBoard({
             </p>
           ) : null}
           {screen === "memorize" ? (
-            <p className="text-center font-medium">Memorize! A cor some em 3 segundos.</p>
+            <p className="text-center font-medium">Memorize! A cor some em 5 segundos.</p>
           ) : null}
           {screen === "guess" ? (
             <>

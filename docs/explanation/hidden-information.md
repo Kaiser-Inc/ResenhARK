@@ -35,7 +35,7 @@ In Huehint, the round's color and the guesses are the secret. `apps/api/src/app/
 | Data | What the viewer sees |
 |---|---|
 | Colors of future rounds | Nothing. They exist only in the server state |
-| Current color, before the reveal | Only the giver, in `hint` and `guessing`. In solo, only the player, during the 3 s `memorize` phase |
+| Current color, before the reveal | Only the giver, in `hint` and `guessing`. In solo, only the player, during the 5 s `memorize` phase |
 | Other players' guesses, before the reveal | Only who guessed (`submitted`), never the color. Your own guess comes back as `myGuess` |
 | Revealed rounds | Everything: color, hint, guesses and scores, in `rounds` |
 

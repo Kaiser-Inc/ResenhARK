@@ -173,7 +173,7 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
   await expect(page.getByLabel("Link da playlist")).toBeVisible();
 });
 
-test("Huehint solo: memorize for three seconds, keyboard recreation, immediate reveal and five-round result", async ({
+test("Huehint solo: memorize for five seconds, keyboard recreation, immediate reveal and five-round result", async ({
   page,
 }) => {
   test.setTimeout(160_000);
@@ -186,7 +186,7 @@ test("Huehint solo: memorize for three seconds, keyboard recreation, immediate r
     });
     await expect(page.getByRole("slider")).toHaveCount(0);
     await expect(page.getByRole("region", { name: "Cor secreta" })).toHaveCount(0, {
-      timeout: 5_000,
+      timeout: 8_000,
     });
     await expect(
       page.getByRole("paragraph").filter({ hasText: /^Recrie a cor de memória$/ }),

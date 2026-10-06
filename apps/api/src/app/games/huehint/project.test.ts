@@ -135,7 +135,7 @@ test("solo: memorize shows the color to the player only, then guessing hides it"
   assert.deepEqual(view.color, TARGET);
   assert.equal(view.giverId, null);
   assert.equal(leaks(project(state, "spectator"), TARGET), false);
-  const open = tick(state, fixedCtx(3000)).state;
+  const open = tick(state, fixedCtx(5000)).state;
   assert.equal(project(open, "a").phase, "guessing");
   assert.equal(leaks(project(open, "a"), TARGET), false);
 });

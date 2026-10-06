@@ -143,9 +143,9 @@ test("memorize announces the solo player to spectators and instructions only to 
     players: [view.players[0]],
   };
   const spectator = render(solo, "spectator");
-  assert.doesNotMatch(spectator, /Memorize a cor\. Você tem 3 segundos\./);
+  assert.doesNotMatch(spectator, /Memorize a cor\. Você tem 5 segundos\./);
   assert.match(liveText(spectator), /Ana está memorizando a cor/);
-  assert.match(liveText(render(solo, "giver")), /Memorize a cor\. Você tem 3 segundos\./);
+  assert.match(liveText(render(solo, "giver")), /Memorize a cor\. Você tem 5 segundos\./);
 });
 test("hint announcements address the giver and identify the giver to other players", () => {
   const giver = liveText(render({ phase: "hint" }, "giver"));

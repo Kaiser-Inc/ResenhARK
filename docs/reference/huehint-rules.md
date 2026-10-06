@@ -68,7 +68,7 @@ With exactly 2 players, each round gives the guesser and the giver the same poin
 ## Solo mode
 
 - 5 rounds, with no giver.
-- **Memorize** (`memorize`, 3 s). The player sees the color, then it hides (`memorize-ended`).
+- **Memorize** (`memorize`, 5 s). The player sees the color, then it hides (`memorize-ended`).
 - **Guess** (`guessing`, `guessSeconds`). The player rebuilds the color from memory. The guess reveals at once. The deadline reveals with no guess.
 - **Reveal** (`reveal`, 12 s), with the same scoring as the group game.
 - The player wins at the end. Leaving ends the game with `endReason: "ended"`.

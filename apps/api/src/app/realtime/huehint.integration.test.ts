@@ -324,7 +324,7 @@ test("starting Huehint with one online member runs solo", async (t) => {
   assert.equal(hue(s)?.mode, "solo");
   assert.equal(hue(s)?.totalRounds, 5);
   assert.ok(hue(s)?.color);
-  app.clock.set(app.clock.now() + 3000);
+  app.clock.set(app.clock.now() + 5000);
   await app.hub.runDueTimers();
   const open = await stateWhere(clients[0], (x) => hue(x)?.phase === "guessing");
   assert.equal(hue(open)?.color, null);
