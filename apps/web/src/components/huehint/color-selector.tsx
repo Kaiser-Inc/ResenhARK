@@ -55,7 +55,7 @@ export function ColorSelector({
                 style={{ background: gradients[key] }}
                 onPointerDown={(event) => {
                   if (disabled) return;
-                  event.currentTarget.focus();
+                  event.currentTarget.focus({ preventScroll: true });
                   event.currentTarget.setPointerCapture(event.pointerId);
                   const rect = event.currentTarget.getBoundingClientRect();
                   const value = Math.round(
