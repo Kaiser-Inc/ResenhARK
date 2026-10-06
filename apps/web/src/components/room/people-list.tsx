@@ -15,9 +15,16 @@ type PeopleListProps = {
   /** The connection is down: the menus stay but cannot be used. */
   actionsDisabled?: boolean;
   youId?: string;
+  happyMemberId?: string;
 };
 
-export function PeopleList({ members, onRemove, actionsDisabled = false, youId }: PeopleListProps) {
+export function PeopleList({
+  members,
+  onRemove,
+  actionsDisabled = false,
+  youId,
+  happyMemberId,
+}: PeopleListProps) {
   if (!members) {
     return (
       <section aria-label="Carregando pessoas" aria-busy="true" className="flex flex-col gap-1">
@@ -39,6 +46,7 @@ export function PeopleList({ members, onRemove, actionsDisabled = false, youId }
             name={member.name}
             avatar={member.avatar}
             size={32}
+            expression={member.id === happyMemberId ? "happy" : "idle"}
             animate
             online={member.online}
             className={cn(!member.online && "opacity-50")}

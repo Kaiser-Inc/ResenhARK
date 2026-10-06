@@ -71,7 +71,7 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
   const pages = [page, bia, caio];
   await configureHuehint(page);
   await expect(bia.getByText("Jogo escolhido: Huehint")).toBeVisible();
-  await expect(bia.getByText("Voltas por jogador")).toBeVisible();
+  await expect(bia.getByText("Voltas por jogador", { exact: true })).toBeVisible();
   await expect(bia.getByRole("combobox")).toHaveCount(0);
   await checkAxe(page);
   await checkAxe(bia);

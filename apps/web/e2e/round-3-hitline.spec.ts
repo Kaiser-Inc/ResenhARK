@@ -43,7 +43,9 @@ test("CA-F4/F5/F6: fifteen cards scroll with the page and keep actions on screen
   await expect(timeline.locator("[data-card-id]")).toHaveCount(15);
   for (const width of [390, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    expect(await timeline.evaluate((node) => getComputedStyle(node).overflowY)).toBe("visible");
+    await expect
+      .poll(() => timeline.evaluate((node) => getComputedStyle(node).overflowY))
+      .toBe("visible");
     for (const fraction of [0, 0.5, 1]) {
       await page.evaluate(
         (value) =>

@@ -20,6 +20,7 @@ export type RoomActions = {
   onRemove: (member: MemberView) => void;
   onLeave: () => Promise<void>;
   gameRunning: boolean;
+  arriving?: boolean;
 };
 
 async function copyLink(code: string) {
@@ -59,6 +60,7 @@ export function RoomPeople({
       <PeopleList
         members={members}
         youId={actions?.youId}
+        happyMemberId={actions?.arriving ? actions.youId : undefined}
         onRemove={actions?.isOwner ? actions.onRemove : undefined}
         actionsDisabled={actions?.disabled}
       />

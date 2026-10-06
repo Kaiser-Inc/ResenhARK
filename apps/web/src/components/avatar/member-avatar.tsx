@@ -76,15 +76,18 @@ export function MemberAvatar({
   className,
 }: MemberAvatarProps) {
   const reduce = useReduced();
-  const jump = expression === "happy" && !reduce;
+  const react = animate && !reduce;
+  const jump = react && expression === "happy";
   return (
     <motion.span
+      key={expression}
       aria-hidden="true"
       data-expression={expression}
       className={cn("relative inline-flex shrink-0", className)}
       style={{ width: size, height: size }}
-      animate={jump ? { y: [0, -6, 0] } : undefined}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      initial={react && expression !== "idle" ? { opacity: 0.8 } : false}
+      animate={{ opacity: 1, y: jump ? [0, -2, 0] : 0 }}
+      transition={{ duration: reduce ? 0 : 0.12, ease: [0.23, 1, 0.32, 1] }}
     >
       <Blobatar
         name={name}
@@ -92,7 +95,6 @@ export function MemberAvatar({
         hue={avatar.hue}
         traits={{ shape: shapeTrait(avatar.shape) }}
         expression={EXPRESSIONS[expression]}
-        animate={animate && !reduce ? "always" : undefined}
         background="circle"
         aria-hidden="true"
       />

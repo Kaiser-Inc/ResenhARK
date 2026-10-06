@@ -301,6 +301,15 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
   const [removeTarget, setRemoveTarget] = useState<MemberView | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const connected = status === "connected";
+  const [arriving, setArriving] = useState(false);
+  const you = room?.you;
+
+  useEffect(() => {
+    if (!you) return;
+    setArriving(true);
+    const timer = setTimeout(() => setArriving(false), 1_000);
+    return () => clearTimeout(timer);
+  }, [you]);
 
   useEffect(() => {
     if (status === "invalid-session" && !left.current) onInvalidSession();
@@ -326,6 +335,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
       room
         ? {
             youId: room.you,
+            arriving,
             isOwner: room.ownerId === room.you,
             gameRunning: room.game !== null && room.game.view.phase !== "game-over",
             disabled: !connected,
@@ -336,7 +346,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
             onLeave,
           }
         : null,
-    [room, connected, onLeave],
+    [room, connected, onLeave, arriving],
   );
 
   const chatSlot = useMemo<ChatSlot | null>(
