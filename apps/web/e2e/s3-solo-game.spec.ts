@@ -93,8 +93,10 @@ test("small playlist warning appears for a big N", async ({ page }) => {
   await expect(page.getByRole("status").filter({ hasText: "40 faixas prontas" })).toBeVisible();
   await expect(page.getByLabel("Link da playlist")).toHaveAttribute("type", "url");
   await expect(page.getByText(/Playlist pequena/)).toHaveCount(0);
-  await chooseOption(page, "Cartas para vencer", "30");
-  await expect(page.getByText(/Playlist pequena para 1 jogador e N=30/)).toBeVisible();
+  // At most 15 cards to win, so only a short deck can trigger the warning for one player.
+  await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
+  await page.getByRole("button", { name: "Importar playlist" }).click();
+  await expect(page.getByText(/Playlist pequena para 1 jogador e N=10/)).toBeVisible();
 });
 
 test("owner starts a new game after the game is over", async ({ page }) => {

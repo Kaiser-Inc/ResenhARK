@@ -52,9 +52,14 @@ for (const viewport of VIEWPORTS) {
       await expect(page.getByText("40 faixas prontas")).toBeVisible({ timeout: 10_000 });
       await shot(page, name("lobby-imported"));
 
-      await chooseOption(page, "Cartas para vencer", "30");
+      // At most 15 cards to win, so only a short deck can trigger the warning for one player.
+      await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
+      await page.getByRole("button", { name: "Importar playlist" }).click();
       await expect(page.getByText(/Playlist pequena/)).toBeVisible();
       await shot(page, name("lobby-small-playlist"));
+      await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
+      await page.getByRole("button", { name: "Importar playlist" }).click();
+      await expect(page.getByText("40 faixas prontas")).toBeVisible();
 
       const bia = await joinRoomAs(browser, code, "Bia");
       await bia.page.setViewportSize({ width: viewport.width, height: viewport.height });
@@ -64,7 +69,7 @@ for (const viewport of VIEWPORTS) {
       await shot(bia.page, name("lobby-member"));
       await bia.context.close(); // offline members are not dealt in: Ana plays alone
 
-      await chooseOption(page, "Cartas para vencer", "30");
+      await chooseOption(page, "Cartas para vencer", "15");
       await page.getByRole("button", { name: "Iniciar partida" }).click();
       await expect(page.getByRole("button", { name: "Puxar carta" })).toBeVisible();
       await shot(page, name("turn-start"));
