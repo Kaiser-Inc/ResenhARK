@@ -33,8 +33,8 @@ export function ColorSelector({
     b: `linear-gradient(to top, #000, ${hsbToCss({ ...color, b: 100 })})`,
   };
   return (
-    <div aria-label="Seletor de cor" className="flex flex-col gap-3">
-      <div className="flex h-[320px] min-w-0 sm:h-[400px]">
+    <div aria-label="Seletor de cor" className="mx-auto flex w-full max-w-[480px] flex-col gap-3">
+      <div className="flex aspect-[4/5] min-w-0">
         <div className="flex shrink-0 gap-2 rounded-l-xl bg-muted p-3 pr-4">
           {BARS.map(({ key, label, max }) => (
             <div key={key} className="flex flex-col items-center gap-2">
