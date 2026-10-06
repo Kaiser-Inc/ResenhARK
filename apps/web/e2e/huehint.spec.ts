@@ -143,9 +143,7 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
     }
     await keyboardGuess(guessers[1]);
     for (const p of pages) {
-      const reveal = p
-        .getByRole("region", { name: `Revelação da rodada ${round}`, exact: true })
-        .first();
+      const reveal = p.getByRole("region", { name: `Revelação da rodada ${round}`, exact: true });
       await expect(reveal).toBeVisible();
       await expect(reveal).toContainText("Cor real");
       await expect(reveal).toContainText(/Nota: \d+,\d{2} \/ 10,00/);
@@ -195,9 +193,7 @@ test("Huehint solo: memorize for three seconds, keyboard recreation, immediate r
     ).toBeVisible();
     if (round === 1) await checkAxe(page);
     await keyboardGuess(page);
-    const reveal = page
-      .getByRole("region", { name: `Revelação da rodada ${round}`, exact: true })
-      .first();
+    const reveal = page.getByRole("region", { name: `Revelação da rodada ${round}`, exact: true });
     await expect(reveal).toBeVisible();
     await expect(reveal).toContainText(/Nota: \d+,\d{2}/);
     await expect(reveal).not.toContainText("Nota do dador");
@@ -267,6 +263,6 @@ test("Huehint selector accepts mouse drags and touch taps with integer HSB value
     expect(Number.isInteger(Number(await slider.getAttribute("aria-valuenow")))).toBe(true);
   await page.getByRole("button", { name: "Confirmar palpite" }).click();
   await expect(
-    page.getByRole("region", { name: "Revelação da rodada 1", exact: true }).first(),
+    page.getByRole("region", { name: "Revelação da rodada 1", exact: true }),
   ).toContainText(/Nota: \d+,\d{2}/);
 });

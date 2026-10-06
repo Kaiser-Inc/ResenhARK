@@ -33,7 +33,16 @@ const room: RoomView = {
   code: "ABCDE",
   you: "giver",
   ownerId: "giver",
-  members: [{ id: "giver", name: "Ana", avatar: { hue: 0, shape: "round" }, online: true, isOwner: true, role: "player" }],
+  members: [
+    {
+      id: "giver",
+      name: "Ana",
+      avatar: { hue: 0, shape: "round" },
+      online: true,
+      isOwner: true,
+      role: "player",
+    },
+  ],
   lobby: {
     selectedGame: "huehint",
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
@@ -127,7 +136,12 @@ function liveText(markup: string): string {
 }
 
 test("memorize announces the solo player to spectators and instructions only to the player", () => {
-  const solo = { mode: "solo" as const, phase: "memorize" as const, giverId: null, players: [view.players[0]] };
+  const solo = {
+    mode: "solo" as const,
+    phase: "memorize" as const,
+    giverId: null,
+    players: [view.players[0]],
+  };
   const spectator = render(solo, "spectator");
   assert.doesNotMatch(spectator, /Memorize a cor\. Você tem 3 segundos\./);
   assert.match(liveText(spectator), /Ana está memorizando a cor/);
@@ -140,4 +154,28 @@ test("hint announcements address the giver and identify the giver to other playe
   const other = liveText(render({ phase: "hint", color: null }, "guesser"));
   assert.match(other, /Ana está pensando na dica/);
   assert.doesNotMatch(other, /Sua vez: dê uma dica para a cor/);
+});
+
+test("reveal renders the current round once and keeps only earlier rounds in the gallery", () => {
+  const first = {
+    round: 1,
+    giverId: "giver",
+    color: { h: 317, s: 83, b: 71 },
+    hint: "Azul",
+    outcome: "revealed" as const,
+    guesses: [],
+    giverScore: 0,
+  };
+  const single = render({ phase: "reveal", color: null, rounds: [first] });
+  assert.equal((single.match(/aria-label="Revelação da rodada 1"/g) ?? []).length, 1);
+  assert.doesNotMatch(single, /aria-label="Galeria de rodadas"/);
+  const second = { ...first, round: 2 };
+  const multiple = render({ phase: "reveal", round: 2, color: null, rounds: [first, second] });
+  assert.equal((multiple.match(/aria-label="Revelação da rodada 1"/g) ?? []).length, 1);
+  assert.equal((multiple.match(/aria-label="Revelação da rodada 2"/g) ?? []).length, 1);
+  assert.equal((multiple.match(/<details\b/g) ?? []).length, 1);
+  const finished = render({ phase: "game-over", round: 2, color: null, rounds: [first, second] });
+  assert.equal((finished.match(/<details\b/g) ?? []).length, 2);
+  assert.equal((finished.match(/aria-label="Revelação da rodada 1"/g) ?? []).length, 1);
+  assert.equal((finished.match(/aria-label="Revelação da rodada 2"/g) ?? []).length, 1);
 });

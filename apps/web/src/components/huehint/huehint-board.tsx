@@ -115,27 +115,27 @@ function RoundReveal({
       ) : null}
       {round.outcome === "revealed" ? (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        {guesserIds.map((id) => {
-          const guess = round.guesses.find((g) => g.playerId === id);
-          return (
-            <div key={id} className="flex flex-col gap-2 rounded-xl bg-background p-4">
-              {guess ? (
-                <>
-                  <div className="grid grid-cols-2 gap-3">
-                    <ColorSwatch color={round.color} label="Cor real" />
-                    <ColorSwatch color={guess.color} label={`Palpite de ${name(id)}`} />
-                  </div>
-                  <p className="font-semibold">Nota: {formatScore(guess.score)} / 10,00</p>
-                </>
-              ) : (
-                <>
-                  <p className="font-medium">{name(id)}</p>
-                  <p className="text-sm text-muted-foreground">sem palpite</p>
-                </>
-              )}
-            </div>
-          );
-        })}
+          {guesserIds.map((id) => {
+            const guess = round.guesses.find((g) => g.playerId === id);
+            return (
+              <div key={id} className="flex flex-col gap-2 rounded-xl bg-background p-4">
+                {guess ? (
+                  <>
+                    <div className="grid grid-cols-2 gap-3">
+                      <ColorSwatch color={round.color} label="Cor real" />
+                      <ColorSwatch color={guess.color} label={`Palpite de ${name(id)}`} />
+                    </div>
+                    <p className="font-semibold">Nota: {formatScore(guess.score)} / 10,00</p>
+                  </>
+                ) : (
+                  <>
+                    <p className="font-medium">{name(id)}</p>
+                    <p className="text-sm text-muted-foreground">sem palpite</p>
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
       ) : null}
       {round.giverScore !== null ? (
@@ -221,6 +221,7 @@ export function HuehintBoard({
     ? `${view.winners.map(name).join(" e ")} ${view.winners.length > 1 ? "venceram" : "venceu"}!`
     : "Partida encerrada";
   const lastRound = view.rounds.at(-1);
+  const galleryRounds = view.phase === "reveal" ? view.rounds.slice(0, -1) : view.rounds;
   const phaseText =
     view.phase === "game-over"
       ? winnerText
@@ -390,10 +391,10 @@ export function HuehintBoard({
         </>
       )}
       <Scoreboard view={view} members={room.members} />
-      {view.rounds.length > 0 ? (
+      {galleryRounds.length > 0 ? (
         <section aria-label="Galeria de rodadas" className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold">Galeria de rodadas</h2>
-          {view.rounds.map((round) => (
+          {galleryRounds.map((round) => (
             <details key={round.round} className="rounded-xl bg-muted p-4">
               <summary className="cursor-pointer font-medium">
                 Rodada {round.round}
