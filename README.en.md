@@ -17,6 +17,7 @@ The first game is Hitline, a music timeline. You hear a 30 s clip, pick where th
 | Room by code, with name and blobatar avatar, no sign-up | Available |
 | Real-time chat, with the last 200 messages as history | Available |
 | Hitline: music timeline, tokens, contests | Available |
+| Huehint: color guessing from a hint, in a group or solo | Backend ready, interface in progress |
 | SiteSpy | Coming soon |
 | Codetalk | Coming soon |
 

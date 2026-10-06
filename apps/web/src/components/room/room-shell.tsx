@@ -19,6 +19,7 @@ import { ChatPanel } from "@/components/chat/chat-panel";
 import { ChatSkeleton } from "@/components/chat/chat-thread";
 import { Countdown } from "@/components/hitline/countdown";
 import { HitlineBoard } from "@/components/hitline/hitline-board";
+import { HuehintBoard } from "@/components/huehint/huehint-board";
 import { LobbyPanel } from "@/components/lobby/lobby-panel";
 import { ConnectionBanner } from "@/components/room/connection-banner";
 import { RoomMobileBar } from "@/components/room/room-mobile-bar";
@@ -339,14 +340,24 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
         chat={chatSlot}
         reconnecting={status === "reconnecting"}
         contest={
-          room?.game?.view.phase === "contest" && room.game.view.contestDeadline !== null
+          room?.game?.type === "hitline" &&
+          room.game.view.phase === "contest" &&
+          room.game.view.contestDeadline !== null
             ? { deadline: room.game.view.contestDeadline, clock }
             : null
         }
         focusOnMount={focusOnMount}
       >
         {room ? (
-          room.game ? (
+          room.game?.type === "huehint" ? (
+            <HuehintBoard
+              room={room}
+              events={events}
+              send={send}
+              clock={clock}
+              connected={connected}
+            />
+          ) : room.game ? (
             <HitlineBoard
               room={room}
               events={events}

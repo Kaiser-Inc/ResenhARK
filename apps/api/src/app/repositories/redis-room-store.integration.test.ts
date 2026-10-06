@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { DEFAULT_HITLINE_CONFIG, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
 import { startTestServer } from "../../test/helpers.js";
 
 test("revokeMemberSessions drops every session of that member only", async () => {
@@ -42,5 +43,22 @@ test("touch renews the TTL of the room, chat and sessions", async () => {
   for (const key of ["room:ABCDE", "chat:ABCDE", "session:t1", "member-sessions:ABCDE:m1"]) {
     assert.ok((await redis.ttl(key)) > 21000, `${key} ttl not renewed`);
   }
+  await app.close();
+});
+
+test("load gives rooms saved before Huehint the default game choice", async () => {
+  const app = await startTestServer();
+  const legacy = {
+    code: "ABCDE",
+    ownerId: "m1",
+    members: [],
+    lastActivityAt: 0,
+    lobby: { config: DEFAULT_HITLINE_CONFIG, deck: null, played: [] },
+    game: null,
+  };
+  await app.store.redis.set("room:ABCDE", JSON.stringify(legacy));
+  const room = await app.store.load("ABCDE");
+  assert.equal(room?.lobby.game, "hitline");
+  assert.deepEqual(room?.lobby.huehintConfig, DEFAULT_HUEHINT_CONFIG);
   await app.close();
 });

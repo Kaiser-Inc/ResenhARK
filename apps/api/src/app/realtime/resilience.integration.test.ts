@@ -7,6 +7,7 @@ import {
   type TestSession,
   connectClient,
   createRoomVia,
+  hitlineView,
   joinRoomVia,
   startTestServer,
   stateWhere,
@@ -61,7 +62,7 @@ async function startRoom(t: Cleanup, names: string[]) {
 async function startGame(owner: Socket, clients: Socket[]) {
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
   const started = await stateWhere(owner, (s) => s.events.some((e) => e.type === "game-started"));
-  const turnId = started.room.game?.view.turnPlayerId;
+  const turnId = hitlineView(started)?.turnPlayerId;
   return started.room.members.findIndex((m) => m.id === turnId);
 }
 
@@ -74,8 +75,8 @@ test("a game survives an API restart and resolves expired deadlines on reconnect
     await emit(driver, "game:action", { type: "lock-guess", slot: 0, title: "x", artist: "y" }),
     { ok: true },
   );
-  const open = await stateWhere(owner, (s) => s.room.game?.view.phase === "contest");
-  const deadline = open.room.game?.view.contestDeadline as number;
+  const open = await stateWhere(owner, (s) => hitlineView(s)?.phase === "contest");
+  const deadline = hitlineView(open)?.contestDeadline as number;
 
   // Crash: Redis goes away first, so no graceful disconnect mutation reaches the room.
   app.store.redis.disconnect();
@@ -88,8 +89,8 @@ test("a game survives an API restart and resolves expired deadlines on reconnect
   const back = await connectClient(app2.url, sessions[turn].sessionToken);
   t.after(() => back.close());
   const first = await stateWhere(back, () => true);
-  assert.ok(first.room.game?.view.lastReveal, "the expired contest is resolved on reconnect");
-  assert.notEqual(first.room.game?.view.phase, "contest");
+  assert.ok(hitlineView(first)?.lastReveal, "the expired contest is resolved on reconnect");
+  assert.notEqual(hitlineView(first)?.phase, "contest");
 });
 
 test("rehydrate resets ghost presence and arms the game and owner deadlines", async (t) => {
@@ -112,7 +113,11 @@ test("rehydrate resets ghost presence and arms the game and owner deadlines", as
   app2.clock.set(base + 31_000);
   await app2.hub.runDueTimers();
   const passed = await app2.store.load(sessions[0].code);
-  assert.equal(passed?.game?.state.turn, 1, "ghost-online Ana loses the turn after 30 s");
+  assert.equal(
+    passed?.game?.type === "hitline" && passed.game.state.turn,
+    1,
+    "ghost-online Ana loses the turn after 30 s",
+  );
 
   app2.clock.set(base + 61_000);
   await app2.hub.runDueTimers();
@@ -142,8 +147,8 @@ test("kicking the turn player mid-game passes the turn", async (t) => {
   assert.deepEqual(await emit(owner, "room:kick", { targetId: victim }), { ok: true });
   const s = await stateWhere(owner, (x) => x.room.members.length === 4);
   assert.ok(s.events.some((e) => e.type === "turn-passed" && e.reason === "removed"));
-  assert.notEqual(s.room.game?.view.turnPlayerId, victim);
-  assert.equal(s.room.game?.view.players.length, 4);
+  assert.notEqual(hitlineView(s)?.turnPlayerId, victim);
+  assert.equal(hitlineView(s)?.players.length, 4);
 });
 
 test("a member who joins mid-game is a spectator and plays the next game", async (t) => {
@@ -158,7 +163,7 @@ test("a member who joins mid-game is a spectator and plays the next game", async
   assert.deepEqual(await emit(owner, "game:end"), { ok: true });
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
   const next = await stateWhere(owner, (s) => s.events.some((e) => e.type === "game-started"));
-  assert.equal(next.room.game?.view.players.length, 3);
+  assert.equal(hitlineView(next)?.players.length, 3);
   assert.equal(next.room.members.find((m) => m.id === cid.memberId)?.role, "player");
 });
 
@@ -166,14 +171,13 @@ test("owner ends the game and starts a new one with the same playlist", async (t
   const { clients, owner } = await startRoom(t, ["Ana", "Bia"]);
   await startGame(owner, clients);
   assert.deepEqual(await emit(owner, "game:end"), { ok: true });
-  const over = await stateWhere(owner, (s) => s.room.game?.view.phase === "game-over");
+  const over = await stateWhere(owner, (s) => hitlineView(s)?.phase === "game-over");
   assert.deepEqual(over.room.lobby.playlist, { name: "Fake", count: 20 });
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
   const fresh = await stateWhere(
     owner,
-    (s) =>
-      s.events.some((e) => e.type === "game-started") && s.room.game?.view.phase !== "game-over",
+    (s) => s.events.some((e) => e.type === "game-started") && hitlineView(s)?.phase !== "game-over",
   );
-  assert.equal(fresh.room.game?.view.players.length, 2);
+  assert.equal(hitlineView(fresh)?.players.length, 2);
   assert.deepEqual(fresh.room.lobby.playlist, { name: "Fake", count: 20 });
 });

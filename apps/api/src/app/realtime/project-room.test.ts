@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { DEFAULT_HITLINE_CONFIG } from "@resenhark/shared";
+import { DEFAULT_HITLINE_CONFIG, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
 import { projectRoom } from "./project-room.js";
 
@@ -29,7 +29,9 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
     ],
   );
   assert.deepEqual(view.lobby, {
+    selectedGame: "hitline",
     config: DEFAULT_HITLINE_CONFIG,
+    huehintConfig: DEFAULT_HUEHINT_CONFIG,
     playlist: null,
     remaining: null,
     smallPlaylist: false,

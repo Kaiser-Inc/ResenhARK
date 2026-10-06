@@ -58,7 +58,7 @@ after(() => app.close());
 
 async function seedDraw(drawId: string | null): Promise<void> {
   const room = (await app.store.load(owner.code)) as unknown as Record<string, unknown>;
-  room.game = { kind: "hitline", state: { draw: drawId ? { id: drawId, card } : null } };
+  room.game = { type: "hitline", state: { draw: drawId ? { id: drawId, card } : null } };
   await app.store.save(room as never);
   if (drawId) await app.store.indexDraw(drawId, owner.code);
 }

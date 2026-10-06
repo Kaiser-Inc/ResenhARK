@@ -1,7 +1,7 @@
 import type { GameView, LobbyView, RoomView } from "@resenhark/shared";
 import { settings } from "../core/settings.js";
 import { type Room, isOnline, unplayedCards } from "../domain/room/room.js";
-import { project } from "../games/hitline/project.js";
+import { isRunning, projectGame } from "../games/registry.js";
 import { audioPath } from "../http/audio-tickets.js";
 
 /** What `viewerId` is allowed to see of the room. Never add hidden game data here. */
@@ -11,19 +11,21 @@ export function projectRoom(room: Room, viewerId: string, now: number): RoomView
   const cap = Math.min(onlineCount, lobby.config.maxPlayers);
   const remaining = lobby.deck ? unplayedCards(lobby).length : null;
   const lobbyView: LobbyView = {
+    selectedGame: lobby.game,
     config: { ...lobby.config },
+    huehintConfig: { ...lobby.huehintConfig },
     playlist: lobby.deck ? { name: lobby.deck.name, count: lobby.deck.cards.length } : null,
     remaining,
     smallPlaylist: remaining !== null && remaining < cap * lobby.config.targetCards * 2,
   };
-  const active = !!game && game.state.phase !== "game-over";
+  const active = isRunning(game);
   let gameView: GameView | null = null;
   if (game) {
-    const view = project(game.state, viewerId);
-    if (view.draw) {
-      view.draw.audioUrl = audioPath(settings.SESSION_SECRET, view.draw.id, viewerId);
+    gameView = projectGame(game, viewerId);
+    if (gameView.type === "hitline" && gameView.view.draw) {
+      const draw = gameView.view.draw;
+      draw.audioUrl = audioPath(settings.SESSION_SECRET, draw.id, viewerId);
     }
-    gameView = { type: "hitline", view };
   }
   return {
     code: room.code,
@@ -35,7 +37,8 @@ export function projectRoom(room: Room, viewerId: string, now: number): RoomView
       avatar: member.avatar,
       online: isOnline(member),
       isOwner: member.id === room.ownerId,
-      role: active ? (game.playerIds.includes(member.id) ? "player" : "spectator") : "member",
+      role:
+        active && game ? (game.playerIds.includes(member.id) ? "player" : "spectator") : "member",
     })),
     lobby: lobbyView,
     game: gameView,

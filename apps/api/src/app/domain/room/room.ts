@@ -1,12 +1,16 @@
 import {
   type Avatar,
   DEFAULT_HITLINE_CONFIG,
+  DEFAULT_HUEHINT_CONFIG,
+  type GameType,
   type HitlineConfig,
+  type HuehintConfig,
   ROOM_CODE_ALPHABET,
   normalizeName,
 } from "@resenhark/shared";
-import { type Card, type HitlineState, nextDeadline } from "../../games/hitline/engine.js";
+import type { Card } from "../../games/hitline/engine.js";
 import { normalizeTitle } from "../../games/hitline/normalize.js";
+import { type ActiveGame, gameDeadline } from "../../games/registry.js";
 import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 
 export type Member = {
@@ -21,12 +25,16 @@ export type Member = {
 };
 
 export type Lobby = {
+  /** The game `game:start` starts. */
+  game: GameType;
+  /** Hitline config. */
   config: HitlineConfig;
+  huehintConfig: HuehintConfig;
   deck: ImportedPlaylist | null;
   /** Stable keys (see playedKey) of every song already played in this room. */
   played: string[];
 };
-export type ActiveGame = { type: "hitline"; state: HitlineState; playerIds: string[] };
+export type { ActiveGame };
 
 export type Room = {
   code: string;
@@ -57,7 +65,13 @@ export function createRoom(code: string, owner: Member, now: number): Room {
     ownerId: owner.id,
     members: [owner],
     lastActivityAt: now,
-    lobby: { config: DEFAULT_HITLINE_CONFIG, deck: null, played: [] },
+    lobby: {
+      game: "hitline",
+      config: DEFAULT_HITLINE_CONFIG,
+      huehintConfig: DEFAULT_HUEHINT_CONFIG,
+      deck: null,
+      played: [],
+    },
     game: null,
   };
 }
@@ -98,7 +112,7 @@ export function unplayedCards(lobby: Lobby): Card[] {
  */
 export function foldPlayed(room: Room): Room {
   const { game, lobby } = room;
-  if (!game || !lobby.deck) return room;
+  if (game?.type !== "hitline" || !lobby.deck) return room;
   const inDeck = new Set(game.state.deck.map((card) => card.id));
   const played = new Set(lobby.played);
   for (const card of lobby.deck.cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
@@ -151,7 +165,7 @@ export function roomDeadline(room: Room): number | null {
     !owner || owner.offlineSince === null || !nextOnline(room.members, owner.id)
       ? null
       : owner.offlineSince + OWNER_GRACE_MS;
-  const game = room.game ? nextDeadline(room.game.state) : null;
+  const game = room.game ? gameDeadline(room.game) : null;
   if (handover === null) return game;
   return game === null ? handover : Math.min(handover, game);
 }

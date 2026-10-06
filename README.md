@@ -17,6 +17,7 @@ O primeiro jogo é o Hitline, uma linha do tempo de músicas. Você ouve um trec
 | Sala por código, com nome e avatar blobatar, sem cadastro | Disponível |
 | Chat em tempo real, com histórico das últimas 200 mensagens | Disponível |
 | Hitline: linha do tempo de músicas, fichas, contestação | Disponível |
+| Huehint: jogo de cores por dica, em grupo ou solo | Backend pronto, interface em construção |
 | SiteSpy | Em breve |
 | Codetalk | Em breve |
 
