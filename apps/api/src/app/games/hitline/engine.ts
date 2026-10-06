@@ -12,7 +12,8 @@ export type Card = {
   isrc: string | null;
   spotifyUrl: string | null;
 };
-export type Ctx = { now: number; rng: () => number; newId: () => string };
+export type { Ctx } from "../system.js";
+import type { Ctx } from "../system.js";
 export type Player = {
   id: string;
   timeline: Card[];
@@ -74,8 +75,8 @@ export type EngineResult =
   | { ok: true; state: HitlineState; events: HitlineEvent[] }
   | { ok: false; error: RuleError };
 
-/** Actor for hub-driven actions (missing audio, owner ending the game). */
-export const SYSTEM_ACTOR = "system";
+export { SYSTEM_ACTOR } from "../system.js";
+import { SYSTEM_ACTOR } from "../system.js";
 export const START_TOKENS = 2;
 export const SKIP_COST = 1;
 export const CONTEST_COST = 1;

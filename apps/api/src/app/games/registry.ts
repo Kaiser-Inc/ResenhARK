@@ -5,19 +5,20 @@ import {
   type HitlineEvent,
   type HitlineIntent,
   type HitlineView,
+  type HuehintEvent,
+  type HuehintIntent,
+  type HuehintView,
   hitlineIntentSchema,
+  huehintIntentSchema,
 } from "@resenhark/shared";
 import type { ZodType } from "zod";
 import * as hitline from "./hitline/engine.js";
 import { project as projectHitline } from "./hitline/project.js";
+import * as huehint from "./huehint/engine.js";
+import { project as projectHuehint } from "./huehint/project.js";
+import type { Ctx, SystemAction } from "./system.js";
 
-export type Ctx = { now: number; rng: () => number; newId: () => string };
-
-/** Room-driven actions every game accepts with the same shape. */
-export type SystemAction =
-  | { type: "set-online"; online: boolean }
-  | { type: "remove"; playerId: string }
-  | { type: "end" };
+export type { Ctx, SystemAction };
 
 /**
  * The minimal minigame contract: what the room, hub and gateway call on any game.
@@ -44,9 +45,19 @@ const hitlineModule: GameModule<hitline.HitlineState, HitlineIntent, HitlineEven
   intentSchema: hitlineIntentSchema,
 };
 
-export const GAMES = { hitline: hitlineModule };
+const huehintModule: GameModule<huehint.HuehintState, HuehintIntent, HuehintEvent, HuehintView> = {
+  apply: huehint.apply,
+  tick: huehint.tick,
+  nextDeadline: huehint.nextDeadline,
+  project: projectHuehint,
+  intentSchema: huehintIntentSchema,
+};
 
-export type ActiveGame = { type: "hitline"; state: hitline.HitlineState; playerIds: string[] };
+export const GAMES = { hitline: hitlineModule, huehint: huehintModule };
+
+export type ActiveGame =
+  | { type: "hitline"; state: hitline.HitlineState; playerIds: string[] }
+  | { type: "huehint"; state: huehint.HuehintState; playerIds: string[] };
 
 // ponytail: one cast ties `type` to its module; TS cannot correlate the union by itself.
 const moduleOf = (game: ActiveGame) =>

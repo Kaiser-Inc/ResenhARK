@@ -113,7 +113,11 @@ test("rehydrate resets ghost presence and arms the game and owner deadlines", as
   app2.clock.set(base + 31_000);
   await app2.hub.runDueTimers();
   const passed = await app2.store.load(sessions[0].code);
-  assert.equal(passed?.game?.state.turn, 1, "ghost-online Ana loses the turn after 30 s");
+  assert.equal(
+    passed?.game?.type === "hitline" && passed.game.state.turn,
+    1,
+    "ghost-online Ana loses the turn after 30 s",
+  );
 
   app2.clock.set(base + 61_000);
   await app2.hub.runDueTimers();

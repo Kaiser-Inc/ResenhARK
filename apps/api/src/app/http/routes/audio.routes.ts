@@ -80,7 +80,7 @@ export async function audioRoutes(
         if (!verifyAudioTicket(settings.SESSION_SECRET, drawId, m, t)) return notFound();
         const code = await store.roomOfDraw(drawId);
         const room = code ? await store.load(code) : null;
-        const draw = room?.game?.state.draw;
+        const draw = room?.game?.type === "hitline" ? room.game.state.draw : null;
         const card = draw?.id === drawId ? draw.card : null;
         if (!room || !card || !room.members.some((member) => member.id === m)) return notFound();
         const found = await preview(drawId, card);

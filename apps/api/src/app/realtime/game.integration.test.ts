@@ -291,7 +291,7 @@ test("a stale missing-preview result after the game ended is ignored", async (t)
   await new Promise((resolve) => setTimeout(resolve, 100));
   const game = (await app.store.load(sessions[0].code))?.game;
   assert.equal(game?.state.endReason, "ended");
-  assert.equal(game?.state.deck.length, 18); // 1 dealt + the drawn card, which was heard
+  assert.equal(game?.type === "hitline" && game.state.deck.length, 18); // 1 dealt + the drawn card, which was heard
 });
 
 test("a draw that cannot be indexed fails the mutation and is not saved", async (t) => {
@@ -306,7 +306,8 @@ test("a draw that cannot be indexed fails the mutation and is not saved", async 
     ok: false,
     error: "server-error",
   });
-  assert.equal((await store.load(sessions[0].code))?.game?.state.draw, null);
+  const loaded = (await store.load(sessions[0].code))?.game;
+  assert.equal(loaded?.type === "hitline" ? loaded.state.draw : "not hitline", null);
 });
 
 const titles = (s: RoomStatePayload) =>

@@ -89,6 +89,8 @@ export type HuehintEvent =
   | { type: "game-started" }
   | { type: "round-started"; round: number; giverId: string | null }
   | { type: "hint-given"; hint: string }
+  /** Solo: the color hides and guessing opens. */
+  | { type: "memorize-ended" }
   | { type: "guess-submitted"; playerId: string }
   | { type: "round-revealed"; round: HuehintRoundView }
   | { type: "round-canceled"; giverId: string }
