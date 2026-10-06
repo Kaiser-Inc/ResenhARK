@@ -371,6 +371,26 @@ test("importing a playlist resets the played songs", async (t) => {
   assert.equal(s.room.lobby.playlist?.count, 8);
 });
 
+test("lobby:use-default-deck is owner-only, blocked mid-game, and brings the default deck back fresh", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
+  await ready(owner);
+  await emit(owner, "game:start");
+  assert.deepEqual(await emit(owner, "lobby:use-default-deck"), {
+    ok: false,
+    error: "game-running",
+  });
+  await finishRound(owner, clients[1]);
+  assert.deepEqual(await emit(clients[1], "lobby:use-default-deck"), {
+    ok: false,
+    error: "not-owner",
+  });
+  assert.deepEqual(await emit(owner, "lobby:use-default-deck"), { ok: true });
+  const count = DEFAULT_DECK.cards.length;
+  const s = await stateWhere(clients[1], (x) => x.room.lobby.playlist.source === "default");
+  assert.deepEqual(s.room.lobby.playlist, { source: "default", name: "Baralho ResenhARK", count });
+  assert.equal(s.room.lobby.remaining, count);
+});
+
 test("lobby:reset-played is owner-only, blocked mid-game, and restores every song", async (t) => {
   const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
   await ready(owner);

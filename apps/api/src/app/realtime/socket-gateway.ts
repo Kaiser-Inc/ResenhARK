@@ -331,6 +331,22 @@ export function registerSocketGateway(
     );
 
     socket.on(
+      "lobby:use-default-deck",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          // Same as an import: a new deck starts a fresh played-set and drops the finished game.
+          return {
+            ok: true,
+            room: { ...room, game: null, lobby: { ...room.lobby, deck: null, played: [] } },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
       "lobby:reset-played",
       intent(async () => {
         const ack = await hub.mutate(code, (room) => {
