@@ -49,17 +49,17 @@ for (const viewport of VIEWPORTS) {
       await expect(page.locator('[data-slot="button"][data-loading]')).toBeVisible();
       await shot(page, name("lobby-importing"));
       slow = false;
-      await expect(page.getByText("40 faixas prontas")).toBeVisible({ timeout: 10_000 });
+      await expect(page.getByText(/· 40 músicas/)).toBeVisible({ timeout: 10_000 });
       await shot(page, name("lobby-imported"));
 
       // At most 15 cards to win, so only a short deck can trigger the warning for one player.
       await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
       await page.getByRole("button", { name: "Importar playlist" }).click();
-      await expect(page.getByText(/Playlist pequena/)).toBeVisible();
+      await expect(page.getByText(/Baralho pequeno/)).toBeVisible();
       await shot(page, name("lobby-small-playlist"));
       await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
       await page.getByRole("button", { name: "Importar playlist" }).click();
-      await expect(page.getByText("40 faixas prontas")).toBeVisible();
+      await expect(page.getByText(/· 40 músicas/)).toBeVisible();
 
       const bia = await joinRoomAs(browser, code, "Bia");
       await bia.page.setViewportSize({ width: viewport.width, height: viewport.height });

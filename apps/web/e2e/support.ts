@@ -109,7 +109,7 @@ export async function chooseOption(page: Page, label: string, option: string) {
 export async function importDeckAndStart(page: Page, targetCards = "2") {
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Voltar ao baralho ResenhARK" })).toBeVisible();
   const quick = Number(targetCards) < 5;
   await chooseOption(page, "Cartas para vencer", quick ? "5" : targetCards);
   await page.getByRole("button", { name: "Iniciar partida" }).click();

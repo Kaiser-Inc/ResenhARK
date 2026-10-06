@@ -81,22 +81,24 @@ test("non-owner sees the waiting state in the lobby", async ({ browser }) => {
   await expect(bia.getByRole("button", { name: "Importar playlist" })).toHaveCount(0);
   await expect(bia.getByText("Cartas para vencer")).toBeVisible();
   await expect(ana.getByRole("button", { name: "Iniciar partida" })).toBeVisible();
-  await expect(bia.getByText("SiteSpy")).toBeVisible();
-  await expect(bia.getByText("em breve")).toHaveCount(2);
+  await expect(bia.getByText("SiteSpy")).toHaveCount(0);
+  await expect(bia.getByText("em breve")).toHaveCount(0);
 });
 
 test("small playlist warning appears for a big N", async ({ page }) => {
   await createRoomAs(page, "Ana");
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByText("40 faixas prontas")).toBeVisible();
-  await expect(page.getByRole("status").filter({ hasText: "40 faixas prontas" })).toBeVisible();
+  await expect(page.getByText(/· 40 músicas/)).toBeVisible();
+  await expect(page.getByRole("status").filter({ hasText: /· 40 músicas/ })).toBeVisible();
   await expect(page.getByLabel("Link da playlist")).toHaveAttribute("type", "url");
-  await expect(page.getByText(/Playlist pequena/)).toHaveCount(0);
+  await expect(page.getByText(/Baralho pequeno/)).toHaveCount(0);
   // At most 15 cards to win, so only a short deck can trigger the warning for one player.
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByText(/Playlist pequena para 1 jogador e N=10/)).toBeVisible();
+  await expect(
+    page.getByText(/Baralho pequeno para 1 jogador com 10 cartas para vencer/),
+  ).toBeVisible();
 });
 
 test("owner starts a new game after the game is over", async ({ page }) => {
@@ -110,8 +112,8 @@ test("owner starts a new game after the game is over", async ({ page }) => {
     page.getByRole("region", { name: "Resultado" }).getByText(/^\d+ fichas?$/),
   ).toBeVisible();
   await page.getByRole("button", { name: "Outra rodada" }).click();
-  await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await expect(page.getByText(/· 40 músicas/)).toBeVisible();
   await page.reload();
-  await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await expect(page.getByText(/· 40 músicas/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeVisible();
 });
