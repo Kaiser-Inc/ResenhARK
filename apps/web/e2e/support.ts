@@ -10,6 +10,7 @@ import {
 } from "@playwright/test";
 
 export { expect };
+const TEST_REDIS = new URL(process.env.E2E_REDIS_URL ?? "redis://localhost:6379/14");
 
 /**
  * `test` that closes every context the test opened with `browser.newContext()`/`newPage()`.
@@ -128,7 +129,7 @@ function redis(...command: string[]): Promise<string | null> {
       `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
     );
   return new Promise((resolve, reject) => {
-    const socket = net.connect(6379, "localhost");
+    const socket = net.connect(Number(TEST_REDIS.port || 6379), TEST_REDIS.hostname);
     let data = "";
     socket.on("error", reject);
     socket.on("data", (chunk) => {
@@ -148,7 +149,7 @@ function redis(...command: string[]): Promise<string | null> {
         resolve(rest.slice(start, start + Number(match[1])));
       }
     });
-    send(socket, "SELECT", "14");
+    send(socket, "SELECT", TEST_REDIS.pathname.slice(1) || "0");
     send(socket, ...command);
   });
 }
@@ -170,7 +171,7 @@ export async function pokeTokens(code: string, tokens: number): Promise<void> {
   for (const player of room.game.state.players) player.tokens = tokens;
   const body = JSON.stringify(room);
   await new Promise<void>((resolve, reject) => {
-    const socket = net.connect(6379, "localhost");
+    const socket = net.connect(Number(TEST_REDIS.port || 6379), TEST_REDIS.hostname);
     const send = (...args: string[]) =>
       socket.write(
         `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
@@ -184,7 +185,7 @@ export async function pokeTokens(code: string, tokens: number): Promise<void> {
         resolve();
       }
     });
-    send("SELECT", "14");
+    send("SELECT", TEST_REDIS.pathname.slice(1) || "0");
     send("SET", `room:${code}`, body, "KEEPTTL");
   });
 }

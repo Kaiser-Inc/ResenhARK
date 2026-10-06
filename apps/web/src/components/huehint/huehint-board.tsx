@@ -1,4 +1,5 @@
 "use client";
+import { RulesSheet } from "@/components/rules-sheet";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { Countdown } from "@/components/hitline/countdown";
@@ -265,8 +266,8 @@ export function HuehintBoard({
           ? `. Rodada de ${name(canceled.giverId)} cancelada.`
           : ""}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-muted p-4">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-4 rounded-xl bg-muted p-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <p className="font-semibold">
             Rodada {view.round} / {view.totalRounds}
           </p>
@@ -285,6 +286,7 @@ export function HuehintBoard({
             {view.phase === "game-over" ? "Tempo encerrado" : "Tempo pausado"}
           </span>
         )}
+        <RulesSheet setup={{ type: "huehint", config: view.config }} />
       </div>
       {!player ? (
         <p className="text-sm text-muted-foreground">

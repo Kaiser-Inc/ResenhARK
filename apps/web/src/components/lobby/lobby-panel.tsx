@@ -1,6 +1,7 @@
 "use client";
 
 import { GameConfigForm } from "@/components/lobby/game-config-form";
+import { HowToPlay } from "@/components/lobby/how-to-play";
 import { HuehintConfigForm } from "@/components/lobby/huehint-config-form";
 import { PlaylistImport } from "@/components/lobby/playlist-import";
 import { Button } from "@/components/ui/button";
@@ -132,6 +133,14 @@ export function LobbyPanel({
             </p>
           </>
         )}
+        <HowToPlay
+          key={lobby.selectedGame}
+          setup={
+            hitline
+              ? { type: "hitline", config: lobby.config }
+              : { type: "huehint", config: lobby.huehintConfig }
+          }
+        />
         {isOwner ? (
           <div className="flex flex-col items-start gap-2">
             <Button

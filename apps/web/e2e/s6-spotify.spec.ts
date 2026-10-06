@@ -134,7 +134,7 @@ test("connect refuses an authorize url that is not the Spotify consent page", as
   await page.goto("/admin/spotify");
   await page.getByRole("button", { name: "Conectar Spotify" }).click();
   await expect(page.getByText("Não deu para conectar. Tenta de novo.")).toBeVisible();
-  await expect(page).toHaveURL(/localhost:4001\/admin\/spotify$/);
+  await expect(page).toHaveURL(/\/admin\/spotify$/);
 });
 
 test("connect follows a Spotify authorize url", async ({ page }) => {

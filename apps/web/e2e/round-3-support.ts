@@ -5,7 +5,7 @@ import { expect } from "./support";
 
 const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-06-rodada-3-ui-ux/ui";
 
-export async function checkpoint(page: Page, slice: string) {
+export async function checkpoint(page: Page, slice: string, beforeCapture?: () => Promise<void>) {
   for (const theme of ["dark", "light"] as const) {
     await page.evaluate((value) => {
       document.documentElement.classList.toggle("dark", value === "dark");
@@ -15,6 +15,7 @@ export async function checkpoint(page: Page, slice: string) {
       await page.setViewportSize({ width, height: 900 });
       // Responsive room layouts remount the existing spring-animated card.
       await page.waitForTimeout(700);
+      await beforeCapture?.();
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
       );
