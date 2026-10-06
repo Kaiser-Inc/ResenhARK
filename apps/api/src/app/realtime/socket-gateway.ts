@@ -17,6 +17,7 @@ import {
   unplayedCards,
 } from "../domain/room/room.js";
 import { SYSTEM_ACTOR, create } from "../games/hitline/engine.js";
+import { create as createHuehint } from "../games/huehint/engine.js";
 import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
@@ -108,6 +109,28 @@ export function registerSocketGateway(
         game: { ...result.game, playerIds: game.playerIds.filter((id) => id !== memberId) },
       },
       events: result.events,
+    };
+  };
+
+  /** Online members by join order, up to `max`; the rest watch. */
+  const seatPlayers = (room: Room, max: number) =>
+    room.members
+      .filter(isOnline)
+      .sort((a, b) => a.joinedAt - b.joinedAt)
+      .slice(0, max)
+      .map((m) => m.id);
+
+  /** Huehint needs no deck: one online member plays solo, two or more play as a group. */
+  const startHuehint = (room: Room): MutationResult => {
+    // A finished Hitline game's songs still count as played.
+    const folded = foldPlayed(room);
+    const playerIds = seatPlayers(folded, folded.lobby.huehintConfig.maxPlayers);
+    const started = createHuehint(folded.lobby.huehintConfig, playerIds, ctx());
+    return {
+      ok: true,
+      room: { ...folded, game: { type: "huehint", state: started.state, playerIds } },
+      events: started.events,
+      system: ["Partida de Huehint começou"],
     };
   };
 
@@ -324,15 +347,12 @@ export function registerSocketGateway(
         const ack = await hub.mutate(code, (folded) => {
           if (notOwner(folded)) return { ok: false, error: "not-owner" };
           if (running(folded)) return { ok: false, error: "game-running" };
+          if (folded.lobby.game === "huehint") return startHuehint(folded);
           // A finished game's songs count as played even when the owner skips "Outra rodada".
           const room = foldPlayed(folded);
           if (!room.lobby.deck) return { ok: false, error: "no-deck" };
           const pool = unplayedCards(room.lobby);
-          const playerIds = room.members
-            .filter(isOnline)
-            .sort((a, b) => a.joinedAt - b.joinedAt)
-            .slice(0, room.lobby.config.maxPlayers)
-            .map((m) => m.id);
+          const playerIds = seatPlayers(room, room.lobby.config.maxPlayers);
           // Each player takes a card and at least one must remain to draw.
           if (pool.length <= playerIds.length) {
             const played = (room.lobby.played ?? []).length > 0;
