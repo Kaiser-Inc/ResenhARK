@@ -50,11 +50,11 @@ The engine stores scores in hundredths as integers and sums integers, so totals 
 - The giver scores the mean of the guesses sent, rounded to 2 decimals. With no guesses, the giver scores 0. A `no-hint` round gives the giver no score.
 - A player's total is their guess points plus their giver points.
 
-With exactly 2 players, each round gives the guesser and the giver the same points, so their totals end equal. The guess-points tiebreak below decides those games.
+With exactly 2 players, each round gives the guesser and the giver the same points, so their totals end equal. The giver-points tiebreak below decides those games.
 
 ## End of the game
 
-- The game ends after the last reveal, with `endReason: "rounds-done"`. The highest total wins. Equal totals go to the player with more guess points, and a tie on both shares the win.
+- The game ends after the last reveal, with `endReason: "rounds-done"`. The highest total wins. Equal totals go to the player with more giver points, so a giver gains nothing from a misleading hint. A tie on both shares the win.
 - The owner can end the game early (`game:end`), with `endReason: "ended"` and no winners.
 - When a group game drops below 2 players, it ends at once with `endReason: "not-enough-players"`, and the same rule picks the winner among the remaining players.
 
