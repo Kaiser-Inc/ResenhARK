@@ -4,7 +4,7 @@ These are the rules as the server implements them in `apps/api/src/app/games/hit
 
 ## Setup
 
-- The owner imports a playlist and sets the options (see below), then starts the game.
+- Every room starts with the built-in deck, "Baralho ResenhARK" (`apps/api/src/app/games/hitline/default-deck.json`). The owner can import a Spotify playlist instead, go back to the built-in deck with `lobby:use-default-deck`, set the options (see below) and start the game.
 - Players are the online members, in join order, up to `maxPlayers`. Everyone else is a spectator. A member who joins during a game is a spectator and can play the next one.
 - The deck is shuffled, and the turn order is random.
 - Each player starts with 1 revealed card from the deck and 2 tokens.
@@ -12,7 +12,7 @@ These are the rules as the server implements them in `apps/api/src/app/games/hit
 
 | Option | Range | Default |
 |---|---|---|
-| `targetCards` (cards to win) | 2 to 30 | 10 |
+| `targetCards` (cards to win) | 5 to 15 | 10 |
 | `contestSeconds` | 5 to 60 | 15 |
 | `guessSeconds` | 30 to 300 | 120 |
 | `maxPlayers` | 1 to 15 | 15 |

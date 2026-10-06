@@ -12,7 +12,7 @@ These are the rules as the server implements them in `apps/api/src/app/games/hue
 
 | Option | Range | Default |
 |---|---|---|
-| `turnsPerPlayer` | 1 to 3 | 2 |
+| `turnsPerPlayer` | 1 to 5 | 2 |
 | `hintSeconds` | 15 to 90 | 30 |
 | `guessSeconds` | 20 to 120 | 45 |
 | `maxPlayers` | 2 to 15 | 15 |
@@ -70,7 +70,7 @@ With exactly 2 players, each round gives the guesser and the giver the same poin
 - 5 rounds, with no giver.
 - **Memorize** (`memorize`, 5 s). The player sees the color, then it hides (`memorize-ended`).
 - **Guess** (`guessing`, `guessSeconds`). The player rebuilds the color from memory. The guess reveals at once. The deadline reveals with no guess.
-- **Reveal** (`reveal`, 12 s), with the same scoring as the group game.
+- **Reveal** (`reveal`, 12 s), with the same scoring as the group game. The player can skip the rest of the reveal with `next-round`.
 - The player wins at the end. Leaving ends the game with `endReason: "ended"`.
 
 ## Color draw

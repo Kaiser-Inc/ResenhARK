@@ -8,7 +8,7 @@ A room for your team to get together, chat and play: join with a code, talk in r
 
 ResenhARK was built for Kaiser's team Casual Daily, held on a Google Meet call. Voice and video stay in Meet, outside the app. ResenhARK covers the rest: someone creates a room and shares the code, everyone joins with just a name and a blobatar avatar, no account, and the room has real-time chat and a game.
 
-The first game is Hitline, a music timeline. You hear a 30 s clip, pick where the song goes in your timeline (by release year), and the rest of the room can contest. Songs come from a Spotify playlist. The server decides everything, and each person receives only what they are allowed to see.
+The first game is Hitline, a music timeline. You hear a 30 s clip, pick where the song goes in your timeline (by release year), and the rest of the room can contest. Songs come from the built-in deck, or from a Spotify playlist the room owner imports. The server decides everything, and each person receives only what they are allowed to see.
 
 ## Features
 

@@ -30,12 +30,13 @@ A failed intent never changes state. The state comes back through `room:state`, 
 | `lobby:configure-huehint` | `HuehintConfig` (below) | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `lobby:import` | `{ link: string }`, 1 to 500 characters | Owner, no game running | `invalid-input`, `room-not-found`, `not-owner`, `game-running`, `playlist-invalid-link`, `playlist-no-access`, `playlist-empty`, `spotify-disconnected` |
 | `lobby:reset-played` | none | Owner, no game running | `not-owner`, `game-running` |
-| `game:start` | none | Owner, no game running. Starts the selected game | `not-owner`, `game-running`, and for Hitline only `no-deck`, `playlist-empty`, `playlist-exhausted` |
+| `lobby:use-default-deck` | none | Owner, no game running | `not-owner`, `game-running` |
+| `game:start` | none | Owner, no game running. Starts the selected game | `not-owner`, `game-running`, and for Hitline only `playlist-empty`, `playlist-exhausted` |
 | `game:end` | none | Owner, game running | `not-owner`, `no-game` |
 | `game:reset` | none | Owner, game finished | `not-owner`, `no-game` |
 | `game:action` | `HitlineIntent` or `HuehintIntent` (below), validated against the running game | Players | `invalid-input`, `no-game`, and the rule errors below |
 
-`lobby:import` replaces the deck, clears the played set and removes a finished game. `game:reset` is the "Outra rodada" button: it clears the finished game and keeps the playlist and the played set. `lobby:reset-played` is "Recomeçar músicas".
+Every room starts with the built-in "Baralho ResenhARK". `lobby:import` replaces the deck, clears the played set and removes a finished game. `lobby:use-default-deck` does the same with the built-in deck, so the owner can drop an imported playlist. `game:reset` is the "Outra rodada" button: it clears the finished game and keeps the playlist and the played set. `lobby:reset-played` is "Recomeçar músicas".
 
 `room:leave` and `room:kick` remove the member from a running game. When a leaving member owns the room, the next online member becomes the owner. The kicked member receives `room:kicked`, and the server disconnects their sockets and revokes their sessions.
 
@@ -71,7 +72,7 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `insufficient-token
 
 ```ts
 {
-  turnsPerPlayer: number; // 1 to 3, default 2
+  turnsPerPlayer: number; // 1 to 5, default 2
   hintSeconds: number;    // 15 to 90, default 30
   guessSeconds: number;   // 20 to 120, default 45
   maxPlayers: number;     // 2 to 15, default 15
@@ -88,6 +89,7 @@ Sent in `game:action`. A color is `Hsb`: `{ h: 0 to 359, s: 0 to 100, b: 0 to 10
 |---|---|---|
 | `give-hint` | `hint: string` | Giver, phase `hint`, once. The hint must pass `isValidHint`: 1 to 30 characters after trim, at most 4 words, no digit and no `#` |
 | `guess` | `color: Hsb` | Players except the giver, phase `guessing`, once |
+| `next-round` | none | The player of a solo game, phase `reveal`. Starts the next round at once instead of waiting for the 12 s. Anything else returns `wrong-phase` |
 
 Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `already-guessed`. The full rules are in [Huehint rules](huehint-rules.md).
 
@@ -112,8 +114,8 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `al
   lobby: { selectedGame: "hitline" | "huehint";
            config: HitlineConfig;
            huehintConfig: HuehintConfig;
-           playlist: { name: string; count: number } | null;
-           remaining: number | null;   // songs not played yet in this room
+           playlist: { source: "default" | "playlist"; name: string; count: number };
+           remaining: number;          // songs not played yet in this room
            smallPlaylist: boolean };   // remaining < min(online, maxPlayers) x targetCards x 2
   game: { type: "hitline"; view: HitlineView }
       | { type: "huehint"; view: HuehintView }
@@ -224,7 +226,7 @@ System messages announce joins, leaves, kicks, a new owner, the start of a game 
 | `playlist-no-access` | The connected account cannot read the playlist |
 | `playlist-empty` | The playlist has no usable tracks, or too few to start a game |
 | `playlist-exhausted` | Every song was already played in this room |
-| `no-deck` | The room has no playlist yet |
+| `no-deck` | No longer sent: every room has the built-in deck. Kept in the type for old clients |
 | `game-running` | The action needs no running game |
 | `no-game` | The action needs a game |
 | `not-your-turn` | Only the turn player (Hitline) or the giver (Huehint hint) can do this, or the giver tried to guess |
