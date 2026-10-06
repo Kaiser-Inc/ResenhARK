@@ -2,8 +2,9 @@ import { type Ack, type ErrorCode, type GameEvent, SOCKET_EVENTS } from "@resenh
 import type { Server } from "socket.io";
 import { systemMessage } from "../domain/room/chat.js";
 import { type Room, roomDeadline, tickRoom } from "../domain/room/room.js";
-import { type Card, SYSTEM_ACTOR, apply } from "../games/hitline/engine.js";
+import { type Card, apply } from "../games/hitline/engine.js";
 import { applyGame, isGamePlayer, isRunning, tickGame } from "../games/registry.js";
+import { SYSTEM_ACTOR } from "../games/system.js";
 import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { projectRoom } from "./project-room.js";

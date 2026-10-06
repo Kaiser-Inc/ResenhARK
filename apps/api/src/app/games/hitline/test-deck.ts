@@ -1,4 +1,5 @@
-import type { Card, Ctx } from "./engine.js";
+import type { Ctx } from "../system.js";
+import type { Card } from "./engine.js";
 
 export const card = (id: string, year: number, title = id, artists = [`${id} artist`]): Card => ({
   id,

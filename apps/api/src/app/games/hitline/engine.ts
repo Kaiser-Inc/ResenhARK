@@ -12,8 +12,7 @@ export type Card = {
   isrc: string | null;
   spotifyUrl: string | null;
 };
-export type { Ctx } from "../system.js";
-import type { Ctx } from "../system.js";
+import { type Ctx, SYSTEM_ACTOR } from "../system.js";
 export type Player = {
   id: string;
   timeline: Card[];
@@ -75,8 +74,6 @@ export type EngineResult =
   | { ok: true; state: HitlineState; events: HitlineEvent[] }
   | { ok: false; error: RuleError };
 
-export { SYSTEM_ACTOR } from "../system.js";
-import { SYSTEM_ACTOR } from "../system.js";
 export const START_TOKENS = 2;
 export const SKIP_COST = 1;
 export const CONTEST_COST = 1;

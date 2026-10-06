@@ -16,9 +16,10 @@ import {
   leave,
   unplayedCards,
 } from "../domain/room/room.js";
-import { SYSTEM_ACTOR, create } from "../games/hitline/engine.js";
+import { create } from "../games/hitline/engine.js";
 import { create as createHuehint } from "../games/huehint/engine.js";
 import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
+import { SYSTEM_ACTOR } from "../games/system.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { type MutationResult, type RoomHub, socketRoom } from "./room-hub.js";
