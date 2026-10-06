@@ -44,6 +44,7 @@ export function Timeline({
   highlightCardId = null,
 }: TimelineProps) {
   const listRef = useRef<HTMLOListElement>(null);
+  const previousCards = useRef<Set<string> | null>(null);
   const reduce = useReduced();
   const [flashId, setFlashId] = useState<string | null>(null);
   useEffect(() => {
@@ -55,6 +56,17 @@ export function Timeline({
     const id = setTimeout(() => setFlashId(null), 1000);
     return () => clearTimeout(id);
   }, [highlightCardId]);
+  useEffect(() => {
+    const previous = previousCards.current;
+    previousCards.current = new Set(cards.map((card) => card.id));
+    if (!previous) return;
+    const added = cards.find((card) => !previous.has(card.id));
+    if (!added) return;
+    const row = Array.from(
+      listRef.current?.querySelectorAll<HTMLElement>("[data-card-id]") ?? [],
+    ).find((node) => node.dataset.cardId === added.id);
+    row?.scrollIntoView({ block: "center", behavior: reduce ? "instant" : "smooth" });
+  }, [cards, reduce]);
   // Items shift into place when the ghost opens a gap; a fade-only world has no layout movement.
   const layout = reduce ? false : "position";
   const ghost = (slot: number) =>
@@ -148,18 +160,19 @@ export function Timeline({
       ref={listRef}
       aria-label={`Timeline de ${ownerName}`}
       onKeyDown={onKeyDown}
-      // scrollable region must be keyboard-reachable; when interactive the gap buttons are the tab stops
+      // Reading the whole timeline stays keyboard reachable when its gaps are display-only.
       tabIndex={interactive ? undefined : 0}
-      className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto"
+      className="flex flex-col gap-1"
     >
       {gap(0)}
       {ghost(0)}
       {cards.map((card, index) => (
         <Fragment key={card.id}>
           <motion.li
+            data-card-id={card.id}
             layout={layout}
             className={cn(
-              "flex items-baseline gap-4 rounded-md py-1 transition-colors duration-[400ms] ease-out",
+              "flex items-baseline gap-4 rounded-md py-1 transition-colors duration-[120ms] ease-out",
               flashId === card.id && "bg-accent",
             )}
           >

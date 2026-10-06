@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { HITLINE_TARGET_CARDS } from "@/lib/config-options";
 
 const range = (from: number, to: number, step = 1) =>
   Array.from({ length: Math.floor((to - from) / step) + 1 }, (_, i) => from + i * step);
@@ -20,7 +21,7 @@ const options = (values: number[], unit = ""): Option[] =>
   values.map((v) => ({ value: String(v), label: `${v}${unit}` }));
 
 const FIELDS: { key: keyof HitlineConfig; label: string; options: Option[] }[] = [
-  { key: "targetCards", label: "Cartas para vencer", options: options(range(2, 30)) },
+  { key: "targetCards", label: "Cartas para vencer", options: options(HITLINE_TARGET_CARDS) },
   { key: "contestSeconds", label: "Tempo de contestação", options: options(range(5, 60, 5), " s") },
   { key: "guessSeconds", label: "Tempo de palpite", options: options(range(30, 300, 30), " s") },
   { key: "maxPlayers", label: "Máximo de jogadores", options: options(range(1, 15)) },

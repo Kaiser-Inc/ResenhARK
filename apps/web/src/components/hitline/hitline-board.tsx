@@ -111,7 +111,7 @@ export function HitlineBoard({
       : [];
 
   return (
-    <section aria-label="Hitline" className="flex flex-col gap-8">
+    <section aria-label="Hitline" className="flex flex-col gap-8 pb-40 lg:pb-0">
       <h1 className="sr-only">Hitline</h1>
       <Announcer events={events} view={view} members={room.members} you={room.you} clock={clock} />
       <StatusStrip view={view} turnMember={turnMember} isTurn={isTurn} clock={clock} />
@@ -132,32 +132,35 @@ export function HitlineBoard({
           celebrate={events.some((e) => e.type === "game-over")}
         />
       ) : (
-        <>
-          <CardInPlay
-            view={view}
-            you={room.you}
-            isTurn={isTurn}
-            connected={connected}
-            chosenSlot={chosenSlot}
-            pending={pending}
-            guessText={guessText}
-            onGuessText={(next) => setTyped({ drawId, ...next })}
-            onDraw={() => void act("draw", { type: "draw" })}
-            onSkip={() => void act("skip", { type: "skip" })}
-            onBuy={() => void act("buy", { type: "buy" })}
-            onPass={() => void act("pass", { type: "pass" })}
-            onLock={() =>
-              chosenSlot !== null &&
-              void act("lock", {
-                type: "lock-guess",
-                slot: chosenSlot,
-                title: guessText.title.trim(),
-                artist: guessText.artist.trim(),
-              })
-            }
-          />
+        <div className="grid items-start gap-8 lg:grid-cols-2">
+          <div className="lg:sticky lg:top-6">
+            <CardInPlay
+              view={view}
+              you={room.you}
+              isTurn={isTurn}
+              connected={connected}
+              chosenSlot={chosenSlot}
+              pending={pending}
+              guessText={guessText}
+              onGuessText={(next) => setTyped({ drawId, ...next })}
+              onDraw={() => void act("draw", { type: "draw" })}
+              onSkip={() => void act("skip", { type: "skip" })}
+              onBuy={() => void act("buy", { type: "buy" })}
+              onPass={() => void act("pass", { type: "pass" })}
+              onLock={() =>
+                chosenSlot !== null &&
+                void act("lock", {
+                  type: "lock-guess",
+                  slot: chosenSlot,
+                  title: guessText.title.trim(),
+                  artist: guessText.artist.trim(),
+                })
+              }
+            />
+          </div>
           {turnPlayer ? (
             <Timeline
+              key={turnPlayer.id}
               ownerName={turnMember?.name ?? ""}
               cards={turnPlayer.timeline}
               interactive={(guessing || canContest) && connected && pending === null}
@@ -174,7 +177,7 @@ export function HitlineBoard({
               }
             />
           ) : null}
-        </>
+        </div>
       )}
       {reveal ? <RevealPanel reveal={reveal} members={room.members} /> : null}
       <Scoreboard view={view} members={room.members} />

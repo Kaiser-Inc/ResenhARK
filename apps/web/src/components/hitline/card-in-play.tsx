@@ -12,6 +12,9 @@ import { BUY_COST, SKIP_COST, disabledReason } from "@/lib/error-messages";
 
 export type Pending = "draw" | "lock" | "skip" | "buy" | "pass" | "contest";
 
+const ACTIONS =
+  "hitline-actions fixed inset-x-0 bottom-0 z-20 flex flex-wrap items-start gap-2 border-t border-border bg-background px-4 py-3 pb-[calc(12px+env(safe-area-inset-bottom,0px))] lg:static lg:border-0 lg:p-0";
+
 type CardInPlayProps = {
   view: HitlineView;
   you: string;
@@ -112,7 +115,7 @@ export function CardInPlay({
           <p className="text-sm text-muted-foreground">Trecho indisponível</p>
         ) : null}
         {isTurn && phase === "turn-start" ? (
-          <div className="flex flex-wrap items-start gap-2">
+          <div className={ACTIONS}>
             <ActionButton id="draw" loading={pending === "draw"} reason={offline} onClick={onDraw}>
               Puxar carta
             </ActionButton>
@@ -157,7 +160,7 @@ export function CardInPlay({
                 />
               </Field>
             </div>
-            <div className="flex flex-wrap items-start gap-2">
+            <div className={ACTIONS}>
               <ActionButton
                 id="lock"
                 loading={pending === "lock"}
@@ -199,15 +202,17 @@ export function CardInPlay({
             <p className="text-sm text-muted-foreground">
               Escolha um vão livre na timeline para contestar ou passe.
             </p>
-            <ActionButton
-              id="pass"
-              variant="outline"
-              loading={pending === "pass"}
-              reason={offline ?? (decided ? contestReason : null)}
-              onClick={onPass}
-            >
-              Passar
-            </ActionButton>
+            <div className={ACTIONS}>
+              <ActionButton
+                id="pass"
+                variant="outline"
+                loading={pending === "pass"}
+                reason={offline ?? (decided ? contestReason : null)}
+                onClick={onPass}
+              >
+                Passar
+              </ActionButton>
+            </div>
             {!decided && contestReason ? (
               <p className="text-xs text-muted-foreground">{contestReason}</p>
             ) : null}

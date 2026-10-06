@@ -96,15 +96,17 @@ export function RoomSidebar({
   code,
   members,
   actions,
+  className,
 }: {
   code: string;
   members: MemberView[] | null;
   actions: RoomActions | null;
+  className?: string;
 }) {
   return (
     <aside
       aria-label="Painel da sala"
-      className="hidden w-60 shrink-0 flex-col border-border border-r bg-background lg:flex"
+      className={`hidden w-60 shrink-0 flex-col border-border border-r bg-background lg:flex ${className ?? ""}`}
     >
       <div className="flex h-14 shrink-0 items-center gap-2 px-4">
         <ResenharkLogo className="h-6 w-auto shrink-0" />

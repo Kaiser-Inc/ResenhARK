@@ -159,6 +159,11 @@ export async function peekRoom(code: string): Promise<any> {
   return JSON.parse((await redis("GET", `room:${code}`)) as string);
 }
 
+/** Test-only state write in db 14, preserving the room's expiry. */
+export async function writeRoom(code: string, room: unknown): Promise<void> {
+  await redis("SET", `room:${code}`, JSON.stringify(room), "KEEPTTL");
+}
+
 /** Overwrites `tokens` of every player in the stored e2e room (db 14); a reload then shows the new balance. */
 export async function pokeTokens(code: string, tokens: number): Promise<void> {
   const room = await peekRoom(code);
