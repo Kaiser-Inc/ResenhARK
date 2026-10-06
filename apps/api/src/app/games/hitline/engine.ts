@@ -1,4 +1,5 @@
 import type { HitlineConfig, HitlineEvent } from "@resenhark/shared";
+import { shuffle } from "../../core/shuffle.js";
 import { matchesArtist, matchesTitle } from "./normalize.js";
 import { toPublicCard, toRevealView } from "./project.js";
 import { correctSlot, insertAt, isCorrectSlot } from "./slots.js";
@@ -80,15 +81,6 @@ export const SKIP_COST = 1;
 export const CONTEST_COST = 1;
 export const BUY_COST = 3;
 export const OFFLINE_GRACE_MS = 30_000;
-
-function shuffle<T>(items: T[], rng: () => number): T[] {
-  const a = [...items];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rng() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 export function create(
   config: HitlineConfig,
