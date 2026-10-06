@@ -8,6 +8,7 @@ import {
   ROOM_CODE_ALPHABET,
   normalizeName,
 } from "@resenhark/shared";
+import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
 import type { Card } from "../../games/hitline/engine.js";
 import { normalizeTitle } from "../../games/hitline/normalize.js";
 import { type ActiveGame, gameDeadline } from "../../games/registry.js";
@@ -30,6 +31,7 @@ export type Lobby = {
   /** Hitline config. */
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
+  /** The imported playlist; null plays DEFAULT_DECK. */
   deck: ImportedPlaylist | null;
   /** Stable keys (see playedKey) of every song already played in this room. */
   played: string[];
@@ -100,10 +102,15 @@ export function playedKey(card: Card): string {
   );
 }
 
+/** The deck the room plays: the imported playlist, else the default deck. */
+export function deckOf(lobby: Lobby): ImportedPlaylist {
+  return lobby.deck ?? DEFAULT_DECK;
+}
+
 /** Deck cards not played yet in this room. */
 export function unplayedCards(lobby: Lobby): Card[] {
   const played = new Set(lobby.played);
-  return (lobby.deck?.cards ?? []).filter((card) => !played.has(playedKey(card)));
+  return deckOf(lobby).cards.filter((card) => !played.has(playedKey(card)));
 }
 
 /**
@@ -112,10 +119,10 @@ export function unplayedCards(lobby: Lobby): Card[] {
  */
 export function foldPlayed(room: Room): Room {
   const { game, lobby } = room;
-  if (game?.type !== "hitline" || !lobby.deck) return room;
+  if (game?.type !== "hitline") return room;
   const inDeck = new Set(game.state.deck.map((card) => card.id));
   const played = new Set(lobby.played);
-  for (const card of lobby.deck.cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
+  for (const card of deckOf(lobby).cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
   return { ...room, lobby: { ...lobby, played: [...played] } };
 }
 

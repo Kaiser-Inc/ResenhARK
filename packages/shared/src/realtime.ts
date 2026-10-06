@@ -56,9 +56,10 @@ export type LobbyView = {
   /** Hitline config (kept under this name for compatibility). */
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
-  playlist: { name: string; count: number } | null;
-  /** Songs not yet played in this room (null without a playlist); below `count` once rounds were played. */
-  remaining: number | null;
+  /** The room's deck: the built-in "Baralho ResenhARK" until the owner imports a playlist. */
+  playlist: { source: "default" | "playlist"; name: string; count: number };
+  /** Songs not yet played in this room; below `count` once rounds were played. */
+  remaining: number;
   /** True when the playlist is likely too short for the players and target. */
   smallPlaylist: boolean;
 };
