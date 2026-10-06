@@ -12,6 +12,7 @@ import {
   type DeezerHit,
   type DeezerTrack,
   type Outcome,
+  artistKey,
   decide,
   pickTrack,
   report,
@@ -53,6 +54,20 @@ async function deezerHits(c: Candidate): Promise<DeezerHit[]> {
   return (body?.data ?? []).map((t) => ({ id: t.id, title: t.title, artist: t.artist.name }));
 }
 
+/** The artist's 100 most played tracks: the studio version often ranks below live ones in search. */
+async function artistTop(name: string): Promise<DeezerHit[]> {
+  const found = (await getJson(
+    `https://api.deezer.com/search/artist?q=${encodeURIComponent(name)}&limit=5`,
+    150,
+  )) as { data?: { id: number; name: string }[] } | null;
+  const artist = found?.data?.find((a) => artistKey(a.name) === artistKey(name));
+  if (!artist) return [];
+  const top = (await getJson(`https://api.deezer.com/artist/${artist.id}/top?limit=100`, 150)) as {
+    data?: { id: number; title: string; artist: { name: string } }[];
+  } | null;
+  return (top?.data ?? []).map((t) => ({ id: t.id, title: t.title, artist: t.artist.name }));
+}
+
 async function deezerTrack(id: number): Promise<DeezerTrack | null> {
   const t = (await getJson(`https://api.deezer.com/track/${id}`, 150)) as {
     id?: number;
@@ -81,7 +96,11 @@ async function main() {
   const outcomes: Outcome[] = [];
   for (const [index, c] of candidates.entries()) {
     const key = `${c.artists.join(",")}|${c.title}`;
-    const hit = pickTrack(c, await cached(cache, `search:${key}`, () => deezerHits(c)));
+    const hits = [
+      ...(await cached(cache, `search:${key}`, () => deezerHits(c))),
+      ...(await cached(cache, `top:${c.artists[0]}`, () => artistTop(c.artists[0]))),
+    ];
+    const hit = pickTrack(c, hits);
     const track = hit ? await cached(cache, `track:${hit.id}`, () => deezerTrack(hit.id)) : null;
     const mbYear = track?.isrc
       ? await cached(cache, `mb:${track.isrc}`, () => firstReleaseYear(track.isrc))

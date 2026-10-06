@@ -26,6 +26,41 @@ test("pickTrack prefers the plain studio title over remasters and rejects live, 
   assert.equal(pickTrack(coverMe, [hit(8, "Cover Me", "Bruce Springsteen")])?.id, 8);
 });
 
+test("pickTrack matches a title whose parenthetical part is on either side", () => {
+  const sat: Candidate = {
+    title: "(I Can't Get No) Satisfaction",
+    artists: ["The Rolling Stones"],
+    year: 1965,
+    br: false,
+  };
+  assert.equal(
+    pickTrack(sat, [hit(11, "(I Can't Get No) Satisfaction", "The Rolling Stones")])?.id,
+    11,
+  );
+  assert.equal(pickTrack(sat, [hit(12, "Satisfaction", "The Rolling Stones")])?.id, 12);
+});
+
+test("pickTrack ignores dots, apostrophes and a leading The in the artist", () => {
+  const ymca: Candidate = { title: "Y.M.C.A.", artists: ["Village People"], year: 1978, br: false };
+  assert.equal(pickTrack(ymca, [hit(21, "YMCA", "Village People")])?.id, 21);
+  const abc: Candidate = { title: "ABC", artists: ["The Jackson 5"], year: 1970, br: false };
+  assert.equal(pickTrack(abc, [hit(22, "ABC", "Jackson 5")])?.id, 22);
+});
+
+test("pickTrack takes a live recording only for a Brazilian song without a studio one", () => {
+  const infiel: Candidate = {
+    title: "Infiel",
+    artists: ["Marília Mendonça"],
+    year: 2016,
+    br: true,
+  };
+  const live = hit(31, "Infiel (Ao Vivo)", "Marília Mendonça");
+  assert.equal(pickTrack(infiel, [live])?.id, 31);
+  assert.equal(pickTrack(infiel, [live, hit(32, "Infiel", "Marília Mendonça")])?.id, 32);
+  assert.equal(pickTrack({ ...infiel, br: false }, [live]), null);
+  assert.equal(pickTrack(infiel, [hit(33, "Infiel (Acústico)", "Marília Mendonça")]), null);
+});
+
 test("pickTrack ignores accents, case and a featured artist", () => {
   const cand: Candidate = {
     title: "Evidências",
@@ -94,9 +129,21 @@ test("select caps the deck at max with a quarter of Brazilian songs, filling fro
   ]);
 });
 
+test("select trims a side evenly along the list, so later decades are not cut", () => {
+  const deck = select(accepted(8, false), 4);
+  assert.deepEqual(
+    deck.map((s) => s.title),
+    ["Ti0", "Ti2", "Ti4", "Ti6"],
+  );
+});
+
 test("select drops a repeated title and artist", () => {
   const twice = [...accepted(3, false), ...accepted(1, false)];
   assert.equal(select(twice, 10).length, 3);
+  const [a, b] = accepted(2, false) as Extract<Outcome, { kind: "accepted" }>[];
+  a.candidate = { ...a.candidate, title: "One Kiss", artists: ["Calvin Harris", "Dua Lipa"] };
+  b.candidate = { ...b.candidate, title: "One Kiss", artists: ["Dua Lipa", "Calvin Harris"] };
+  assert.equal(select([a, b], 10).length, 1);
 });
 
 test("report lists every removed song with its reason and every divergent year", () => {

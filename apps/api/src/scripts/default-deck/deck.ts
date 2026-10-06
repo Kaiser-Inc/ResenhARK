@@ -25,13 +25,15 @@ export type DeckSong = {
 };
 
 const REJECTED =
-  /\b(live|ao vivo|en vivo|remix|mix|karaok[eê]|cover|tribute|acoustic|ac[uú]stico|instrumental|cifra|playback|sped up|slowed|8-bit)\b/;
+  /\b(remix|mix|karaok[eê]|cover|tribute|acoustic|ac[uú]stico|instrumental|cifra|playback|sped up|slowed|8-bit)\b/;
+const LIVE = /\b(live|ao vivo|en vivo)\b/;
 
 export function normalize(text: string): string {
   return text
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
     .toLowerCase()
+    .replace(/[.'’]/g, "")
     .replace(/&/g, " and ")
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim();
@@ -49,17 +51,29 @@ function extras(title: string): string {
   return (title.match(EXTRAS) ?? []).join(" ");
 }
 
-/** The studio recording of the candidate among the search hits, plain title first. */
+export const artistKey = (name: string) => normalize(name).replace(/^the /, "");
+
+/**
+ * The studio recording of the candidate among the search hits, plain title first. A Brazilian
+ * song may fall back to a live recording, because many sertanejo hits were first released live.
+ */
 export function pickTrack(candidate: Candidate, hits: DeezerHit[]): DeezerHit | null {
-  const title = normalize(candidate.title);
-  const artists = candidate.artists.map(normalize);
+  const title = normalize(baseTitle(candidate.title));
+  const artists = candidate.artists.map(artistKey);
   const matches = hits.filter(
     (hit) =>
       normalize(baseTitle(hit.title)) === title &&
-      artists.includes(normalize(hit.artist)) &&
+      artists.includes(artistKey(hit.artist)) &&
       !REJECTED.test(normalize(extras(hit.title))),
   );
-  return matches.find((hit) => normalize(hit.title) === title) ?? matches[0] ?? null;
+  const studio = matches.filter((hit) => !LIVE.test(normalize(extras(hit.title))));
+  const plain = normalize(candidate.title);
+  return (
+    studio.find((hit) => normalize(hit.title) === plain) ??
+    studio[0] ??
+    (candidate.br ? matches[0] : undefined) ??
+    null
+  );
 }
 
 export function decide(
@@ -82,13 +96,19 @@ export function decide(
 
 const BR_SHARE = 0.25;
 
+/** `n` items evenly spaced along the list, keeping its spread of decades. */
+function spread<T>(items: T[], n: number): T[] {
+  if (n >= items.length) return items;
+  return Array.from({ length: n }, (_, i) => items[Math.floor((i * items.length) / n)]);
+}
+
 /** Up to `max` accepted songs, a quarter Brazilian when possible, in list order, without repeats. */
 export function select(outcomes: Outcome[], max: number): DeckSong[] {
   const seen = new Set<string>();
   const songs: DeckSong[] = [];
   for (const o of outcomes) {
     if (o.kind !== "accepted") continue;
-    const key = `${normalize(o.candidate.title)}|${o.candidate.artists.map(normalize).join(",")}`;
+    const key = `${normalize(o.candidate.title)}|${o.candidate.artists.map(normalize).sort().join(",")}`;
     if (seen.has(key)) continue;
     seen.add(key);
     const { title, artists, year, br } = o.candidate;
@@ -97,7 +117,7 @@ export function select(outcomes: Outcome[], max: number): DeckSong[] {
   const br = songs.filter((s) => s.br);
   const intl = songs.filter((s) => !s.br);
   const brCount = Math.min(br.length, Math.max(Math.round(max * BR_SHARE), max - intl.length));
-  const keep = new Set([...br.slice(0, brCount), ...intl.slice(0, max - brCount)]);
+  const keep = new Set([...spread(br, brCount), ...spread(intl, max - brCount)]);
   return songs.filter((s) => keep.has(s));
 }
 
