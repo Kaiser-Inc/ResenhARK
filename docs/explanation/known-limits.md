@@ -42,4 +42,5 @@ Real-time features use WebSockets (Socket.IO). A network that blocks WebSocket t
 - No moderation: you can remove a member but cannot ban one, and chat messages cannot be edited or deleted.
 - The interface is in Brazilian Portuguese only.
 - Voice and video are not in the app. Use Google Meet.
-- SiteSpy and Codetalk are not built yet.
+- SiteSpy and Codetalk are not built yet. Huehint has its server and contracts, and its interface is in progress.
+- Huehint's score curve and color weights are a first calibration, not tuned by real play yet.

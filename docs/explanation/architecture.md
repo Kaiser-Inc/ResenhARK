@@ -4,7 +4,7 @@ ResenhARK is a monorepo with three packages: `apps/api` (the server), `apps/web`
 
 ## The server is the authority
 
-The web app holds no game logic. It sends intents ("draw", "lock this guess") and renders what the server sends back. The Hitline engine runs only on the server. `packages/shared` carries Zod schemas and types for intents, views and events, not the engine.
+The web app holds no game logic. It sends intents ("draw", "lock this guess") and renders what the server sends back. The game engines (Hitline, Huehint) run only on the server, and so does the Huehint scoring. `packages/shared` carries Zod schemas and types for intents, views and events, not the engine.
 
 Every change follows the same path:
 
@@ -68,13 +68,24 @@ The engine in `apps/api/src/app/games/hitline/engine.ts` is made of pure functio
 | `tick(state, ctx)` | Settles every deadline that has passed (contest, guess, offline turn player) and returns the new state and events |
 | `project(state, viewerId)` | Returns what that viewer may see. See [Hidden information](hidden-information.md) |
 
+The Huehint engine in `games/huehint/engine.ts` has the same shape. Its `create(config, playerIds, ctx)` takes no deck: it shuffles the giver order and draws every round's color up front. `color.ts` holds the CIEDE2000 scoring and `palette.ts` the color draw. See [Huehint rules](../reference/huehint-rules.md).
+
 Deadlines are absolute timestamps stored in the state. After each commit, the hub arms one `setTimeout` per room for the next deadline (`roomDeadline`, which also covers the owner handover). When it fires, it runs an empty mutation, so the `tick` runs inside the queue like everything else. A stale timer does nothing, because the tick decides from the state.
 
 ## The room and game boundary
 
-The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and never reads inside the state. The Hitline module (`games/hitline`) knows nothing about members or sockets.
+The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and never reads inside the state. Each game module (`games/hitline`, `games/huehint`) knows nothing about members or sockets.
 
-`RoomHub` and `socket-gateway.ts` connect the two: they call `create`, `apply`, `tick` and `project`. A new game, such as SiteSpy or Codetalk, would add its own folder next to `hitline` with the same four functions. The formal `Game` interface is not extracted yet. The plan is to extract it once a second real game exists. `RoomView.game` and `GameEvent` in `packages/shared` are the types to widen at that point.
+`games/registry.ts` holds the minimal game contract, extracted once Huehint became the second real game. Each game provides four pure functions with the same shape:
+
+- `apply(state, actorId, action, ctx)`;
+- `tick(state, ctx)`;
+- `nextDeadline(state)`;
+- `project(state, viewerId)`.
+
+Each game also accepts the same room-driven actions (`set-online`, `remove`, `end`) and has an intent schema. `RoomHub`, `socket-gateway.ts`, `projectRoom` and `roomDeadline` call the registry's `applyGame`, `tickGame`, `gameDeadline`, `projectGame` and `parseIntent`, which route by `game.type`.
+
+Starting a game stays game-specific in the gateway, because the preconditions differ: Hitline needs a deck, Huehint needs nothing. Scoring is internal to each engine. Hitline-only concerns (deck, played songs, audio) check `game.type === "hitline"` before they act. A third game adds its folder, an entry in `GAMES` and a member in the `ActiveGame`, `GameView` and `GameEvent` unions.
 
 ## Presence and ownership
 

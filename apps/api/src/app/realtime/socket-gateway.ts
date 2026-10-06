@@ -2,7 +2,8 @@ import {
   type Ack,
   SOCKET_EVENTS,
   hitlineConfigSchema,
-  hitlineIntentSchema,
+  huehintConfigSchema,
+  selectGameInputSchema,
 } from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
@@ -15,7 +16,10 @@ import {
   leave,
   unplayedCards,
 } from "../domain/room/room.js";
-import { SYSTEM_ACTOR, apply, create } from "../games/hitline/engine.js";
+import { create } from "../games/hitline/engine.js";
+import { create as createHuehint } from "../games/huehint/engine.js";
+import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
+import { SYSTEM_ACTOR } from "../games/system.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { type MutationResult, type RoomHub, socketRoom } from "./room-hub.js";
@@ -36,7 +40,7 @@ export function registerSocketGateway(
 ): void {
   const { store, hub, playlists, now, rng, newId, onError } = deps;
   const ctx = () => ({ now: now(), rng, newId });
-  const running = (room: Room) => !!room.game && room.game.state.phase !== "game-over";
+  const running = (room: Room) => isRunning(room.game);
   const chatLimiter = new RateLimiter(5, 5000);
 
   io.use(async (socket, next) => {
@@ -88,35 +92,46 @@ export function registerSocketGateway(
   /** Mirrors a member's presence into the running game, when they are a player. */
   const setPresence = (room: Room, memberId: string, online: boolean) => {
     const game = room.game;
-    if (!game || !running(room) || !game.state.players.some((p) => p.id === memberId)) {
-      return { room, events: [] };
-    }
-    const result = apply(game.state, memberId, { type: "set-online", online }, ctx());
+    if (!isRunning(game) || !isGamePlayer(game, memberId)) return { room, events: [] };
+    const result = applyGame(game, memberId, { type: "set-online", online }, ctx());
     if (!result.ok) return { room, events: [] };
-    return {
-      room: { ...room, game: { ...game, state: result.state } },
-      events: result.events,
-    };
+    return { room: { ...room, game: result.game }, events: result.events };
   };
 
   /** A kicked or departed player leaves the running game; the turn passes if it was theirs. */
   const removeFromGame = (room: Room, memberId: string) => {
     const game = room.game;
-    if (!game || !running(room) || !game.state.players.some((p) => p.id === memberId)) {
-      return { room, events: [] };
-    }
-    const result = apply(game.state, SYSTEM_ACTOR, { type: "remove", playerId: memberId }, ctx());
+    if (!isRunning(game) || !isGamePlayer(game, memberId)) return { room, events: [] };
+    const result = applyGame(game, SYSTEM_ACTOR, { type: "remove", playerId: memberId }, ctx());
     if (!result.ok) return { room, events: [] };
     return {
       room: {
         ...room,
-        game: {
-          ...game,
-          state: result.state,
-          playerIds: game.playerIds.filter((id) => id !== memberId),
-        },
+        game: { ...result.game, playerIds: game.playerIds.filter((id) => id !== memberId) },
       },
       events: result.events,
+    };
+  };
+
+  /** Online members by join order, up to `max`; the rest watch. */
+  const seatPlayers = (room: Room, max: number) =>
+    room.members
+      .filter(isOnline)
+      .sort((a, b) => a.joinedAt - b.joinedAt)
+      .slice(0, max)
+      .map((m) => m.id);
+
+  /** Huehint needs no deck: one online member plays solo, two or more play as a group. */
+  const startHuehint = (room: Room): MutationResult => {
+    // A finished Hitline game's songs still count as played.
+    const folded = foldPlayed(room);
+    const playerIds = seatPlayers(folded, folded.lobby.huehintConfig.maxPlayers);
+    const started = createHuehint(folded.lobby.huehintConfig, playerIds, ctx());
+    return {
+      ok: true,
+      room: { ...folded, game: { type: "huehint", state: started.state, playerIds } },
+      events: started.events,
+      system: ["Partida de Huehint começou"],
     };
   };
 
@@ -251,6 +266,40 @@ export function registerSocketGateway(
     );
 
     socket.on(
+      "lobby:select-game",
+      intent(async (payload) => {
+        const parsed = selectGameInputSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return {
+            ok: true,
+            room: { ...room, lobby: { ...room.lobby, game: parsed.data.game } },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:configure-huehint",
+      intent(async (payload) => {
+        const parsed = huehintConfigSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return {
+            ok: true,
+            room: { ...room, lobby: { ...room.lobby, huehintConfig: parsed.data } },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
       "lobby:import",
       intent(async (payload) => {
         const link = (payload as { link?: unknown } | null)?.link;
@@ -299,15 +348,12 @@ export function registerSocketGateway(
         const ack = await hub.mutate(code, (folded) => {
           if (notOwner(folded)) return { ok: false, error: "not-owner" };
           if (running(folded)) return { ok: false, error: "game-running" };
+          if (folded.lobby.game === "huehint") return startHuehint(folded);
           // A finished game's songs count as played even when the owner skips "Outra rodada".
           const room = foldPlayed(folded);
           if (!room.lobby.deck) return { ok: false, error: "no-deck" };
           const pool = unplayedCards(room.lobby);
-          const playerIds = room.members
-            .filter(isOnline)
-            .sort((a, b) => a.joinedAt - b.joinedAt)
-            .slice(0, room.lobby.config.maxPlayers)
-            .map((m) => m.id);
+          const playerIds = seatPlayers(room, room.lobby.config.maxPlayers);
           // Each player takes a card and at least one must remain to draw.
           if (pool.length <= playerIds.length) {
             const played = (room.lobby.played ?? []).length > 0;
@@ -331,14 +377,10 @@ export function registerSocketGateway(
         const ack = await hub.mutate(code, (room) => {
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           const game = room.game;
-          if (!game || !running(room)) return { ok: false, error: "no-game" };
-          const result = apply(game.state, SYSTEM_ACTOR, { type: "end" }, ctx());
+          if (!isRunning(game)) return { ok: false, error: "no-game" };
+          const result = applyGame(game, SYSTEM_ACTOR, { type: "end" }, ctx());
           if (!result.ok) return result;
-          return {
-            ok: true,
-            room: { ...room, game: { ...game, state: result.state } },
-            events: result.events,
-          };
+          return { ok: true, room: { ...room, game: result.game }, events: result.events };
         });
         return { ack };
       }),
@@ -359,18 +401,15 @@ export function registerSocketGateway(
     socket.on(
       "game:action",
       intent(async (payload) => {
-        const parsed = hitlineIntentSchema.safeParse(payload);
-        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
         const ack = await hub.mutate(code, (room) => {
           const game = room.game;
           if (!game) return { ok: false, error: "no-game" };
-          const result = apply(game.state, memberId, parsed.data, ctx());
+          // Validated against the active game's intents, which only the loaded room knows.
+          const parsed = parseIntent(game, payload);
+          if (!parsed.ok) return { ok: false, error: "invalid-input" };
+          const result = applyGame(game, memberId, parsed.action, ctx());
           if (!result.ok) return result;
-          return {
-            ok: true,
-            room: { ...room, game: { ...game, state: result.state } },
-            events: result.events,
-          };
+          return { ok: true, room: { ...room, game: result.game }, events: result.events };
         });
         return { ack };
       }),

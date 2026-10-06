@@ -26,6 +26,8 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   "invalid-slot": "Esse vão não existe mais.",
   "already-decided": "Você já decidiu nesta contestação",
   "not-a-player": "Você está só olhando esta partida",
+  "invalid-hint": "Dica inválida: até 30 caracteres e 4 palavras, sem números nem #",
+  "already-guessed": "Você já enviou seu palpite",
   "server-error": "Algo deu errado no servidor. Tenta de novo.",
   timeout: "Sem resposta do servidor. Tenta de novo.",
 };

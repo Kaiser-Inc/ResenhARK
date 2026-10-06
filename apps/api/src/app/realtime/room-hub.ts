@@ -2,7 +2,9 @@ import { type Ack, type ErrorCode, type GameEvent, SOCKET_EVENTS } from "@resenh
 import type { Server } from "socket.io";
 import { systemMessage } from "../domain/room/chat.js";
 import { type Room, roomDeadline, tickRoom } from "../domain/room/room.js";
-import { type Card, SYSTEM_ACTOR, apply, tick } from "../games/hitline/engine.js";
+import { type Card, apply } from "../games/hitline/engine.js";
+import { applyGame, isGamePlayer, isRunning, tickGame } from "../games/registry.js";
+import { SYSTEM_ACTOR } from "../games/system.js";
 import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { projectRoom } from "./project-room.js";
@@ -83,20 +85,16 @@ export class RoomHub {
           let game = room.game;
           const events: GameEvent[] = [];
           for (const m of room.members) {
-            if (!game || game.state.phase === "game-over") break;
-            if (!game.state.players.some((p) => p.id === m.id)) continue;
-            const r = apply(
-              game.state,
+            if (!isRunning(game)) break;
+            if (!isGamePlayer(game, m.id)) continue;
+            const r = applyGame(
+              game,
               m.id,
               { type: "set-online", online: false },
-              {
-                now: now(),
-                rng,
-                newId,
-              },
+              { now: now(), rng, newId },
             );
             if (!r.ok) continue;
-            game = { ...game, state: r.state };
+            game = r.game;
             events.push(...r.events);
           }
           return {
@@ -191,23 +189,19 @@ export class RoomHub {
     events: GameEvent[];
   } {
     const game = ticked.room.game;
-    if (!game || game.state.phase === "game-over") return { ...ticked, events: [] };
+    if (!isRunning(game)) return { ...ticked, events: [] };
     const { now, rng, newId } = this.deps;
-    const result = tick(game.state, { now: now(), rng, newId });
+    const result = tickGame(game, { now: now(), rng, newId });
     // Every tick transition emits an event; none means nothing was due.
     if (result.events.length === 0) return { ...ticked, events: [] };
-    return {
-      ...ticked,
-      room: { ...ticked.room, game: { ...game, state: result.state } },
-      events: result.events,
-    };
+    return { ...ticked, room: { ...ticked.room, game: result.game }, events: result.events };
   }
 
   /** After a card-drawn, looks for its preview outside the queue; fire and forget. */
   private watchAudio(room: Room, events: GameEvent[], misses: number): void {
     let drawn: string | null = null;
     for (const e of events) if (e.type === "card-drawn") drawn = e.drawId;
-    const draw = room.game?.state.draw;
+    const draw = room.game?.type === "hitline" ? room.game.state.draw : null;
     if (!drawn || !draw || draw.id !== drawn) return;
     void this.checkAudio(room.code, draw, misses).catch(this.deps.onError);
   }
@@ -225,8 +219,10 @@ export class RoomHub {
     if (url) return;
     await this.mutate(code, (room) => {
       const game = room.game;
-      // The draw moved on (skip, timeout, end) while the lookup ran.
-      if (!game || game.state.draw?.id !== draw.id) return { ok: false, error: "wrong-phase" };
+      // The draw moved on (skip, timeout, end, another game) while the lookup ran.
+      if (game?.type !== "hitline" || game.state.draw?.id !== draw.id) {
+        return { ok: false, error: "wrong-phase" };
+      }
       const { now, rng, newId } = this.deps;
       const result = apply(
         game.state,

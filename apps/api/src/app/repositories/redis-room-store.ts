@@ -1,4 +1,4 @@
-import { CHAT_HISTORY, type ChatMessage } from "@resenhark/shared";
+import { CHAT_HISTORY, type ChatMessage, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
 import type { Redis } from "ioredis";
 import type { Room } from "../domain/room/room.js";
 import { ROOM_TTL_SECONDS, type RoomStore } from "./room-store.js";
@@ -14,7 +14,12 @@ export class RedisRoomStore implements RoomStore {
 
   async load(code: string): Promise<Room | null> {
     const raw = await this.redis.get(roomKey(code));
-    return raw ? (JSON.parse(raw) as Room) : null;
+    if (!raw) return null;
+    const room = JSON.parse(raw) as Room;
+    // Rooms saved before Huehint have no game choice yet.
+    room.lobby.game ??= "hitline";
+    room.lobby.huehintConfig ??= DEFAULT_HUEHINT_CONFIG;
+    return room;
   }
 
   async save(room: Room): Promise<void> {

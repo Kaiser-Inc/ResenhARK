@@ -36,7 +36,7 @@ export function HitlineBoard({
   connected,
   onNewGame,
 }: HitlineBoardProps) {
-  const view = room.game?.view;
+  const view = room.game?.type === "hitline" ? room.game.view : undefined;
   const drawId = view?.draw?.id ?? null;
   const timelineLength =
     view?.players.find((p) => p.id === view.turnPlayerId)?.timeline.length ?? 0;

@@ -28,6 +28,23 @@ When a hidden card leaves play unrevealed (the turn player goes offline or is re
 
 Projection tests (`project.test.ts`, `project-room.test.ts`) check these rules.
 
+## Huehint: the secret color
+
+In Huehint, the round's color and the guesses are the secret. `apps/api/src/app/games/huehint/project.ts` follows the same field-by-field rule.
+
+| Data | What the viewer sees |
+|---|---|
+| Colors of future rounds | Nothing. They exist only in the server state |
+| Current color, before the reveal | Only the giver, in `hint` and `guessing`. In solo, only the player, during the 5 s `memorize` phase |
+| Other players' guesses, before the reveal | Only who guessed (`submitted`), never the color. Your own guess comes back as `myGuess` |
+| Revealed rounds | Everything: color, hint, guesses and scores, in `rounds` |
+
+The giver does not see the guesses before the reveal either, so they cannot react to them on the call.
+
+Every member receives the same events, so no Huehint event carries the color or a guess before the reveal. `round-started` names only the round and the giver, and `guess-submitted` names only the player. The color first appears in an event inside `round-revealed`.
+
+Scores are computed on the server. Projection tests (`games/huehint/project.test.ts`) check every phase for the giver, a guesser and a spectator, and they check the events. Socket tests (`realtime/huehint.integration.test.ts`) check what each connected client receives.
+
 ## Audio without a leak
 
 The clip must reach a browser `<audio>` element without revealing the song. The server uses its own endpoint.
@@ -57,5 +74,6 @@ Anything else throws, so a bad provider response cannot make the server call an 
 - The provider's preview URL.
 - Other members' session tokens or audio tickets.
 - The turn player's typed guess text before the reveal, for anyone but the turn player.
+- In Huehint, the current color before the reveal (except for the giver, or the solo player while memorizing), the colors of future rounds, and other players' guesses before the reveal.
 
 The chat renders as text, never as HTML.
