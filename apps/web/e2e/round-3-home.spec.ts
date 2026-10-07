@@ -1,6 +1,40 @@
 import { checkpoint } from "./round-3-support";
 import { createRoomAs, expect, test } from "./support";
 
+for (const reduced of [false, true])
+  test(`Home CTA scrambles, handles interrupted hover and opens the form (${reduced ? "reduced" : "full"} motion)`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: reduced ? "reduce" : "no-preference" });
+    await page.goto("/");
+    const button = page.locator(".home-create-room");
+    const label = page.getByTestId("create-room-label");
+    await expect(label).toHaveText("Criar sala");
+    await button.hover();
+    await expect(label).not.toHaveText(/^(Criar sala|Começar a resenha!)$/);
+    await expect(label).toHaveText("Começar a resenha!");
+    await expect(button).toHaveAccessibleName("Começar a resenha!");
+    const angle = () =>
+      button.evaluate((node) =>
+        getComputedStyle(node, "::after").getPropertyValue("--home-create-angle"),
+      );
+    const firstAngle = await angle();
+    await expect.poll(angle).not.toBe(firstAngle);
+    expect(
+      await button.evaluate((node) => Number.parseFloat(getComputedStyle(node, "::after").top)),
+    ).toBeLessThan(0);
+    await page.mouse.move(0, 0);
+    await button.hover();
+    await page.mouse.move(0, 0);
+    await expect(label).toHaveText("Criar sala");
+    await expect(button).toHaveAccessibleName("Criar sala");
+    await button.hover();
+    await button.click();
+    await expect(page.getByLabel("Seu nome", { exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "Cancelar", exact: true }).click();
+    await expect(label).toHaveText("Criar sala");
+  });
+
 test("CA-F11: approved hero, actions, steps and cards adapt to desktop and mobile", async ({
   page,
 }) => {
@@ -9,7 +43,7 @@ test("CA-F11: approved hero, actions, steps and cards adapt to desktop and mobil
   await page.goto("/");
   const title = page.getByRole("heading", { name: "Qual vai ser a resenha de hoje?", exact: true });
   await expect(title).toBeVisible();
-  await expect(page.getByText("Sala de jogos do time", { exact: true })).toBeVisible();
+  await expect(page.getByText("Sala de jogos do time", { exact: true })).toHaveCount(0);
   await expect(
     page.getByText(
       "Crie uma sala, mande o código pro time e joguem juntos. Sem cadastro, direto do navegador.",
@@ -17,11 +51,20 @@ test("CA-F11: approved hero, actions, steps and cards adapt to desktop and mobil
   ).toBeVisible();
   for (const step of ["Crie a sala", "Compartilhe o código", "Escolha o jogo"])
     await expect(page.getByRole("heading", { name: step, exact: true })).toBeVisible();
-  const create = await page.getByRole("button", { name: "Criar sala", exact: true }).boundingBox();
-  const code = await page.getByLabel("Código da sala", { exact: true }).boundingBox();
-  expect(create).not.toBeNull();
-  expect(code).not.toBeNull();
-  expect(Math.abs((create?.y ?? 0) - (code?.y ?? 1))).toBeLessThan(1);
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    const create = await page
+      .getByRole("button", { name: "Criar sala", exact: true })
+      .boundingBox();
+    const code = await page.getByLabel("Código da sala", { exact: true }).boundingBox();
+    const enter = await page.getByRole("button", { name: "Entrar", exact: true }).boundingBox();
+    expect(create).not.toBeNull();
+    expect(code).not.toBeNull();
+    expect(enter).not.toBeNull();
+    expect(Math.abs((enter?.y ?? 0) - (code?.y ?? 1))).toBeLessThan(1);
+    expect(create?.y).toBeGreaterThan((code?.y ?? 0) + (code?.height ?? 0));
+    expect(create?.width).toBeCloseTo((enter?.x ?? 0) + (enter?.width ?? 0) - (code?.x ?? 0), 0);
+  }
   const boat = await page.getByTestId("hero-boat").boundingBox();
   const heading = await title.boundingBox();
   expect(boat?.x).toBeGreaterThan((heading?.x ?? 0) + (heading?.width ?? 0));
@@ -50,6 +93,7 @@ test("CA-F12: both cards flip with Enter and Space and expose only their current
     await expect(rules).toHaveCount(0);
     await card.focus();
     await card.press("Enter");
+    await expect(card).toHaveCSS("outline-style", "solid");
     await expect(card).toHaveAttribute("aria-pressed", "true");
     await expect(rules).toBeVisible();
     await expect(card).toHaveAccessibleDescription(
@@ -85,7 +129,9 @@ test("CA-F12: touch flips without hover", async ({ browser }) => {
   await context.close();
 });
 
-test("CA-F12: reduced motion stops the boat and swaps card faces with a fade", async ({ page }) => {
+test("immersive motion keeps the boat and card flips with a reduced system preference", async ({
+  page,
+}) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.setViewportSize({ width: 390, height: 900 });
   await page.goto("/");
@@ -97,34 +143,37 @@ test("CA-F12: reduced motion stops the boat and swaps card faces with a fade", a
     for (const part of [".hero-boat-sway", ".hero-boat-waves"])
       expect(
         await page.locator(part).evaluate((node) => getComputedStyle(node).animationName),
-      ).toBe("none");
+      ).not.toBe("none");
     const card = page.getByRole("button", { name: "Hitline", exact: true });
     const next = (await card.getAttribute("aria-pressed")) !== "true";
     await card.click();
     expect(
       await card.locator(".game-card-inner").evaluate((node) => getComputedStyle(node).transform),
-    ).toBe("none");
+    ).not.toBe("none");
     const visible = card.locator(`[data-face="${next ? "back" : "front"}"]`);
     await expect(visible).toHaveCSS("opacity", "1");
-    await expect(visible).toHaveCSS("transition-duration", "0.12s");
-    await expect(visible).toHaveCSS("transition-property", /opacity/);
+    await expect(card.locator(".game-card-inner")).toHaveCSS("transition-duration", "0.28s");
+    await expect(card.locator(".game-card-inner")).toHaveCSS("transition-property", "transform");
   }
 });
 
-test("the boat loops slowly within the approved two-degree limit", async ({ page }) => {
+test("the boat follows a continuous wave with a visible five-degree sway", async ({ page }) => {
   test.setTimeout(30_000);
   await page.goto("/");
   const sway = page.locator(".hero-boat-sway");
-  await expect(sway).toHaveCSS("animation-duration", "6s");
+  await expect(sway).toHaveCSS("animation-duration", "4.8s");
   await expect(sway).toHaveCSS("animation-iteration-count", "infinite");
-  for (let n = 0; n < 6; n++) {
+  const angles: number[] = [];
+  for (let n = 0; n < 12; n++) {
     const angle = await sway.evaluate((node) => {
       const matrix = new DOMMatrix(getComputedStyle(node).transform);
       return Math.abs((Math.atan2(matrix.b, matrix.a) * 180) / Math.PI);
     });
-    expect(angle).toBeLessThanOrEqual(2.01);
-    await page.waitForTimeout(1000);
+    angles.push(angle);
+    expect(angle).toBeLessThanOrEqual(5.01);
+    await page.waitForTimeout(400);
   }
+  expect(Math.max(...angles)).toBeGreaterThan(3);
 });
 
 test("CA-F15: home has metadata and a static boat image, room and admin stay noindex", async ({

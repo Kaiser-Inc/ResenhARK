@@ -41,7 +41,7 @@ export function fireConfetti() {
     zIndex: "100",
   });
   document.body.appendChild(canvas);
-  const fire = confetti.create(canvas, { resize: true, disableForReducedMotion: true });
+  const fire = confetti.create(canvas, { resize: true, disableForReducedMotion: false });
   void Promise.resolve(fire({ particleCount: 90, spread: 80, origin: { y: 0.4 }, colors })).finally(
     () => canvas.remove(),
   );

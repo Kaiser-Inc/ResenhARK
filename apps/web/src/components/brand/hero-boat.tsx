@@ -8,11 +8,16 @@ export function HeroBoat({ className }: { className?: string }) {
       viewBox="0 0 480 320"
       aria-hidden="true"
       data-testid="hero-boat"
-      className={cn("hero-boat w-full", className)}
+      data-intro="true"
+      className={cn("hero-boat block w-full overflow-visible", className)}
     >
       <g transform="translate(110 18)">
-        <g className="hero-boat-sway">
-          <ResenharkLogo className="hero-boat-logo" width={260} height={244} withKaiserMark />
+        <g className="hero-boat-float">
+          <g className="hero-boat-landing">
+            <g className="hero-boat-sway">
+              <ResenharkLogo className="hero-boat-logo" width={260} height={244} withKaiserMark />
+            </g>
+          </g>
         </g>
       </g>
       <g

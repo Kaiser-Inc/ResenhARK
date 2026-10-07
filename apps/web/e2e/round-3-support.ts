@@ -33,6 +33,7 @@ export async function checkpoint(
         await page.setViewportSize({ width, height });
         await beforeCapture?.();
       }
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
         true,
       );

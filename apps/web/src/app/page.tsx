@@ -31,7 +31,6 @@ export default function HomePage() {
       >
         <section className="grid items-center gap-8 lg:grid-cols-2">
           <div className="order-2 flex min-w-0 flex-col gap-6 lg:order-1">
-            <p className="text-sm font-medium text-primary-text">Sala de jogos do time</p>
             <PageHeader
               title={
                 <>
@@ -43,19 +42,40 @@ export default function HomePage() {
             />
             <HomeActions />
           </div>
-          <HeroBoat className="order-1 mx-auto max-w-[480px] lg:order-2" />
+          <div className="order-1 mx-auto flex w-full max-w-[480px] flex-col items-center lg:order-2">
+            <HeroBoat />
+            <p
+              aria-label="ResenhARK"
+              data-testid="hero-wordmark"
+              className="text-[clamp(2.75rem,6vw,5rem)] leading-none font-extrabold tracking-[-0.055em]"
+            >
+              Resenh<span className="text-primary-text">ARK</span>
+            </p>
+          </div>
         </section>
         <section aria-labelledby="how-it-works" className="flex flex-col gap-6">
           <h2 id="how-it-works" className="text-xl leading-7 font-semibold">
             Como funciona
           </h2>
-          <ol className="grid gap-6 lg:grid-cols-3">
+          <ol className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-4">
             {["Crie a sala", "Compartilhe o código", "Escolha o jogo"].map((step, index) => (
-              <li key={step} className="flex items-center gap-4">
-                <span aria-hidden="true" className="font-mono text-sm text-muted-foreground">
-                  0{index + 1}
+              <li
+                key={step}
+                className="relative flex items-center gap-4 lg:flex-1 lg:last:flex-none"
+              >
+                <span
+                  aria-hidden="true"
+                  className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary font-mono text-base font-semibold text-primary-foreground"
+                >
+                  {index + 1}
                 </span>
-                <h3 className="text-base leading-6 font-semibold">{step}</h3>
+                <h3 className="text-base leading-6 font-semibold lg:shrink-0">{step}</h3>
+                {index < 2 && (
+                  <span
+                    aria-hidden="true"
+                    className="absolute top-12 left-[19px] h-4 w-0.5 bg-primary-text/50 lg:static lg:h-0.5 lg:min-w-8 lg:flex-1"
+                  />
+                )}
               </li>
             ))}
           </ol>

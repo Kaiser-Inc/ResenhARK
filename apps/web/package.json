@@ -15,6 +15,7 @@
     "@base-ui/react": "^1.8.0",
     "@blobatar/react": "^2.7.0",
     "@resenhark/shared": "workspace:*",
+    "animejs": "^4.4.0",
     "blobatar": "^2.7.0",
     "canvas-confetti": "^1.9.3",
     "class-variance-authority": "^0.7.1",

@@ -2,11 +2,11 @@
 
 import type { HitlineView, MemberView } from "@resenhark/shared";
 import { ChevronDownIcon } from "lucide-react";
-import { motion } from "motion/react";
-import { useState } from "react";
+import { animate, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
-import { useReduced } from "@/components/hitline/motion";
+import { CARD_MOTION, FADE, SCORE_DELAY, useReduced } from "@/components/hitline/motion";
 import { TimelineCards, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
 import { TokenStack } from "@/components/hitline/token-stack";
 import { Badge } from "@/components/ui/badge";
@@ -25,12 +25,50 @@ function Gain() {
     <motion.span
       aria-hidden="true"
       className="pointer-events-none absolute -top-3 right-0 font-mono text-xs font-semibold text-success"
-      initial={reduce ? { opacity: 0 } : { opacity: 1, y: 0 }}
-      animate={reduce ? { opacity: [0, 1, 1, 0] } : { opacity: [1, 1, 0], y: -14 }}
-      transition={reduce ? { duration: 1 } : { duration: 1, ease: "easeOut" }}
+      initial={{ opacity: 0 }}
+      animate={
+        reduce
+          ? { opacity: [0, 1, 1, 0] }
+          : { opacity: [0, 1, 1, 0], transform: ["translateY(0px)", "translateY(-12px)"] }
+      }
+      transition={{ duration: 0.46, delay: reduce ? 0 : SCORE_DELAY, ease: CARD_MOTION.ease }}
     >
       +1
     </motion.span>
+  );
+}
+
+function CardCount({ count, target }: { count: number; target: number }) {
+  const node = useRef<HTMLSpanElement>(null);
+  const previous = useRef(count);
+  const reduce = useReduced();
+  useEffect(() => {
+    const changed = count !== previous.current;
+    const increased = count > previous.current;
+    previous.current = count;
+    if (!changed || !node.current) return;
+    const animation = animate(
+      node.current,
+      reduce
+        ? { opacity: [0.5, 1] }
+        : {
+            opacity: [0.5, 1],
+            transform: ["translateY(4px) scale(1.08)", "translateY(0px) scale(1)"],
+          },
+      reduce ? FADE : { ...CARD_MOTION, delay: increased ? SCORE_DELAY : 0 },
+    );
+    return () => {
+      animation.stop();
+      if (node.current) {
+        node.current.style.transform = "none";
+        node.current.style.opacity = "1";
+      }
+    };
+  }, [count, reduce]);
+  return (
+    <span ref={node} data-motion="card-count" className="inline-block">
+      {count}/{target}
+    </span>
   );
 }
 
@@ -66,7 +104,7 @@ export function Scoreboard({ view, members }: ScoreboardProps) {
                 {player.online ? null : <Badge>offline</Badge>}
                 <span className="relative font-mono tabular-nums">
                   <span className="sr-only">cartas </span>
-                  {player.timeline.length}/{view.config.targetCards}
+                  <CardCount count={player.timeline.length} target={view.config.targetCards} />
                   {reveal?.receiverId === player.id ? <Gain key={reveal.card.id} /> : null}
                 </span>
                 <span className="relative flex w-24 justify-end">

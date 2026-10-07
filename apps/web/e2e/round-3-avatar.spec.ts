@@ -75,19 +75,28 @@ test("CA-F14: arrival is a one-second reaction and idle avatars never loop", asy
   await expect(face).toHaveAttribute("data-expression", "idle");
 });
 
-test("CA-F14: reduced motion keeps expressions but removes avatar movement", async ({ page }) => {
+test("entry reactions keep their animation with a reduced system preference", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
   await page.getByRole("button", { name: "Criar sala" }).click();
   const face = page.getByTestId("avatar-preview").locator("[data-expression]");
+  const pending = page.evaluate(async () => {
+    let animated = false;
+    for (let i = 0; i < 40; i++) {
+      const face = document.querySelector('[data-testid="avatar-preview"] [data-expression]');
+      animated ||= (face?.getAnimations({ subtree: true }).length ?? 0) > 0;
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    return animated;
+  });
   await page.getByLabel("Seu nome").fill("Ana");
   await expect(face).toHaveAttribute("data-expression", "happy");
   await page.getByRole("radio", { name: "Rosa", exact: true }).click();
   await expect(face).toHaveAttribute("data-expression", "love");
-  expect(await face.evaluate((node) => node.getAnimations({ subtree: true }).length)).toBe(0);
-  expect(await face.evaluate((node) => getComputedStyle(node).transform)).toMatch(
-    /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/,
-  );
+  expect(await pending).toBe(true);
   await expect(face).toHaveAttribute("data-expression", "happy");
-  expect(await face.evaluate((node) => node.getAnimations({ subtree: true }).length)).toBe(0);
+  await expect
+    .poll(() => face.evaluate((node) => node.getAnimations({ subtree: true }).length))
+    .toBe(0);
+  await expect(face).toHaveCSS("transform", /^(none|matrix\(1, 0, 0, 1, 0, 0\))$/);
 });

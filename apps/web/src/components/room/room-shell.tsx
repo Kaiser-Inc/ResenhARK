@@ -24,6 +24,7 @@ import { LobbyPanel } from "@/components/lobby/lobby-panel";
 import { ConnectionBanner } from "@/components/room/connection-banner";
 import { RoomMobileBar } from "@/components/room/room-mobile-bar";
 import { type RoomActions, RoomSidebar } from "@/components/room/room-sidebar";
+import { useRoomTransition } from "@/components/room/room-transition";
 import { SiteBar } from "@/components/site-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -296,6 +297,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
     sessionToken,
   );
   const router = useRouter();
+  const { finish } = useRoomTransition();
   // After "Sair da sala" the server revokes the token and hangs up: that is not an invalid session.
   const left = useRef(false);
   const [removeTarget, setRemoveTarget] = useState<MemberView | null>(null);
@@ -303,6 +305,12 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
   const connected = status === "connected";
   const [arriving, setArriving] = useState(false);
   const you = room?.you;
+
+  useEffect(() => {
+    // A failed connection exposes the existing reconnect UI instead of hiding it behind a loader.
+    if (you || status === "reconnecting" || status === "invalid-session" || status === "kicked")
+      finish();
+  }, [you, status, finish]);
 
   useEffect(() => {
     if (!you) return;

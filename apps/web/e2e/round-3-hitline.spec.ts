@@ -86,6 +86,6 @@ for (const reducedMotion of ["reduce", "no-preference"] as const) {
     await writeRoom(code, room);
     await page.reload();
     await page.getByRole("button", { name: "Comprar carta (3 fichas)" }).click();
-    await expect.poll(() => calls).toContain(reducedMotion === "reduce" ? "instant" : "smooth");
+    await expect.poll(() => calls).toContain("smooth");
   });
 }

@@ -68,12 +68,14 @@ async function spendOne(page: Page) {
   return pending;
 }
 
-test("reduced motion: the token pop does not scale", async ({ browser }) => {
+test("immersive motion: tokens keep their pop with a reduced system preference", async ({
+  browser,
+}) => {
   const page = await (await browser.newContext({ reducedMotion: "reduce" })).newPage();
   const samples = await spendOne(page);
   await expectTokens(strip(page), 1);
   expect(samples.length).toBeGreaterThan(0);
-  for (const t of samples) expect(t).toMatch(IDENTITY);
+  expect(samples.some((t) => !IDENTITY.test(t))).toBe(true);
 });
 
 test("full motion: the token pop scales", async ({ page }) => {

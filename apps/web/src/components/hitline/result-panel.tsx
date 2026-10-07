@@ -33,7 +33,7 @@ export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: Re
   const [loading, setLoading] = useState(false);
   const reduce = useReduced();
   const flashId = useTimelineHighlight(view.lastReveal?.card.id ?? null);
-  // One burst when the result appears; skipped entirely under reduced motion.
+  // One burst when the result appears; reloads never replay a finished victory.
   const fired = useRef(false);
   // biome-ignore lint/correctness/useExhaustiveDependencies: fires once per mount
   useEffect(() => {
@@ -55,8 +55,10 @@ export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: Re
         <motion.div
           data-motion="winner"
           className="flex gap-3"
-          initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.6 }}
-          animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
+          initial={
+            reduce ? { opacity: 0 } : { opacity: 0, transform: "translateY(24px) scale(0.92)" }
+          }
+          animate={reduce ? { opacity: 1 } : { opacity: 1, transform: "translateY(0px) scale(1)" }}
           transition={reduce ? FADE : SPRING}
         >
           {view.winners.map((id) => {

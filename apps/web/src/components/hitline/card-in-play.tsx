@@ -3,7 +3,7 @@
 import type { HitlineView } from "@resenhark/shared";
 import { motion } from "motion/react";
 
-import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
+import { CARD_MOTION, FADE, useReduced } from "@/components/hitline/motion";
 import { SnippetPlayer } from "@/components/hitline/snippet-player";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -91,17 +91,34 @@ export function CardInPlay({
   const decided = view.passed.includes(you) || view.contests.some((c) => c.playerId === you);
   return (
     <section aria-label="Carta em jogo" className="flex items-start gap-4">
-      {/* A new draw flips in from the deck: rotateY 180 to 0 on a spring, or a fade when reduced. */}
-      <div className="shrink-0 [perspective:600px]">
+      {/* The back plates stay put while the drawn card slides out of the deck. */}
+      <div className="relative shrink-0">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 translate-x-1 -translate-y-1 rounded-lg border border-border-strong bg-muted"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 translate-x-2 -translate-y-2 rounded-lg border border-border-strong bg-muted"
+        />
         <motion.div
           key={draw?.id ?? "deck"}
           data-motion="draw-card"
           aria-hidden="true"
-          className="flex h-24 w-[68px] items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] leading-none font-semibold text-primary-text
- [backface-visibility:hidden]"
-          initial={draw ? (reduce ? { opacity: 0 } : { rotateY: 180 }) : false}
-          animate={reduce ? { opacity: 1 } : { rotateY: 0 }}
-          transition={reduce ? FADE : SPRING}
+          className="relative flex h-24 w-[68px] items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] leading-none font-semibold text-primary-text"
+          initial={
+            draw
+              ? reduce
+                ? { opacity: 0 }
+                : { opacity: 0, transform: "translate(-16px, -10px) rotate(-8deg) scale(0.95)" }
+              : false
+          }
+          animate={
+            reduce
+              ? { opacity: 1, transform: "none" }
+              : { opacity: 1, transform: "translate(0px, 0px) rotate(0deg) scale(1)" }
+          }
+          transition={reduce ? FADE : CARD_MOTION}
         >
           ?
         </motion.div>

@@ -86,8 +86,13 @@ export function MemberAvatar({
       className={cn("relative inline-flex shrink-0", className)}
       style={{ width: size, height: size }}
       initial={react && expression !== "idle" ? { opacity: 0.8 } : false}
-      animate={{ opacity: 1, y: jump ? [0, -2, 0] : 0 }}
-      transition={{ duration: reduce ? 0 : 0.12, ease: [0.23, 1, 0.32, 1] }}
+      animate={{
+        opacity: 1,
+        transform: jump
+          ? ["translateY(0px) scale(1)", "translateY(-5px) scale(1.04)", "translateY(0px) scale(1)"]
+          : "translateY(0px) scale(1)",
+      }}
+      transition={{ duration: reduce ? 0 : 0.24, ease: [0.23, 1, 0.32, 1] }}
     >
       <Blobatar
         name={name}

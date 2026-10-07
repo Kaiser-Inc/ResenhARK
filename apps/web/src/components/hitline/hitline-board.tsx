@@ -110,6 +110,13 @@ export function HitlineBoard({
         ]
       : [];
 
+  const roundSummary = (
+    <div className="flex flex-col gap-6 border-t border-border pt-6">
+      {reveal ? <RevealPanel reveal={reveal} members={room.members} /> : null}
+      <Scoreboard view={view} members={room.members} />
+    </div>
+  );
+
   return (
     <section aria-label="Hitline" className="flex flex-col gap-8 pb-40 lg:pb-0">
       <h1 className="sr-only">Hitline</h1>
@@ -124,39 +131,45 @@ export function HitlineBoard({
         {notice}
       </output>
       {view.phase === "game-over" ? (
-        <ResultPanel
-          view={view}
-          members={room.members}
-          isOwner={isOwner}
-          onNewGame={onNewGame}
-          celebrate={events.some((e) => e.type === "game-over")}
-        />
+        <>
+          <ResultPanel
+            view={view}
+            members={room.members}
+            isOwner={isOwner}
+            onNewGame={onNewGame}
+            celebrate={events.some((e) => e.type === "game-over")}
+          />
+          {roundSummary}
+        </>
       ) : (
         <div className="grid items-start gap-8 lg:grid-cols-2">
-          <div className="lg:sticky lg:top-6">
-            <CardInPlay
-              view={view}
-              you={room.you}
-              isTurn={isTurn}
-              connected={connected}
-              chosenSlot={chosenSlot}
-              pending={pending}
-              guessText={guessText}
-              onGuessText={(next) => setTyped({ drawId, ...next })}
-              onDraw={() => void act("draw", { type: "draw" })}
-              onSkip={() => void act("skip", { type: "skip" })}
-              onBuy={() => void act("buy", { type: "buy" })}
-              onPass={() => void act("pass", { type: "pass" })}
-              onLock={() =>
-                chosenSlot !== null &&
-                void act("lock", {
-                  type: "lock-guess",
-                  slot: chosenSlot,
-                  title: guessText.title.trim(),
-                  artist: guessText.artist.trim(),
-                })
-              }
-            />
+          <div className="flex min-w-0 flex-col gap-8 lg:self-stretch">
+            <div className="lg:sticky lg:top-6 lg:z-10 lg:bg-background">
+              <CardInPlay
+                view={view}
+                you={room.you}
+                isTurn={isTurn}
+                connected={connected}
+                chosenSlot={chosenSlot}
+                pending={pending}
+                guessText={guessText}
+                onGuessText={(next) => setTyped({ drawId, ...next })}
+                onDraw={() => void act("draw", { type: "draw" })}
+                onSkip={() => void act("skip", { type: "skip" })}
+                onBuy={() => void act("buy", { type: "buy" })}
+                onPass={() => void act("pass", { type: "pass" })}
+                onLock={() =>
+                  chosenSlot !== null &&
+                  void act("lock", {
+                    type: "lock-guess",
+                    slot: chosenSlot,
+                    title: guessText.title.trim(),
+                    artist: guessText.artist.trim(),
+                  })
+                }
+              />
+            </div>
+            {roundSummary}
           </div>
           {turnPlayer ? (
             <Timeline
@@ -179,8 +192,6 @@ export function HitlineBoard({
           ) : null}
         </div>
       )}
-      {reveal ? <RevealPanel reveal={reveal} members={room.members} /> : null}
-      <Scoreboard view={view} members={room.members} />
       {isOwner && view.phase !== "game-over" ? (
         <div>
           <ConfirmDialog

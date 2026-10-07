@@ -6,7 +6,13 @@ import { motion } from "motion/react";
 import { Fragment, useEffect, useRef } from "react";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
-import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
+import {
+  CARD_LAND_DELAY,
+  CARD_MOTION,
+  FADE,
+  SPRING,
+  useReduced,
+} from "@/components/hitline/motion";
 import { TimelineCardRow, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
 import { cn } from "@/lib/utils";
 
@@ -70,7 +76,7 @@ export function Timeline({
         data-motion="ghost"
         initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
         animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
-        transition={reduce ? FADE : SPRING}
+        transition={reduce ? FADE : CARD_MOTION}
         className="flex h-10 items-center justify-center rounded-md border border-dashed border-border-strong font-mono text-lg font-semibold text-primary-text"
       >
         ?
@@ -94,7 +100,7 @@ export function Timeline({
     const held = taken.find((t) => t.slot === slot);
     if (held) {
       return (
-        <motion.li key={`gap-${slot}`} layout={layout}>
+        <motion.li key={`gap-${slot}`} layout={layout} transition={CARD_MOTION}>
           <div
             title={held.text}
             className="flex h-8 w-full items-center gap-2 rounded-md border border-solid border-border-strong bg-secondary px-3 text-sm"
@@ -103,9 +109,9 @@ export function Timeline({
               <motion.span
                 data-motion="contester"
                 className="inline-flex"
-                initial={reduce ? { opacity: 0 } : { scale: 0.6 }}
+                initial={reduce ? { opacity: 0 } : { scale: 0.95 }}
                 animate={reduce ? { opacity: 1 } : { scale: 1 }}
-                transition={reduce ? FADE : SPRING}
+                transition={reduce ? FADE : CARD_MOTION}
               >
                 <MemberAvatar name={held.member.name} avatar={held.member.avatar} size={24} />
               </motion.span>
@@ -118,7 +124,7 @@ export function Timeline({
     if (!interactive) {
       // Display only: no disabled button without a reason, same 32 px rhythm.
       return (
-        <motion.li key={`gap-${slot}`} layout={layout} aria-hidden="true">
+        <motion.li key={`gap-${slot}`} layout={layout} transition={CARD_MOTION} aria-hidden="true">
           <div className="flex h-8 w-full items-center rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground">
             {gapLabel(cards, slot)}
           </div>
@@ -126,7 +132,7 @@ export function Timeline({
       );
     }
     return (
-      <motion.li key={`gap-${slot}`} layout={layout}>
+      <motion.li key={`gap-${slot}`} layout={layout} transition={CARD_MOTION}>
         <button
           type="button"
           data-gap
@@ -164,6 +170,17 @@ export function Timeline({
             card={card}
             highlighted={flashId === card.id}
             layout={layout}
+            initial={
+              previousCards.current && !previousCards.current.has(card.id)
+                ? reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, transform: "translateX(16px) scale(0.96)" }
+                : false
+            }
+            animate={{ opacity: 1, transform: reduce ? "none" : "translateX(0px) scale(1)" }}
+            transition={
+              reduce ? FADE : { ...CARD_MOTION, delay: CARD_LAND_DELAY, layout: CARD_MOTION }
+            }
           />
           {gap(index + 1)}
           {ghost(index + 1)}

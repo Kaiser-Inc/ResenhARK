@@ -59,7 +59,7 @@ export async function expectNoAxeViolations(page: Page) {
   ).toEqual([]);
 }
 
-/** Creates a room through the UI as `name` and waits until the room URL is open. */
+/** Creates a room through the UI and waits for the entrance to settle before measuring or scanning it. */
 export async function createRoomAs(page: Page, name: string): Promise<string> {
   // On a cold dev server a click can land before hydration and do nothing: redo the whole flow.
   await expect(async () => {
@@ -69,6 +69,10 @@ export async function createRoomAs(page: Page, name: string): Promise<string> {
     await page.getByRole("button", { name: "Criar e entrar" }).click();
     await expect(page).toHaveURL(/\/sala\/[A-HJKMNP-Z]{5}$/, { timeout: 5_000 });
   }).toPass({ timeout: 40_000 });
+  await expect(page.getByRole("heading", { name: "Lobby", exact: true })).toBeVisible();
+  await expect(page.getByRole("status", { name: "Carregamento da sala" })).toHaveCount(0);
+  await expect(page.getByTestId("route-surface")).toHaveCSS("opacity", "1");
+  await expect(page.getByTestId("route-surface")).toHaveCSS("transform", "none");
   return page.url().split("/").pop() as string;
 }
 
