@@ -15,5 +15,6 @@ export const DEFAULT_DECK: ImportedPlaylist = {
     year: song.year,
     isrc: song.isrc,
     spotifyUrl: null,
+    deezerId: song.deezerId,
   })),
 };

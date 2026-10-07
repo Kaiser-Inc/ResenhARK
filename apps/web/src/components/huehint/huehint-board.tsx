@@ -281,7 +281,7 @@ export function HuehintBoard({
     ? `${view.winners.map(name).join(" e ")} ${view.winners.length > 1 ? "venceram" : "venceu"}!`
     : "Partida encerrada";
   const lastRound = view.rounds.at(-1);
-  // The server breaks equal totals by guess points; show why when a loser has the winners' total.
+  // The server breaks equal totals by giver points; show why when a loser has the winners' total.
   const winnerTotal = view.players.find((p) => view.winners.includes(p.id))?.total;
   const wonOnTiebreak = view.players.some(
     (p) => !view.winners.includes(p.id) && p.total === winnerTotal,
@@ -362,7 +362,7 @@ export function HuehintBoard({
                 : "Todas as rodadas foram jogadas."}
           </p>
           {wonOnTiebreak ? (
-            <p className="text-sm font-medium">Venceu no desempate pelos palpites.</p>
+            <p className="text-sm font-medium">Venceu no desempate pelas dicas.</p>
           ) : null}
           {isOwner ? (
             <Button

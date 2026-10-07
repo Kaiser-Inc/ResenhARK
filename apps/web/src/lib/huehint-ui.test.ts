@@ -180,7 +180,7 @@ test("reveal renders the current round once and keeps only earlier rounds in the
   assert.equal((finished.match(/aria-label="Revelação da rodada 2"/g) ?? []).length, 1);
 });
 
-test("game over hides the giver line and explains a guess-points tiebreak", () => {
+test("game over hides the giver line and explains a giver-points tiebreak", () => {
   const players = [
     { id: "giver", online: true, guessPoints: 19.82, giverPoints: 18.73, total: 38.55 },
     { id: "guesser", online: true, guessPoints: 18.73, giverPoints: 19.82, total: 38.55 },
@@ -195,7 +195,7 @@ test("game over hides the giver line and explains a guess-points tiebreak", () =
     players,
   });
   assert.doesNotMatch(tiebreak, /Dador:/);
-  assert.match(tiebreak, /Venceu no desempate pelos palpites/);
+  assert.match(tiebreak, /Venceu no desempate pelas dicas/);
   const clear = render({
     phase: "game-over",
     giverId: null,

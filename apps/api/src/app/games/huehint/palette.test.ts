@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { seededRng } from "../../core/seeded-rng.js";
-import { drawColors, saturationBand } from "./palette.js";
+import { deltaE2000, hsbToLab } from "./color.js";
+import { DARK_BELOW, MIN_DELTA_E, drawColors, saturationBand } from "./palette.js";
 
 const GAMES = 4000;
 const ROUNDS = 12;
@@ -43,6 +44,43 @@ test("consecutive rounds never share a hue sector and each block of 6 covers all
       assert.equal(new Set(g.slice(i, i + 6).map((c) => sector(c.h))).size, 6);
     }
   }
+});
+
+test("at most one dark color in any 6 consecutive rounds", () => {
+  for (const g of games) {
+    for (let i = 0; i + 6 <= g.length; i++) {
+      const dark = g.slice(i, i + 6).filter((c) => c.b < DARK_BELOW).length;
+      assert.ok(dark <= 1, `${dark} dark colors in rounds ${i + 1} to ${i + 6}`);
+    }
+  }
+});
+
+const de = (a: Parameters<typeof hsbToLab>[0], b: Parameters<typeof hsbToLab>[0]) =>
+  deltaE2000(hsbToLab(a), hsbToLab(b));
+
+test("a solo game's 5 colors are MIN_DELTA_E apart in almost every game", () => {
+  const rng = seededRng(11);
+  let apart = 0;
+  for (let n = 0; n < 2000; n++) {
+    const g = drawColors(5, rng);
+    const closest = Math.min(...g.flatMap((a, i) => g.slice(i + 1).map((b) => de(a, b))));
+    if (closest >= MIN_DELTA_E) apart += 1;
+  }
+  assert.ok(apart / 2000 >= 0.99, `${apart} of 2000`);
+});
+
+test("in long games each color keeps clear of the last 5, and MIN_DELTA_E from them 95% of the time", () => {
+  let checked = 0;
+  let clear = 0;
+  for (const g of games) {
+    for (let i = 1; i < g.length; i++) {
+      const closest = Math.min(...g.slice(Math.max(0, i - 5), i).map((b) => de(g[i], b)));
+      assert.ok(closest >= 15, `round ${i + 1}: ΔE ${closest}`);
+      checked += 1;
+      if (closest >= MIN_DELTA_E) clear += 1;
+    }
+  }
+  assert.ok(clear / checked >= 0.95, `${clear} of ${checked}`);
 });
 
 test("saturationBand splits at 15 and 40", () => {

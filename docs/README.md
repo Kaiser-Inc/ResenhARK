@@ -6,6 +6,7 @@ Documentation for people who run, change or deploy ResenhARK. It follows the [Di
 |---|---|
 | Run the app and play a first game on your machine | [Tutorial: your first game](tutorial-first-game.md) |
 | Let rooms import Spotify playlists | [Connect Spotify](how-to/connect-spotify.md) |
+| Change the songs of the built-in deck | [Rebuild the built-in deck](how-to/rebuild-default-deck.md) |
 | Put the app online on free tiers | [Deploy](how-to/deploy.md) |
 | Run the unit, integration and e2e tests | [Run the tests](how-to/run-tests.md) |
 | Look up an environment variable | [Environment variables](reference/environment-variables.md) |
