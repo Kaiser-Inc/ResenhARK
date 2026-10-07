@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { describeHsb, hsbToCss } from "@/lib/huehint";
+import { hsbToCss } from "@/lib/huehint";
 import type { Hsb } from "@resenhark/shared";
 import { CheckIcon } from "lucide-react";
 import { useState } from "react";
@@ -127,7 +127,6 @@ export function ColorSelector({
           </Button>
         </div>
       </div>
-      <p className="font-mono text-sm tabular-nums">{describeHsb(color)}</p>
       <p className="text-xs text-muted-foreground">
         Arraste as barras ou use as setas. Shift + seta ajusta de 10 em 10.
       </p>

@@ -11,7 +11,6 @@ export function hsbToCss({ h, s, b }: Hsb): string {
 }
 
 export const formatScore = (score: number): string => score.toFixed(2).replace(".", ",");
-export const describeHsb = ({ h, s, b }: Hsb): string => `H ${h}° · S ${s}% · B ${b}%`;
 
 /** Projection and role alone decide which interaction can be shown. */
 export function huehintScreen(view: HuehintView, you: string) {

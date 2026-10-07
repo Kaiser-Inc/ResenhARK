@@ -11,7 +11,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { type Send, gameErrorMessage } from "@/lib/game-errors";
-import { describeHsb, formatScore, hsbToCss, huehintScreen } from "@/lib/huehint";
+import { formatScore, hsbToCss, huehintScreen } from "@/lib/huehint";
 import type { ServerClock } from "@/lib/server-clock";
 import {
   type GameEvent,
@@ -51,12 +51,11 @@ function ColorSwatch({
     >
       <div
         role="img"
-        aria-label={`${label}: ${describeHsb(color)}`}
+        aria-label={label}
         className="h-28 rounded-xl ring-1 ring-border sm:h-40"
         style={{ background: hsbToCss(color) }}
       />
       <p className="text-sm font-medium">{label}</p>
-      <p className="font-mono text-xs tabular-nums">{describeHsb(color)}</p>
     </motion.div>
   );
 }
@@ -291,7 +290,7 @@ export function HuehintBoard({
     view.phase === "game-over"
       ? winnerText
       : view.phase === "reveal"
-        ? `Rodada ${view.round} revelada.${lastRound ? ` Cor real: ${describeHsb(lastRound.color)}. ${lastRound.outcome === "no-hint" ? `${name(lastRound.giverId)} não deu dica` : lastRound.guesses.map((g) => `${name(g.playerId)}: ${formatScore(g.score)}`).join(". ")}${lastRound.giverScore !== null ? `. Nota do dador: ${formatScore(lastRound.giverScore)}` : ""}` : ""}`
+        ? `Rodada ${view.round} revelada.${lastRound ? ` ${lastRound.outcome === "no-hint" ? `${name(lastRound.giverId)} não deu dica` : lastRound.guesses.map((g) => `${name(g.playerId)}: ${formatScore(g.score)}`).join(". ")}${lastRound.giverScore !== null ? `. Nota do dador: ${formatScore(lastRound.giverScore)}` : ""}` : ""}`
         : view.phase === "memorize"
           ? screen === "memorize"
             ? "Memorize a cor. Você tem 5 segundos."
