@@ -2,6 +2,32 @@
 
 Branch: `feat/round-3-ui-ux-web`, baseada em `ef4fc99`.
 
+## Fechamento e integração — 2026-10-07
+
+As decisões e evidências desta seção substituem as limitações de movimento do registro original abaixo.
+
+- Timelines públicas do placar e resultado reutilizam `TimelineCardRow`: ano, título e artistas, texto completo em `title`, lista acessível, sem scroll interno e destaque de 1 s apenas por cor. Duas pessoas e 15 cartas foram verificadas.
+- O SVG oficial da KaiserInc compõe a vela/balão, monta suas seis peças na entrada da Home e acompanha o barco, inclusive no carregamento de sala.
+- Movimento completo independentemente de `prefers-reduced-motion`, conforme direção explícita do produto: balanço de até 5° em 4,8 s, flutuação, ondas, parallax dos cards, flip, scramble do CTA, borda externa animada, transição de sala, reações, revelações, contagem e confetti. Listas de músicas permanecem estáveis para leitura.
+- O texto pequeno “Sala de jogos do time” foi removido da Home. O nome ResenhARK e os metadados foram preservados.
+- Foco dos cards corrigido; mouse, teclado, toque sintetizado, interrupções de hover e recuperação após erro de criação foram exercitados.
+- Os três adendos desta revisão alteram fontes somente em `apps/web`; o lockfile registra o anime.js solicitado anteriormente.
+- Lint e typecheck de web, API e shared passaram no checkout integrado. Testes: 29 web, 343 API e 11 shared, todos verdes.
+- Regressão final integrada: 153/153 cenários Chromium passaram em uma execução completa, sem retries (12,4 min).
+- Capturas adicionais: `8-player-timelines`, `8-player-timelines-result`, `9-home-kaiser-mark` e `10-home-immersive`, todas a 390/1440 px nos dois temas, com axe sem violações. O checkpoint `2-hitline` também foi atualizado.
+- Evidências: `/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-06-rodada-3-ui-ux/ui/`. Logs persistentes finais: `/home/kaiser/KaiserInc/ResenhARK-integration/.dev-flow/2026-10-07-integrated-validation/{shared,api,web,e2e}.log`.
+- E2E integrado isolado: web 4012, API 3345 e Redis 12. Preview integrado em `http://localhost:4000/`, API 3333 e Redis 0, com fixtures locais de playlist e áudio.
+
+### Integração
+
+`feat/round-3-ui-ux-web` e `feat/round-4-default-deck` foram integradas na `develop` sem conflitos. A segunda branch adiciona o baralho de 500 músicas e refinamentos de regras/áudio. Configurações locais não commitadas permaneceram nos seus checkouts.
+
+Os e2e de integração verificam as 500 músicas do novo baralho e aguardam os fades de revelação do Huehint antes de medir contraste com axe, mantendo todas as regras da análise habilitadas.
+
+## Registro original das sete fatias — 2026-10-06
+
+As contagens, restrições de movimento e limites de escopo abaixo correspondem à entrega anterior aos adendos e ao pedido posterior de merge/PR.
+
 ## Entrega por fatia
 
 | Fatia | Resultado | Escolha de implementação |

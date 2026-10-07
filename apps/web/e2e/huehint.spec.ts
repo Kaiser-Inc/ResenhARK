@@ -3,6 +3,14 @@ import type { Page } from "@playwright/test";
 import { chooseOption, createRoomAs, expect, joinRoomAs, test } from "./support";
 
 async function checkAxe(page: Page) {
+  // Scan the settled reveal; an opacity entrance temporarily lowers text contrast.
+  await expect
+    .poll(() =>
+      page
+        .locator('[data-motion^="hue-"]')
+        .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
+    )
+    .toBe(true);
   const { violations } = await new AxeBuilder({ page }).analyze();
   expect(
     violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
