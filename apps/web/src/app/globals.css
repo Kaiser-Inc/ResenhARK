@@ -176,6 +176,43 @@
   height: 244px;
 }
 
+.hero-boat .hero-kaiser-piece {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-kaiser-assemble 650ms cubic-bezier(0.23, 1, 0.32, 1) 800ms both;
+}
+
+.hero-boat .hero-kaiser-piece:nth-child(2) {
+  animation-delay: 850ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(3) {
+  animation-delay: 900ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(4) {
+  animation-delay: 950ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(5) {
+  animation-delay: 1000ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(6) {
+  animation-delay: 1050ms;
+}
+
+@keyframes hero-kaiser-assemble {
+  0% {
+    opacity: 0;
+    transform: translateY(18%) scale(0.75) rotate(-8deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0%) scale(1.08) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%) scale(1) rotate(0deg);
+  }
+}
+
 .hero-boat-sway {
   transform-box: fill-box;
   transform-origin: 50% 80%;

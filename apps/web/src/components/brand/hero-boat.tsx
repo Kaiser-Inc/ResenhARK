@@ -12,7 +12,7 @@ export function HeroBoat({ className }: { className?: string }) {
     >
       <g transform="translate(110 18)">
         <g className="hero-boat-sway">
-          <ResenharkLogo className="hero-boat-logo" width={260} height={244} />
+          <ResenharkLogo className="hero-boat-logo" width={260} height={244} withKaiserMark />
         </g>
       </g>
       <g
