@@ -3,10 +3,11 @@
 import type { MemberView, PublicCard } from "@resenhark/shared";
 import { CheckIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
+import { TimelineCardRow, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
 import { cn } from "@/lib/utils";
 
 /** A gap someone already holds: the guess or a contest. Shown with who, never clickable. */
@@ -46,16 +47,7 @@ export function Timeline({
   const listRef = useRef<HTMLOListElement>(null);
   const previousCards = useRef<Set<string> | null>(null);
   const reduce = useReduced();
-  const [flashId, setFlashId] = useState<string | null>(null);
-  useEffect(() => {
-    if (!highlightCardId) {
-      setFlashId(null);
-      return;
-    }
-    setFlashId(highlightCardId);
-    const id = setTimeout(() => setFlashId(null), 1000);
-    return () => clearTimeout(id);
-  }, [highlightCardId]);
+  const flashId = useTimelineHighlight(highlightCardId);
   useEffect(() => {
     const previous = previousCards.current;
     previousCards.current = new Set(cards.map((card) => card.id));
@@ -162,30 +154,17 @@ export function Timeline({
       onKeyDown={onKeyDown}
       // Reading the whole timeline stays keyboard reachable when its gaps are display-only.
       tabIndex={interactive ? undefined : 0}
-      className="flex flex-col gap-1"
+      className="flex min-w-0 flex-col gap-1"
     >
       {gap(0)}
       {ghost(0)}
       {cards.map((card, index) => (
         <Fragment key={card.id}>
-          <motion.li
-            data-card-id={card.id}
+          <TimelineCardRow
+            card={card}
+            highlighted={flashId === card.id}
             layout={layout}
-            className={cn(
-              "flex items-baseline gap-4 rounded-md py-1 transition-colors duration-[120ms] ease-out",
-              flashId === card.id && "bg-accent",
-            )}
-          >
-            <span className="w-[72px] shrink-0 font-mono text-2xl leading-7 font-semibold">
-              {card.year}
-            </span>
-            <span
-              title={`${card.title} · ${card.artists.join(", ")}`}
-              className="min-w-0 truncate text-sm leading-[22px] text-muted-foreground"
-            >
-              {card.title} · {card.artists.join(", ")}
-            </span>
-          </motion.li>
+          />
           {gap(index + 1)}
           {ghost(index + 1)}
         </Fragment>

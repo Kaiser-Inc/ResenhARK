@@ -7,8 +7,10 @@ import { useState } from "react";
 
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
 import { useReduced } from "@/components/hitline/motion";
+import { TimelineCards, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
 import { TokenStack } from "@/components/hitline/token-stack";
 import { Badge } from "@/components/ui/badge";
+import { timelineHighlightFor } from "@/lib/timeline-highlight";
 import { cn } from "@/lib/utils";
 
 type ScoreboardProps = {
@@ -35,6 +37,7 @@ function Gain() {
 export function Scoreboard({ view, members }: ScoreboardProps) {
   const [open, setOpen] = useState<string | null>(null);
   const reveal = view.lastReveal;
+  const flashId = useTimelineHighlight(reveal?.card.id ?? null);
   return (
     <section aria-label="Placar">
       <ul className="flex flex-col">
@@ -82,9 +85,12 @@ export function Scoreboard({ view, members }: ScoreboardProps) {
                 />
               </button>
               {expanded ? (
-                <p className="pb-2 pl-11 font-mono text-sm text-muted-foreground">
-                  {player.timeline.map((c) => c.year).join(" · ") || "Sem cartas"}
-                </p>
+                <TimelineCards
+                  cards={player.timeline}
+                  ownerName={member.name}
+                  highlightedCardId={timelineHighlightFor(reveal, player.id, flashId)}
+                  className="pb-2 pl-11"
+                />
               ) : null}
             </li>
           );

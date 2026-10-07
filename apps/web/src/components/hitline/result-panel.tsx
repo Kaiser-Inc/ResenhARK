@@ -9,8 +9,10 @@ import { toast } from "sonner";
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
 import { fireConfetti } from "@/components/hitline/confetti";
 import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
+import { TimelineCards, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
 import { Button } from "@/components/ui/button";
 import { gameErrorMessage } from "@/lib/game-errors";
+import { timelineHighlightFor } from "@/lib/timeline-highlight";
 
 const REASONS: Record<NonNullable<HitlineView["endReason"]>, string> = {
   target: "Chegou ao número de cartas para vencer.",
@@ -30,6 +32,7 @@ type ResultPanelProps = {
 export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: ResultPanelProps) {
   const [loading, setLoading] = useState(false);
   const reduce = useReduced();
+  const flashId = useTimelineHighlight(view.lastReveal?.card.id ?? null);
   // One burst when the result appears; skipped entirely under reduced motion.
   const fired = useRef(false);
   // biome-ignore lint/correctness/useExhaustiveDependencies: fires once per mount
@@ -84,17 +87,24 @@ export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: Re
           Desempate: mais cartas, depois mais fichas. Se continuar empatado, a vitória é dividida.
         </p>
       ) : null}
-      <ol className="flex flex-col gap-1 text-sm" aria-label="Placar final">
+      <ol className="flex flex-col gap-6 text-sm" aria-label="Placar final">
         {standings.map((player) => (
-          <li key={player.id} className="flex items-center gap-3">
-            <span className="min-w-0 flex-1 truncate font-medium">{name(player.id)}</span>
-            <span className="font-mono tabular-nums">
-              <span className="sr-only">cartas </span>
-              {player.timeline.length}/{view.config.targetCards}
-            </span>
-            <span className="w-16 text-right text-muted-foreground">
-              {player.tokens} {player.tokens === 1 ? "ficha" : "fichas"}
-            </span>
+          <li key={player.id} className="flex min-w-0 flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <span className="min-w-0 flex-1 truncate font-medium">{name(player.id)}</span>
+              <span className="font-mono tabular-nums">
+                <span className="sr-only">cartas </span>
+                {player.timeline.length}/{view.config.targetCards}
+              </span>
+              <span className="w-16 text-right text-muted-foreground">
+                {player.tokens} {player.tokens === 1 ? "ficha" : "fichas"}
+              </span>
+            </div>
+            <TimelineCards
+              cards={player.timeline}
+              ownerName={name(player.id)}
+              highlightedCardId={timelineHighlightFor(view.lastReveal, player.id, flashId)}
+            />
           </li>
         ))}
       </ol>
