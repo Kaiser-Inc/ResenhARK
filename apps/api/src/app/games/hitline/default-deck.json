@@ -1,0 +1,242 @@
+[
+  {
+    "title": "505",
+    "artists": ["Arctic Monkeys"],
+    "year": 2007,
+    "isrc": null
+  },
+  {
+    "title": "Mr. Brightside",
+    "artists": ["The Killers"],
+    "year": 2004,
+    "isrc": null
+  },
+  {
+    "title": "Bohemian Rhapsody",
+    "artists": ["Queen"],
+    "year": 1975,
+    "isrc": null
+  },
+  {
+    "title": "Billie Jean",
+    "artists": ["Michael Jackson"],
+    "year": 1982,
+    "isrc": null
+  },
+  {
+    "title": "Smells Like Teen Spirit",
+    "artists": ["Nirvana"],
+    "year": 1991,
+    "isrc": null
+  },
+  {
+    "title": "Wonderwall",
+    "artists": ["Oasis"],
+    "year": 1995,
+    "isrc": null
+  },
+  {
+    "title": "Rolling in the Deep",
+    "artists": ["Adele"],
+    "year": 2011,
+    "isrc": null
+  },
+  {
+    "title": "Blinding Lights",
+    "artists": ["The Weeknd"],
+    "year": 2020,
+    "isrc": null
+  },
+  {
+    "title": "Evidências",
+    "artists": ["Chitãozinho & Xororó"],
+    "year": 1990,
+    "isrc": null
+  },
+  {
+    "title": "Aquarela",
+    "artists": ["Toquinho"],
+    "year": 1983,
+    "isrc": null
+  },
+  {
+    "title": "Tempo Perdido",
+    "artists": ["Legião Urbana"],
+    "year": 1986,
+    "isrc": null
+  },
+  {
+    "title": "Exagerado",
+    "artists": ["Cazuza"],
+    "year": 1985,
+    "isrc": null
+  },
+  {
+    "title": "Anna Júlia",
+    "artists": ["Los Hermanos"],
+    "year": 1999,
+    "isrc": null
+  },
+  {
+    "title": "Pais e Filhos",
+    "artists": ["Legião Urbana"],
+    "year": 1989,
+    "isrc": null
+  },
+  {
+    "title": "Sozinho",
+    "artists": ["Caetano Veloso"],
+    "year": 1998,
+    "isrc": null
+  },
+  {
+    "title": "Ai Se Eu Te Pego",
+    "artists": ["Michel Teló"],
+    "year": 2011,
+    "isrc": null
+  },
+  {
+    "title": "Despacito",
+    "artists": ["Luis Fonsi"],
+    "year": 2017,
+    "isrc": null
+  },
+  {
+    "title": "Shape of You",
+    "artists": ["Ed Sheeran"],
+    "year": 2017,
+    "isrc": null
+  },
+  {
+    "title": "Uptown Funk",
+    "artists": ["Mark Ronson", "Bruno Mars"],
+    "year": 2015,
+    "isrc": null
+  },
+  {
+    "title": "Hey Ya!",
+    "artists": ["OutKast"],
+    "year": 2003,
+    "isrc": null
+  },
+  {
+    "title": "Crazy in Love",
+    "artists": ["Beyoncé"],
+    "year": 2003,
+    "isrc": null
+  },
+  {
+    "title": "Toxic",
+    "artists": ["Britney Spears"],
+    "year": 2003,
+    "isrc": null
+  },
+  {
+    "title": "Seven Nation Army",
+    "artists": ["The White Stripes"],
+    "year": 2003,
+    "isrc": null
+  },
+  {
+    "title": "Sweet Child O' Mine",
+    "artists": ["Guns N' Roses"],
+    "year": 1987,
+    "isrc": null
+  },
+  {
+    "title": "Take On Me",
+    "artists": ["a-ha"],
+    "year": 1985,
+    "isrc": null
+  },
+  {
+    "title": "Like a Prayer",
+    "artists": ["Madonna"],
+    "year": 1989,
+    "isrc": null
+  },
+  {
+    "title": "Hotel California",
+    "artists": ["Eagles"],
+    "year": 1976,
+    "isrc": null
+  },
+  {
+    "title": "Imagine",
+    "artists": ["John Lennon"],
+    "year": 1971,
+    "isrc": null
+  },
+  {
+    "title": "Stayin' Alive",
+    "artists": ["Bee Gees"],
+    "year": 1977,
+    "isrc": null
+  },
+  {
+    "title": "Dancing Queen",
+    "artists": ["ABBA"],
+    "year": 1976,
+    "isrc": null
+  },
+  {
+    "title": "Lose Yourself",
+    "artists": ["Eminem"],
+    "year": 2002,
+    "isrc": null
+  },
+  {
+    "title": "bad guy",
+    "artists": ["Billie Eilish"],
+    "year": 2019,
+    "isrc": null
+  },
+  {
+    "title": "Levitating",
+    "artists": ["Dua Lipa"],
+    "year": 2020,
+    "isrc": null
+  },
+  {
+    "title": "As It Was",
+    "artists": ["Harry Styles"],
+    "year": 2022,
+    "isrc": null
+  },
+  {
+    "title": "Flowers",
+    "artists": ["Miley Cyrus"],
+    "year": 2023,
+    "isrc": null
+  },
+  {
+    "title": "Garota Nacional",
+    "artists": ["Skank"],
+    "year": 1996,
+    "isrc": null
+  },
+  {
+    "title": "Meu Erro",
+    "artists": ["Os Paralamas do Sucesso"],
+    "year": 1984,
+    "isrc": null
+  },
+  {
+    "title": "Vapor Barato",
+    "artists": ["O Rappa"],
+    "year": 1996,
+    "isrc": null
+  },
+  {
+    "title": "Que País É Esse",
+    "artists": ["Legião Urbana"],
+    "year": 1987,
+    "isrc": null
+  },
+  {
+    "title": "Garota de Ipanema",
+    "artists": ["Tom Jobim"],
+    "year": 1963,
+    "isrc": null
+  }
+]

@@ -1,8 +1,11 @@
 "use client";
+import { RulesSheet } from "@/components/rules-sheet";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { Countdown } from "@/components/hitline/countdown";
+import { useReduced } from "@/components/hitline/motion";
 import { ColorSelector } from "@/components/huehint/color-selector";
+import { NextColorButton } from "@/components/huehint/next-color-button";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -21,12 +24,31 @@ import {
   type RoomView,
   isValidHint,
 } from "@resenhark/shared";
+import { motion } from "motion/react";
 import { useId, useState } from "react";
 import { toast } from "sonner";
 
-function ColorSwatch({ color, label }: { color: Hsb; label: string }) {
+function ColorSwatch({
+  color,
+  label,
+  reveal,
+  delay = 0,
+}: { color: Hsb; label: string; reveal?: "real" | "guess"; delay?: number }) {
+  const reduced = useReduced();
   return (
-    <div className="flex min-w-0 flex-col gap-2">
+    <motion.div
+      data-motion={reveal ? `hue-${reveal}` : undefined}
+      className="flex min-w-0 flex-col gap-2"
+      initial={
+        reveal ? (reduced ? { opacity: 0 } : { opacity: 0, transform: "scale(0.96)" }) : false
+      }
+      animate={{ opacity: 1, transform: reduced ? "none" : "scale(1)" }}
+      transition={{
+        duration: reduced ? 0.12 : 0.22,
+        delay: reduced ? 0 : delay,
+        ease: [0.23, 1, 0.32, 1],
+      }}
+    >
       <div
         role="img"
         aria-label={`${label}: ${describeHsb(color)}`}
@@ -35,7 +57,7 @@ function ColorSwatch({ color, label }: { color: Hsb; label: string }) {
       />
       <p className="text-sm font-medium">{label}</p>
       <p className="font-mono text-xs tabular-nums">{describeHsb(color)}</p>
-    </div>
+    </motion.div>
   );
 }
 
@@ -93,7 +115,14 @@ function RoundReveal({
   round,
   players,
   members,
-}: { round: HuehintRoundView; players: HuehintView["players"]; members: MemberView[] }) {
+  animateReveal = true,
+}: {
+  round: HuehintRoundView;
+  players: HuehintView["players"];
+  members: MemberView[];
+  animateReveal?: boolean;
+}) {
+  const reduced = useReduced();
   const name = (id: string | null) => members.find((m) => m.id === id)?.name ?? "Alguém";
   // Include departed guess authors as well as current players; the projection owns all scores.
   const guesserIds = [
@@ -102,7 +131,7 @@ function RoundReveal({
   return (
     <section
       aria-label={`Revelação da rodada ${round.round}`}
-      className="flex flex-col gap-4 rounded-xl bg-muted p-4 motion-safe:animate-in motion-safe:fade-in motion-safe:duration-300 sm:p-6"
+      className="flex flex-col gap-4 rounded-xl bg-muted p-4 sm:p-6"
     >
       <h2 className="text-lg font-semibold">Rodada {round.round}</h2>
       {round.outcome === "no-hint" ? (
@@ -111,21 +140,52 @@ function RoundReveal({
         <p className="text-lg font-medium">“{round.hint}”</p>
       ) : null}
       {round.outcome === "no-hint" || round.guesses.length === 0 ? (
-        <ColorSwatch color={round.color} label="Cor real" />
+        <ColorSwatch
+          color={round.color}
+          label="Cor real"
+          reveal={animateReveal ? "real" : undefined}
+        />
       ) : null}
       {round.outcome === "revealed" ? (
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-          {guesserIds.map((id) => {
+          {guesserIds.map((id, index) => {
             const guess = round.guesses.find((g) => g.playerId === id);
             return (
               <div key={id} className="flex flex-col gap-2 rounded-xl bg-background p-4">
                 {guess ? (
                   <>
                     <div className="grid grid-cols-2 gap-3">
-                      <ColorSwatch color={round.color} label="Cor real" />
-                      <ColorSwatch color={guess.color} label={`Palpite de ${name(id)}`} />
+                      <ColorSwatch
+                        color={round.color}
+                        label="Cor real"
+                        reveal={animateReveal ? "real" : undefined}
+                      />
+                      <ColorSwatch
+                        color={guess.color}
+                        label={`Palpite de ${name(id)}`}
+                        reveal={animateReveal ? "guess" : undefined}
+                        delay={0.16 + index * 0.04}
+                      />
                     </div>
-                    <p className="font-semibold">Nota: {formatScore(guess.score)} / 10,00</p>
+                    <motion.p
+                      data-motion="hue-score"
+                      className="font-semibold"
+                      initial={
+                        animateReveal
+                          ? reduced
+                            ? { opacity: 0 }
+                            : { opacity: 0, transform: "translateY(4px)" }
+                          : false
+                      }
+                      animate={{ opacity: 1, transform: reduced ? "none" : "translateY(0px)" }}
+                      transition={{
+                        duration: reduced ? 0.12 : 0.18,
+                        delay: reduced || !animateReveal ? 0 : 0.3 + index * 0.04,
+                        ease: [0.23, 1, 0.32, 1],
+                      }}
+                    >
+                      Nota: {formatScore(guess.score)} / 10,00
+                    </motion.p>
                   </>
                 ) : (
                   <>
@@ -257,17 +317,15 @@ export function HuehintBoard({
       tabIndex={0}
       className="flex flex-col gap-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
     >
-      <h1 className="text-2xl font-semibold tracking-tight">
-        Huehint{view.mode === "solo" ? " · treino solo" : ""}
-      </h1>
+      <h1 className="sr-only">Huehint{view.mode === "solo" ? " · treino solo" : ""}</h1>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {phaseText}
         {canceled?.type === "round-canceled"
           ? `. Rodada de ${name(canceled.giverId)} cancelada.`
           : ""}
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl bg-muted p-4">
-        <div className="flex flex-col gap-1">
+      <div className="flex flex-wrap items-center gap-4 rounded-xl bg-muted p-4">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
           <p className="font-semibold">
             Rodada {view.round} / {view.totalRounds}
           </p>
@@ -286,6 +344,7 @@ export function HuehintBoard({
             {view.phase === "game-over" ? "Tempo encerrado" : "Tempo pausado"}
           </span>
         )}
+        <RulesSheet setup={{ type: "huehint", config: view.config }} />
       </div>
       {!player ? (
         <p className="text-sm text-muted-foreground">
@@ -396,10 +455,18 @@ export function HuehintBoard({
             </section>
           ) : null}
           {screen === "reveal" && lastRound ? (
-            <RoundReveal round={lastRound} players={view.players} members={room.members} />
+            <RoundReveal
+              key={lastRound.round}
+              round={lastRound}
+              players={view.players}
+              members={room.members}
+            />
           ) : null}
         </>
       )}
+      {view.mode === "solo" && view.phase === "reveal" && player ? (
+        <NextColorButton key={view.round} send={send} connected={connected} />
+      ) : null}
       <Scoreboard view={view} members={room.members} />
       {galleryRounds.length > 0 ? (
         <section aria-label="Galeria de rodadas" className="flex flex-col gap-3">
@@ -411,7 +478,12 @@ export function HuehintBoard({
                 {round.hint ? ` · ${round.hint}` : ""}
               </summary>
               <div className="pt-4">
-                <RoundReveal round={round} players={view.players} members={room.members} />
+                <RoundReveal
+                  round={round}
+                  players={view.players}
+                  members={room.members}
+                  animateReveal={false}
+                />
               </div>
             </details>
           ))}

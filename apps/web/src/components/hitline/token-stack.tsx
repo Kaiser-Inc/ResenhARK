@@ -3,7 +3,7 @@
 import { animate } from "motion/react";
 import { useEffect, useRef } from "react";
 
-import { useReduced } from "@/components/hitline/motion";
+import { CARD_MOTION, SCORE_DELAY, useReduced } from "@/components/hitline/motion";
 import { cn } from "@/lib/utils";
 
 const MAX_TOKENS = 5;
@@ -29,9 +29,20 @@ export function TokenStack({ count, className }: { count: number; className?: st
   const pop = useRef<HTMLSpanElement>(null);
   const previous = useRef(count);
   useEffect(() => {
-    if (previous.current !== count && !reduce && pop.current)
-      animate(pop.current, { scale: [1, 1.2, 1] }, { duration: 0.25, ease: "easeOut" });
+    const increased = count > previous.current;
+    const animation =
+      previous.current !== count && !reduce && pop.current
+        ? animate(
+            pop.current,
+            { transform: ["scale(1)", "scale(1.15)", "scale(1)"] },
+            { ...CARD_MOTION, delay: increased ? SCORE_DELAY : 0 },
+          )
+        : null;
     previous.current = count;
+    return () => {
+      animation?.stop();
+      if (pop.current) pop.current.style.transform = "none";
+    };
   }, [count, reduce]);
   return (
     <span

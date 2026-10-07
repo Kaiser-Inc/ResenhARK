@@ -5,6 +5,7 @@ import { MenuIcon } from "lucide-react";
 import { useState } from "react";
 
 import { ResenharkLogo } from "@/components/brand/resenhark-logo";
+import { RoomHomeLink } from "@/components/room/room-home-link";
 import {
   LeaveRoom,
   type RoomActions,
@@ -29,7 +30,9 @@ export function RoomMobileBar({
   return (
     <>
       <header className="flex h-14 shrink-0 items-center gap-3 border-border border-b bg-background px-4 lg:hidden">
-        <ResenharkLogo className="h-6 w-auto shrink-0" />
+        <RoomHomeLink code={code} gameRunning={actions?.gameRunning}>
+          <ResenharkLogo className="h-6 w-auto shrink-0" />
+        </RoomHomeLink>
         <span
           translate="no"
           className="min-w-0 flex-1 truncate font-mono text-sm font-semibold tracking-[0.15em]"

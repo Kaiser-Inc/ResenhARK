@@ -34,6 +34,8 @@
   --subtle-foreground: oklch(0.53 0.016 286);
   --success: oklch(0.5 0.1 150);
   --warning: oklch(0.53 0.11 75);
+  --game-hitline: oklch(0.88 0.1 80);
+  --game-huehint: oklch(0.87 0.06 210);
   --border-strong: oklch(0.86 0.008 286);
   --sidebar: oklch(0.978 0.004 286);
   --sidebar-foreground: oklch(0.21 0.006 285.885);
@@ -71,6 +73,8 @@
   --subtle-foreground: oklch(0.65 0.012 286);
   --success: oklch(0.75 0.1 150);
   --warning: oklch(0.78 0.1 80);
+  --game-hitline: oklch(0.42 0.085 75);
+  --game-huehint: oklch(0.38 0.075 210);
   --border-strong: oklch(0.35 0.009 286);
   --chart-1: oklch(0.785 0.1 274.713);
   --chart-2: oklch(0.585 0.16 277.117);
@@ -121,6 +125,8 @@
   --color-subtle-foreground: var(--subtle-foreground);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-game-hitline: var(--game-hitline);
+  --color-game-huehint: var(--game-huehint);
   --color-border-strong: var(--border-strong);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -146,6 +152,8 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
   }
   body {
     @apply bg-background text-foreground;
@@ -161,6 +169,321 @@
   [role="radio"] {
     touch-action: manipulation;
   }
+}
+
+@property --home-create-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+.home-create-room::before,
+.home-create-room::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border-radius: 11px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 200ms ease-out;
+}
+
+.home-create-room::before {
+  border: 1px solid color-mix(in oklch, var(--primary-text) 45%, transparent);
+  box-shadow: 0 0 8px color-mix(in oklch, var(--primary-text) 35%, transparent);
+}
+
+.home-create-room::after {
+  padding: 1px;
+  background: conic-gradient(
+    from var(--home-create-angle),
+    transparent 0deg,
+    var(--primary-text) 60deg,
+    var(--primary-foreground) 90deg,
+    var(--primary-text) 120deg,
+    transparent 150deg
+  );
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: home-create-border 3s linear infinite;
+  animation-play-state: paused;
+}
+
+.home-create-room:focus-visible::before,
+.home-create-room:focus-visible::after {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-create-room:hover::before,
+  .home-create-room:hover::after {
+    opacity: 1;
+    animation-play-state: running;
+  }
+}
+
+@keyframes home-create-border {
+  to {
+    --home-create-angle: 360deg;
+  }
+}
+
+.hero-boat-logo {
+  width: 260px;
+  height: 244px;
+  overflow: visible;
+}
+
+.hero-boat .hero-kaiser-piece {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-kaiser-assemble 650ms cubic-bezier(0.23, 1, 0.32, 1) 800ms both;
+}
+
+.hero-boat .hero-kaiser-piece:nth-child(2) {
+  animation-delay: 850ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(3) {
+  animation-delay: 900ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(4) {
+  animation-delay: 950ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(5) {
+  animation-delay: 1000ms;
+}
+.hero-boat .hero-kaiser-piece:nth-child(6) {
+  animation-delay: 1050ms;
+}
+
+@keyframes hero-kaiser-assemble {
+  0% {
+    opacity: 0;
+    transform: translateY(18%) scale(0.75) rotate(-8deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(0%) scale(1.08) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0%) scale(1) rotate(0deg);
+  }
+}
+
+.hero-boat-float {
+  animation: boat-float 4.8s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+}
+
+.hero-boat-landing {
+  transform-box: fill-box;
+  transform-origin: 50% 85%;
+}
+
+.hero-boat-sway {
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: boat-sway 4.8s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+}
+
+.hero-boat-waves {
+  animation: boat-waves 4.8s var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) infinite;
+}
+
+@keyframes boat-sway {
+  0%,
+  100% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes boat-waves {
+  0%,
+  100% {
+    transform: translateY(4px) scaleX(0.97);
+  }
+  50% {
+    transform: translateY(-4px) scaleX(1.06);
+  }
+}
+
+@keyframes boat-float {
+  0%,
+  100% {
+    transform: translate(0px, 0px);
+  }
+  30% {
+    transform: translate(6px, -12px);
+  }
+  70% {
+    transform: translate(-4px, 8px);
+  }
+}
+
+.hero-boat[data-intro] .hero-boat-float {
+  animation-delay: 1450ms;
+}
+
+.hero-boat[data-intro] .hero-boat-landing {
+  animation: hero-boat-land 600ms var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) 600ms both;
+}
+
+.hero-boat[data-intro] [data-logo-piece] {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-piece-arrive 900ms var(--ease-in-out, cubic-bezier(0.77, 0, 0.175, 1)) both;
+}
+
+.hero-boat[data-intro] [data-logo-piece="hull-left"] {
+  --piece-x: -24px;
+  --piece-y: 12px;
+  --piece-turn: -20deg;
+}
+
+.hero-boat[data-intro] [data-logo-piece="hull-right"] {
+  --piece-x: 24px;
+  --piece-y: 12px;
+  --piece-turn: 20deg;
+  animation-delay: 100ms;
+}
+
+.hero-boat[data-intro] [data-logo-piece="bubble"] {
+  --piece-y: -10px;
+  --piece-turn: -12deg;
+  animation-delay: 260ms;
+}
+
+.hero-boat[data-intro] .hero-boat-waves path {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hero-wave-ripple 650ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1)) 600ms both;
+}
+
+.hero-boat[data-intro] .hero-boat-waves path:nth-child(2) {
+  animation-delay: 700ms;
+}
+
+.hero-boat[data-intro] .hero-boat-waves path:nth-child(3) {
+  animation-delay: 800ms;
+}
+
+@keyframes hero-piece-arrive {
+  0% {
+    opacity: 0;
+    transform: translate(var(--piece-x, 0px), var(--piece-y, 0px)) rotate(var(--piece-turn, 0deg));
+  }
+  18% {
+    opacity: 1;
+  }
+  68% {
+    transform: translate(calc(var(--piece-x, 0px) * -0.08), -2px)
+      rotate(calc(var(--piece-turn, 0deg) * -0.12));
+  }
+  84% {
+    transform: translate(calc(var(--piece-x, 0px) * 0.025), 1px)
+      rotate(calc(var(--piece-turn, 0deg) * 0.04));
+  }
+  100% {
+    opacity: 1;
+    transform: translate(0px, 0px) rotate(0deg);
+  }
+}
+
+@keyframes hero-wave-ripple {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scaleX(0.65);
+  }
+  65% {
+    opacity: 1;
+    transform: translateY(-3px) scaleX(1.04);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0px) scaleX(1);
+  }
+}
+
+@keyframes hero-boat-land {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  35% {
+    transform: translateY(8px) rotate(-3deg);
+  }
+  70% {
+    transform: translateY(-3px) rotate(1deg);
+  }
+}
+
+.game-card {
+  --game-angle: -1deg;
+  min-width: 0;
+  perspective: 1000px;
+  transform: rotate(var(--game-angle));
+  transition: transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.game-card[data-game="huehint"] {
+  --game-angle: 1deg;
+}
+
+.game-card-inner {
+  display: grid;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 280ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
+}
+
+.game-card-face {
+  grid-area: 1 / 1;
+  padding: 24px;
+  backface-visibility: hidden;
+}
+
+.game-card-back {
+  transform: rotateY(180deg);
+}
+.game-card[aria-pressed="true"] .game-card-inner {
+  transform: rotateY(180deg);
+}
+.game-card:focus-visible {
+  transform: rotate(0deg);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .game-card:hover {
+    transform: rotate(0deg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .game-card {
+    --game-angle: -2deg;
+  }
+  .game-card[data-game="huehint"] {
+    --game-angle: 2deg;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
 }
 
 .skip-link {
@@ -191,7 +514,7 @@
 
 /* motion
  * App motion: system window opening, logo assembly and route cross-fade.
- * Registry components own their interaction motion; reduced motion keeps fades.
+ * Registry components own their interaction motion; the game keeps full motion in every system mode.
  */
 
 @keyframes system-line {
@@ -314,41 +637,4 @@
 
 ::view-transition-new(.page-swap) {
   animation: page-in 150ms ease-out both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .system-window-open > .system-window-body,
-  ::view-transition-new(.page-swap) {
-    animation-name: system-fade;
-    animation-duration: 150ms !important;
-    animation-delay: 0ms;
-  }
-
-  .system-window-open::before {
-    display: none;
-  }
-
-  .logo-assembly[data-assembling] [data-logo-piece],
-  ::view-transition-group(*) {
-    animation: none;
-  }
-  *,
-  *::before,
-  *::after {
-    transition-property: opacity, color, background-color, border-color, outline-color, fill, stroke,
-      stroke-dashoffset !important;
-    --tw-enter-scale: 1 !important;
-    --tw-enter-translate-x: 0 !important;
-    --tw-enter-translate-y: 0 !important;
-    --tw-exit-scale: 1 !important;
-    --tw-exit-translate-x: 0 !important;
-    --tw-exit-translate-y: 0 !important;
-  }
-  [data-starting-style],
-  [data-ending-style] {
-    --tw-scale-x: 100% !important;
-    --tw-scale-y: 100% !important;
-    --tw-scale-z: 100% !important;
-    transform: none !important;
-  }
 }

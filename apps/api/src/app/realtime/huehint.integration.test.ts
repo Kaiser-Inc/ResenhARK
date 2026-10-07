@@ -71,7 +71,7 @@ test("only the owner selects or configures, with valid input", async (t) => {
     ok: false,
     error: "not-owner",
   });
-  assert.deepEqual(await emit(owner, "lobby:configure-huehint", { ...config, turnsPerPlayer: 4 }), {
+  assert.deepEqual(await emit(owner, "lobby:configure-huehint", { ...config, turnsPerPlayer: 6 }), {
     ok: false,
     error: "invalid-input",
   });

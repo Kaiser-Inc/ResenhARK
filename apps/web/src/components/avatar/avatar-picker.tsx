@@ -5,7 +5,7 @@ import { RadioGroup } from "@base-ui/react/radio-group";
 import { type Avatar, HUES, SHAPES, type Shape } from "@resenhark/shared";
 import { useId } from "react";
 
-import { MemberAvatar } from "@/components/avatar/member-avatar";
+import { MemberAvatar, type MemberExpression } from "@/components/avatar/member-avatar";
 import { cn } from "@/lib/utils";
 
 const HUE_LABELS: Record<(typeof HUES)[number], string> = {
@@ -39,9 +39,10 @@ type AvatarPickerProps = {
   name: string;
   value: Avatar;
   onChange: (avatar: Avatar) => void;
+  expression?: MemberExpression;
 };
 
-export function AvatarPicker({ name, value, onChange }: AvatarPickerProps) {
+export function AvatarPicker({ name, value, onChange, expression = "idle" }: AvatarPickerProps) {
   const id = useId();
   const hueLabelId = `${id}-hue`;
   const shapeLabelId = `${id}-shape`;
@@ -52,7 +53,7 @@ export function AvatarPicker({ name, value, onChange }: AvatarPickerProps) {
         data-testid="avatar-preview"
         className="flex size-24 items-center justify-center self-start"
       >
-        <MemberAvatar name={seed} avatar={value} size={96} animate />
+        <MemberAvatar name={seed} avatar={value} size={96} expression={expression} animate />
       </div>
 
       <div className="flex flex-col gap-2">

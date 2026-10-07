@@ -32,7 +32,9 @@ const sample = (page: Page) =>
     return out;
   });
 
-test("reduced motion: reveal does not rotate, translate or scale", async ({ browser }) => {
+test("immersive motion: reveal still rotates with a reduced system preference", async ({
+  browser,
+}) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   const code = await createRoomAs(page, "Ana");
@@ -43,14 +45,36 @@ test("reduced motion: reveal does not rotate, translate or scale", async ({ brow
   const samples = await pending;
   await expect(page.getByRole("region", { name: "Virada" })).toBeVisible();
   expect(samples.length).toBeGreaterThan(0);
-  for (const t of samples) expect(t).toMatch(IDENTITY);
+  expect(samples.some((t) => !IDENTITY.test(t))).toBe(true);
   await expect(page.locator("[data-expression]").first()).toBeVisible();
-  // Final state is reached without movement: the odometer reads the year, the card shows its outcome.
+  // The full reveal still settles on the actual year and outcome.
   const reveal = page.getByRole("region", { name: "Virada" });
   const year = (await reveal.locator(".sr-only").first().innerText()).trim();
-  await expect(reveal.getByTestId("odometer")).toHaveText(year);
+  await expect
+    .poll(() =>
+      reveal.getByTestId("odometer").evaluate((node) =>
+        Array.from(node.children)
+          .map((column) => {
+            const bounds = column.getBoundingClientRect();
+            return Array.from(column.firstElementChild?.children ?? []).find((digit) => {
+              const box = digit.getBoundingClientRect();
+              const center = box.top + box.height / 2;
+              return center >= bounds.top && center < bounds.bottom;
+            })?.textContent;
+          })
+          .join(""),
+      ),
+    )
+    .toBe(year);
   await expect(reveal.getByText(/^[✓✗]$/)).toBeVisible();
-  await expect(reveal.getByText("?", { exact: true })).toBeHidden();
+  await expect
+    .poll(() =>
+      reveal
+        .locator('[data-motion="reveal-card"]')
+        .evaluate((node) => new DOMMatrix(getComputedStyle(node).transform).m11),
+    )
+    .toBeCloseTo(-1, 3);
+  await expect(reveal.getByText("?", { exact: true })).toHaveCSS("backface-visibility", "hidden");
 });
 
 test("full motion: reveal rotates the card", async ({ page }) => {
@@ -78,7 +102,9 @@ test("winner sees confetti canvas and love expression", async ({ page }) => {
   ).toHaveCount(1);
 });
 
-test("reduced motion: no confetti canvas at game over", async ({ browser }) => {
+test("immersive motion: victory keeps confetti with a reduced system preference", async ({
+  browser,
+}) => {
   const context = await browser.newContext({ reducedMotion: "reduce" });
   const page = await context.newPage();
   const code = await createRoomAs(page, "Ana");
@@ -86,7 +112,7 @@ test("reduced motion: no confetti canvas at game over", async ({ browser }) => {
   const lock = await playToLock(page, code);
   await lock.click();
   await expect(page.getByRole("region", { name: "Resultado" })).toBeVisible();
-  await expect(page.locator("canvas")).toHaveCount(0);
+  await expect(page.locator("canvas")).toHaveCount(1);
 });
 
 test("blobatar expression follows the game: thinking, then happy on a hit", async ({ page }) => {

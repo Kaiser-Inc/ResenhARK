@@ -3,6 +3,9 @@ import { defineConfig } from "@playwright/test";
 
 const repoRoot = path.resolve(__dirname, "../..");
 const WEB_URL = process.env.E2E_BASE_URL ?? "http://localhost:4001";
+const API_URL = process.env.E2E_API_URL ?? "http://127.0.0.1:3334";
+const WEB_PORT = Number(new URL(WEB_URL).port || 80);
+const API_PORT = Number(new URL(API_URL).port || 80);
 
 export default defineConfig({
   testDir: "./e2e",
@@ -20,13 +23,13 @@ export default defineConfig({
     {
       command: "PATH=$HOME/.local/bin:$PATH pnpm --filter api dev",
       cwd: repoRoot,
-      port: 3334,
-      reuseExistingServer: !process.env.CI,
+      port: API_PORT,
+      reuseExistingServer: false,
       timeout: 60_000,
       env: {
         NODE_ENV: "test",
-        PORT: "3334",
-        REDIS_URL: "redis://localhost:6379/14",
+        PORT: String(API_PORT),
+        REDIS_URL: process.env.E2E_REDIS_URL ?? "redis://localhost:6379/14",
         PLAYLIST_SOURCE: "fixture",
         AUDIO_SOURCE: "fixture",
         // Pinned so a developer's apps/api/.env (real env beats dotenv) cannot change e2e behaviour.
@@ -34,22 +37,22 @@ export default defineConfig({
         SPOTIFY_CLIENT_ID: "",
         SPOTIFY_CLIENT_SECRET: "",
         SPOTIFY_REDIRECT_URI: "",
-        WEB_URL: "http://localhost:4001",
-        PUBLIC_API_URL: "http://127.0.0.1:3334",
+        WEB_URL,
+        PUBLIC_API_URL: API_URL,
         TRUST_PROXY_HOPS: "0",
-        CORS_ORIGIN: "http://localhost:4001",
+        CORS_ORIGIN: WEB_URL,
         E2E_SEED: "1",
       },
     },
     {
-      command: "PATH=$HOME/.local/bin:$PATH pnpm --filter web exec sh -c 'next build --webpack && next start -p 4001'",
+      command: `PATH=$HOME/.local/bin:$PATH pnpm --filter web exec sh -c 'next build --webpack && next start -p ${WEB_PORT}'`,
       cwd: repoRoot,
       url: WEB_URL,
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       // Build+start (not dev): next dev locks .next/dev per project, so it cannot run beside the developer's own dev server.
       timeout: 300_000,
       // Real env beats .env.local: e2e talks to the API directly, never through a dev proxy/tunnel setup.
-      env: { NEXT_PUBLIC_API_URL: "http://127.0.0.1:3334", API_PROXY_URL: "" },
+      env: { NEXT_PUBLIC_API_URL: API_URL, API_PROXY_URL: "" },
     },
   ],
 });

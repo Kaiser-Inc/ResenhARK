@@ -1,15 +1,28 @@
+import { KaiserincMark } from "./kaiserinc-mark";
+
 type ResenharkLogoProps = {
   className?: string;
   title?: string;
+  width?: number;
+  height?: number;
+  withKaiserMark?: boolean;
 };
 
 // "Arca de conversa": a speech bubble above a hull split in two halves.
 // The tail of the bubble points into the split; the right half is the accent.
-export function ResenharkLogo({ className, title }: ResenharkLogoProps) {
+export function ResenharkLogo({
+  className,
+  title,
+  width,
+  height,
+  withKaiserMark = false,
+}: ResenharkLogoProps) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 64 60"
+      width={width}
+      height={height}
       className={className}
       role={title ? "img" : undefined}
       aria-label={title}
@@ -18,6 +31,7 @@ export function ResenharkLogo({ className, title }: ResenharkLogoProps) {
       {title ? <title>{title}</title> : null}
       <g data-logo-piece="bubble" fill="currentColor">
         <path d="M16 2h32a6 6 0 0 1 6 6v16a6 6 0 0 1-6 6H38l-6 8-6-8H16a6 6 0 0 1-6-6V8a6 6 0 0 1 6-6Z" />
+        {withKaiserMark ? <KaiserincMark /> : null}
       </g>
       <g data-logo-piece="hull-left" fill="currentColor">
         <path d="M3 44h27v16H14Z" />

@@ -11,15 +11,15 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground hover:bg-primary-hover motion-safe:active:not-aria-disabled:scale-[0.97]",
+          "bg-primary text-primary-foreground hover:bg-primary-hover active:not-aria-disabled:scale-[0.97]",
         outline:
-          "border-border-strong bg-transparent hover:bg-accent aria-expanded:bg-accent active:bg-border motion-safe:active:not-aria-disabled:scale-[0.97]",
+          "border-border-strong bg-transparent hover:bg-accent aria-expanded:bg-accent active:bg-border active:not-aria-disabled:scale-[0.97]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-border aria-expanded:bg-border motion-safe:active:not-aria-disabled:scale-[0.97]",
+          "bg-secondary text-secondary-foreground hover:bg-border aria-expanded:bg-border active:not-aria-disabled:scale-[0.97]",
         ghost:
-          "hover:bg-accent aria-expanded:bg-accent active:bg-border motion-safe:active:not-aria-disabled:scale-[0.97]",
+          "hover:bg-accent aria-expanded:bg-accent active:bg-border active:not-aria-disabled:scale-[0.97]",
         destructive:
-          "border-border-strong bg-transparent text-destructive hover:bg-accent motion-safe:active:not-aria-disabled:scale-[0.97]",
+          "border-border-strong bg-transparent text-destructive hover:bg-accent active:not-aria-disabled:scale-[0.97]",
         link: "text-primary-text underline-offset-4 hover:underline",
       },
       size: {

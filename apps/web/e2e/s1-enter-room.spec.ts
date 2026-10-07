@@ -31,7 +31,7 @@ test("enter with a room code from the home page", async ({ page, browser }) => {
 
   await page.goto("/");
   await page.getByLabel("Código da sala").fill(code.toLowerCase());
-  await page.getByRole("button", { name: "Entrar com código" }).click();
+  await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page).toHaveURL(new RegExp(`/sala/${code}$`));
   await expect(page.getByLabel("Seu nome")).toBeVisible();
 });
@@ -143,7 +143,7 @@ test("validation errors move focus to the invalid field", async ({ page }) => {
   await expect(page.getByText("Escreva um nome de até 20 letras")).toBeVisible();
   await expect(page.getByLabel("Seu nome")).toBeFocused();
   await page.getByRole("button", { name: "Cancelar" }).click();
-  await page.getByRole("button", { name: "Entrar com código" }).click();
+  await page.getByRole("button", { name: "Entrar" }).click();
   await expect(page.getByText("O código tem 5 letras")).toBeVisible();
   await expect(page.getByLabel("Código da sala")).toBeFocused();
 });

@@ -3,7 +3,7 @@ import { CheckIcon, XIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
 
-import { FADE, SPRING, STAGGER_SECONDS, useReduced } from "@/components/hitline/motion";
+import { CARD_MOTION, FADE, STAGGER_SECONDS, useReduced } from "@/components/hitline/motion";
 import { OdometerYear } from "@/components/hitline/odometer-year";
 import { cn } from "@/lib/utils";
 
@@ -12,10 +12,10 @@ function Mark({ ok, label, children }: { ok: boolean; label: string; children?: 
   return (
     <motion.li
       variants={{
-        hidden: reduce ? { opacity: 0 } : { opacity: 0, y: 4 },
-        shown: reduce ? { opacity: 1 } : { opacity: 1, y: 0 },
+        hidden: reduce ? { opacity: 0 } : { opacity: 0, transform: "translateY(12px)" },
+        shown: reduce ? { opacity: 1 } : { opacity: 1, transform: "translateY(0px)" },
       }}
-      transition={FADE}
+      transition={reduce ? FADE : CARD_MOTION}
       className="flex flex-wrap items-center gap-x-2 text-sm"
     >
       <span
@@ -44,7 +44,10 @@ function Sequence({ children }: { children: React.ReactNode }) {
       className="flex flex-col gap-1"
       initial="hidden"
       animate="shown"
-      transition={{ staggerChildren: reduce ? 0 : STAGGER_SECONDS }}
+      transition={{
+        delayChildren: reduce ? 0 : CARD_MOTION.duration,
+        staggerChildren: reduce ? 0 : STAGGER_SECONDS,
+      }}
     >
       {children}
     </motion.ul>
@@ -58,12 +61,30 @@ function FlipCard({ hit }: { hit: boolean }) {
     <motion.div
       data-motion="miss-fall"
       className="shrink-0 [perspective:600px]"
-      initial={{ x: 0, y: 0 }}
-      animate={hit || reduce ? { x: 0, y: 0 } : { x: [0, -6, 6, -4, 4, 0], y: 24, opacity: 0 }}
+      initial={{ transform: "translate(0px, 0px) rotate(0deg)" }}
+      animate={
+        hit || reduce
+          ? { transform: "translate(0px, 0px) rotate(0deg)" }
+          : {
+              transform: [
+                "translate(0px, 0px) rotate(0deg)",
+                "translate(-8px, 0px) rotate(-3deg)",
+                "translate(8px, 0px) rotate(3deg)",
+                "translate(-4px, 0px) rotate(-2deg)",
+                "translate(4px, 0px) rotate(2deg)",
+                "translate(0px, 28px) rotate(6deg)",
+              ],
+              opacity: 0,
+            }
+      }
       transition={{
-        x: { duration: 0.3, delay: 0.5 },
-        y: { duration: 0.25, delay: 0.8, ease: [0.23, 1, 0.32, 1] },
-        opacity: { duration: 0.25, delay: 0.8 },
+        transform: {
+          duration: 0.4,
+          delay: CARD_MOTION.duration,
+          times: [0, 0.15, 0.3, 0.45, 0.6, 1],
+          ease: "linear",
+        },
+        opacity: { duration: 0.22, delay: 0.42 },
       }}
     >
       <motion.div
@@ -71,9 +92,9 @@ function FlipCard({ hit }: { hit: boolean }) {
         data-motion="reveal-card"
         className="relative h-24 w-[68px]"
         style={{ transformStyle: "preserve-3d" }}
-        initial={reduce ? { opacity: 0 } : { rotateY: 0 }}
-        animate={reduce ? { opacity: 1 } : { rotateY: 180 }}
-        transition={reduce ? FADE : SPRING}
+        initial={reduce ? { opacity: 0 } : { transform: "rotateY(0deg)" }}
+        animate={reduce ? { opacity: 1, transform: "none" } : { transform: "rotateY(180deg)" }}
+        transition={reduce ? FADE : CARD_MOTION}
       >
         {reduce ? null : (
           <div className="absolute inset-0 flex items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] font-semibold text-primary-text [backface-visibility:hidden]">

@@ -3,10 +3,17 @@
 import type { MemberView, PublicCard } from "@resenhark/shared";
 import { CheckIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { Fragment, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef } from "react";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
-import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
+import {
+  CARD_LAND_DELAY,
+  CARD_MOTION,
+  FADE,
+  SPRING,
+  useReduced,
+} from "@/components/hitline/motion";
+import { TimelineCardRow, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
 import { cn } from "@/lib/utils";
 
 /** A gap someone already holds: the guess or a contest. Shown with who, never clickable. */
@@ -44,17 +51,20 @@ export function Timeline({
   highlightCardId = null,
 }: TimelineProps) {
   const listRef = useRef<HTMLOListElement>(null);
+  const previousCards = useRef<Set<string> | null>(null);
   const reduce = useReduced();
-  const [flashId, setFlashId] = useState<string | null>(null);
+  const flashId = useTimelineHighlight(highlightCardId);
   useEffect(() => {
-    if (!highlightCardId) {
-      setFlashId(null);
-      return;
-    }
-    setFlashId(highlightCardId);
-    const id = setTimeout(() => setFlashId(null), 1000);
-    return () => clearTimeout(id);
-  }, [highlightCardId]);
+    const previous = previousCards.current;
+    previousCards.current = new Set(cards.map((card) => card.id));
+    if (!previous) return;
+    const added = cards.find((card) => !previous.has(card.id));
+    if (!added) return;
+    const row = Array.from(
+      listRef.current?.querySelectorAll<HTMLElement>("[data-card-id]") ?? [],
+    ).find((node) => node.dataset.cardId === added.id);
+    row?.scrollIntoView({ block: "center", behavior: reduce ? "instant" : "smooth" });
+  }, [cards, reduce]);
   // Items shift into place when the ghost opens a gap; a fade-only world has no layout movement.
   const layout = reduce ? false : "position";
   const ghost = (slot: number) =>
@@ -66,7 +76,7 @@ export function Timeline({
         data-motion="ghost"
         initial={reduce ? { opacity: 0 } : { opacity: 0, scale: 0.95 }}
         animate={reduce ? { opacity: 1 } : { opacity: 1, scale: 1 }}
-        transition={reduce ? FADE : SPRING}
+        transition={reduce ? FADE : CARD_MOTION}
         className="flex h-10 items-center justify-center rounded-md border border-dashed border-border-strong font-mono text-lg font-semibold text-primary-text"
       >
         ?
@@ -90,7 +100,7 @@ export function Timeline({
     const held = taken.find((t) => t.slot === slot);
     if (held) {
       return (
-        <motion.li key={`gap-${slot}`} layout={layout}>
+        <motion.li key={`gap-${slot}`} layout={layout} transition={CARD_MOTION}>
           <div
             title={held.text}
             className="flex h-8 w-full items-center gap-2 rounded-md border border-solid border-border-strong bg-secondary px-3 text-sm"
@@ -99,9 +109,9 @@ export function Timeline({
               <motion.span
                 data-motion="contester"
                 className="inline-flex"
-                initial={reduce ? { opacity: 0 } : { scale: 0.6 }}
+                initial={reduce ? { opacity: 0 } : { scale: 0.95 }}
                 animate={reduce ? { opacity: 1 } : { scale: 1 }}
-                transition={reduce ? FADE : SPRING}
+                transition={reduce ? FADE : CARD_MOTION}
               >
                 <MemberAvatar name={held.member.name} avatar={held.member.avatar} size={24} />
               </motion.span>
@@ -114,7 +124,7 @@ export function Timeline({
     if (!interactive) {
       // Display only: no disabled button without a reason, same 32 px rhythm.
       return (
-        <motion.li key={`gap-${slot}`} layout={layout} aria-hidden="true">
+        <motion.li key={`gap-${slot}`} layout={layout} transition={CARD_MOTION} aria-hidden="true">
           <div className="flex h-8 w-full items-center rounded-md border border-dashed border-border px-3 text-sm text-muted-foreground">
             {gapLabel(cards, slot)}
           </div>
@@ -122,7 +132,7 @@ export function Timeline({
       );
     }
     return (
-      <motion.li key={`gap-${slot}`} layout={layout}>
+      <motion.li key={`gap-${slot}`} layout={layout} transition={CARD_MOTION}>
         <button
           type="button"
           data-gap
@@ -148,31 +158,30 @@ export function Timeline({
       ref={listRef}
       aria-label={`Timeline de ${ownerName}`}
       onKeyDown={onKeyDown}
-      // scrollable region must be keyboard-reachable; when interactive the gap buttons are the tab stops
+      // Reading the whole timeline stays keyboard reachable when its gaps are display-only.
       tabIndex={interactive ? undefined : 0}
-      className="flex max-h-[60vh] flex-col gap-1 overflow-y-auto"
+      className="flex min-w-0 flex-col gap-1"
     >
       {gap(0)}
       {ghost(0)}
       {cards.map((card, index) => (
         <Fragment key={card.id}>
-          <motion.li
+          <TimelineCardRow
+            card={card}
+            highlighted={flashId === card.id}
             layout={layout}
-            className={cn(
-              "flex items-baseline gap-4 rounded-md py-1 transition-colors duration-[400ms] ease-out",
-              flashId === card.id && "bg-accent",
-            )}
-          >
-            <span className="w-[72px] shrink-0 font-mono text-2xl leading-7 font-semibold">
-              {card.year}
-            </span>
-            <span
-              title={`${card.title} · ${card.artists.join(", ")}`}
-              className="min-w-0 truncate text-sm leading-[22px] text-muted-foreground"
-            >
-              {card.title} · {card.artists.join(", ")}
-            </span>
-          </motion.li>
+            initial={
+              previousCards.current && !previousCards.current.has(card.id)
+                ? reduce
+                  ? { opacity: 0 }
+                  : { opacity: 0, transform: "translateX(16px) scale(0.96)" }
+                : false
+            }
+            animate={{ opacity: 1, transform: reduce ? "none" : "translateX(0px) scale(1)" }}
+            transition={
+              reduce ? FADE : { ...CARD_MOTION, delay: CARD_LAND_DELAY, layout: CARD_MOTION }
+            }
+          />
           {gap(index + 1)}
           {ghost(index + 1)}
         </Fragment>

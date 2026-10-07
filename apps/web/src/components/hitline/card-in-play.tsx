@@ -3,7 +3,7 @@
 import type { HitlineView } from "@resenhark/shared";
 import { motion } from "motion/react";
 
-import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
+import { CARD_MOTION, FADE, useReduced } from "@/components/hitline/motion";
 import { SnippetPlayer } from "@/components/hitline/snippet-player";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import { BUY_COST, SKIP_COST, disabledReason } from "@/lib/error-messages";
 
 export type Pending = "draw" | "lock" | "skip" | "buy" | "pass" | "contest";
+
+const ACTIONS =
+  "hitline-actions fixed inset-x-0 bottom-0 z-20 flex flex-wrap items-start gap-2 border-t border-border bg-background px-4 py-3 pb-[calc(12px+env(safe-area-inset-bottom,0px))] lg:static lg:border-0 lg:p-0";
 
 type CardInPlayProps = {
   view: HitlineView;
@@ -88,17 +91,34 @@ export function CardInPlay({
   const decided = view.passed.includes(you) || view.contests.some((c) => c.playerId === you);
   return (
     <section aria-label="Carta em jogo" className="flex items-start gap-4">
-      {/* A new draw flips in from the deck: rotateY 180 to 0 on a spring, or a fade when reduced. */}
-      <div className="shrink-0 [perspective:600px]">
+      {/* The back plates stay put while the drawn card slides out of the deck. */}
+      <div className="relative shrink-0">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 translate-x-1 -translate-y-1 rounded-lg border border-border-strong bg-muted"
+        />
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 translate-x-2 -translate-y-2 rounded-lg border border-border-strong bg-muted"
+        />
         <motion.div
           key={draw?.id ?? "deck"}
           data-motion="draw-card"
           aria-hidden="true"
-          className="flex h-24 w-[68px] items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] leading-none font-semibold text-primary-text
- [backface-visibility:hidden]"
-          initial={draw ? (reduce ? { opacity: 0 } : { rotateY: 180 }) : false}
-          animate={reduce ? { opacity: 1 } : { rotateY: 0 }}
-          transition={reduce ? FADE : SPRING}
+          className="relative flex h-24 w-[68px] items-center justify-center rounded-lg border border-border-strong bg-secondary font-mono text-[40px] leading-none font-semibold text-primary-text"
+          initial={
+            draw
+              ? reduce
+                ? { opacity: 0 }
+                : { opacity: 0, transform: "translate(-16px, -10px) rotate(-8deg) scale(0.95)" }
+              : false
+          }
+          animate={
+            reduce
+              ? { opacity: 1, transform: "none" }
+              : { opacity: 1, transform: "translate(0px, 0px) rotate(0deg) scale(1)" }
+          }
+          transition={reduce ? FADE : CARD_MOTION}
         >
           ?
         </motion.div>
@@ -112,7 +132,7 @@ export function CardInPlay({
           <p className="text-sm text-muted-foreground">Trecho indisponível</p>
         ) : null}
         {isTurn && phase === "turn-start" ? (
-          <div className="flex flex-wrap items-start gap-2">
+          <div className={ACTIONS}>
             <ActionButton id="draw" loading={pending === "draw"} reason={offline} onClick={onDraw}>
               Puxar carta
             </ActionButton>
@@ -157,7 +177,7 @@ export function CardInPlay({
                 />
               </Field>
             </div>
-            <div className="flex flex-wrap items-start gap-2">
+            <div className={ACTIONS}>
               <ActionButton
                 id="lock"
                 loading={pending === "lock"}
@@ -199,15 +219,17 @@ export function CardInPlay({
             <p className="text-sm text-muted-foreground">
               Escolha um vão livre na timeline para contestar ou passe.
             </p>
-            <ActionButton
-              id="pass"
-              variant="outline"
-              loading={pending === "pass"}
-              reason={offline ?? (decided ? contestReason : null)}
-              onClick={onPass}
-            >
-              Passar
-            </ActionButton>
+            <div className={ACTIONS}>
+              <ActionButton
+                id="pass"
+                variant="outline"
+                loading={pending === "pass"}
+                reason={offline ?? (decided ? contestReason : null)}
+                onClick={onPass}
+              >
+                Passar
+              </ActionButton>
+            </div>
             {!decided && contestReason ? (
               <p className="text-xs text-muted-foreground">{contestReason}</p>
             ) : null}

@@ -24,6 +24,7 @@ import { LobbyPanel } from "@/components/lobby/lobby-panel";
 import { ConnectionBanner } from "@/components/room/connection-banner";
 import { RoomMobileBar } from "@/components/room/room-mobile-bar";
 import { type RoomActions, RoomSidebar } from "@/components/room/room-sidebar";
+import { useRoomTransition } from "@/components/room/room-transition";
 import { SiteBar } from "@/components/site-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -89,6 +90,7 @@ type RoomFrameProps = {
   contest?: ContestNotice | null;
   /** Move focus to the main region on mount (the join form that had it just went away). */
   focusOnMount?: boolean;
+  scrollPage?: boolean;
   children: ReactNode;
 };
 
@@ -100,6 +102,7 @@ function RoomFrame({
   reconnecting = false,
   contest = null,
   focusOnMount = false,
+  scrollPage = false,
   children,
 }: RoomFrameProps) {
   const layout = useLayout();
@@ -121,10 +124,15 @@ function RoomFrame({
   const unread = chat?.unread ?? 0;
 
   return (
-    <div className="flex h-dvh flex-col">
+    <div className={cn("flex flex-col", scrollPage ? "min-h-dvh" : "h-dvh")}>
       <ConnectionBanner visible={reconnecting} />
       <div className="flex min-h-0 flex-1">
-        <RoomSidebar code={code} members={members} actions={actions} />
+        <RoomSidebar
+          code={code}
+          members={members}
+          actions={actions}
+          className={scrollPage ? "sticky top-0 h-dvh" : undefined}
+        />
         <div className="flex min-w-0 flex-1 flex-col">
           <RoomMobileBar code={code} members={members} actions={actions} />
           {layout === "narrow" ? (
@@ -139,17 +147,30 @@ function RoomFrame({
                 onValueChange={(value) => setTab(value === "chat" ? "chat" : "game")}
                 className="min-h-0 flex-1 gap-0"
               >
-                <TabsList className="w-full shrink-0 px-4">
+                <TabsList
+                  className={cn(
+                    "w-full shrink-0 px-4",
+                    scrollPage && "sticky top-0 z-10 bg-background",
+                  )}
+                >
                   <TabsTrigger value="game">Jogo</TabsTrigger>
                   <TabsTrigger value="chat">
                     Chat
                     <UnreadBadge count={unread} />
                   </TabsTrigger>
                 </TabsList>
-                <TabsContent value="game" className="min-h-0 overflow-y-auto">
+                <TabsContent
+                  value="game"
+                  style={scrollPage ? { animation: "none" } : undefined}
+                  className={cn("min-h-0", !scrollPage && "overflow-y-auto")}
+                >
                   <div className="px-4 py-8">{children}</div>
                 </TabsContent>
-                <TabsContent value="chat" keepMounted className="flex min-h-0 flex-col">
+                <TabsContent
+                  value="chat"
+                  keepMounted
+                  className={cn("flex min-h-0 flex-col", scrollPage && "h-[calc(100dvh-88px)]")}
+                >
                   {contest ? (
                     <output className="flex shrink-0 items-center gap-1 bg-secondary px-4 py-2 text-sm font-medium">
                       Contestação aberta ·{" "}
@@ -166,7 +187,7 @@ function RoomFrame({
                 ref={mainRef}
                 id="main-content"
                 tabIndex={-1}
-                className="min-h-0 min-w-0 flex-1 overflow-y-auto"
+                className={cn("min-h-0 min-w-0 flex-1", !scrollPage && "overflow-y-auto")}
               >
                 <div className="mx-auto flex max-w-[1600px] items-start justify-between gap-4 px-4 py-8 sm:px-6 lg:py-12">
                   <div className="min-w-0 flex-1">{children}</div>
@@ -181,7 +202,10 @@ function RoomFrame({
               {layout === "wide" ? (
                 <aside
                   aria-label="Chat"
-                  className="relative flex w-[360px] shrink-0 flex-col before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border"
+                  className={cn(
+                    "relative flex w-[360px] shrink-0 flex-col before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border",
+                    scrollPage && "sticky top-0 h-dvh",
+                  )}
                 >
                   <div className="flex h-14 shrink-0 items-center px-4">
                     <h2 className="text-base font-semibold">Chat</h2>
@@ -273,11 +297,27 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
     sessionToken,
   );
   const router = useRouter();
+  const { finish } = useRoomTransition();
   // After "Sair da sala" the server revokes the token and hangs up: that is not an invalid session.
   const left = useRef(false);
   const [removeTarget, setRemoveTarget] = useState<MemberView | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const connected = status === "connected";
+  const [arriving, setArriving] = useState(false);
+  const you = room?.you;
+
+  useEffect(() => {
+    // A failed connection exposes the existing reconnect UI instead of hiding it behind a loader.
+    if (you || status === "reconnecting" || status === "invalid-session" || status === "kicked")
+      finish();
+  }, [you, status, finish]);
+
+  useEffect(() => {
+    if (!you) return;
+    setArriving(true);
+    const timer = setTimeout(() => setArriving(false), 1_000);
+    return () => clearTimeout(timer);
+  }, [you]);
 
   useEffect(() => {
     if (status === "invalid-session" && !left.current) onInvalidSession();
@@ -303,7 +343,9 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
       room
         ? {
             youId: room.you,
+            arriving,
             isOwner: room.ownerId === room.you,
+            gameRunning: room.game !== null && room.game.view.phase !== "game-over",
             disabled: !connected,
             onRemove: (member) => {
               setRemoveTarget(member);
@@ -312,7 +354,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
             onLeave,
           }
         : null,
-    [room, connected, onLeave],
+    [room, connected, onLeave, arriving],
   );
 
   const chatSlot = useMemo<ChatSlot | null>(
@@ -347,6 +389,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
             : null
         }
         focusOnMount={focusOnMount}
+        scrollPage={room?.game?.type === "hitline"}
       >
         {room ? (
           room.game?.type === "huehint" ? (

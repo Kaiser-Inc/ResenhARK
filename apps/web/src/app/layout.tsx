@@ -12,6 +12,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-mono" });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:4000"),
   title: { default: "ResenhARK", template: "%s | ResenhARK" },
   description: "Uma sala para reunir o time, conversar e jogar.",
   robots: { index: false, follow: false },

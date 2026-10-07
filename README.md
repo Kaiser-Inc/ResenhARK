@@ -8,7 +8,7 @@ Uma sala para reunir o time, conversar e jogar: entre com um código, converse e
 
 O ResenhARK nasceu para a Casual Daily do time de Kaiser, que acontece numa call do Google Meet. Voz e vídeo continuam no Meet, fora do app. O ResenhARK cuida do resto: alguém cria uma sala e compartilha o código, cada pessoa entra só com um nome e um avatar blobatar, sem conta, e a sala tem chat em tempo real e um jogo.
 
-O primeiro jogo é o Hitline, uma linha do tempo de músicas. Você ouve um trecho de 30 s, escolhe onde a música entra na sua linha do tempo (pelo ano de lançamento) e o resto da sala pode contestar. As músicas vêm de uma playlist do Spotify. O servidor decide tudo, e cada pessoa recebe só o que pode ver.
+O primeiro jogo é o Hitline, uma linha do tempo de músicas. Você ouve um trecho de 30 s, escolhe onde a música entra na sua linha do tempo (pelo ano de lançamento) e o resto da sala pode contestar. As músicas vêm do baralho embutido ou de uma playlist do Spotify que o dono da sala importa. O servidor decide tudo, e cada pessoa recebe só o que pode ver.
 
 ## Recursos
 
