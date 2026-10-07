@@ -78,7 +78,8 @@ With exactly 2 players, each round gives the guesser and the giver the same poin
 All the colors of a game are drawn at the start, one per round, with the server's random generator.
 
 - **Saturation** by band: vivid (40 to 100) with weight 70, soft (15 to 39) with weight 20 and neutral (0 to 14) with weight 10. After the first neutral, only vivid and soft remain, still 70 to 20, so a game has at most one neutral color.
-- **Brightness** from 15 to 95, which avoids pure black and white.
+- **Brightness** from 15 to 95, which avoids pure black and white. Dark colors (brightness under 35) look alike, so any 6 consecutive rounds have at most one.
 - **Hue** in 6 sectors of 60°. Every block of 6 rounds visits each sector once in a shuffled order, and two consecutive rounds never share a sector, even across blocks. The exact hue within a sector is uniform.
+- **Distance.** Each color is redrawn, up to 60 times, until it is at least ΔE 25 (CIEDE2000) from the colors of the 5 rounds before it. When no try gets there, the farthest try is kept. In a 5-round solo game the colors end up at least ΔE 25 apart in practice; in long group games about 2% of the colors stay between 15 and 25 from a recent one.
 
 The curve constant (25) and the band weights are a first calibration. They change after real play.
