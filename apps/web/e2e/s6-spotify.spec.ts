@@ -36,12 +36,9 @@ test("callback status in the url shows a toast", async ({ page }) => {
   await expect(page).toHaveURL(/\/admin\/spotify$/);
 });
 
-test("owner lobby links to the Spotify admin, a member does not", async ({ browser }) => {
+test("room members do not see a Spotify admin link", async ({ browser }) => {
   const { ana, bia, anaContext, biaContext } = await twoMembersInRoom(browser);
-  await expect(ana.getByRole("link", { name: "Admin do Spotify" })).toHaveAttribute(
-    "href",
-    "/admin/spotify",
-  );
+  await expect(ana.getByRole("link", { name: "Admin do Spotify" })).toHaveCount(0);
   await expect(bia.getByRole("link", { name: "Admin do Spotify" })).toHaveCount(0);
   await anaContext.close();
   await biaContext.close();
@@ -51,12 +48,14 @@ for (const [name, width, height] of [
   ["390", 390, 844],
   ["1440", 1440, 900],
 ] as const) {
-  test(`owner lobby admin link screenshot ${name}`, async ({ page }) => {
+  test(`owner lobby playlist helper screenshot ${name}`, async ({ page }) => {
     await setTheme(page, "dark");
     await page.setViewportSize({ width, height });
     await createRoomAs(page, "Ana");
-    await expect(page.getByRole("link", { name: "Admin do Spotify" })).toBeVisible();
-    await shot(page, `admin-link-${name}-dark`);
+    await expect(
+      page.getByText("Funciona com playlists do Spotify em que Kaiser é colaborador."),
+    ).toBeVisible();
+    await shot(page, `playlist-helper-${name}-dark`);
   });
 }
 
@@ -135,7 +134,7 @@ test("connect refuses an authorize url that is not the Spotify consent page", as
   await page.goto("/admin/spotify");
   await page.getByRole("button", { name: "Conectar Spotify" }).click();
   await expect(page.getByText("Não deu para conectar. Tenta de novo.")).toBeVisible();
-  await expect(page).toHaveURL(/localhost:4001\/admin\/spotify$/);
+  await expect(page).toHaveURL(/\/admin\/spotify$/);
 });
 
 test("connect follows a Spotify authorize url", async ({ page }) => {

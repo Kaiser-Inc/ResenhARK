@@ -11,6 +11,8 @@ export type Card = {
   year: number;
   isrc: string | null;
   spotifyUrl: string | null;
+  /** Deezer track id, set by the built-in deck so the clip comes from that exact track. */
+  deezerId?: number;
 };
 import { type Ctx, SYSTEM_ACTOR } from "../system.js";
 export type Player = {

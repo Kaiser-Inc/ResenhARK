@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_HITLINE_CONFIG, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
+import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
 import { projectRoom } from "./project-room.js";
 
 const avatar = { hue: 12, shape: "cloud" } as const;
@@ -32,8 +33,8 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
     selectedGame: "hitline",
     config: DEFAULT_HITLINE_CONFIG,
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
-    playlist: null,
-    remaining: null,
+    playlist: { source: "default", name: "Baralho ResenhARK", count: DEFAULT_DECK.cards.length },
+    remaining: DEFAULT_DECK.cards.length,
     smallPlaylist: false,
   });
   assert.equal(view.game, null);
@@ -58,7 +59,7 @@ test("projectRoom counts remaining songs and sizes the small-playlist warning ag
   assert.equal(projectRoom(room, "ana", 0).lobby.smallPlaylist, false);
   room.lobby.played = ["t0|a", "t1|a", "t2|a"];
   const view = projectRoom(room, "ana", 0).lobby;
-  assert.equal(view.playlist?.count, 12);
+  assert.deepEqual(view.playlist, { source: "playlist", name: "P", count: 12 });
   assert.equal(view.remaining, 9);
   assert.equal(view.smallPlaylist, true);
 });

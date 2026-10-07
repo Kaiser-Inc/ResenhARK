@@ -47,8 +47,8 @@ const room: RoomView = {
     selectedGame: "huehint",
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
     config: { targetCards: 10, contestSeconds: 10, guessSeconds: 60, maxPlayers: 15 },
-    playlist: null,
-    remaining: null,
+    playlist: { source: "default", name: "Baralho ResenhARK", count: 40 },
+    remaining: 40,
     smallPlaylist: false,
   },
   game: { type: "huehint", view },
@@ -180,7 +180,7 @@ test("reveal renders the current round once and keeps only earlier rounds in the
   assert.equal((finished.match(/aria-label="Revelação da rodada 2"/g) ?? []).length, 1);
 });
 
-test("game over hides the giver line and explains a guess-points tiebreak", () => {
+test("game over hides the giver line and explains a giver-points tiebreak", () => {
   const players = [
     { id: "giver", online: true, guessPoints: 19.82, giverPoints: 18.73, total: 38.55 },
     { id: "guesser", online: true, guessPoints: 18.73, giverPoints: 19.82, total: 38.55 },
@@ -195,7 +195,7 @@ test("game over hides the giver line and explains a guess-points tiebreak", () =
     players,
   });
   assert.doesNotMatch(tiebreak, /Dador:/);
-  assert.match(tiebreak, /Venceu no desempate pelos palpites/);
+  assert.match(tiebreak, /Venceu no desempate pelas dicas/);
   const clear = render({
     phase: "game-over",
     giverId: null,
@@ -205,4 +205,13 @@ test("game over hides the giver line and explains a guess-points tiebreak", () =
     players: [players[0], { ...players[1], total: 30 }],
   });
   assert.doesNotMatch(clear, /desempate/);
+});
+
+test("next color is only available to the solo player during reveal", () => {
+  assert.match(render({ mode: "solo", phase: "reveal" }), /Próxima cor/);
+  assert.doesNotMatch(render({ mode: "solo", phase: "reveal" }, "spectator"), /Próxima cor/);
+  assert.doesNotMatch(render({ mode: "group", phase: "reveal" }), /Próxima cor/);
+  for (const phase of ["memorize", "guessing", "game-over"] as const) {
+    assert.doesNotMatch(render({ mode: "solo", phase }), /Próxima cor/);
+  }
 });

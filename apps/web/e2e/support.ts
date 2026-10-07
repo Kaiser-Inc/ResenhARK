@@ -10,6 +10,7 @@ import {
 } from "@playwright/test";
 
 export { expect };
+const TEST_REDIS = new URL(process.env.E2E_REDIS_URL ?? "redis://localhost:6379/14");
 
 /**
  * `test` that closes every context the test opened with `browser.newContext()`/`newPage()`.
@@ -58,7 +59,7 @@ export async function expectNoAxeViolations(page: Page) {
   ).toEqual([]);
 }
 
-/** Creates a room through the UI as `name` and waits until the room URL is open. */
+/** Creates a room through the UI and waits for the entrance to settle before measuring or scanning it. */
 export async function createRoomAs(page: Page, name: string): Promise<string> {
   // On a cold dev server a click can land before hydration and do nothing: redo the whole flow.
   await expect(async () => {
@@ -68,6 +69,10 @@ export async function createRoomAs(page: Page, name: string): Promise<string> {
     await page.getByRole("button", { name: "Criar e entrar" }).click();
     await expect(page).toHaveURL(/\/sala\/[A-HJKMNP-Z]{5}$/, { timeout: 5_000 });
   }).toPass({ timeout: 40_000 });
+  await expect(page.getByRole("heading", { name: "Lobby", exact: true })).toBeVisible();
+  await expect(page.getByRole("status", { name: "Carregamento da sala" })).toHaveCount(0);
+  await expect(page.getByTestId("route-surface")).toHaveCSS("opacity", "1");
+  await expect(page.getByTestId("route-surface")).toHaveCSS("transform", "none");
   return page.url().split("/").pop() as string;
 }
 
@@ -101,41 +106,67 @@ export async function chooseOption(page: Page, label: string, option: string) {
   await page.getByRole("option", { name: option, exact: true }).click();
 }
 
-/** Owner flow up to the first drawn card: import the dev deck, set N and start. */
+/**
+ * Owner flow up to the first drawn card: import the dev deck, set N and start.
+ * The lobby only offers 5 or more cards to win; a smaller N (a quick solo win) is
+ * written straight into the running game in the e2e Redis.
+ */
 export async function importDeckAndStart(page: Page, targetCards = "2") {
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByText("40 faixas prontas")).toBeVisible();
-  await chooseOption(page, "Cartas para vencer", targetCards);
+  await expect(page.getByRole("button", { name: "Voltar ao baralho ResenhARK" })).toBeVisible();
+  const quick = Number(targetCards) < 5;
+  await chooseOption(page, "Cartas para vencer", quick ? "5" : targetCards);
   await page.getByRole("button", { name: "Iniciar partida" }).click();
+  if (!quick) return;
+  const code = new URL(page.url()).pathname.split("/").pop() as string;
+  await expect.poll(async () => (await peekRoom(code)).game !== null).toBe(true);
+  const room = await peekRoom(code);
+  room.game.state.config.targetCards = Number(targetCards);
+  await redis("SET", `room:${code}`, JSON.stringify(room), "KEEPTTL");
+}
+
+/** One command against the e2e Redis (db 14); returns the bulk reply, or null for a simple one. */
+function redis(...command: string[]): Promise<string | null> {
+  const send = (socket: net.Socket, ...args: string[]) =>
+    socket.write(
+      `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
+    );
+  return new Promise((resolve, reject) => {
+    const socket = net.connect(Number(TEST_REDIS.port || 6379), TEST_REDIS.hostname);
+    let data = "";
+    socket.on("error", reject);
+    socket.on("data", (chunk) => {
+      data += chunk.toString();
+      // +OK\r\n (SELECT) then either +OK\r\n or $<len>\r\n<payload>\r\n
+      const rest = data.startsWith("+OK\r\n") ? data.slice(5) : "";
+      if (rest.startsWith("+")) {
+        socket.end();
+        resolve(null);
+        return;
+      }
+      const match = /^\$(\d+)\r\n/.exec(rest);
+      if (!match) return;
+      const start = match[0].length;
+      if (Buffer.byteLength(rest.slice(start)) >= Number(match[1]) + 2) {
+        socket.end();
+        resolve(rest.slice(start, start + Number(match[1])));
+      }
+    });
+    send(socket, "SELECT", TEST_REDIS.pathname.slice(1) || "0");
+    send(socket, ...command);
+  });
 }
 
 /** Reads the stored room straight from the e2e Redis (db 14); hidden game data included. */
 // biome-ignore lint/suspicious/noExplicitAny: test-only peek at the raw stored room
 export async function peekRoom(code: string): Promise<any> {
-  const send = (socket: net.Socket, ...args: string[]) =>
-    socket.write(
-      `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
-    );
-  const raw = await new Promise<string>((resolve, reject) => {
-    const socket = net.connect(6379, "localhost");
-    let data = "";
-    socket.on("error", reject);
-    socket.on("data", (chunk) => {
-      data += chunk.toString();
-      // +OK\r\n then $<len>\r\n<payload>\r\n
-      const match = /\+OK\r\n\$(\d+)\r\n/.exec(data);
-      if (!match) return;
-      const start = match.index + match[0].length;
-      if (Buffer.byteLength(data.slice(start)) >= Number(match[1]) + 2) {
-        socket.end();
-        resolve(data.slice(start, start + Number(match[1])));
-      }
-    });
-    send(socket, "SELECT", "14");
-    send(socket, "GET", `room:${code}`);
-  });
-  return JSON.parse(raw);
+  return JSON.parse((await redis("GET", `room:${code}`)) as string);
+}
+
+/** Test-only state write in db 14, preserving the room's expiry. */
+export async function writeRoom(code: string, room: unknown): Promise<void> {
+  await redis("SET", `room:${code}`, JSON.stringify(room), "KEEPTTL");
 }
 
 /** Overwrites `tokens` of every player in the stored e2e room (db 14); a reload then shows the new balance. */
@@ -144,7 +175,7 @@ export async function pokeTokens(code: string, tokens: number): Promise<void> {
   for (const player of room.game.state.players) player.tokens = tokens;
   const body = JSON.stringify(room);
   await new Promise<void>((resolve, reject) => {
-    const socket = net.connect(6379, "localhost");
+    const socket = net.connect(Number(TEST_REDIS.port || 6379), TEST_REDIS.hostname);
     const send = (...args: string[]) =>
       socket.write(
         `*${args.length}\r\n${args.map((a) => `$${Buffer.byteLength(a)}\r\n${a}\r\n`).join("")}`,
@@ -158,7 +189,7 @@ export async function pokeTokens(code: string, tokens: number): Promise<void> {
         resolve();
       }
     });
-    send("SELECT", "14");
+    send("SELECT", TEST_REDIS.pathname.slice(1) || "0");
     send("SET", `room:${code}`, body, "KEEPTTL");
   });
 }

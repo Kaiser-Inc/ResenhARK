@@ -1,0 +1,4002 @@
+[
+  {
+    "title": "It's Now or Never",
+    "artists": ["Elvis Presley"],
+    "year": 1960,
+    "isrc": "USRC16001349",
+    "deezerId": 1055390,
+    "br": false
+  },
+  {
+    "title": "Stand by Me",
+    "artists": ["Ben E. King"],
+    "year": 1961,
+    "isrc": "USAT21205862",
+    "deezerId": 136710424,
+    "br": false
+  },
+  {
+    "title": "Green Onions",
+    "artists": ["Booker T. & the M.G.'s"],
+    "year": 1962,
+    "isrc": "USAT20000736",
+    "deezerId": 358680521,
+    "br": false
+  },
+  {
+    "title": "She Loves You",
+    "artists": ["The Beatles"],
+    "year": 1963,
+    "isrc": "GBUM71505910",
+    "deezerId": 116348596,
+    "br": false
+  },
+  {
+    "title": "Mas Que Nada",
+    "artists": ["Jorge Ben Jor"],
+    "year": 1963,
+    "isrc": "BRMCA6300083",
+    "deezerId": 4703131,
+    "br": true
+  },
+  {
+    "title": "The House of the Rising Sun",
+    "artists": ["The Animals"],
+    "year": 1964,
+    "isrc": "FRX991530374",
+    "deezerId": 107659972,
+    "br": false
+  },
+  {
+    "title": "You Really Got Me",
+    "artists": ["The Kinks"],
+    "year": 1964,
+    "isrc": "DESK99091901",
+    "deezerId": 2319655705,
+    "br": false
+  },
+  {
+    "title": "Oh, Pretty Woman",
+    "artists": ["Roy Orbison"],
+    "year": 1964,
+    "isrc": "USSM16401425",
+    "deezerId": 78033230,
+    "br": false
+  },
+  {
+    "title": "(I Can't Get No) Satisfaction",
+    "artists": ["The Rolling Stones"],
+    "year": 1965,
+    "isrc": "USA176510160",
+    "deezerId": 7677778,
+    "br": false
+  },
+  {
+    "title": "The Sound of Silence",
+    "artists": ["Simon & Garfunkel"],
+    "year": 1965,
+    "isrc": "USSM16401131",
+    "deezerId": 2468570,
+    "br": false
+  },
+  {
+    "title": "Unchained Melody",
+    "artists": ["The Righteous Brothers"],
+    "year": 1965,
+    "isrc": "USPG16590023",
+    "deezerId": 885544,
+    "br": false
+  },
+  {
+    "title": "I Got You (I Feel Good)",
+    "artists": ["James Brown"],
+    "year": 1965,
+    "isrc": "NLHR50916012",
+    "deezerId": 71646930,
+    "br": false
+  },
+  {
+    "title": "Quero Que Vá Tudo Pro Inferno",
+    "artists": ["Roberto Carlos"],
+    "year": 1965,
+    "isrc": "BRSME6500127",
+    "deezerId": 103414524,
+    "br": true
+  },
+  {
+    "title": "Good Vibrations",
+    "artists": ["The Beach Boys"],
+    "year": 1966,
+    "isrc": "USCA21101837",
+    "deezerId": 14176175,
+    "br": false
+  },
+  {
+    "title": "I'm a Believer",
+    "artists": ["The Monkees"],
+    "year": 1966,
+    "isrc": "USRH10651278",
+    "deezerId": 764920,
+    "br": false
+  },
+  {
+    "title": "Monday, Monday",
+    "artists": ["The Mamas & the Papas"],
+    "year": 1966,
+    "isrc": "QM6MZ1436390",
+    "deezerId": 92272808,
+    "br": false
+  },
+  {
+    "title": "Namoradinha de um Amigo Meu",
+    "artists": ["Roberto Carlos"],
+    "year": 1966,
+    "isrc": "BRSME6600104",
+    "deezerId": 103413932,
+    "br": true
+  },
+  {
+    "title": "All You Need Is Love",
+    "artists": ["The Beatles"],
+    "year": 1967,
+    "isrc": "GBAYE9901228",
+    "deezerId": 475334152,
+    "br": false
+  },
+  {
+    "title": "A Whiter Shade of Pale",
+    "artists": ["Procol Harum"],
+    "year": 1967,
+    "isrc": "GBBWX0701000",
+    "deezerId": 109300764,
+    "br": false
+  },
+  {
+    "title": "Somethin' Stupid",
+    "artists": ["Frank Sinatra", "Nancy Sinatra"],
+    "year": 1967,
+    "isrc": "USRH10723033",
+    "deezerId": 71483071,
+    "br": false
+  },
+  {
+    "title": "Happy Together",
+    "artists": ["The Turtles"],
+    "year": 1967,
+    "isrc": "USA560587940",
+    "deezerId": 2043943,
+    "br": false
+  },
+  {
+    "title": "Alegria, Alegria",
+    "artists": ["Caetano Veloso"],
+    "year": 1967,
+    "isrc": "BRUM70601093",
+    "deezerId": 883997,
+    "br": true
+  },
+  {
+    "title": "Hey Jude",
+    "artists": ["The Beatles"],
+    "year": 1968,
+    "isrc": "GBAYE0601566",
+    "deezerId": 126848613,
+    "br": false
+  },
+  {
+    "title": "(Sittin' On) The Dock of the Bay",
+    "artists": ["Otis Redding"],
+    "year": 1968,
+    "isrc": "USAT20804257",
+    "deezerId": 495824392,
+    "br": false
+  },
+  {
+    "title": "I Heard It Through the Grapevine",
+    "artists": ["Marvin Gaye"],
+    "year": 1968,
+    "isrc": "USMO16884718",
+    "deezerId": 709960012,
+    "br": false
+  },
+  {
+    "title": "Here Comes the Sun",
+    "artists": ["The Beatles"],
+    "year": 1969,
+    "isrc": "GBAYE0601696",
+    "deezerId": 116348464,
+    "br": false
+  },
+  {
+    "title": "My Way",
+    "artists": ["Frank Sinatra"],
+    "year": 1969,
+    "isrc": "USRH10902101",
+    "deezerId": 70835066,
+    "br": false
+  },
+  {
+    "title": "I Want You Back",
+    "artists": ["The Jackson 5"],
+    "year": 1969,
+    "isrc": "USMO19400306",
+    "deezerId": 4188287,
+    "br": false
+  },
+  {
+    "title": "Proud Mary",
+    "artists": ["Creedence Clearwater Revival"],
+    "year": 1969,
+    "isrc": "USFI86900049",
+    "deezerId": 883642,
+    "br": false
+  },
+  {
+    "title": "Whole Lotta Love",
+    "artists": ["Led Zeppelin"],
+    "year": 1969,
+    "isrc": "USAT21300925",
+    "deezerId": 78671026,
+    "br": false
+  },
+  {
+    "title": "As Curvas da Estrada de Santos",
+    "artists": ["Roberto Carlos"],
+    "year": 1969,
+    "isrc": "BRAPF0100004",
+    "deezerId": 17000513,
+    "br": true
+  },
+  {
+    "title": "País Tropical",
+    "artists": ["Jorge Ben Jor"],
+    "year": 1969,
+    "isrc": "BRUM70500275",
+    "deezerId": 529383861,
+    "br": true
+  },
+  {
+    "title": "Sentado à Beira do Caminho",
+    "artists": ["Erasmo Carlos"],
+    "year": 1969,
+    "isrc": "BRSGL7000019",
+    "deezerId": 117239786,
+    "br": true
+  },
+  {
+    "title": "Bridge over Troubled Water",
+    "artists": ["Simon & Garfunkel"],
+    "year": 1970,
+    "isrc": "USSM16900808",
+    "deezerId": 13174764,
+    "br": false
+  },
+  {
+    "title": "(They Long to Be) Close to You",
+    "artists": ["Carpenters"],
+    "year": 1970,
+    "isrc": "USAM17000373",
+    "deezerId": 74790480,
+    "br": false
+  },
+  {
+    "title": "Paranoid",
+    "artists": ["Black Sabbath"],
+    "year": 1970,
+    "isrc": "USSM19704475",
+    "deezerId": 625169,
+    "br": false
+  },
+  {
+    "title": "Primavera",
+    "artists": ["Tim Maia"],
+    "year": 1970,
+    "isrc": "BRLUM9300044",
+    "deezerId": 123786584,
+    "br": true
+  },
+  {
+    "title": "Jesus Cristo",
+    "artists": ["Roberto Carlos"],
+    "year": 1970,
+    "isrc": "BRAPF0100014",
+    "deezerId": 17000525,
+    "br": true
+  },
+  {
+    "title": "Stairway to Heaven",
+    "artists": ["Led Zeppelin"],
+    "year": 1971,
+    "isrc": "NLHR52177378",
+    "deezerId": 3114282771,
+    "br": false
+  },
+  {
+    "title": "What's Going On",
+    "artists": ["Marvin Gaye"],
+    "year": 1971,
+    "isrc": "USMO17100041",
+    "deezerId": 1133408852,
+    "br": false
+  },
+  {
+    "title": "American Pie",
+    "artists": ["Don McLean"],
+    "year": 1971,
+    "isrc": "USEM38600088",
+    "deezerId": 3156285,
+    "br": false
+  },
+  {
+    "title": "Brown Sugar",
+    "artists": ["The Rolling Stones"],
+    "year": 1971,
+    "isrc": "GBUM71502355",
+    "deezerId": 100632630,
+    "br": false
+  },
+  {
+    "title": "Construção",
+    "artists": ["Chico Buarque"],
+    "year": 1971,
+    "isrc": "BRPGD7100036",
+    "deezerId": 2237170,
+    "br": true
+  },
+  {
+    "title": "Starman",
+    "artists": ["David Bowie"],
+    "year": 1972,
+    "isrc": "UKDNQ1544661",
+    "deezerId": 1397796872,
+    "br": false
+  },
+  {
+    "title": "Superstition",
+    "artists": ["Stevie Wonder"],
+    "year": 1972,
+    "isrc": "USMO17200984",
+    "deezerId": 2505668,
+    "br": false
+  },
+  {
+    "title": "Smoke on the Water",
+    "artists": ["Deep Purple"],
+    "year": 1972,
+    "isrc": "GBDXG1200006",
+    "deezerId": 60840057,
+    "br": false
+  },
+  {
+    "title": "Expresso 2222",
+    "artists": ["Gilberto Gil"],
+    "year": 1972,
+    "isrc": "BRPGD7200008",
+    "deezerId": 1436044382,
+    "br": true
+  },
+  {
+    "title": "Preta Pretinha",
+    "artists": ["Novos Baianos"],
+    "year": 1972,
+    "isrc": "BRWMB0200003",
+    "deezerId": 16093613,
+    "br": true
+  },
+  {
+    "title": "Goodbye Yellow Brick Road",
+    "artists": ["Elton John"],
+    "year": 1973,
+    "isrc": "GBAMB9500058",
+    "deezerId": 1138640,
+    "br": false
+  },
+  {
+    "title": "Dream On",
+    "artists": ["Aerosmith"],
+    "year": 1973,
+    "isrc": "USSM10011897",
+    "deezerId": 2431707315,
+    "br": false
+  },
+  {
+    "title": "Angie",
+    "artists": ["The Rolling Stones"],
+    "year": 1973,
+    "isrc": "GBUM70909413",
+    "deezerId": 4124759,
+    "br": false
+  },
+  {
+    "title": "Gostava Tanto de Você",
+    "artists": ["Tim Maia"],
+    "year": 1973,
+    "isrc": "BRMCA7300051",
+    "deezerId": 543126422,
+    "br": true
+  },
+  {
+    "title": "Metamorfose Ambulante",
+    "artists": ["Raul Seixas"],
+    "year": 1973,
+    "isrc": "BRMCA7300118",
+    "deezerId": 4676600,
+    "br": true
+  },
+  {
+    "title": "Sangue Latino",
+    "artists": ["Secos & Molhados"],
+    "year": 1973,
+    "isrc": "BRWMB9802394",
+    "deezerId": 12334774,
+    "br": true
+  },
+  {
+    "title": "Waterloo",
+    "artists": ["ABBA"],
+    "year": 1974,
+    "isrc": "SEAYD7415010",
+    "deezerId": 76376889,
+    "br": false
+  },
+  {
+    "title": "Kung Fu Fighting",
+    "artists": ["Carl Douglas"],
+    "year": 1974,
+    "isrc": "GBAJE7400014",
+    "deezerId": 3782909292,
+    "br": false
+  },
+  {
+    "title": "You're the First, the Last, My Everything",
+    "artists": ["Barry White"],
+    "year": 1974,
+    "isrc": "USPR37400001",
+    "deezerId": 537995772,
+    "br": false
+  },
+  {
+    "title": "Águas de Março",
+    "artists": ["Elis Regina", "Tom Jobim"],
+    "year": 1974,
+    "isrc": "BRPGD7400001",
+    "deezerId": 565340102,
+    "br": true
+  },
+  {
+    "title": "Mamma Mia",
+    "artists": ["ABBA"],
+    "year": 1975,
+    "isrc": "SEAYD7501010",
+    "deezerId": 884030,
+    "br": false
+  },
+  {
+    "title": "That's the Way (I Like It)",
+    "artists": ["KC and the Sunshine Band"],
+    "year": 1975,
+    "isrc": "GBAYE7500059",
+    "deezerId": 3151321,
+    "br": false
+  },
+  {
+    "title": "Rock and Roll All Nite",
+    "artists": ["Kiss"],
+    "year": 1975,
+    "isrc": "USPR37509157",
+    "deezerId": 2675537,
+    "br": false
+  },
+  {
+    "title": "Wish You Were Here",
+    "artists": ["Pink Floyd"],
+    "year": 1975,
+    "isrc": "GBN9Y1100088",
+    "deezerId": 116914042,
+    "br": false
+  },
+  {
+    "title": "Refazenda",
+    "artists": ["Gilberto Gil"],
+    "year": 1975,
+    "isrc": "BRWMB9701569",
+    "deezerId": 1133490342,
+    "br": true
+  },
+  {
+    "title": "Ovelha Negra",
+    "artists": ["Rita Lee"],
+    "year": 1975,
+    "isrc": "BREMI7500065",
+    "deezerId": 15709222,
+    "br": true
+  },
+  {
+    "title": "Hotel California",
+    "artists": ["Eagles"],
+    "year": 1976,
+    "isrc": "GBHFE0611362",
+    "deezerId": 11858169,
+    "br": false
+  },
+  {
+    "title": "Sir Duke",
+    "artists": ["Stevie Wonder"],
+    "year": 1976,
+    "isrc": "USMO17600526",
+    "deezerId": 538709322,
+    "br": false
+  },
+  {
+    "title": "Blitzkrieg Bop",
+    "artists": ["Ramones"],
+    "year": 1976,
+    "isrc": "USWB10201776",
+    "deezerId": 624737332,
+    "br": false
+  },
+  {
+    "title": "Como Nossos Pais",
+    "artists": ["Belchior"],
+    "year": 1976,
+    "isrc": "BRWMB9705419",
+    "deezerId": 39056601,
+    "br": true
+  },
+  {
+    "title": "Apenas um Rapaz Latino-Americano",
+    "artists": ["Belchior"],
+    "year": 1976,
+    "isrc": "BRMCA7600058",
+    "deezerId": 4685335,
+    "br": true
+  },
+  {
+    "title": "We Will Rock You",
+    "artists": ["Queen"],
+    "year": 1977,
+    "isrc": "GBUM71029618",
+    "deezerId": 4092312801,
+    "br": false
+  },
+  {
+    "title": "We Are the Champions",
+    "artists": ["Queen"],
+    "year": 1977,
+    "isrc": "GBUM71029619",
+    "deezerId": 4092339021,
+    "br": false
+  },
+  {
+    "title": "Go Your Own Way",
+    "artists": ["Fleetwood Mac"],
+    "year": 1977,
+    "isrc": "UKDNQ1545436",
+    "deezerId": 762795222,
+    "br": false
+  },
+  {
+    "title": "How Deep Is Your Love",
+    "artists": ["Bee Gees"],
+    "year": 1977,
+    "isrc": "NLF057790012",
+    "deezerId": 350027751,
+    "br": false
+  },
+  {
+    "title": "Mr. Blue Sky",
+    "artists": ["Electric Light Orchestra"],
+    "year": 1977,
+    "isrc": "USSM17200399",
+    "deezerId": 112662184,
+    "br": false
+  },
+  {
+    "title": "Jamming",
+    "artists": ["Bob Marley & The Wailers"],
+    "year": 1977,
+    "isrc": "USIR27700013",
+    "deezerId": 530300751,
+    "br": false
+  },
+  {
+    "title": "Dust in the Wind",
+    "artists": ["Kansas"],
+    "year": 1977,
+    "isrc": "UKDNQ1559505",
+    "deezerId": 897964932,
+    "br": false
+  },
+  {
+    "title": "Amigo",
+    "artists": ["Roberto Carlos"],
+    "year": 1977,
+    "isrc": "BRSME9300284",
+    "deezerId": 71017854,
+    "br": true
+  },
+  {
+    "title": "Avôhai",
+    "artists": ["Zé Ramalho"],
+    "year": 1977,
+    "isrc": "BRSME7800017",
+    "deezerId": 70097305,
+    "br": true
+  },
+  {
+    "title": "Don't Stop Me Now",
+    "artists": ["Queen"],
+    "year": 1978,
+    "isrc": "GBUM71029610",
+    "deezerId": 4092329741,
+    "br": false
+  },
+  {
+    "title": "Roxanne",
+    "artists": ["The Police"],
+    "year": 1978,
+    "isrc": "GBAAM7800003",
+    "deezerId": 2525877,
+    "br": false
+  },
+  {
+    "title": "Rivers of Babylon",
+    "artists": ["Boney M."],
+    "year": 1978,
+    "isrc": "DED167800006",
+    "deezerId": 968798,
+    "br": false
+  },
+  {
+    "title": "Y.M.C.A.",
+    "artists": ["Village People"],
+    "year": 1978,
+    "isrc": "FR22F8000020",
+    "deezerId": 3809084112,
+    "br": false
+  },
+  {
+    "title": "Sultans of Swing",
+    "artists": ["Dire Straits"],
+    "year": 1978,
+    "isrc": "GBF089601041",
+    "deezerId": 2263033,
+    "br": false
+  },
+  {
+    "title": "Cálice",
+    "artists": ["Chico Buarque", "Milton Nascimento"],
+    "year": 1978,
+    "isrc": "BRPGD7800015",
+    "deezerId": 4676535,
+    "br": true
+  },
+  {
+    "title": "Maria Maria",
+    "artists": ["Milton Nascimento"],
+    "year": 1978,
+    "isrc": "BREMI7800105",
+    "deezerId": 35946071,
+    "br": true
+  },
+  {
+    "title": "Gimme! Gimme! Gimme! (A Man After Midnight)",
+    "artists": ["ABBA"],
+    "year": 1979,
+    "isrc": "SEAYD7901120",
+    "deezerId": 884041,
+    "br": false
+  },
+  {
+    "title": "London Calling",
+    "artists": ["The Clash"],
+    "year": 1979,
+    "isrc": "GBBBN0400804",
+    "deezerId": 539781,
+    "br": false
+  },
+  {
+    "title": "Message in a Bottle",
+    "artists": ["The Police"],
+    "year": 1979,
+    "isrc": "GBAAM7900002",
+    "deezerId": 2525861,
+    "br": false
+  },
+  {
+    "title": "Heart of Glass",
+    "artists": ["Blondie"],
+    "year": 1979,
+    "isrc": "USCH37800029",
+    "deezerId": 418231512,
+    "br": false
+  },
+  {
+    "title": "The Logical Song",
+    "artists": ["Supertramp"],
+    "year": 1979,
+    "isrc": "USAM19500624",
+    "deezerId": 2503274,
+    "br": false
+  },
+  {
+    "title": "Video Killed the Radio Star",
+    "artists": ["The Buggles"],
+    "year": 1979,
+    "isrc": "GBAAN7900013",
+    "deezerId": 2509817,
+    "br": false
+  },
+  {
+    "title": "Toda Menina Baiana",
+    "artists": ["Gilberto Gil"],
+    "year": 1979,
+    "isrc": "BRGPG7900007",
+    "deezerId": 3272023001,
+    "br": true
+  },
+  {
+    "title": "Mania de Você",
+    "artists": ["Rita Lee"],
+    "year": 1979,
+    "isrc": "BREMI7500046",
+    "deezerId": 104938156,
+    "br": true
+  },
+  {
+    "title": "Admirável Gado Novo",
+    "artists": ["Zé Ramalho"],
+    "year": 1979,
+    "isrc": "BRSME7900007",
+    "deezerId": 70097320,
+    "br": true
+  },
+  {
+    "title": "You Shook Me All Night Long",
+    "artists": ["AC/DC"],
+    "year": 1980,
+    "isrc": "AUAP08000047",
+    "deezerId": 92720048,
+    "br": false
+  },
+  {
+    "title": "Another One Bites the Dust",
+    "artists": ["Queen"],
+    "year": 1980,
+    "isrc": "GBUM71029605",
+    "deezerId": 4092324041,
+    "br": false
+  },
+  {
+    "title": "Call Me",
+    "artists": ["Blondie"],
+    "year": 1980,
+    "isrc": "USCH38900008",
+    "deezerId": 3104486,
+    "br": false
+  },
+  {
+    "title": "Brass in Pocket",
+    "artists": ["The Pretenders"],
+    "year": 1980,
+    "isrc": "GBAHT0105688",
+    "deezerId": 661218,
+    "br": false
+  },
+  {
+    "title": "Don't Stop Believin'",
+    "artists": ["Journey"],
+    "year": 1981,
+    "isrc": "USSM18100116",
+    "deezerId": 625643,
+    "br": false
+  },
+  {
+    "title": "In the Air Tonight",
+    "artists": ["Phil Collins"],
+    "year": 1981,
+    "isrc": "USAT20202601",
+    "deezerId": 4106262,
+    "br": false
+  },
+  {
+    "title": "Bette Davis Eyes",
+    "artists": ["Kim Carnes"],
+    "year": 1981,
+    "isrc": "USCA28100081",
+    "deezerId": 3153065,
+    "br": false
+  },
+  {
+    "title": "Jessie's Girl",
+    "artists": ["Rick Springfield"],
+    "year": 1981,
+    "isrc": "USRC18108188",
+    "deezerId": 454843722,
+    "br": false
+  },
+  {
+    "title": "I Love Rock 'N Roll",
+    "artists": ["Joan Jett & the Blackhearts"],
+    "year": 1981,
+    "isrc": "USBH18100118",
+    "deezerId": 3795205892,
+    "br": false
+  },
+  {
+    "title": "Waiting for a Girl Like You",
+    "artists": ["Foreigner"],
+    "year": 1981,
+    "isrc": "USAT20803008",
+    "deezerId": 2814886,
+    "br": false
+  },
+  {
+    "title": "Emoções",
+    "artists": ["Roberto Carlos"],
+    "year": 1981,
+    "isrc": "BRAPF0100015",
+    "deezerId": 17000524,
+    "br": true
+  },
+  {
+    "title": "Billie Jean",
+    "artists": ["Michael Jackson"],
+    "year": 1982,
+    "isrc": "USSM19902991",
+    "deezerId": 4603408,
+    "br": false
+  },
+  {
+    "title": "Thriller",
+    "artists": ["Michael Jackson"],
+    "year": 1982,
+    "isrc": "USSM19902989",
+    "deezerId": 555639,
+    "br": false
+  },
+  {
+    "title": "Africa",
+    "artists": ["Toto"],
+    "year": 1982,
+    "isrc": "USSM19801941",
+    "deezerId": 1079668,
+    "br": false
+  },
+  {
+    "title": "Hungry Like the Wolf",
+    "artists": ["Duran Duran"],
+    "year": 1982,
+    "isrc": "GBAYE8200051",
+    "deezerId": 3130433,
+    "br": false
+  },
+  {
+    "title": "Should I Stay or Should I Go",
+    "artists": ["The Clash"],
+    "year": 1982,
+    "isrc": "GBARL0800809",
+    "deezerId": 2204574,
+    "br": false
+  },
+  {
+    "title": "Come On Eileen",
+    "artists": ["Dexys Midnight Runners"],
+    "year": 1982,
+    "isrc": "GBF088200006",
+    "deezerId": 106344460,
+    "br": false
+  },
+  {
+    "title": "Only You",
+    "artists": ["Yazoo"],
+    "year": 1982,
+    "isrc": "GB5KW1800060",
+    "deezerId": 3785959802,
+    "br": false
+  },
+  {
+    "title": "Pass the Dutchie",
+    "artists": ["Musical Youth"],
+    "year": 1982,
+    "isrc": "GBBBY0300024",
+    "deezerId": 2234298,
+    "br": false
+  },
+  {
+    "title": "Você Não Soube Me Amar",
+    "artists": ["Blitz"],
+    "year": 1982,
+    "isrc": "BREMI8200021",
+    "deezerId": 3401132,
+    "br": true
+  },
+  {
+    "title": "Tempos Modernos",
+    "artists": ["Lulu Santos"],
+    "year": 1982,
+    "isrc": "BRBMG0000297",
+    "deezerId": 72318837,
+    "br": true
+  },
+  {
+    "title": "Girls Just Want to Have Fun",
+    "artists": ["Cyndi Lauper"],
+    "year": 1983,
+    "isrc": "USSM18300548",
+    "deezerId": 72194071,
+    "br": false
+  },
+  {
+    "title": "Time After Time",
+    "artists": ["Cyndi Lauper"],
+    "year": 1983,
+    "isrc": "USSM18300650",
+    "deezerId": 72194073,
+    "br": false
+  },
+  {
+    "title": "Let's Dance",
+    "artists": ["David Bowie"],
+    "year": 1983,
+    "isrc": "USJT11800183",
+    "deezerId": 565656032,
+    "br": false
+  },
+  {
+    "title": "Sweet Dreams (Are Made of This)",
+    "artists": ["Eurythmics"],
+    "year": 1983,
+    "isrc": "GBARL8300027",
+    "deezerId": 1022285,
+    "br": false
+  },
+  {
+    "title": "Hello",
+    "artists": ["Lionel Richie"],
+    "year": 1983,
+    "isrc": "USMO18390012",
+    "deezerId": 918048,
+    "br": false
+  },
+  {
+    "title": "Blue Monday",
+    "artists": ["New Order"],
+    "year": 1983,
+    "isrc": "USQW18300001",
+    "deezerId": 7337280,
+    "br": false
+  },
+  {
+    "title": "Uptown Girl",
+    "artists": ["Billy Joel"],
+    "year": 1983,
+    "isrc": "USSM18300270",
+    "deezerId": 1025659,
+    "br": false
+  },
+  {
+    "title": "True",
+    "artists": ["Spandau Ballet"],
+    "year": 1983,
+    "isrc": "GBUM70911469",
+    "deezerId": 4566248,
+    "br": false
+  },
+  {
+    "title": "Maniac",
+    "artists": ["Michael Sembello"],
+    "year": 1983,
+    "isrc": "USPR38302462",
+    "deezerId": 540168502,
+    "br": false
+  },
+  {
+    "title": "Pro Dia Nascer Feliz",
+    "artists": ["Barão Vermelho"],
+    "year": 1983,
+    "isrc": "BXB3N2200015",
+    "deezerId": 3261366831,
+    "br": true
+  },
+  {
+    "title": "Como uma Onda",
+    "artists": ["Lulu Santos"],
+    "year": 1983,
+    "isrc": "BRWMB9705440",
+    "deezerId": 3878749,
+    "br": true
+  },
+  {
+    "title": "Inútil",
+    "artists": ["Ultraje a Rigor"],
+    "year": 1983,
+    "isrc": "BRWMB9701845",
+    "deezerId": 63652994,
+    "br": true
+  },
+  {
+    "title": "Me Dê Motivo",
+    "artists": ["Tim Maia"],
+    "year": 1983,
+    "isrc": "BRMCA8300166",
+    "deezerId": 543123762,
+    "br": true
+  },
+  {
+    "title": "Você É Linda",
+    "artists": ["Caetano Veloso"],
+    "year": 1983,
+    "isrc": "BRMCA8300194",
+    "deezerId": 58496331,
+    "br": true
+  },
+  {
+    "title": "Like a Virgin",
+    "artists": ["Madonna"],
+    "year": 1984,
+    "isrc": "USWB10002748",
+    "deezerId": 678336,
+    "br": false
+  },
+  {
+    "title": "Purple Rain",
+    "artists": ["Prince"],
+    "year": 1984,
+    "isrc": "USWB11700470",
+    "deezerId": 374283061,
+    "br": false
+  },
+  {
+    "title": "Wake Me Up Before You Go-Go",
+    "artists": ["Wham!"],
+    "year": 1984,
+    "isrc": "GBBBN0009712",
+    "deezerId": 15194531,
+    "br": false
+  },
+  {
+    "title": "Born in the U.S.A.",
+    "artists": ["Bruce Springsteen"],
+    "year": 1984,
+    "isrc": "USSM18400406",
+    "deezerId": 15586213,
+    "br": false
+  },
+  {
+    "title": "Footloose",
+    "artists": ["Kenny Loggins"],
+    "year": 1984,
+    "isrc": "USSM18400107",
+    "deezerId": 4155200162,
+    "br": false
+  },
+  {
+    "title": "I Just Called to Say I Love You",
+    "artists": ["Stevie Wonder"],
+    "year": 1984,
+    "isrc": "USUMG9900476",
+    "deezerId": 538709362,
+    "br": false
+  },
+  {
+    "title": "People Are People",
+    "artists": ["Depeche Mode"],
+    "year": 1984,
+    "isrc": "GBAJH0602205",
+    "deezerId": 68514099,
+    "br": false
+  },
+  {
+    "title": "Jump",
+    "artists": ["Van Halen"],
+    "year": 1984,
+    "isrc": "USY252163073",
+    "deezerId": 1455166152,
+    "br": false
+  },
+  {
+    "title": "You're My Heart, You're My Soul",
+    "artists": ["Modern Talking"],
+    "year": 1984,
+    "isrc": "DEC738500015",
+    "deezerId": 548507,
+    "br": false
+  },
+  {
+    "title": "I Want to Know What Love Is",
+    "artists": ["Foreigner"],
+    "year": 1984,
+    "isrc": "USAT21811075",
+    "deezerId": 581279782,
+    "br": false
+  },
+  {
+    "title": "What's Love Got to Do with It",
+    "artists": ["Tina Turner"],
+    "year": 1984,
+    "isrc": "USCA28400002",
+    "deezerId": 3120266,
+    "br": false
+  },
+  {
+    "title": "Sonífera Ilha",
+    "artists": ["Titãs"],
+    "year": 1984,
+    "isrc": "BRWMB9806022",
+    "deezerId": 36364121,
+    "br": true
+  },
+  {
+    "title": "Óculos",
+    "artists": ["Os Paralamas Do Sucesso"],
+    "year": 1984,
+    "isrc": "BREMI8400066",
+    "deezerId": 3317671,
+    "br": true
+  },
+  {
+    "title": "Meu Erro",
+    "artists": ["Os Paralamas Do Sucesso"],
+    "year": 1984,
+    "isrc": "BREMI8700205",
+    "deezerId": 17773342,
+    "br": true
+  },
+  {
+    "title": "Whisky a Go-Go",
+    "artists": ["Roupa Nova"],
+    "year": 1984,
+    "isrc": "BRBMG9103570",
+    "deezerId": 13244021,
+    "br": true
+  },
+  {
+    "title": "Take On Me",
+    "artists": ["a-ha"],
+    "year": 1985,
+    "isrc": "USWB19901214",
+    "deezerId": 664107,
+    "br": false
+  },
+  {
+    "title": "Money for Nothing",
+    "artists": ["Dire Straits"],
+    "year": 1985,
+    "isrc": "GBF088500674",
+    "deezerId": 2514681,
+    "br": false
+  },
+  {
+    "title": "How Will I Know",
+    "artists": ["Whitney Houston"],
+    "year": 1985,
+    "isrc": "USAR18500150",
+    "deezerId": 5181151,
+    "br": false
+  },
+  {
+    "title": "Don't You (Forget About Me)",
+    "artists": ["Simple Minds"],
+    "year": 1985,
+    "isrc": "GBZ8N1600270",
+    "deezerId": 3045268991,
+    "br": false
+  },
+  {
+    "title": "Running Up That Hill (A Deal with God)",
+    "artists": ["Kate Bush"],
+    "year": 1985,
+    "isrc": "GBCNR8500002",
+    "deezerId": 2173954687,
+    "br": false
+  },
+  {
+    "title": "Holding Back the Years",
+    "artists": ["Simply Red"],
+    "year": 1985,
+    "isrc": "GBCRL0800628",
+    "deezerId": 3559261671,
+    "br": false
+  },
+  {
+    "title": "Live Is Life",
+    "artists": ["Opus"],
+    "year": 1985,
+    "isrc": "ATB150800051",
+    "deezerId": 901054,
+    "br": false
+  },
+  {
+    "title": "We Built This City",
+    "artists": ["Starship"],
+    "year": 1985,
+    "isrc": "USRC18503424",
+    "deezerId": 602137972,
+    "br": false
+  },
+  {
+    "title": "Sussudio",
+    "artists": ["Phil Collins"],
+    "year": 1985,
+    "isrc": "USRH11600243",
+    "deezerId": 122014992,
+    "br": false
+  },
+  {
+    "title": "Será",
+    "artists": ["Legião Urbana"],
+    "year": 1985,
+    "isrc": "BREMI8400036",
+    "deezerId": 3530207,
+    "br": true
+  },
+  {
+    "title": "Olhar 43",
+    "artists": ["RPM"],
+    "year": 1985,
+    "isrc": "BRSME8600005",
+    "deezerId": 68772192,
+    "br": true
+  },
+  {
+    "title": "Rádio Pirata",
+    "artists": ["RPM"],
+    "year": 1985,
+    "isrc": "BRSME8500012",
+    "deezerId": 13265546,
+    "br": true
+  },
+  {
+    "title": "Nós Vamos Invadir Sua Praia",
+    "artists": ["Ultraje a Rigor"],
+    "year": 1985,
+    "isrc": "BRDEP9900068",
+    "deezerId": 95681868,
+    "br": true
+  },
+  {
+    "title": "Papa Don't Preach",
+    "artists": ["Madonna"],
+    "year": 1986,
+    "isrc": "USWB19903344",
+    "deezerId": 678363,
+    "br": false
+  },
+  {
+    "title": "You Give Love a Bad Name",
+    "artists": ["Bon Jovi"],
+    "year": 1986,
+    "isrc": "USPR39402224",
+    "deezerId": 577487242,
+    "br": false
+  },
+  {
+    "title": "A Kind of Magic",
+    "artists": ["Queen"],
+    "year": 1986,
+    "isrc": "GBUM71029621",
+    "deezerId": 4092326581,
+    "br": false
+  },
+  {
+    "title": "Sledgehammer",
+    "artists": ["Peter Gabriel"],
+    "year": 1986,
+    "isrc": "GBCPB1200864",
+    "deezerId": 540503442,
+    "br": false
+  },
+  {
+    "title": "Take My Breath Away",
+    "artists": ["Berlin"],
+    "year": 1986,
+    "isrc": "USA560630200",
+    "deezerId": 1967665,
+    "br": false
+  },
+  {
+    "title": "Master of Puppets",
+    "artists": ["Metallica"],
+    "year": 1986,
+    "isrc": "QMKHM1600219",
+    "deezerId": 424565232,
+    "br": false
+  },
+  {
+    "title": "Invisible Touch",
+    "artists": ["Genesis"],
+    "year": 1986,
+    "isrc": "GBAAA0700779",
+    "deezerId": 14637100,
+    "br": false
+  },
+  {
+    "title": "Polícia",
+    "artists": ["Titãs"],
+    "year": 1986,
+    "isrc": "BRBMG0500268",
+    "deezerId": 137199672,
+    "br": true
+  },
+  {
+    "title": "Alagados",
+    "artists": ["Os Paralamas Do Sucesso"],
+    "year": 1986,
+    "isrc": "BREMI8800407",
+    "deezerId": 112659718,
+    "br": true
+  },
+  {
+    "title": "Música Urbana",
+    "artists": ["Capital Inicial"],
+    "year": 1986,
+    "isrc": "BCC1P2200006",
+    "deezerId": 1990887647,
+    "br": true
+  },
+  {
+    "title": "Bad",
+    "artists": ["Michael Jackson"],
+    "year": 1987,
+    "isrc": "USSM11204980",
+    "deezerId": 59509531,
+    "br": false
+  },
+  {
+    "title": "Smooth Criminal",
+    "artists": ["Michael Jackson"],
+    "year": 1987,
+    "isrc": "USSM10905822",
+    "deezerId": 4603400,
+    "br": false
+  },
+  {
+    "title": "Sweet Child O' Mine",
+    "artists": ["Guns N' Roses"],
+    "year": 1987,
+    "isrc": "USGF18714809",
+    "deezerId": 518458172,
+    "br": false
+  },
+  {
+    "title": "Paradise City",
+    "artists": ["Guns N' Roses"],
+    "year": 1987,
+    "isrc": "USGF18714806",
+    "deezerId": 518458142,
+    "br": false
+  },
+  {
+    "title": "I Wanna Dance with Somebody (Who Loves Me)",
+    "artists": ["Whitney Houston"],
+    "year": 1987,
+    "isrc": "USAR18700121",
+    "deezerId": 75981528,
+    "br": false
+  },
+  {
+    "title": "I Still Haven't Found What I'm Looking For",
+    "artists": ["U2"],
+    "year": 1987,
+    "isrc": "GBUM70709783",
+    "deezerId": 912481,
+    "br": false
+  },
+  {
+    "title": "Just Like Heaven",
+    "artists": ["The Cure"],
+    "year": 1987,
+    "isrc": "GBALB8700003",
+    "deezerId": 1143636,
+    "br": false
+  },
+  {
+    "title": "Everywhere",
+    "artists": ["Fleetwood Mac"],
+    "year": 1987,
+    "isrc": "USWB19900202",
+    "deezerId": 664444,
+    "br": false
+  },
+  {
+    "title": "Heaven Is a Place on Earth",
+    "artists": ["Belinda Carlisle"],
+    "year": 1987,
+    "isrc": "GBAAA8700010",
+    "deezerId": 3808827462,
+    "br": false
+  },
+  {
+    "title": "Need You Tonight",
+    "artists": ["INXS"],
+    "year": 1987,
+    "isrc": "GBAMX8700008",
+    "deezerId": 11282931,
+    "br": false
+  },
+  {
+    "title": "Faroeste Caboclo",
+    "artists": ["Legião Urbana"],
+    "year": 1987,
+    "isrc": "BREMI8700089",
+    "deezerId": 3530214,
+    "br": true
+  },
+  {
+    "title": "Comida",
+    "artists": ["Titãs"],
+    "year": 1987,
+    "isrc": "BRWMB9600811",
+    "deezerId": 36363041,
+    "br": true
+  },
+  {
+    "title": "The Look",
+    "artists": ["Roxette"],
+    "year": 1988,
+    "isrc": "SEAME8878010",
+    "deezerId": 3092167,
+    "br": false
+  },
+  {
+    "title": "Don't Worry, Be Happy",
+    "artists": ["Bobby McFerrin"],
+    "year": 1988,
+    "isrc": "USEM38800361",
+    "deezerId": 3127387,
+    "br": false
+  },
+  {
+    "title": "Straight Up",
+    "artists": ["Paula Abdul"],
+    "year": 1988,
+    "isrc": "USVI28800024",
+    "deezerId": 3109328,
+    "br": false
+  },
+  {
+    "title": "Patience",
+    "artists": ["Guns N' Roses"],
+    "year": 1988,
+    "isrc": "USGF18819805",
+    "deezerId": 1091041532,
+    "br": false
+  },
+  {
+    "title": "Ideologia",
+    "artists": ["Cazuza"],
+    "year": 1988,
+    "isrc": "BRPGD8800026",
+    "deezerId": 4670017,
+    "br": true
+  },
+  {
+    "title": "Brasil",
+    "artists": ["Cazuza"],
+    "year": 1988,
+    "isrc": "BRMCA8800058",
+    "deezerId": 13623280,
+    "br": true
+  },
+  {
+    "title": "Ilariê",
+    "artists": ["Xuxa"],
+    "year": 1988,
+    "isrc": "BRSGL8800026",
+    "deezerId": 16171165,
+    "br": true
+  },
+  {
+    "title": "Love Shack",
+    "artists": ["The B-52's"],
+    "year": 1989,
+    "isrc": "USRE18900030",
+    "deezerId": 3929350,
+    "br": false
+  },
+  {
+    "title": "Lambada",
+    "artists": ["Kaoma"],
+    "year": 1989,
+    "isrc": "USA2P2335656",
+    "deezerId": 2364224845,
+    "br": false
+  },
+  {
+    "title": "She Drives Me Crazy",
+    "artists": ["Fine Young Cannibals"],
+    "year": 1989,
+    "isrc": "GBAAP2000255",
+    "deezerId": 1178372072,
+    "br": false
+  },
+  {
+    "title": "The Best",
+    "artists": ["Tina Turner"],
+    "year": 1989,
+    "isrc": "USCA28900109",
+    "deezerId": 3142379,
+    "br": false
+  },
+  {
+    "title": "Pais e Filhos",
+    "artists": ["Legião Urbana"],
+    "year": 1989,
+    "isrc": "BREMI8900064",
+    "deezerId": 3530216,
+    "br": true
+  },
+  {
+    "title": "Há Tempos",
+    "artists": ["Legião Urbana"],
+    "year": 1989,
+    "isrc": "BREMI8900063",
+    "deezerId": 3529945,
+    "br": true
+  },
+  {
+    "title": "Lanterna dos Afogados",
+    "artists": ["Os Paralamas Do Sucesso"],
+    "year": 1989,
+    "isrc": "BREMI8900093",
+    "deezerId": 3419859231,
+    "br": true
+  },
+  {
+    "title": "Oceano",
+    "artists": ["Djavan"],
+    "year": 1989,
+    "isrc": "BRSME8900064",
+    "deezerId": 74617609,
+    "br": true
+  },
+  {
+    "title": "U Can't Touch This",
+    "artists": ["MC Hammer"],
+    "year": 1990,
+    "isrc": "USCA29000294",
+    "deezerId": 3136389,
+    "br": false
+  },
+  {
+    "title": "Nothing Compares 2 U",
+    "artists": ["Sinéad O'Connor"],
+    "year": 1990,
+    "isrc": "GBAYK9000017",
+    "deezerId": 1787569267,
+    "br": false
+  },
+  {
+    "title": "Enjoy the Silence",
+    "artists": ["Depeche Mode"],
+    "year": 1990,
+    "isrc": "GBAJH9800146",
+    "deezerId": 68515055,
+    "br": false
+  },
+  {
+    "title": "Era um Garoto Que Como Eu Amava os Beatles e os Rolling Stones",
+    "artists": ["Engenheiros do Hawaii"],
+    "year": 1990,
+    "isrc": "BRBMG9000152",
+    "deezerId": 13252212,
+    "br": true
+  },
+  {
+    "title": "Pense em Mim",
+    "artists": ["Leandro & Leonardo"],
+    "year": 1990,
+    "isrc": "BRWMB9704971",
+    "deezerId": 3902616,
+    "br": true
+  },
+  {
+    "title": "W/Brasil (Chama o Síndico)",
+    "artists": ["Jorge Ben Jor"],
+    "year": 1990,
+    "isrc": "BRWMB0300648",
+    "deezerId": 452745812,
+    "br": true
+  },
+  {
+    "title": "Come as You Are",
+    "artists": ["Nirvana"],
+    "year": 1991,
+    "isrc": "USGF19942503",
+    "deezerId": 13791932,
+    "br": false
+  },
+  {
+    "title": "(Everything I Do) I Do It for You",
+    "artists": ["Bryan Adams"],
+    "year": 1991,
+    "isrc": "USAM19190012",
+    "deezerId": 1182159,
+    "br": false
+  },
+  {
+    "title": "Nothing Else Matters",
+    "artists": ["Metallica"],
+    "year": 1991,
+    "isrc": "QMKHM1900008",
+    "deezerId": 1483825282,
+    "br": false
+  },
+  {
+    "title": "Enter Sandman",
+    "artists": ["Metallica"],
+    "year": 1991,
+    "isrc": "QMKHM1900001",
+    "deezerId": 1483825212,
+    "br": false
+  },
+  {
+    "title": "Black or White",
+    "artists": ["Michael Jackson"],
+    "year": 1991,
+    "isrc": "USSM19000733",
+    "deezerId": 15593566,
+    "br": false
+  },
+  {
+    "title": "Joyride",
+    "artists": ["Roxette"],
+    "year": 1991,
+    "isrc": "SEAMA9079010",
+    "deezerId": 1523248472,
+    "br": false
+  },
+  {
+    "title": "Alive",
+    "artists": ["Pearl Jam"],
+    "year": 1991,
+    "isrc": "USSM19100003",
+    "deezerId": 7675130,
+    "br": false
+  },
+  {
+    "title": "Vento no Litoral",
+    "artists": ["Legião Urbana"],
+    "year": 1991,
+    "isrc": "BREMI9100014",
+    "deezerId": 3530218,
+    "br": true
+  },
+  {
+    "title": "Cheia de Manias",
+    "artists": ["Raça Negra"],
+    "year": 1991,
+    "isrc": "BRRGE1905224",
+    "deezerId": 705328182,
+    "br": true
+  },
+  {
+    "title": "Creep",
+    "artists": ["Radiohead"],
+    "year": 1992,
+    "isrc": "GBAYE9200070",
+    "deezerId": 138547415,
+    "br": false
+  },
+  {
+    "title": "I Will Always Love You",
+    "artists": ["Whitney Houston"],
+    "year": 1992,
+    "isrc": "USAR19200110",
+    "deezerId": 7675403,
+    "br": false
+  },
+  {
+    "title": "Rhythm Is a Dancer",
+    "artists": ["SNAP!"],
+    "year": 1992,
+    "isrc": "DET189200600",
+    "deezerId": 3785942552,
+    "br": false
+  },
+  {
+    "title": "Tears in Heaven",
+    "artists": ["Eric Clapton"],
+    "year": 1992,
+    "isrc": "USRE19100010",
+    "deezerId": 4654895,
+    "br": false
+  },
+  {
+    "title": "It's My Life",
+    "artists": ["Dr. Alban"],
+    "year": 1992,
+    "isrc": "DED419200001",
+    "deezerId": 3801448032,
+    "br": false
+  },
+  {
+    "title": "Baby Got Back",
+    "artists": ["Sir Mix-a-Lot"],
+    "year": 1992,
+    "isrc": "USA561380023",
+    "deezerId": 61548256,
+    "br": false
+  },
+  {
+    "title": "Se...",
+    "artists": ["Djavan"],
+    "year": 1992,
+    "isrc": "BRSME9200122",
+    "deezerId": 74617711,
+    "br": true
+  },
+  {
+    "title": "The Sign",
+    "artists": ["Ace of Base"],
+    "year": 1993,
+    "isrc": "SEVJH0803404",
+    "deezerId": 93851026,
+    "br": false
+  },
+  {
+    "title": "Linger",
+    "artists": ["The Cranberries"],
+    "year": 1993,
+    "isrc": "USIR29300085",
+    "deezerId": 910534,
+    "br": false
+  },
+  {
+    "title": "(I Can't Help) Falling in Love with You",
+    "artists": ["UB40"],
+    "year": 1993,
+    "isrc": "GBAAA9300027",
+    "deezerId": 3129579,
+    "br": false
+  },
+  {
+    "title": "Bed of Roses",
+    "artists": ["Bon Jovi"],
+    "year": 1993,
+    "isrc": "USPG19290093",
+    "deezerId": 74628110,
+    "br": false
+  },
+  {
+    "title": "Girls & Boys",
+    "artists": ["Blur"],
+    "year": 1994,
+    "isrc": "GBAYE9400144",
+    "deezerId": 3102138,
+    "br": false
+  },
+  {
+    "title": "Zombie",
+    "artists": ["The Cranberries"],
+    "year": 1994,
+    "isrc": "USIR29400443",
+    "deezerId": 952788,
+    "br": false
+  },
+  {
+    "title": "Self Esteem",
+    "artists": ["The Offspring"],
+    "year": 1994,
+    "isrc": "USEP40710208",
+    "deezerId": 378299601,
+    "br": false
+  },
+  {
+    "title": "Always",
+    "artists": ["Bon Jovi"],
+    "year": 1994,
+    "isrc": "USPR39412221",
+    "deezerId": 538586982,
+    "br": false
+  },
+  {
+    "title": "Kiss from a Rose",
+    "artists": ["Seal"],
+    "year": 1994,
+    "isrc": "USWB19900917",
+    "deezerId": 730428,
+    "br": false
+  },
+  {
+    "title": "The Rhythm of the Night",
+    "artists": ["Corona"],
+    "year": 1994,
+    "isrc": "ITA199800041",
+    "deezerId": 3413806581,
+    "br": false
+  },
+  {
+    "title": "Malandragem",
+    "artists": ["Cássia Eller"],
+    "year": 1994,
+    "isrc": "BRPGD9400246",
+    "deezerId": 390393061,
+    "br": true
+  },
+  {
+    "title": "Onde Você Mora?",
+    "artists": ["Cidade Negra"],
+    "year": 1994,
+    "isrc": "BRSME9900169",
+    "deezerId": 70311991,
+    "br": true
+  },
+  {
+    "title": "You Are Not Alone",
+    "artists": ["Michael Jackson"],
+    "year": 1995,
+    "isrc": "USSM19500002",
+    "deezerId": 8164649,
+    "br": false
+  },
+  {
+    "title": "You Oughta Know",
+    "artists": ["Alanis Morissette"],
+    "year": 1995,
+    "isrc": "DEA812200135",
+    "deezerId": 1702200077,
+    "br": false
+  },
+  {
+    "title": "Fantasy",
+    "artists": ["Mariah Carey"],
+    "year": 1995,
+    "isrc": "USSM19501031",
+    "deezerId": 1013792,
+    "br": false
+  },
+  {
+    "title": "Waterfalls",
+    "artists": ["TLC"],
+    "year": 1995,
+    "isrc": "USLF29400133",
+    "deezerId": 1043894,
+    "br": false
+  },
+  {
+    "title": "Vira-Vira",
+    "artists": ["Mamonas Assassinas"],
+    "year": 1995,
+    "isrc": "BREMI9500364",
+    "deezerId": 3105902,
+    "br": true
+  },
+  {
+    "title": "Robocop Gay",
+    "artists": ["Mamonas Assassinas"],
+    "year": 1995,
+    "isrc": "BREMI9500356",
+    "deezerId": 3105910,
+    "br": true
+  },
+  {
+    "title": "Wannabe",
+    "artists": ["Spice Girls"],
+    "year": 1996,
+    "isrc": "GBAAA9600008",
+    "deezerId": 3133738,
+    "br": false
+  },
+  {
+    "title": "Un-Break My Heart",
+    "artists": ["Toni Braxton"],
+    "year": 1996,
+    "isrc": "USLF29600015",
+    "deezerId": 67163992,
+    "br": false
+  },
+  {
+    "title": "1979",
+    "artists": ["The Smashing Pumpkins"],
+    "year": 1996,
+    "isrc": "USVI21200910",
+    "deezerId": 68976286,
+    "br": false
+  },
+  {
+    "title": "Macarena",
+    "artists": ["Los del Río"],
+    "year": 1996,
+    "isrc": "ES5109500537",
+    "deezerId": 990761,
+    "br": false
+  },
+  {
+    "title": "Lovefool",
+    "artists": ["The Cardigans"],
+    "year": 1996,
+    "isrc": "SEBKB9629380",
+    "deezerId": 910474,
+    "br": false
+  },
+  {
+    "title": "Garota Nacional",
+    "artists": ["Skank"],
+    "year": 1996,
+    "isrc": "BRSME9600283",
+    "deezerId": 14897306,
+    "br": true
+  },
+  {
+    "title": "É uma Partida de Futebol",
+    "artists": ["Skank"],
+    "year": 1996,
+    "isrc": "BRSME9600281",
+    "deezerId": 14897304,
+    "br": true
+  },
+  {
+    "title": "Pescador de Ilusões",
+    "artists": ["O Rappa"],
+    "year": 1996,
+    "isrc": "BRWMB9600150",
+    "deezerId": 67320517,
+    "br": true
+  },
+  {
+    "title": "Bitter Sweet Symphony",
+    "artists": ["The Verve"],
+    "year": 1997,
+    "isrc": "GBUM71601816",
+    "deezerId": 398570642,
+    "br": false
+  },
+  {
+    "title": "My Heart Will Go On",
+    "artists": ["Céline Dion"],
+    "year": 1997,
+    "isrc": "CAC229700120",
+    "deezerId": 14552280,
+    "br": false
+  },
+  {
+    "title": "Barbie Girl",
+    "artists": ["Aqua"],
+    "year": 1997,
+    "isrc": "DKBKA9700403",
+    "deezerId": 1115044,
+    "br": false
+  },
+  {
+    "title": "Good Riddance (Time of Your Life)",
+    "artists": ["Green Day"],
+    "year": 1997,
+    "isrc": "USRE19700545",
+    "deezerId": 778429,
+    "br": false
+  },
+  {
+    "title": "You're Still the One",
+    "artists": ["Shania Twain"],
+    "year": 1997,
+    "isrc": "USMR19887499",
+    "deezerId": 731732292,
+    "br": false
+  },
+  {
+    "title": "Tubthumping",
+    "artists": ["Chumbawamba"],
+    "year": 1997,
+    "isrc": "DEA349700542",
+    "deezerId": 3154917,
+    "br": false
+  },
+  {
+    "title": "Men in Black",
+    "artists": ["Will Smith"],
+    "year": 1997,
+    "isrc": "USSM19700762",
+    "deezerId": 626417,
+    "br": false
+  },
+  {
+    "title": "Around the World",
+    "artists": ["Daft Punk"],
+    "year": 1997,
+    "isrc": "GBDUW0600009",
+    "deezerId": 3129775,
+    "br": false
+  },
+  {
+    "title": "Spice Up Your Life",
+    "artists": ["Spice Girls"],
+    "year": 1997,
+    "isrc": "GBAAA9710052",
+    "deezerId": 3134155,
+    "br": false
+  },
+  {
+    "title": "Torn",
+    "artists": ["Natalie Imbruglia"],
+    "year": 1997,
+    "isrc": "GBARL9700412",
+    "deezerId": 992131,
+    "br": false
+  },
+  {
+    "title": "Cachimbo da Paz",
+    "artists": ["Gabriel O Pensador"],
+    "year": 1997,
+    "isrc": "BRSME9700235",
+    "deezerId": 15116695,
+    "br": true
+  },
+  {
+    "title": "...Baby One More Time",
+    "artists": ["Britney Spears"],
+    "year": 1998,
+    "isrc": "USJI19810404",
+    "deezerId": 540175,
+    "br": false
+  },
+  {
+    "title": "Iris",
+    "artists": ["The Goo Goo Dolls"],
+    "year": 1998,
+    "isrc": "USWB19800160",
+    "deezerId": 4290138,
+    "br": false
+  },
+  {
+    "title": "Pretty Fly (For a White Guy)",
+    "artists": ["The Offspring"],
+    "year": 1998,
+    "isrc": "USSM19804199",
+    "deezerId": 137233982,
+    "br": false
+  },
+  {
+    "title": "The Rockafeller Skank",
+    "artists": ["Fatboy Slim"],
+    "year": 1998,
+    "isrc": "GBBMQ9900048",
+    "deezerId": 3801318912,
+    "br": false
+  },
+  {
+    "title": "Fly Away",
+    "artists": ["Lenny Kravitz"],
+    "year": 1998,
+    "isrc": "USVI29800169",
+    "deezerId": 3156968,
+    "br": false
+  },
+  {
+    "title": "One Week",
+    "artists": ["Barenaked Ladies"],
+    "year": 1998,
+    "isrc": "USRE19800261",
+    "deezerId": 13805977,
+    "br": false
+  },
+  {
+    "title": "Ojos Así",
+    "artists": ["Shakira"],
+    "year": 1998,
+    "isrc": "COS019800780",
+    "deezerId": 15407611,
+    "br": false
+  },
+  {
+    "title": "Resposta",
+    "artists": ["Skank"],
+    "year": 1998,
+    "isrc": "BRSME9800265",
+    "deezerId": 13263710,
+    "br": true
+  },
+  {
+    "title": "Ela Disse Adeus",
+    "artists": ["Os Paralamas Do Sucesso"],
+    "year": 1998,
+    "isrc": "BREMI9800122",
+    "deezerId": 3316913,
+    "br": true
+  },
+  {
+    "title": "I Want It That Way",
+    "artists": ["Backstreet Boys"],
+    "year": 1999,
+    "isrc": "USJI19910614",
+    "deezerId": 13141170,
+    "br": false
+  },
+  {
+    "title": "Smooth",
+    "artists": ["Santana", "Rob Thomas"],
+    "year": 1999,
+    "isrc": "USAR19900033",
+    "deezerId": 82241402,
+    "br": false
+  },
+  {
+    "title": "All the Small Things",
+    "artists": ["blink-182"],
+    "year": 1999,
+    "isrc": "USMC19959123",
+    "deezerId": 127354207,
+    "br": false
+  },
+  {
+    "title": "Mambo No. 5 (A Little Bit of...)",
+    "artists": ["Lou Bega"],
+    "year": 1999,
+    "isrc": "DEH259900010",
+    "deezerId": 434625962,
+    "br": false
+  },
+  {
+    "title": "No Scrubs",
+    "artists": ["TLC"],
+    "year": 1999,
+    "isrc": "USLF29900479",
+    "deezerId": 1075781,
+    "br": false
+  },
+  {
+    "title": "If You Had My Love",
+    "artists": ["Jennifer Lopez"],
+    "year": 1999,
+    "isrc": "USSM19900608",
+    "deezerId": 15475926,
+    "br": false
+  },
+  {
+    "title": "All Star",
+    "artists": ["Smash Mouth"],
+    "year": 1999,
+    "isrc": "USIR19902220",
+    "deezerId": 917717,
+    "br": false
+  },
+  {
+    "title": "Sometimes",
+    "artists": ["Britney Spears"],
+    "year": 1999,
+    "isrc": "USJI19910452",
+    "deezerId": 540177,
+    "br": false
+  },
+  {
+    "title": "Mulher de Fases",
+    "artists": ["Raimundos"],
+    "year": 1999,
+    "isrc": "BRWMB9900522",
+    "deezerId": 761220,
+    "br": true
+  },
+  {
+    "title": "Minha Alma (A Paz Que Eu Não Quero)",
+    "artists": ["O Rappa"],
+    "year": 1999,
+    "isrc": "BRWMB9901156",
+    "deezerId": 3668419,
+    "br": true
+  },
+  {
+    "title": "Zóio de Lula",
+    "artists": ["Charlie Brown Jr."],
+    "year": 1999,
+    "isrc": "BREMI9900064",
+    "deezerId": 3144761,
+    "br": true
+  },
+  {
+    "title": "Garganta",
+    "artists": ["Ana Carolina"],
+    "year": 1999,
+    "isrc": "BRBMG9900050",
+    "deezerId": 13288446,
+    "br": true
+  },
+  {
+    "title": "Yellow",
+    "artists": ["Coldplay"],
+    "year": 2000,
+    "isrc": "GBAYE0000267",
+    "deezerId": 3128096,
+    "br": false
+  },
+  {
+    "title": "The Real Slim Shady",
+    "artists": ["Eminem"],
+    "year": 2000,
+    "isrc": "USIR10000448",
+    "deezerId": 1109737,
+    "br": false
+  },
+  {
+    "title": "One More Time",
+    "artists": ["Daft Punk"],
+    "year": 2000,
+    "isrc": "GBDUW0000053",
+    "deezerId": 3135553,
+    "br": false
+  },
+  {
+    "title": "Beautiful Day",
+    "artists": ["U2"],
+    "year": 2000,
+    "isrc": "GBAAN0000196",
+    "deezerId": 2162742,
+    "br": false
+  },
+  {
+    "title": "Rock DJ",
+    "artists": ["Robbie Williams"],
+    "year": 2000,
+    "isrc": "GBAYK0000160",
+    "deezerId": 3102419,
+    "br": false
+  },
+  {
+    "title": "Lady (Hear Me Tonight)",
+    "artists": ["Modjo"],
+    "year": 2000,
+    "isrc": "FR9W10100535",
+    "deezerId": 70179720,
+    "br": false
+  },
+  {
+    "title": "Amor I Love You",
+    "artists": ["Marisa Monte"],
+    "year": 2000,
+    "isrc": "BRONE0500116",
+    "deezerId": 2990565061,
+    "br": true
+  },
+  {
+    "title": "Relicário",
+    "artists": ["Cássia Eller"],
+    "year": 2000,
+    "isrc": "BRUM71201353",
+    "deezerId": 62774240,
+    "br": true
+  },
+  {
+    "title": "All Star",
+    "artists": ["Nando Reis"],
+    "year": 2000,
+    "isrc": "BRWMB0001249",
+    "deezerId": 4113352,
+    "br": true
+  },
+  {
+    "title": "Chop Suey!",
+    "artists": ["System Of A Down"],
+    "year": 2001,
+    "isrc": "USSM10107256",
+    "deezerId": 859699,
+    "br": false
+  },
+  {
+    "title": "Whenever, Wherever",
+    "artists": ["Shakira"],
+    "year": 2001,
+    "isrc": "NLB630100324",
+    "deezerId": 15211178,
+    "br": false
+  },
+  {
+    "title": "Survivor",
+    "artists": ["Destiny's Child"],
+    "year": 2001,
+    "isrc": "USSM10019326",
+    "deezerId": 5817089,
+    "br": false
+  },
+  {
+    "title": "Clint Eastwood",
+    "artists": ["Gorillaz"],
+    "year": 2001,
+    "isrc": "GBAYE0001408",
+    "deezerId": 3100444,
+    "br": false
+  },
+  {
+    "title": "Drops of Jupiter (Tell Me)",
+    "artists": ["Train"],
+    "year": 2001,
+    "isrc": "USSM10019751",
+    "deezerId": 68908956,
+    "br": false
+  },
+  {
+    "title": "Trouble",
+    "artists": ["Coldplay"],
+    "year": 2001,
+    "isrc": "GBAYE0000560",
+    "deezerId": 3128097,
+    "br": false
+  },
+  {
+    "title": "Love Don't Cost a Thing",
+    "artists": ["Jennifer Lopez"],
+    "year": 2001,
+    "isrc": "USSM10017308",
+    "deezerId": 618317,
+    "br": false
+  },
+  {
+    "title": "Lugar ao Sol",
+    "artists": ["Charlie Brown Jr."],
+    "year": 2001,
+    "isrc": "BREMI0100321",
+    "deezerId": 3144765,
+    "br": true
+  },
+  {
+    "title": "Todo Carnaval Tem Seu Fim",
+    "artists": ["Los Hermanos"],
+    "year": 2001,
+    "isrc": "BRAMD0100577",
+    "deezerId": 6270442,
+    "br": true
+  },
+  {
+    "title": "Complicated",
+    "artists": ["Avril Lavigne"],
+    "year": 2002,
+    "isrc": "USAR10200223",
+    "deezerId": 15587465,
+    "br": false
+  },
+  {
+    "title": "Sk8er Boi",
+    "artists": ["Avril Lavigne"],
+    "year": 2002,
+    "isrc": "USAR10200229",
+    "deezerId": 15587466,
+    "br": false
+  },
+  {
+    "title": "Lose Yourself",
+    "artists": ["Eminem"],
+    "year": 2002,
+    "isrc": "USIR10211559",
+    "deezerId": 1109731,
+    "br": false
+  },
+  {
+    "title": "Hot In Herre",
+    "artists": ["Nelly"],
+    "year": 2002,
+    "isrc": "USUR10200371",
+    "deezerId": 2447436,
+    "br": false
+  },
+  {
+    "title": "A Thousand Miles",
+    "artists": ["Vanessa Carlton"],
+    "year": 2002,
+    "isrc": "USIR10210955",
+    "deezerId": 983832,
+    "br": false
+  },
+  {
+    "title": "Beautiful",
+    "artists": ["Christina Aguilera"],
+    "year": 2002,
+    "isrc": "USRC10201067",
+    "deezerId": 967334,
+    "br": false
+  },
+  {
+    "title": "Já Sei Namorar",
+    "artists": ["Tribalistas"],
+    "year": 2002,
+    "isrc": "BRONE0400012",
+    "deezerId": 959082482,
+    "br": true
+  },
+  {
+    "title": "Velha Infância",
+    "artists": ["Tribalistas"],
+    "year": 2002,
+    "isrc": "BRONE0400003",
+    "deezerId": 959082392,
+    "br": true
+  },
+  {
+    "title": "Deixa a Vida Me Levar",
+    "artists": ["Zeca Pagodinho"],
+    "year": 2002,
+    "isrc": "BRMCA0200035",
+    "deezerId": 112660002,
+    "br": true
+  },
+  {
+    "title": "She Will Be Loved",
+    "artists": ["Maroon 5"],
+    "year": 2002,
+    "isrc": "USJAY0300082",
+    "deezerId": 1165303,
+    "br": false
+  },
+  {
+    "title": "Seven Nation Army",
+    "artists": ["The White Stripes"],
+    "year": 2003,
+    "isrc": "USVT10300001",
+    "deezerId": 1153182282,
+    "br": false
+  },
+  {
+    "title": "Bring Me to Life",
+    "artists": ["Evanescence"],
+    "year": 2003,
+    "isrc": "USWU30200093",
+    "deezerId": 80274512,
+    "br": false
+  },
+  {
+    "title": "Hey Ya!",
+    "artists": ["Outkast"],
+    "year": 2003,
+    "isrc": "USAR10300924",
+    "deezerId": 628266,
+    "br": false
+  },
+  {
+    "title": "Crazy In Love",
+    "artists": ["Beyoncé", "JAY-Z"],
+    "year": 2003,
+    "isrc": "USSM10305425",
+    "deezerId": 609244,
+    "br": false
+  },
+  {
+    "title": "Toxic",
+    "artists": ["Britney Spears"],
+    "year": 2003,
+    "isrc": "USJI10301005",
+    "deezerId": 15391618,
+    "br": false
+  },
+  {
+    "title": "The Reason",
+    "artists": ["Hoobastank"],
+    "year": 2003,
+    "isrc": "USIR20300704",
+    "deezerId": 634445372,
+    "br": false
+  },
+  {
+    "title": "Máscara",
+    "artists": ["Pitty"],
+    "year": 2003,
+    "isrc": "BRDEP0300003",
+    "deezerId": 95987828,
+    "br": true
+  },
+  {
+    "title": "Vou Deixar",
+    "artists": ["Skank"],
+    "year": 2003,
+    "isrc": "BRSME0300185",
+    "deezerId": 14896725,
+    "br": true
+  },
+  {
+    "title": "Somebody Told Me",
+    "artists": ["The Killers"],
+    "year": 2004,
+    "isrc": "GBFFP0300054",
+    "deezerId": 2947342,
+    "br": false
+  },
+  {
+    "title": "Take Me Out",
+    "artists": ["Franz Ferdinand"],
+    "year": 2004,
+    "isrc": "GBCEL0300192",
+    "deezerId": 4315684,
+    "br": false
+  },
+  {
+    "title": "American Idiot",
+    "artists": ["Green Day"],
+    "year": 2004,
+    "isrc": "USRE10400888",
+    "deezerId": 773367,
+    "br": false
+  },
+  {
+    "title": "Since U Been Gone",
+    "artists": ["Kelly Clarkson"],
+    "year": 2004,
+    "isrc": "GBCTA0400231",
+    "deezerId": 62118993,
+    "br": false
+  },
+  {
+    "title": "Somewhere Only We Know",
+    "artists": ["Keane"],
+    "year": 2004,
+    "isrc": "GBAAN0300664",
+    "deezerId": 2317363,
+    "br": false
+  },
+  {
+    "title": "Run",
+    "artists": ["Snow Patrol"],
+    "year": 2004,
+    "isrc": "GBAKW0300958",
+    "deezerId": 1138321,
+    "br": false
+  },
+  {
+    "title": "Ai, Ai, Ai...",
+    "artists": ["Vanessa da Mata"],
+    "year": 2004,
+    "isrc": "BRSME0400209",
+    "deezerId": 13242329,
+    "br": true
+  },
+  {
+    "title": "Fix You",
+    "artists": ["Coldplay"],
+    "year": 2005,
+    "isrc": "GBAYE0500605",
+    "deezerId": 3106505,
+    "br": false
+  },
+  {
+    "title": "Bad Day",
+    "artists": ["Daniel Powter"],
+    "year": 2005,
+    "isrc": "USWB10401971",
+    "deezerId": 6685848,
+    "br": false
+  },
+  {
+    "title": "Better Together",
+    "artists": ["Jack Johnson"],
+    "year": 2005,
+    "isrc": "USMC60400027",
+    "deezerId": 2320086,
+    "br": false
+  },
+  {
+    "title": "How to Save a Life",
+    "artists": ["The Fray"],
+    "year": 2005,
+    "isrc": "USSM10601178",
+    "deezerId": 7674865,
+    "br": false
+  },
+  {
+    "title": "Gold Digger",
+    "artists": ["Kanye West"],
+    "year": 2005,
+    "isrc": "USUM70500143",
+    "deezerId": 1184309,
+    "br": false
+  },
+  {
+    "title": "Hollaback Girl",
+    "artists": ["Gwen Stefani"],
+    "year": 2005,
+    "isrc": "USIR10400847",
+    "deezerId": 983450,
+    "br": false
+  },
+  {
+    "title": "Um Minuto para o Fim do Mundo",
+    "artists": ["CPM 22"],
+    "year": 2005,
+    "isrc": "BRMSU0500001",
+    "deezerId": 4704278,
+    "br": true
+  },
+  {
+    "title": "Hips Don't Lie",
+    "artists": ["Shakira"],
+    "year": 2006,
+    "isrc": "USQX92505612",
+    "deezerId": 3663852612,
+    "br": false
+  },
+  {
+    "title": "Rehab",
+    "artists": ["Amy Winehouse"],
+    "year": 2006,
+    "isrc": "GBUM70603730",
+    "deezerId": 2176852,
+    "br": false
+  },
+  {
+    "title": "Crazy",
+    "artists": ["Gnarls Barkley"],
+    "year": 2006,
+    "isrc": "GBAHT0600202",
+    "deezerId": 2794160,
+    "br": false
+  },
+  {
+    "title": "Chasing Cars",
+    "artists": ["Snow Patrol"],
+    "year": 2006,
+    "isrc": "GBUM70600345",
+    "deezerId": 1184425,
+    "br": false
+  },
+  {
+    "title": "Supermassive Black Hole",
+    "artists": ["Muse"],
+    "year": 2006,
+    "isrc": "GBAHT0500593",
+    "deezerId": 3590186,
+    "br": false
+  },
+  {
+    "title": "Smile",
+    "artists": ["Lily Allen"],
+    "year": 2006,
+    "isrc": "GBAYE0600734",
+    "deezerId": 3165194,
+    "br": false
+  },
+  {
+    "title": "Ain't No Other Man",
+    "artists": ["Christina Aguilera"],
+    "year": 2006,
+    "isrc": "USRC10600321",
+    "deezerId": 62417658,
+    "br": false
+  },
+  {
+    "title": "Promiscuous",
+    "artists": ["Nelly Furtado", "Timbaland"],
+    "year": 2006,
+    "isrc": "USUM70603473",
+    "deezerId": 2430338,
+    "br": false
+  },
+  {
+    "title": "Natasha",
+    "artists": ["Capital Inicial"],
+    "year": 2006,
+    "isrc": "BCC1P2200014",
+    "deezerId": 1803389927,
+    "br": true
+  },
+  {
+    "title": "Umbrella",
+    "artists": ["Rihanna"],
+    "year": 2007,
+    "isrc": "USUM70736771",
+    "deezerId": 925106,
+    "br": false
+  },
+  {
+    "title": "No One",
+    "artists": ["Alicia Keys"],
+    "year": 2007,
+    "isrc": "USJAY0700190",
+    "deezerId": 2466262,
+    "br": false
+  },
+  {
+    "title": "Big Girls Don't Cry",
+    "artists": ["Fergie"],
+    "year": 2007,
+    "isrc": "USUM70609115",
+    "deezerId": 882296,
+    "br": false
+  },
+  {
+    "title": "Girlfriend",
+    "artists": ["Avril Lavigne"],
+    "year": 2007,
+    "isrc": "USRC10700021",
+    "deezerId": 5495885,
+    "br": false
+  },
+  {
+    "title": "Stronger",
+    "artists": ["Kanye West"],
+    "year": 2007,
+    "isrc": "USUM70741299",
+    "deezerId": 1178682,
+    "br": false
+  },
+  {
+    "title": "Apologize",
+    "artists": ["Timbaland", "OneRepublic"],
+    "year": 2007,
+    "isrc": "USUM70722793",
+    "deezerId": 916841,
+    "br": false
+  },
+  {
+    "title": "Boa Sorte / Good Luck",
+    "artists": ["Vanessa da Mata", "Ben Harper"],
+    "year": 2007,
+    "isrc": "BRSME1701579",
+    "deezerId": 408727932,
+    "br": true
+  },
+  {
+    "title": "Pólo",
+    "artists": ["Fresno"],
+    "year": 2007,
+    "isrc": "BRMSU0800057",
+    "deezerId": 7282902,
+    "br": true
+  },
+  {
+    "title": "Viva la Vida",
+    "artists": ["Coldplay"],
+    "year": 2008,
+    "isrc": "GBAYE0800265",
+    "deezerId": 3157972,
+    "br": false
+  },
+  {
+    "title": "Poker Face",
+    "artists": ["Lady Gaga"],
+    "year": 2008,
+    "isrc": "USUM70824409",
+    "deezerId": 2603558,
+    "br": false
+  },
+  {
+    "title": "I Kissed a Girl",
+    "artists": ["Katy Perry"],
+    "year": 2008,
+    "isrc": "USCA20801738",
+    "deezerId": 441805332,
+    "br": false
+  },
+  {
+    "title": "Hot n Cold",
+    "artists": ["Katy Perry"],
+    "year": 2008,
+    "isrc": "USCA20802544",
+    "deezerId": 3160142,
+    "br": false
+  },
+  {
+    "title": "Use Somebody",
+    "artists": ["Kings of Leon"],
+    "year": 2008,
+    "isrc": "USRC10800301",
+    "deezerId": 2924841,
+    "br": false
+  },
+  {
+    "title": "I'm Yours",
+    "artists": ["Jason Mraz"],
+    "year": 2008,
+    "isrc": "USEE10800667",
+    "deezerId": 2686140,
+    "br": false
+  },
+  {
+    "title": "Love Story",
+    "artists": ["Taylor Swift"],
+    "year": 2008,
+    "isrc": "USCJY0803447",
+    "deezerId": 2917264,
+    "br": false
+  },
+  {
+    "title": "You Belong with Me",
+    "artists": ["Taylor Swift"],
+    "year": 2008,
+    "isrc": "USCJY0803328",
+    "deezerId": 4634582,
+    "br": false
+  },
+  {
+    "title": "Borboletas",
+    "artists": ["Victor & Leo"],
+    "year": 2008,
+    "isrc": "BRSME0800586",
+    "deezerId": 13245343,
+    "br": true
+  },
+  {
+    "title": "I Gotta Feeling",
+    "artists": ["Black Eyed Peas"],
+    "year": 2009,
+    "isrc": "USUM70965169",
+    "deezerId": 4619466,
+    "br": false
+  },
+  {
+    "title": "Hey, Soul Sister",
+    "artists": ["Train"],
+    "year": 2009,
+    "isrc": "USSM10904113",
+    "deezerId": 563683852,
+    "br": false
+  },
+  {
+    "title": "Uprising",
+    "artists": ["Muse"],
+    "year": 2009,
+    "isrc": "GBAHT0900320",
+    "deezerId": 4195713,
+    "br": false
+  },
+  {
+    "title": "TiK ToK",
+    "artists": ["Kesha"],
+    "year": 2009,
+    "isrc": "USRC10900433",
+    "deezerId": 4764905,
+    "br": false
+  },
+  {
+    "title": "Fireflies",
+    "artists": ["Owl City"],
+    "year": 2009,
+    "isrc": "USUM70972068",
+    "deezerId": 4188437,
+    "br": false
+  },
+  {
+    "title": "Só os Loucos Sabem",
+    "artists": ["Charlie Brown Jr."],
+    "year": 2009,
+    "isrc": "BRSME0900724",
+    "deezerId": 15738365,
+    "br": true
+  },
+  {
+    "title": "Meteoro",
+    "artists": ["Luan Santana"],
+    "year": 2009,
+    "isrc": "BRRGE0900243",
+    "deezerId": 11098887,
+    "br": true
+  },
+  {
+    "title": "Just the Way You Are",
+    "artists": ["Bruno Mars"],
+    "year": 2010,
+    "isrc": "USAT21001269",
+    "deezerId": 8011850,
+    "br": false
+  },
+  {
+    "title": "Pumped Up Kicks",
+    "artists": ["Foster The People"],
+    "year": 2010,
+    "isrc": "USSM11002931",
+    "deezerId": 15546830,
+    "br": false
+  },
+  {
+    "title": "Somebody That I Used to Know",
+    "artists": ["Gotye", "Kimbra"],
+    "year": 2011,
+    "isrc": "AUZS21100040",
+    "deezerId": 14993990,
+    "br": false
+  },
+  {
+    "title": "Call Me Maybe",
+    "artists": ["Carly Rae Jepsen"],
+    "year": 2011,
+    "isrc": "CAB391100615",
+    "deezerId": 17826508,
+    "br": false
+  },
+  {
+    "title": "Moves Like Jagger",
+    "artists": ["Maroon 5", "Christina Aguilera"],
+    "year": 2011,
+    "isrc": "USUM71109132",
+    "deezerId": 12724819,
+    "br": false
+  },
+  {
+    "title": "Born This Way",
+    "artists": ["Lady Gaga"],
+    "year": 2011,
+    "isrc": "USUM71100638",
+    "deezerId": 11747931,
+    "br": false
+  },
+  {
+    "title": "Little Talks",
+    "artists": ["Of Monsters and Men"],
+    "year": 2011,
+    "isrc": "USUM71119106",
+    "deezerId": 17615568,
+    "br": false
+  },
+  {
+    "title": "Balada",
+    "artists": ["Gusttavo Lima"],
+    "year": 2011,
+    "isrc": "BRRGE1200362",
+    "deezerId": 62050722,
+    "br": true
+  },
+  {
+    "title": "Gangnam Style",
+    "artists": ["PSY"],
+    "year": 2012,
+    "isrc": "USUM71210283",
+    "deezerId": 60726278,
+    "br": false
+  },
+  {
+    "title": "Radioactive",
+    "artists": ["Imagine Dragons"],
+    "year": 2012,
+    "isrc": "USUM71201074",
+    "deezerId": 63510358,
+    "br": false
+  },
+  {
+    "title": "Thrift Shop",
+    "artists": ["Macklemore & Ryan Lewis"],
+    "year": 2012,
+    "isrc": "GMM881200003",
+    "deezerId": 61424045,
+    "br": false
+  },
+  {
+    "title": "We Are Never Ever Getting Back Together",
+    "artists": ["Taylor Swift"],
+    "year": 2012,
+    "isrc": "USCJY1231018",
+    "deezerId": 529117841,
+    "br": false
+  },
+  {
+    "title": "Buquê de Flores",
+    "artists": ["Thiaguinho"],
+    "year": 2012,
+    "isrc": "BRIAW1200059",
+    "deezerId": 75877682,
+    "br": true
+  },
+  {
+    "title": "Sweater Weather",
+    "artists": ["The Neighbourhood"],
+    "year": 2012,
+    "isrc": "USSM11300080",
+    "deezerId": 66506871,
+    "br": false
+  },
+  {
+    "title": "Don't You Worry Child",
+    "artists": ["Swedish House Mafia", "John Martin"],
+    "year": 2012,
+    "isrc": "GBAAA1200643",
+    "deezerId": 60842360,
+    "br": false
+  },
+  {
+    "title": "Get Lucky",
+    "artists": ["Daft Punk", "Pharrell Williams"],
+    "year": 2013,
+    "isrc": "USQX91300809",
+    "deezerId": 66609426,
+    "br": false
+  },
+  {
+    "title": "Wake Me Up",
+    "artists": ["Avicii"],
+    "year": 2013,
+    "isrc": "SEUM71301326",
+    "deezerId": 70266756,
+    "br": false
+  },
+  {
+    "title": "Pompeii",
+    "artists": ["Bastille"],
+    "year": 2013,
+    "isrc": "GBAAA1200795",
+    "deezerId": 63034985,
+    "br": false
+  },
+  {
+    "title": "Take Me to Church",
+    "artists": ["Hozier"],
+    "year": 2013,
+    "isrc": "IEACJ1300031",
+    "deezerId": 84791735,
+    "br": false
+  },
+  {
+    "title": "Hey Brother",
+    "artists": ["Avicii"],
+    "year": 2013,
+    "isrc": "CH3131340084",
+    "deezerId": 70266758,
+    "br": false
+  },
+  {
+    "title": "Show das Poderosas",
+    "artists": ["Anitta"],
+    "year": 2013,
+    "isrc": "BRWMB1300068",
+    "deezerId": 68530321,
+    "br": true
+  },
+  {
+    "title": "Riptide",
+    "artists": ["Vance Joy"],
+    "year": 2013,
+    "isrc": "AULI01385760",
+    "deezerId": 83841464,
+    "br": false
+  },
+  {
+    "title": "Uptown Funk",
+    "artists": ["Mark Ronson", "Bruno Mars"],
+    "year": 2014,
+    "isrc": "GBARL1401524",
+    "deezerId": 92734438,
+    "br": false
+  },
+  {
+    "title": "Blank Space",
+    "artists": ["Taylor Swift"],
+    "year": 2014,
+    "isrc": "USCJY1431309",
+    "deezerId": 89077547,
+    "br": false
+  },
+  {
+    "title": "Thinking Out Loud",
+    "artists": ["Ed Sheeran"],
+    "year": 2014,
+    "isrc": "GBAHS1400099",
+    "deezerId": 79875064,
+    "br": false
+  },
+  {
+    "title": "All About That Bass",
+    "artists": ["Meghan Trainor"],
+    "year": 2014,
+    "isrc": "USSM11401317",
+    "deezerId": 113420702,
+    "br": false
+  },
+  {
+    "title": "Chandelier",
+    "artists": ["Sia"],
+    "year": 2014,
+    "isrc": "USRC11400498",
+    "deezerId": 79587580,
+    "br": false
+  },
+  {
+    "title": "Fancy",
+    "artists": ["Iggy Azalea"],
+    "year": 2014,
+    "isrc": "GBUM71400597",
+    "deezerId": 77349246,
+    "br": false
+  },
+  {
+    "title": "Logo Eu",
+    "artists": ["Jorge & Mateus"],
+    "year": 2014,
+    "isrc": "BRUXD1300156",
+    "deezerId": 71246606,
+    "br": true
+  },
+  {
+    "title": "Problem",
+    "artists": ["Ariana Grande", "Iggy Azalea"],
+    "year": 2014,
+    "isrc": "USUM71405403",
+    "deezerId": 83844534,
+    "br": false
+  },
+  {
+    "title": "Rude",
+    "artists": ["Magic!"],
+    "year": 2014,
+    "isrc": "CAV161300016",
+    "deezerId": 79845486,
+    "br": false
+  },
+  {
+    "title": "Hoje",
+    "artists": ["Ludmilla"],
+    "year": 2014,
+    "isrc": "BRWMB1400159",
+    "deezerId": 83361154,
+    "br": true
+  },
+  {
+    "title": "Can't Feel My Face",
+    "artists": ["The Weeknd"],
+    "year": 2015,
+    "isrc": "USUG11500741",
+    "deezerId": 106506516,
+    "br": false
+  },
+  {
+    "title": "Love Yourself",
+    "artists": ["Justin Bieber"],
+    "year": 2015,
+    "isrc": "USUM71516761",
+    "deezerId": 112662368,
+    "br": false
+  },
+  {
+    "title": "Cheerleader",
+    "artists": ["OMI"],
+    "year": 2015,
+    "isrc": "USUS11202571",
+    "deezerId": 76500485,
+    "br": false
+  },
+  {
+    "title": "See You Again",
+    "artists": ["Wiz Khalifa", "Charlie Puth"],
+    "year": 2015,
+    "isrc": "USAT21500313",
+    "deezerId": 95813354,
+    "br": false
+  },
+  {
+    "title": "Amei Te Ver",
+    "artists": ["Tiago Iorc"],
+    "year": 2015,
+    "isrc": "BRRGE1501670",
+    "deezerId": 103216900,
+    "br": true
+  },
+  {
+    "title": "Faded",
+    "artists": ["Alan Walker"],
+    "year": 2015,
+    "isrc": "NOG841549010",
+    "deezerId": 140295501,
+    "br": false
+  },
+  {
+    "title": "Are You With Me",
+    "artists": ["Lost Frequencies"],
+    "year": 2015,
+    "isrc": "NLF711403495",
+    "deezerId": 81300218,
+    "br": false
+  },
+  {
+    "title": "Closer",
+    "artists": ["The Chainsmokers", "Halsey"],
+    "year": 2016,
+    "isrc": "USQX91601347",
+    "deezerId": 129310248,
+    "br": false
+  },
+  {
+    "title": "Starboy",
+    "artists": ["The Weeknd"],
+    "year": 2016,
+    "isrc": "USUG11600976",
+    "deezerId": 136889400,
+    "br": false
+  },
+  {
+    "title": "Cheap Thrills",
+    "artists": ["Sia"],
+    "year": 2016,
+    "isrc": "USRC11502935",
+    "deezerId": 118195184,
+    "br": false
+  },
+  {
+    "title": "Treat You Better",
+    "artists": ["Shawn Mendes"],
+    "year": 2016,
+    "isrc": "USUM71604711",
+    "deezerId": 351594981,
+    "br": false
+  },
+  {
+    "title": "Infiel",
+    "artists": ["Marília Mendonça"],
+    "year": 2016,
+    "isrc": "BRWNV1500066",
+    "deezerId": 119849606,
+    "br": true
+  },
+  {
+    "title": "Work",
+    "artists": ["Rihanna", "Drake"],
+    "year": 2016,
+    "isrc": "QM5FT1600116",
+    "deezerId": 118190298,
+    "br": false
+  },
+  {
+    "title": "This Girl",
+    "artists": ["Kungs", "Cookin' On 3 Burners"],
+    "year": 2016,
+    "isrc": "FR9W11601798",
+    "deezerId": 135373112,
+    "br": false
+  },
+  {
+    "title": "Muleque de Vila",
+    "artists": ["Projota"],
+    "year": 2016,
+    "isrc": "BRUM71704325",
+    "deezerId": 386150731,
+    "br": true
+  },
+  {
+    "title": "ocean eyes",
+    "artists": ["Billie Eilish"],
+    "year": 2016,
+    "isrc": "US23A1500056",
+    "deezerId": 136337268,
+    "br": false
+  },
+  {
+    "title": "Perfect",
+    "artists": ["Ed Sheeran"],
+    "year": 2017,
+    "isrc": "GBAHS1700024",
+    "deezerId": 142986206,
+    "br": false
+  },
+  {
+    "title": "Believer",
+    "artists": ["Imagine Dragons"],
+    "year": 2017,
+    "isrc": "USUM71700626",
+    "deezerId": 528330441,
+    "br": false
+  },
+  {
+    "title": "Feel It Still",
+    "artists": ["Portugal. The Man"],
+    "year": 2017,
+    "isrc": "USAT21700437",
+    "deezerId": 371593461,
+    "br": false
+  },
+  {
+    "title": "Paradinha",
+    "artists": ["Anitta"],
+    "year": 2017,
+    "isrc": "BRWMB1700282",
+    "deezerId": 368585391,
+    "br": true
+  },
+  {
+    "title": "K.O.",
+    "artists": ["Pabllo Vittar"],
+    "year": 2017,
+    "isrc": "BXOP81600002",
+    "deezerId": 396246622,
+    "br": true
+  },
+  {
+    "title": "Pesadão",
+    "artists": ["IZA"],
+    "year": 2017,
+    "isrc": "BRWMB1700568",
+    "deezerId": 407202172,
+    "br": true
+  },
+  {
+    "title": "Meu Abrigo",
+    "artists": ["Melim"],
+    "year": 2017,
+    "isrc": "BRUM71706702",
+    "deezerId": 438865442,
+    "br": true
+  },
+  {
+    "title": "Something Just Like This",
+    "artists": ["The Chainsmokers", "Coldplay"],
+    "year": 2017,
+    "isrc": "USQX91700278",
+    "deezerId": 142706538,
+    "br": false
+  },
+  {
+    "title": "Attention",
+    "artists": ["Charlie Puth"],
+    "year": 2017,
+    "isrc": "USAT21700928",
+    "deezerId": 349385251,
+    "br": false
+  },
+  {
+    "title": "Bum Bum Tam Tam",
+    "artists": ["MC Fioti"],
+    "year": 2017,
+    "isrc": "GBUM71706425",
+    "deezerId": 438850292,
+    "br": true
+  },
+  {
+    "title": "thank u, next",
+    "artists": ["Ariana Grande"],
+    "year": 2018,
+    "isrc": "USUM71819361",
+    "deezerId": 629899852,
+    "br": false
+  },
+  {
+    "title": "Shallow",
+    "artists": ["Lady Gaga", "Bradley Cooper"],
+    "year": 2018,
+    "isrc": "USUM71813192",
+    "deezerId": 561856742,
+    "br": false
+  },
+  {
+    "title": "Happier",
+    "artists": ["Marshmello", "Bastille"],
+    "year": 2018,
+    "isrc": "USUG11801651",
+    "deezerId": 2441318935,
+    "br": false
+  },
+  {
+    "title": "Better Now",
+    "artists": ["Post Malone"],
+    "year": 2018,
+    "isrc": "USUM71805170",
+    "deezerId": 491446972,
+    "br": false
+  },
+  {
+    "title": "One Kiss",
+    "artists": ["Dua Lipa", "Calvin Harris"],
+    "year": 2018,
+    "isrc": "GBARL1800368",
+    "deezerId": 482990352,
+    "br": false
+  },
+  {
+    "title": "Medicina",
+    "artists": ["Anitta"],
+    "year": 2018,
+    "isrc": "BRWMB1800552",
+    "deezerId": 526885832,
+    "br": true
+  },
+  {
+    "title": "Bebi Liguei",
+    "artists": ["Marília Mendonça"],
+    "year": 2018,
+    "isrc": "BRWNV1800353",
+    "deezerId": 2343735595,
+    "br": true
+  },
+  {
+    "title": "bad guy",
+    "artists": ["Billie Eilish"],
+    "year": 2019,
+    "isrc": "USUM71900764",
+    "deezerId": 655095912,
+    "br": false
+  },
+  {
+    "title": "Dance Monkey",
+    "artists": ["Tones And I"],
+    "year": 2019,
+    "isrc": "QZES71982312",
+    "deezerId": 739870792,
+    "br": false
+  },
+  {
+    "title": "Don't Start Now",
+    "artists": ["Dua Lipa"],
+    "year": 2019,
+    "isrc": "GBAHT1901121",
+    "deezerId": 1124841652,
+    "br": false
+  },
+  {
+    "title": "Watermelon Sugar",
+    "artists": ["Harry Styles"],
+    "year": 2019,
+    "isrc": "USSM11912587",
+    "deezerId": 830336922,
+    "br": false
+  },
+  {
+    "title": "Garupa",
+    "artists": ["Luísa Sonza"],
+    "year": 2019,
+    "isrc": "BRUM71901152",
+    "deezerId": 693449162,
+    "br": true
+  },
+  {
+    "title": "Memories",
+    "artists": ["Maroon 5"],
+    "year": 2019,
+    "isrc": "USUM71913350",
+    "deezerId": 1400843202,
+    "br": false
+  },
+  {
+    "title": "Juice",
+    "artists": ["Lizzo"],
+    "year": 2019,
+    "isrc": "USAT21813044",
+    "deezerId": 666286232,
+    "br": false
+  },
+  {
+    "title": "Jenifer",
+    "artists": ["Gabriel Diniz"],
+    "year": 2019,
+    "isrc": "BRUM71803481",
+    "deezerId": 555639262,
+    "br": true
+  },
+  {
+    "title": "Ai, Amor",
+    "artists": ["Anavitória"],
+    "year": 2019,
+    "isrc": "BRUM71802895",
+    "deezerId": 534404782,
+    "br": true
+  },
+  {
+    "title": "Levitating",
+    "artists": ["Dua Lipa"],
+    "year": 2020,
+    "isrc": "GBAHT1901299",
+    "deezerId": 1124841682,
+    "br": false
+  },
+  {
+    "title": "Heat Waves",
+    "artists": ["Glass Animals"],
+    "year": 2020,
+    "isrc": "GBUM72000433",
+    "deezerId": 1040154662,
+    "br": false
+  },
+  {
+    "title": "Physical",
+    "artists": ["Dua Lipa"],
+    "year": 2020,
+    "isrc": "GBAHT1901298",
+    "deezerId": 862051992,
+    "br": false
+  },
+  {
+    "title": "Mood",
+    "artists": ["24kGoldn", "iann dior"],
+    "year": 2020,
+    "isrc": "USQX92003025",
+    "deezerId": 1283264632,
+    "br": false
+  },
+  {
+    "title": "Dynamite",
+    "artists": ["BTS"],
+    "year": 2020,
+    "isrc": "QM7282022872",
+    "deezerId": 1564465082,
+    "br": false
+  },
+  {
+    "title": "Chuva de Arroz",
+    "artists": ["Luan Santana"],
+    "year": 2020,
+    "isrc": "BRRGE1500702",
+    "deezerId": 99339554,
+    "br": true
+  },
+  {
+    "title": "good 4 u",
+    "artists": ["Olivia Rodrigo"],
+    "year": 2021,
+    "isrc": "USUG12101245",
+    "deezerId": 1378342622,
+    "br": false
+  },
+  {
+    "title": "MONTERO (Call Me By Your Name)",
+    "artists": ["Lil Nas X"],
+    "year": 2021,
+    "isrc": "USSM12100531",
+    "deezerId": 1283264142,
+    "br": false
+  },
+  {
+    "title": "Easy On Me",
+    "artists": ["Adele"],
+    "year": 2021,
+    "isrc": "USSM12105970",
+    "deezerId": 1522223672,
+    "br": false
+  },
+  {
+    "title": "Envolver",
+    "artists": ["Anitta"],
+    "year": 2021,
+    "isrc": "USWL12100576",
+    "deezerId": 1539306892,
+    "br": true
+  },
+  {
+    "title": "Esqueça-me Se For Capaz",
+    "artists": ["Marília Mendonça", "Maiara & Maraisa"],
+    "year": 2021,
+    "isrc": "BRWNV2100044",
+    "deezerId": 4303912022,
+    "br": true
+  },
+  {
+    "title": "Peaches",
+    "artists": ["Justin Bieber"],
+    "year": 2021,
+    "isrc": "USUM72102636",
+    "deezerId": 1280165222,
+    "br": false
+  },
+  {
+    "title": "INDUSTRY BABY",
+    "artists": ["Lil Nas X", "Jack Harlow"],
+    "year": 2021,
+    "isrc": "USSM12104539",
+    "deezerId": 1439691952,
+    "br": false
+  },
+  {
+    "title": "Kiss Me More",
+    "artists": ["Doja Cat", "SZA"],
+    "year": 2021,
+    "isrc": "USRC12100543",
+    "deezerId": 1410738172,
+    "br": false
+  },
+  {
+    "title": "Butter",
+    "artists": ["BTS"],
+    "year": 2021,
+    "isrc": "QM6MZ2156864",
+    "deezerId": 1576169062,
+    "br": false
+  },
+  {
+    "title": "Malvadão 3",
+    "artists": ["Xamã"],
+    "year": 2021,
+    "isrc": "QZNJZ2122225",
+    "deezerId": 1558829232,
+    "br": true
+  },
+  {
+    "title": "Liberdade Provisória",
+    "artists": ["Henrique & Juliano"],
+    "year": 2021,
+    "isrc": "BRWNV1900330",
+    "deezerId": 3879158571,
+    "br": true
+  },
+  {
+    "title": "Anti-Hero",
+    "artists": ["Taylor Swift"],
+    "year": 2022,
+    "isrc": "USUG12205736",
+    "deezerId": 1976903157,
+    "br": false
+  },
+  {
+    "title": "DESPECHÁ",
+    "artists": ["ROSALÍA"],
+    "year": 2022,
+    "isrc": "USSM12207207",
+    "deezerId": 1841999507,
+    "br": false
+  },
+  {
+    "title": "BREAK MY SOUL",
+    "artists": ["Beyoncé"],
+    "year": 2022,
+    "isrc": "USSM12206234",
+    "deezerId": 1842063507,
+    "br": false
+  },
+  {
+    "title": "Bad Habit",
+    "artists": ["Steve Lacy"],
+    "year": 2022,
+    "isrc": "USRC12201440",
+    "deezerId": 1805106587,
+    "br": false
+  },
+  {
+    "title": "Pipoco",
+    "artists": ["Ana Castela"],
+    "year": 2022,
+    "isrc": "BXHZ02200008",
+    "deezerId": 1733341617,
+    "br": true
+  },
+  {
+    "title": "Galopa",
+    "artists": ["Pedro Sampaio"],
+    "year": 2022,
+    "isrc": "BRWMB2100721",
+    "deezerId": 1492202522,
+    "br": true
+  },
+  {
+    "title": "Calm Down",
+    "artists": ["Rema", "Selena Gomez"],
+    "year": 2022,
+    "isrc": "NGA3B2214004",
+    "deezerId": 1644464022,
+    "br": false
+  },
+  {
+    "title": "Stick Season",
+    "artists": ["Noah Kahan"],
+    "year": 2022,
+    "isrc": "USUM72212470",
+    "deezerId": 2310201655,
+    "br": false
+  },
+  {
+    "title": "Leão",
+    "artists": ["Marília Mendonça"],
+    "year": 2022,
+    "isrc": "BRWNV2200185",
+    "deezerId": 2056080287,
+    "br": true
+  },
+  {
+    "title": "Boys Don't Cry",
+    "artists": ["Anitta"],
+    "year": 2022,
+    "isrc": "USWB12200077",
+    "deezerId": 1629163382,
+    "br": true
+  },
+  {
+    "title": "Femininomenon",
+    "artists": ["Chappell Roan"],
+    "year": 2022,
+    "isrc": "USUG12302738",
+    "deezerId": 2390377375,
+    "br": false
+  },
+  {
+    "title": "End of Beginning",
+    "artists": ["Djo"],
+    "year": 2022,
+    "isrc": "GBKPL2205058",
+    "deezerId": 1899060227,
+    "br": false
+  },
+  {
+    "title": "What Was I Made For?",
+    "artists": ["Billie Eilish"],
+    "year": 2023,
+    "isrc": "USUM72307484",
+    "deezerId": 2366043655,
+    "br": false
+  },
+  {
+    "title": "Kill Bill",
+    "artists": ["SZA"],
+    "year": 2023,
+    "isrc": "USRC12204584",
+    "deezerId": 2055292027,
+    "br": false
+  },
+  {
+    "title": "Ella Baila Sola",
+    "artists": ["Eslabon Armado", "Peso Pluma"],
+    "year": 2023,
+    "isrc": "GBMA22311944",
+    "deezerId": 2562077862,
+    "br": false
+  },
+  {
+    "title": "Houdini",
+    "artists": ["Dua Lipa"],
+    "year": 2023,
+    "isrc": "GBAHT2301246",
+    "deezerId": 2525537871,
+    "br": false
+  },
+  {
+    "title": "Dance The Night",
+    "artists": ["Dua Lipa"],
+    "year": 2023,
+    "isrc": "USAT22305457",
+    "deezerId": 2299840635,
+    "br": false
+  },
+  {
+    "title": "Lose Control",
+    "artists": ["Teddy Swims"],
+    "year": 2023,
+    "isrc": "USWB12302315",
+    "deezerId": 2319265555,
+    "br": false
+  },
+  {
+    "title": "Used To Be Young",
+    "artists": ["Miley Cyrus"],
+    "year": 2023,
+    "isrc": "USSM12306461",
+    "deezerId": 2422608825,
+    "br": false
+  },
+  {
+    "title": "Erro Gostoso",
+    "artists": ["Simone Mendes"],
+    "year": 2023,
+    "isrc": "BRUM72202346",
+    "deezerId": 2116131507,
+    "br": true
+  },
+  {
+    "title": "Tá OK",
+    "artists": ["Dennis", "MC Kevin o Chris"],
+    "year": 2023,
+    "isrc": "BRSME2300692",
+    "deezerId": 2254883767,
+    "br": true
+  },
+  {
+    "title": "Coração Partido (Corazón Partío)",
+    "artists": ["Grupo Menos É Mais"],
+    "year": 2023,
+    "isrc": "BRRGE2400589",
+    "deezerId": 2954217391,
+    "br": true
+  },
+  {
+    "title": "Nosso Quadro",
+    "artists": ["Ana Castela"],
+    "year": 2023,
+    "isrc": "BKA7Y2400018",
+    "deezerId": 2674356952,
+    "br": true
+  },
+  {
+    "title": "get him back!",
+    "artists": ["Olivia Rodrigo"],
+    "year": 2023,
+    "isrc": "USUG12304099",
+    "deezerId": 2440763205,
+    "br": false
+  },
+  {
+    "title": "HOT TO GO!",
+    "artists": ["Chappell Roan"],
+    "year": 2023,
+    "isrc": "USUG12305911",
+    "deezerId": 2454854795,
+    "br": false
+  },
+  {
+    "title": "Agora Hills",
+    "artists": ["Doja Cat"],
+    "year": 2023,
+    "isrc": "USRC12301954",
+    "deezerId": 2459517745,
+    "br": false
+  },
+  {
+    "title": "BIRDS OF A FEATHER",
+    "artists": ["Billie Eilish"],
+    "year": 2024,
+    "isrc": "USUM72401994",
+    "deezerId": 2801558052,
+    "br": false
+  },
+  {
+    "title": "Die With A Smile",
+    "artists": ["Lady Gaga", "Bruno Mars"],
+    "year": 2024,
+    "isrc": "USUM72409273",
+    "deezerId": 2947516331,
+    "br": false
+  },
+  {
+    "title": "Beautiful Things",
+    "artists": ["Benson Boone"],
+    "year": 2024,
+    "isrc": "USWB12307016",
+    "deezerId": 2704682202,
+    "br": false
+  },
+  {
+    "title": "MILLION DOLLAR BABY",
+    "artists": ["Tommy Richman"],
+    "year": 2024,
+    "isrc": "QM24S2402528",
+    "deezerId": 2827724612,
+    "br": false
+  },
+  {
+    "title": "Funk Rave",
+    "artists": ["Anitta"],
+    "year": 2024,
+    "isrc": "USUG12303989",
+    "deezerId": 2757533551,
+    "br": true
+  },
+  {
+    "title": "Too Sweet",
+    "artists": ["Hozier"],
+    "year": 2024,
+    "isrc": "IEACJ2300335",
+    "deezerId": 2704610682,
+    "br": false
+  },
+  {
+    "title": "Taste",
+    "artists": ["Sabrina Carpenter"],
+    "year": 2024,
+    "isrc": "USUM72404100",
+    "deezerId": 2949737371,
+    "br": false
+  },
+  {
+    "title": "luther",
+    "artists": ["Kendrick Lamar", "SZA"],
+    "year": 2024,
+    "isrc": "USUG12408496",
+    "deezerId": 3106586641,
+    "br": false
+  },
+  {
+    "title": "Timeless",
+    "artists": ["The Weeknd", "Playboi Carti"],
+    "year": 2024,
+    "isrc": "USUG12406536",
+    "deezerId": 3210598501,
+    "br": false
+  },
+  {
+    "title": "That's So True",
+    "artists": ["Gracie Abrams"],
+    "year": 2024,
+    "isrc": "USUG12406903",
+    "deezerId": 3047560351,
+    "br": false
+  },
+  {
+    "title": "back to friends",
+    "artists": ["sombr"],
+    "year": 2024,
+    "isrc": "USWB12405502",
+    "deezerId": 3151351511,
+    "br": false
+  },
+  {
+    "title": "Fortnight",
+    "artists": ["Taylor Swift", "Post Malone"],
+    "year": 2024,
+    "isrc": "USUG12401028",
+    "deezerId": 2757495911,
+    "br": false
+  },
+  {
+    "title": "we can't be friends (wait for your love)",
+    "artists": ["Ariana Grande"],
+    "year": 2024,
+    "isrc": "USUM72317276",
+    "deezerId": 2690050002,
+    "br": false
+  },
+  {
+    "title": "yes, and?",
+    "artists": ["Ariana Grande"],
+    "year": 2024,
+    "isrc": "USUM72400048",
+    "deezerId": 2614318122,
+    "br": false
+  },
+  {
+    "title": "360",
+    "artists": ["Charli xcx"],
+    "year": 2024,
+    "isrc": "USAT22401341",
+    "deezerId": 2833834772,
+    "br": false
+  },
+  {
+    "title": "I Had Some Help",
+    "artists": ["Post Malone", "Morgan Wallen"],
+    "year": 2024,
+    "isrc": "USUM72404990",
+    "deezerId": 2780753191,
+    "br": false
+  },
+  {
+    "title": "Bed Chem",
+    "artists": ["Sabrina Carpenter"],
+    "year": 2024,
+    "isrc": "USUM72319094",
+    "deezerId": 2949737421,
+    "br": false
+  },
+  {
+    "title": "Stargazing",
+    "artists": ["Myles Smith"],
+    "year": 2024,
+    "isrc": "GBARL2400510",
+    "deezerId": 2758844701,
+    "br": false
+  },
+  {
+    "title": "Manchild",
+    "artists": ["Sabrina Carpenter"],
+    "year": 2025,
+    "isrc": "USUM72504354",
+    "deezerId": 3400077541,
+    "br": false
+  },
+  {
+    "title": "Ordinary",
+    "artists": ["Alex Warren"],
+    "year": 2025,
+    "isrc": "USAT22500463",
+    "deezerId": 3210709941,
+    "br": false
+  },
+  {
+    "title": "The Fate of Ophelia",
+    "artists": ["Taylor Swift"],
+    "year": 2025,
+    "isrc": "USUG12506436",
+    "deezerId": 3579685431,
+    "br": false
+  },
+  {
+    "title": "Mystical Magical",
+    "artists": ["Benson Boone"],
+    "year": 2025,
+    "isrc": "USWB12500844",
+    "deezerId": 3333720471,
+    "br": false
+  },
+  {
+    "title": "DtMF",
+    "artists": ["Bad Bunny"],
+    "year": 2025,
+    "isrc": "QMFMF2447070",
+    "deezerId": 3171003131,
+    "br": false
+  },
+  {
+    "title": "Sapphire",
+    "artists": ["Ed Sheeran"],
+    "year": 2025,
+    "isrc": "GBAHS2500177",
+    "deezerId": 3395410481,
+    "br": false
+  },
+  {
+    "title": "Sports car",
+    "artists": ["Tate McRae"],
+    "year": 2025,
+    "isrc": "USRC12403580",
+    "deezerId": 3196460531,
+    "br": false
+  },
+  {
+    "title": "DAISIES",
+    "artists": ["Justin Bieber"],
+    "year": 2025,
+    "isrc": "USUG12504304",
+    "deezerId": 3454558661,
+    "br": false
+  }
+]

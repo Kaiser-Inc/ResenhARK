@@ -35,7 +35,9 @@ export function Countdown({ deadline, clock }: { deadline: number; clock: Server
   return (
     <motion.span
       className="relative inline-flex size-12 shrink-0 items-center justify-center"
-      animate={pulse ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+      animate={
+        pulse ? { transform: ["scale(1)", "scale(1.1)", "scale(1)"] } : { transform: "scale(1)" }
+      }
       transition={pulse ? { duration: 1, repeat: Number.POSITIVE_INFINITY } : { duration: 0.12 }}
     >
       <svg aria-hidden="true" viewBox="0 0 44 44" className="absolute inset-0 -rotate-90">

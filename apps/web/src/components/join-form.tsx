@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { ApiError } from "@/lib/api";
+import { avatarExpression } from "@/lib/avatar-expression";
 
 type JoinFormProps = {
   submitLabel: string;
@@ -33,6 +34,27 @@ export function JoinForm({
   const [nameError, setNameError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const [typing, setTyping] = useState(false);
+  const [changed, setChanged] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const changeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (typingTimer.current) clearTimeout(typingTimer.current);
+      if (changeTimer.current) clearTimeout(changeTimer.current);
+    },
+    [],
+  );
+
+  function changeAvatar(next: JoinRoomInput["avatar"]) {
+    if (next.hue === avatar.hue && next.shape === avatar.shape) return;
+    setAvatar(next);
+    setChanged(true);
+    if (changeTimer.current) clearTimeout(changeTimer.current);
+    changeTimer.current = setTimeout(() => setChanged(false), 1_000);
+  }
 
   useEffect(() => {
     if (focusOnMount) nameRef.current?.focus();
@@ -43,6 +65,7 @@ export function JoinForm({
     setFormError(null);
     const parsed = joinRoomInputSchema.safeParse({ name, avatar });
     if (!parsed.success) {
+      setFailed(true);
       setNameError("Escreva um nome de até 20 letras");
       nameRef.current?.focus();
       return;
@@ -53,6 +76,7 @@ export function JoinForm({
       await onSubmit(parsed.data);
       // Success navigates away; keep the button busy until the page changes.
     } catch (error) {
+      setFailed(true);
       setPending(false);
       if (error instanceof ApiError && error.code === "name-taken") {
         setNameError("Nome já em uso nesta sala");
@@ -87,11 +111,26 @@ export function JoinForm({
             onChange={(event) => {
               setName(event.target.value);
               setNameError(null);
+              setFormError(null);
+              setFailed(false);
+              setTyping(true);
+              if (typingTimer.current) clearTimeout(typingTimer.current);
+              typingTimer.current = setTimeout(() => setTyping(false), 350);
             }}
           />
           {nameError ? <FieldError id={nameErrorId}>{nameError}</FieldError> : null}
         </Field>
-        <AvatarPicker name={name} value={avatar} onChange={setAvatar} />
+        <AvatarPicker
+          name={name}
+          value={avatar}
+          onChange={changeAvatar}
+          expression={avatarExpression({
+            failed,
+            changed,
+            typing,
+            validName: joinRoomInputSchema.safeParse({ name, avatar }).success,
+          })}
+        />
       </FieldGroup>
       {formError ? (
         <p role="alert" className="text-sm text-destructive">

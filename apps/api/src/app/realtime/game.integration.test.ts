@@ -13,6 +13,7 @@ import {
   startTestServer,
   stateWhere,
 } from "../../test/helpers.js";
+import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
 import type { Card } from "../games/hitline/engine.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 
@@ -72,7 +73,7 @@ test("owner imports, configures and starts; members get 1 card and 2 tokens", as
     assert.equal(p.timeline.length, 1);
     assert.equal(p.tokens, 2);
   }
-  assert.deepEqual(s.room.lobby.playlist, { name: "Fake", count: 20 });
+  assert.deepEqual(s.room.lobby.playlist, { source: "playlist", name: "Fake", count: 20 });
 });
 
 test("non-owner cannot configure, import or start", async (t) => {
@@ -98,9 +99,23 @@ test("invalid configure and import payloads are invalid-input", async (t) => {
   });
 });
 
-test("starting without a deck is no-deck", async (t) => {
-  const { owner } = await room(t, ["Ana"]);
-  assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "no-deck" });
+test("without an import the room plays the default deck and counts its songs as played", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"]);
+  const count = DEFAULT_DECK.cards.length;
+  const lobby = await stateWhere(clients[1], (x) => x.room.lobby.remaining === count);
+  assert.deepEqual(lobby.room.lobby.playlist, {
+    source: "default",
+    name: "Baralho ResenhARK",
+    count,
+  });
+  assert.deepEqual(await emit(owner, "game:start"), { ok: true });
+  const first = titles(await stateWhere(clients[1], (x) => x.room.game !== null));
+  const songs = DEFAULT_DECK.cards.map((c) => c.title);
+  for (const title of first) assert.ok(songs.includes(title), `${title} not in the default deck`);
+  const after = await finishRound(owner, clients[1]);
+  assert.equal(after.room.lobby.remaining, count - 2);
+  assert.deepEqual(await emit(owner, "lobby:reset-played"), { ok: true });
+  await stateWhere(clients[1], (x) => x.room.lobby.remaining === count);
 });
 
 test("import errors from the source are returned", async (t) => {
@@ -151,7 +166,7 @@ test("a failed or throwing import keeps the previous deck", async (t) => {
     error: "server-error",
   });
   const s = await stateWhere(owner, () => true);
-  assert.deepEqual(s.room.lobby.playlist, { name: "Fake", count: 20 });
+  assert.deepEqual(s.room.lobby.playlist, { source: "playlist", name: "Fake", count: 20 });
 });
 
 test("start twice is game-running, configure during a game too, end then restart works", async (t) => {
@@ -354,6 +369,26 @@ test("importing a playlist resets the played songs", async (t) => {
   assert.deepEqual(await emit(owner, "lobby:import", { link: "x" }), { ok: true });
   const s = await stateWhere(clients[1], (x) => x.room.lobby.remaining === 8);
   assert.equal(s.room.lobby.playlist?.count, 8);
+});
+
+test("lobby:use-default-deck is owner-only, blocked mid-game, and brings the default deck back fresh", async (t) => {
+  const { clients, owner } = await room(t, ["Ana", "Bia"], { playlists: playlists(8) });
+  await ready(owner);
+  await emit(owner, "game:start");
+  assert.deepEqual(await emit(owner, "lobby:use-default-deck"), {
+    ok: false,
+    error: "game-running",
+  });
+  await finishRound(owner, clients[1]);
+  assert.deepEqual(await emit(clients[1], "lobby:use-default-deck"), {
+    ok: false,
+    error: "not-owner",
+  });
+  assert.deepEqual(await emit(owner, "lobby:use-default-deck"), { ok: true });
+  const count = DEFAULT_DECK.cards.length;
+  const s = await stateWhere(clients[1], (x) => x.room.lobby.playlist.source === "default");
+  assert.deepEqual(s.room.lobby.playlist, { source: "default", name: "Baralho ResenhARK", count });
+  assert.equal(s.room.lobby.remaining, count);
 });
 
 test("lobby:reset-played is owner-only, blocked mid-game, and restores every song", async (t) => {

@@ -6,6 +6,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { JoinForm } from "@/components/join-form";
 import { RoomLoading, RoomShell } from "@/components/room/room-shell";
+import { useRoomTransition } from "@/components/room/room-transition";
 import { SiteBar } from "@/components/site-bar";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -31,6 +32,11 @@ type Gate =
 export function RoomGate({ code }: { code: string }) {
   const [gate, setGate] = useState<Gate>({ kind: "loading" });
   const [attempt, setAttempt] = useState(0);
+  const { finish } = useRoomTransition();
+
+  useEffect(() => {
+    if (gate.kind === "missing" || gate.kind === "error" || gate.kind === "join") finish();
+  }, [gate.kind, finish]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: attempt re-runs the lookup on retry
   useEffect(() => {

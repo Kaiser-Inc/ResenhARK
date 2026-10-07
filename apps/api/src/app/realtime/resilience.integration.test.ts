@@ -172,12 +172,12 @@ test("owner ends the game and starts a new one with the same playlist", async (t
   await startGame(owner, clients);
   assert.deepEqual(await emit(owner, "game:end"), { ok: true });
   const over = await stateWhere(owner, (s) => hitlineView(s)?.phase === "game-over");
-  assert.deepEqual(over.room.lobby.playlist, { name: "Fake", count: 20 });
+  assert.deepEqual(over.room.lobby.playlist, { source: "playlist", name: "Fake", count: 20 });
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
   const fresh = await stateWhere(
     owner,
     (s) => s.events.some((e) => e.type === "game-started") && hitlineView(s)?.phase !== "game-over",
   );
   assert.equal(hitlineView(fresh)?.players.length, 2);
-  assert.deepEqual(fresh.room.lobby.playlist, { name: "Fake", count: 20 });
+  assert.deepEqual(fresh.room.lobby.playlist, { source: "playlist", name: "Fake", count: 20 });
 });

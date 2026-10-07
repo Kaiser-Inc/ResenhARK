@@ -3,6 +3,14 @@ import type { Page } from "@playwright/test";
 import { chooseOption, createRoomAs, expect, joinRoomAs, test } from "./support";
 
 async function checkAxe(page: Page) {
+  // Scan the settled reveal; an opacity entrance temporarily lowers text contrast.
+  await expect
+    .poll(() =>
+      page
+        .locator('[data-motion^="hue-"]')
+        .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
+    )
+    .toBe(true);
   const { violations } = await new AxeBuilder({ page }).analyze();
   expect(
     violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
@@ -71,7 +79,7 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
   const pages = [page, bia, caio];
   await configureHuehint(page);
   await expect(bia.getByText("Jogo escolhido: Huehint")).toBeVisible();
-  await expect(bia.getByText("Voltas por jogador")).toBeVisible();
+  await expect(bia.getByText("Voltas por jogador", { exact: true })).toBeVisible();
   await expect(bia.getByRole("combobox")).toHaveCount(0);
   await checkAxe(page);
   await checkAxe(bia);

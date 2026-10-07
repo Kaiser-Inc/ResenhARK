@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const huehintConfigSchema = z.object({
-  turnsPerPlayer: z.number().int().min(1).max(3),
+  turnsPerPlayer: z.number().int().min(1).max(5),
   hintSeconds: z.number().int().min(15).max(90),
   guessSeconds: z.number().int().min(20).max(120),
   maxPlayers: z.number().int().min(2).max(15),
@@ -96,10 +96,15 @@ export type HuehintEvent =
   | { type: "round-canceled"; giverId: string }
   | { type: "game-over"; winners: string[]; reason: HuehintEndReason };
 
-export type HuehintIntent = { type: "give-hint"; hint: string } | { type: "guess"; color: Hsb };
+export type HuehintIntent =
+  | { type: "give-hint"; hint: string }
+  | { type: "guess"; color: Hsb }
+  /** Solo only, during the reveal: go to the next color now. */
+  | { type: "next-round" };
 // The hint rules are checked by the engine, so a bad hint gets `invalid-hint`, not `invalid-input`.
 export const huehintIntentSchema: z.ZodType<HuehintIntent> = z.discriminatedUnion("type", [
   // No max here: Socket.IO caps the payload, and a long hint must get invalid-hint.
   z.object({ type: z.literal("give-hint"), hint: z.string() }),
   z.object({ type: z.literal("guess"), color: hsbSchema }),
+  z.object({ type: z.literal("next-round") }),
 ]);

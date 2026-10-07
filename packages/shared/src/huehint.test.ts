@@ -43,8 +43,12 @@ test("hsbSchema accepts integers in range only", () => {
 
 test("huehintConfigSchema enforces the ranges and the default is valid", () => {
   assert.equal(huehintConfigSchema.safeParse(DEFAULT_HUEHINT_CONFIG).success, true);
+  assert.equal(
+    huehintConfigSchema.safeParse({ ...DEFAULT_HUEHINT_CONFIG, turnsPerPlayer: 5 }).success,
+    true,
+  );
   for (const patch of [
-    { turnsPerPlayer: 4 },
+    { turnsPerPlayer: 6 },
     { turnsPerPlayer: 0 },
     { hintSeconds: 14 },
     { hintSeconds: 91 },
@@ -60,7 +64,7 @@ test("huehintConfigSchema enforces the ranges and the default is valid", () => {
     );
 });
 
-test("huehintIntentSchema parses give-hint and guess", () => {
+test("huehintIntentSchema parses give-hint, guess and next-round", () => {
   assert.equal(huehintIntentSchema.safeParse({ type: "give-hint", hint: "Azul" }).success, true);
   assert.equal(
     huehintIntentSchema.safeParse({ type: "guess", color: { h: 1, s: 2, b: 3 } }).success,
@@ -70,6 +74,7 @@ test("huehintIntentSchema parses give-hint and guess", () => {
     huehintIntentSchema.safeParse({ type: "guess", color: { h: 400, s: 2, b: 3 } }).success,
     false,
   );
+  assert.equal(huehintIntentSchema.safeParse({ type: "next-round" }).success, true);
   assert.equal(huehintIntentSchema.safeParse({ type: "draw" }).success, false);
 });
 

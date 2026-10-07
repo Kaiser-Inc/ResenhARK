@@ -25,10 +25,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
         warning: <TriangleAlertIcon className="size-4 text-warning" strokeWidth={1.75} />,
         error: <OctagonXIcon className="size-4 text-destructive" strokeWidth={1.75} />,
         loading: (
-          <Loader2Icon
-            className="size-4 animate-spin text-muted-foreground motion-reduce:animate-none"
-            strokeWidth={1.75}
-          />
+          <Loader2Icon className="size-4 animate-spin text-muted-foreground " strokeWidth={1.75} />
         ),
       }}
       style={

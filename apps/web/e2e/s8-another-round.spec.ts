@@ -47,5 +47,5 @@ test("Recomeçar músicas brings every song back", async ({ page }) => {
   await expect(page.getByText("Restam 39 de 40 músicas")).toBeVisible();
   await page.getByRole("button", { name: "Recomeçar músicas" }).click();
   await expect(page.getByText(/^Restam /)).toHaveCount(0);
-  await expect(page.getByText("40 faixas prontas")).toBeVisible();
+  await expect(page.getByText(/· 40 músicas/)).toBeVisible();
 });

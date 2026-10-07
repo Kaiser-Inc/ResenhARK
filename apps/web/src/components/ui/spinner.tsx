@@ -12,7 +12,7 @@ function Spinner({
       role="status"
       aria-label={label}
       strokeWidth={1.75}
-      className={cn("size-4 animate-spin motion-reduce:animate-none", className)}
+      className={cn("size-4 animate-spin ", className)}
       {...props}
     />
   );

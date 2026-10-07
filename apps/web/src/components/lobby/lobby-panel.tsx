@@ -1,9 +1,9 @@
 "use client";
 
 import { GameConfigForm } from "@/components/lobby/game-config-form";
+import { HowToPlay } from "@/components/lobby/how-to-play";
 import { HuehintConfigForm } from "@/components/lobby/huehint-config-form";
 import { PlaylistImport } from "@/components/lobby/playlist-import";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/page-header";
@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { type Send, gameErrorMessage } from "@/lib/game-errors";
+import { deckLabel, smallDeckWarning } from "@/lib/lobby-copy";
 import type { RoomView } from "@resenhark/shared";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -23,13 +24,6 @@ const GAMES = [
   { value: "hitline", label: "Hitline" },
   { value: "huehint", label: "Huehint" },
 ];
-
-function smallPlaylistWarning(room: RoomView): string | null {
-  if (!room.lobby.smallPlaylist) return null;
-  const online = room.members.filter((m) => m.online).length;
-  const players = Math.max(1, Math.min(online, room.lobby.config.maxPlayers));
-  return `Playlist pequena para ${players} ${players === 1 ? "jogador" : "jogadores"} e N=${room.lobby.config.targetCards}: a partida pode acabar antes de alguém vencer`;
-}
 
 export function LobbyPanel({
   room,
@@ -88,14 +82,6 @@ export function LobbyPanel({
       ) : (
         <p className="font-medium">Jogo escolhido: {hitline ? "Hitline" : "Huehint"}</p>
       )}
-      <ul aria-label="Jogos" className="flex flex-wrap gap-4 text-sm">
-        {["SiteSpy", "Codetalk"].map((name) => (
-          <li key={name} className="flex items-center gap-2 text-subtle-foreground">
-            {name}
-            <Badge>em breve</Badge>
-          </li>
-        ))}
-      </ul>
       <div className="flex max-w-[960px] flex-col gap-6">
         {!isOwner ? (
           <p className="text-base font-medium">Aguardando {owner?.name ?? "o dono"} iniciar</p>
@@ -105,22 +91,22 @@ export function LobbyPanel({
             {isOwner ? (
               <PlaylistImport
                 playlist={lobby.playlist}
-                warning={smallPlaylistWarning(room)}
+                warning={smallDeckWarning(
+                  lobby.smallPlaylist,
+                  room.members.filter((member) => member.online).length,
+                  lobby.config.maxPlayers,
+                  lobby.config.targetCards,
+                )}
                 disabled={!connected || starting}
                 onImport={(link) => send("lobby:import", { link })}
                 remaining={lobby.remaining}
                 onResetPlayed={() => void act("lobby:reset-played")}
+                onUseDefault={() => act("lobby:use-default-deck")}
               />
             ) : (
               <>
-                {lobby.playlist ? (
-                  <p className="text-sm text-muted-foreground">
-                    {lobby.playlist.count} faixas · {lobby.playlist.name}
-                  </p>
-                ) : null}
-                {lobby.playlist &&
-                lobby.remaining !== null &&
-                lobby.remaining < lobby.playlist.count ? (
+                <p className="text-sm text-muted-foreground">{deckLabel(lobby.playlist)}</p>
+                {lobby.remaining < lobby.playlist.count ? (
                   <p className="text-sm font-medium">
                     Restam {lobby.remaining} de {lobby.playlist.count} músicas
                   </p>
@@ -147,12 +133,20 @@ export function LobbyPanel({
             </p>
           </>
         )}
+        <HowToPlay
+          key={lobby.selectedGame}
+          setup={
+            hitline
+              ? { type: "hitline", config: lobby.config }
+              : { type: "huehint", config: lobby.huehintConfig }
+          }
+        />
         {isOwner ? (
           <div className="flex flex-col items-start gap-2">
             <Button
               type="button"
               loading={starting}
-              disabled={!connected || changing || (hitline && !lobby.playlist)}
+              disabled={!connected || changing}
               onClick={async () => {
                 setStarting(true);
                 await act("game:start");
@@ -161,9 +155,6 @@ export function LobbyPanel({
             >
               Iniciar partida
             </Button>
-            {hitline && !lobby.playlist ? (
-              <p className="text-sm text-muted-foreground">Importe uma playlist para começar.</p>
-            ) : null}
           </div>
         ) : null}
       </div>

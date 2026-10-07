@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const hitlineConfigSchema = z.object({
-  targetCards: z.number().int().min(2).max(30),
+  targetCards: z.number().int().min(5).max(15),
   contestSeconds: z.number().int().min(5).max(60),
   guessSeconds: z.number().int().min(30).max(300),
   maxPlayers: z.number().int().min(1).max(15),
