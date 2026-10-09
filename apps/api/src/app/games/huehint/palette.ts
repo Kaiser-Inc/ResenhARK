@@ -1,12 +1,11 @@
 import type { Hsb } from "@resenhark/shared";
 import { shuffle } from "../../core/shuffle.js";
-import { deltaE2000, hsbToLab } from "./color.js";
+import { deltaE2000, hsbToLab, lchToHsb } from "./color.js";
 
-export const HUE_SECTORS = 6;
 /** Below this brightness colors read as "dark" and look alike; at most one per 6 rounds. */
 export const DARK_BELOW = 35;
-/** A new color stays at least this far (CIEDE2000) from the colors of the last rounds. */
-export const MIN_DELTA_E = 25;
+/** A new color stays at least this far (CIEDE2000) from every earlier color of the same game. */
+export const MIN_DELTA_E = 30;
 /**
  * A new color stays at least this far from the newest colors the room drew in earlier games, and
  * OLDER_DELTA_E from the rest. A flat 20 against 60 colors cannot hold: the sRGB gamut fits about
@@ -15,56 +14,129 @@ export const MIN_DELTA_E = 25;
 export const RECENT_DELTA_E = 20;
 export const OLDER_DELTA_E = 12;
 export const NEWEST_COUNT = 8;
-const RECENT = 5;
+const DARK_WINDOW = 6;
+const NEUTRAL_CHANCE = 0.1;
 const TRIES = 200;
 
 export function saturationBand(s: number): "vivid" | "soft" | "neutral" {
   return s >= 40 ? "vivid" : s >= 15 ? "soft" : "neutral";
 }
 
-/**
- * One color per round. Saturation by band (70 vivid / 20 soft / 10 neutral, no neutral after the
- * first), brightness 15..95 with at most one dark color in any 6 rounds, hue from 6 sectors
- * shuffled per block of 6 so consecutive rounds never share a sector. Each color is redrawn until
- * it is MIN_DELTA_E from the last 5 colors and RECENT_DELTA_E from the newest colors in `recent` (the
- * room's earlier games, oldest first) and OLDER_DELTA_E from the rest; when no try gets there, the one with the most room to spare is kept.
- */
-export function drawColors(count: number, rng: () => number, recent: Hsb[] = []): Hsb[] {
+/** A box in CIELCH: lightness, chroma and hue degrees (the hue range may pass 360). */
+export type Family = {
+  name: string;
+  l: [number, number];
+  c: [number, number];
+  h: [number, number];
+};
+
+/** 12 perceptual families, sampled in LCH so each one looks like its own named color. */
+export const FAMILIES: Family[] = [
+  { name: "vermelho", l: [40, 60], c: [55, 90], h: [20, 40] },
+  { name: "laranja", l: [60, 75], c: [60, 85], h: [55, 70] },
+  { name: "amarelo", l: [85, 95], c: [70, 95], h: [90, 102] },
+  { name: "lima", l: [75, 88], c: [60, 90], h: [115, 130] },
+  { name: "verde", l: [45, 70], c: [45, 80], h: [140, 160] },
+  { name: "ciano", l: [60, 80], c: [30, 55], h: [190, 215] },
+  { name: "azul", l: [35, 60], c: [50, 90], h: [255, 275] },
+  { name: "roxo", l: [30, 55], c: [50, 80], h: [295, 315] },
+  { name: "lavanda", l: [70, 85], c: [20, 40], h: [275, 295] },
+  { name: "rosa", l: [55, 80], c: [30, 65], h: [340, 365] },
+  { name: "marrom", l: [28, 45], c: [25, 40], h: [50, 70] },
+  { name: "bege", l: [78, 90], c: [12, 24], h: [75, 90] },
+];
+
+/** One color inside the family's box, kept to brightness 15..95. */
+export function sampleFamily(family: Family, rng: () => number): Hsb {
+  const between = ([min, max]: [number, number]) => min + rng() * (max - min);
+  const color = lchToHsb(between(family.l), between(family.c), between(family.h) % 360);
+  return { ...color, b: Math.min(95, Math.max(15, color.b)) };
+}
+
+function neutralColor(rng: () => number): Hsb {
   const int = (min: number, max: number) => min + Math.floor(rng() * (max - min + 1));
-  const sectors: number[] = [];
-  while (sectors.length < count) {
-    const block = shuffle([...Array(HUE_SECTORS).keys()], rng);
-    // The block's first sector must not repeat the previous block's last.
-    if (block[0] === sectors[sectors.length - 1]) [block[0], block[1]] = [block[1], block[0]];
-    sectors.push(...block);
+  return { h: int(0, 359), s: int(0, 14), b: int(15, 95) };
+}
+
+type Lab = ReturnType<typeof hsbToLab>;
+
+/**
+ * The room to spare of a color: its smallest distance to each group, minus that group's minimum.
+ * Gives up early (returning the margin so far) once it cannot beat `floor`.
+ */
+function marginOf(lab: Lab, floor: number, groups: [Lab[], number][]): number {
+  let margin = Number.POSITIVE_INFINITY;
+  for (const [others, minimum] of groups) {
+    for (const other of others) {
+      margin = Math.min(margin, deltaE2000(lab, other) - minimum);
+      if (margin <= floor) return margin;
+    }
   }
+  return margin;
+}
+
+export type DrawnRound = { family: string | null; color: Hsb };
+
+/**
+ * One color per round. Families come in shuffled blocks of 12, so no two rounds in a row share one
+ * and every block covers all of them. A round may instead be a neutral color (10% a round, at most
+ * one per game). At most one dark color in any 6 rounds. Each color is redrawn until it is
+ * MIN_DELTA_E from every earlier color of the game, RECENT_DELTA_E from the newest colors in
+ * `recent` (the room's earlier games, oldest first) and OLDER_DELTA_E from the rest; when no try
+ * gets there, the one with the most room to spare is kept.
+ */
+export function drawRounds(count: number, rng: () => number, recent: Hsb[] = []): DrawnRound[] {
   const memory = recent.map(hsbToLab);
-  const farthest = (lab: ReturnType<typeof hsbToLab>, others: typeof memory) =>
-    Math.min(Number.POSITIVE_INFINITY, ...others.map((o) => deltaE2000(lab, o)));
   const newest = memory.slice(-NEWEST_COUNT);
   const older = memory.slice(0, -NEWEST_COUNT);
+  // Families left in the current block of 12; each is used once before any repeats.
+  let unused: Family[] = [];
+  let lastFamily: Family | null = null;
   let neutralUsed = false;
-  const colors: Hsb[] = [];
-  for (const sector of sectors.slice(0, count)) {
-    const window = colors.slice(-RECENT).map(hsbToLab);
-    const darkAllowed = !colors.slice(-RECENT).some((c) => c.b < DARK_BELOW);
-    let best: Hsb | null = null;
+  const drawn: DrawnRound[] = [];
+  const earlier: ReturnType<typeof hsbToLab>[] = [];
+  for (let round = 0; round < count; round++) {
+    const darkAllowed = !drawn.slice(1 - DARK_WINDOW).some((r) => r.color.b < DARK_BELOW);
+    const neutral = !neutralUsed && rng() < NEUTRAL_CHANCE;
+    if (!neutral && unused.length === 0) unused = FAMILIES.filter((f) => f !== lastFamily);
+    let best: DrawnRound | null = null;
     let bestMargin = Number.NEGATIVE_INFINITY;
     for (let attempt = 0; attempt < TRIES && bestMargin < 0; attempt++) {
-      const roll = rng() * (neutralUsed ? 90 : 100);
-      const s = roll < 70 ? int(40, 100) : roll < 90 ? int(15, 39) : int(0, 14);
-      const color = { h: sector * 60 + int(0, 59), s, b: int(darkAllowed ? 15 : DARK_BELOW, 95) };
+      // Each try picks among the families still unused, so a crowded one does not block the round.
+      const family = neutral ? null : unused[Math.floor(rng() * unused.length)];
+      const color = family ? sampleFamily(family, rng) : neutralColor(rng);
+      if (!darkAllowed && color.b < DARK_BELOW) continue;
+      // A beige can read as neutral too, so the one-per-game limit counts by saturation.
+      if (neutralUsed && color.s < 15) continue;
       const lab = hsbToLab(color);
-      const margin = Math.min(
-        farthest(lab, window) - MIN_DELTA_E,
-        farthest(lab, newest) - RECENT_DELTA_E,
-        farthest(lab, older) - OLDER_DELTA_E,
-      );
-      if (margin > bestMargin) [best, bestMargin] = [color, margin];
+      const margin = marginOf(lab, bestMargin, [
+        [earlier, MIN_DELTA_E],
+        [newest, RECENT_DELTA_E],
+        [older, OLDER_DELTA_E],
+      ]);
+      if (margin > bestMargin)
+        [best, bestMargin] = [{ family: family?.name ?? null, color }, margin];
     }
-    const chosen = best as Hsb;
-    if (chosen.s < 15) neutralUsed = true;
-    colors.push(chosen);
+    // Every try was dark while a dark color is not allowed: lift one out of the dark.
+    const fallbackFamily = neutral ? null : unused[0];
+    const chosen: DrawnRound = best ?? {
+      family: fallbackFamily?.name ?? null,
+      color: {
+        ...(fallbackFamily ? sampleFamily(fallbackFamily, rng) : neutralColor(rng)),
+        b: DARK_BELOW,
+      },
+    };
+    if (chosen.color.s < 15) neutralUsed = true;
+    if (chosen.family) {
+      lastFamily = FAMILIES.find((f) => f.name === chosen.family) ?? null;
+      unused = unused.filter((f) => f !== lastFamily);
+    }
+    drawn.push(chosen);
+    earlier.push(hsbToLab(chosen.color));
   }
-  return colors;
+  return drawn;
+}
+
+export function drawColors(count: number, rng: () => number, recent: Hsb[] = []): Hsb[] {
+  return drawRounds(count, rng, recent).map((r) => r.color);
 }
