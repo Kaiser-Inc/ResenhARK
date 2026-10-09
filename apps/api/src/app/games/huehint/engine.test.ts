@@ -405,3 +405,16 @@ test("everyone going offline mid-guessing pauses the round instead of revealing 
   assert.equal(s.phase, "guessing");
   assert.equal(s.deadline, 90_000 + GUESS_MS);
 });
+
+test("create marks the game cooperative only when it starts with exactly 2 players", () => {
+  const coop = (ids: string[]) => create(cfg, ids, fixedCtx()).state.cooperative;
+  assert.equal(coop(["a", "b"]), true);
+  assert.equal(coop(["a"]), false);
+  assert.equal(coop(["a", "b", "c"]), false);
+});
+
+test("a game of 3 that drops to 2 stays competitive", () => {
+  const s = act(group(["a", "b", "c"]), SYSTEM_ACTOR, { type: "remove", playerId: "c" }).state;
+  assert.equal(s.players.length, 2);
+  assert.equal(s.cooperative, false);
+});

@@ -33,6 +33,8 @@ export type RoundResult = {
 };
 export type HuehintState = {
   mode: "group" | "solo";
+  /** Set at create when exactly 2 play: the duo shares one team score and nobody wins alone. Absent in old saves. */
+  cooperative: boolean;
   config: HuehintConfig;
   /** In the shuffled giver order. */
   players: Player[];
@@ -73,6 +75,7 @@ export function create(
   const colors = drawColors(givers.length, ctx.rng);
   const s: HuehintState = {
     mode,
+    cooperative: playerIds.length === 2,
     config: structuredClone(config),
     players: order.map((id) => ({ id, online: true })),
     schedule: givers.map((giverId, i) => ({ giverId, color: colors[i] })),

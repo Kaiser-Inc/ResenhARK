@@ -139,3 +139,17 @@ test("solo: memorize shows the color to the player only, then guessing hides it"
   assert.equal(project(open, "a").phase, "guessing");
   assert.equal(leaks(project(open, "a"), TARGET), false);
 });
+
+test("a state saved before the cooperative mode projects as competitive with no team", () => {
+  const { state } = start();
+  const old = structuredClone(state) as Partial<HuehintState>;
+  old.cooperative = undefined;
+  const view = project(old as HuehintState, "a");
+  assert.equal(view.cooperative, false);
+  assert.equal(view.team, null);
+});
+
+test("a cooperative game projects cooperative = true", () => {
+  const { state } = create(DEFAULT_HUEHINT_CONFIG, ["a", "b"], fixedCtx());
+  assert.equal(project(state, "a").cooperative, true);
+});

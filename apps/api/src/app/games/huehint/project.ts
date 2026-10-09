@@ -33,6 +33,9 @@ export function project(s: HuehintState, viewerId: string): HuehintView {
   const t = totals(s);
   return {
     mode: s.mode,
+    // Saves from before the cooperative mode have no flag.
+    cooperative: s.cooperative ?? false,
+    team: null,
     phase: s.phase,
     config: {
       turnsPerPlayer: s.config.turnsPerPlayer,

@@ -36,6 +36,19 @@ export function isValidHint(hint: string): boolean {
   );
 }
 
+/** Cooperative duo rank by score / max, best first. A rank applies from its `min` ratio up. */
+export const HUEHINT_RANKS = [
+  { rank: "S", min: 0.95 },
+  { rank: "A", min: 0.85 },
+  { rank: "B", min: 0.75 },
+  { rank: "C", min: 0.5 },
+  { rank: "D", min: 0.25 },
+  { rank: "E", min: 0 },
+] as const;
+export type HuehintRank = (typeof HUEHINT_RANKS)[number]["rank"];
+/** The duo wins at this rank or better. */
+export const HUEHINT_WIN_RANK: HuehintRank = "B";
+
 export type HuehintPhase = "hint" | "memorize" | "guessing" | "reveal" | "game-over";
 export type HuehintEndReason = "rounds-done" | "ended" | "not-enough-players";
 
@@ -55,6 +68,14 @@ export type HuehintRoundView = {
 
 export type HuehintView = {
   mode: "group" | "solo";
+  /** True when the game started with exactly 2 players: the duo plays together and ranks as a team. */
+  cooperative: boolean;
+  /**
+   * Cooperative only, else null. Points with 2 decimals; `max` counts the revealed rounds (the whole
+   * game once it ends). Mid-game it is a provisional rank with `won` false; only a finished
+   * "rounds-done" game carries the final result.
+   */
+  team: { score: number; max: number; rank: HuehintRank; won: boolean } | null;
   phase: HuehintPhase;
   config: HuehintConfig;
   /** 1-based current round. */
