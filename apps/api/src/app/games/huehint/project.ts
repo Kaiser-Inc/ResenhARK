@@ -1,5 +1,13 @@
 import type { HuehintRoundView, HuehintView } from "@resenhark/shared";
-import { type HuehintState, type RoundResult, nextDeadline, totals } from "./engine.js";
+import {
+  type HuehintState,
+  type RoundResult,
+  nextDeadline,
+  rankOf,
+  teamScore,
+  totals,
+  wonBy,
+} from "./engine.js";
 
 // Every field is built explicitly: never spread a state object here, or hidden data leaks.
 const points = (hundredths: number) => hundredths / 100;
@@ -20,6 +28,20 @@ export function toRoundView(r: RoundResult): HuehintRoundView {
   };
 }
 
+/** Cooperative duo only. Partial while playing, final only for a finished rounds-done game. */
+function toTeamView(s: HuehintState): HuehintView["team"] {
+  if (!s.cooperative) return null;
+  if (s.phase === "game-over" && s.endReason !== "rounds-done") return null;
+  const { score, max } = teamScore(s);
+  const rank = rankOf(score, max);
+  return {
+    score: points(score),
+    max: points(max),
+    rank,
+    won: s.phase === "game-over" && wonBy(rank),
+  };
+}
+
 export function project(s: HuehintState, viewerId: string): HuehintView {
   const over = s.phase === "game-over";
   const current = over ? undefined : s.schedule[s.round];
@@ -35,7 +57,7 @@ export function project(s: HuehintState, viewerId: string): HuehintView {
     mode: s.mode,
     // Saves from before the cooperative mode have no flag.
     cooperative: s.cooperative ?? false,
-    team: null,
+    team: toTeamView(s),
     phase: s.phase,
     config: {
       turnsPerPlayer: s.config.turnsPerPlayer,

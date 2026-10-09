@@ -11,8 +11,11 @@ import {
   apply,
   create,
   nextDeadline,
+  rankOf,
+  teamScore,
   tick,
   totals,
+  wonBy,
 } from "./engine.js";
 
 const cfg: HuehintConfig = { ...DEFAULT_HUEHINT_CONFIG, hintSeconds: 30, guessSeconds: 45 };
@@ -305,8 +308,8 @@ test("giver removed in the last round ends the game", () => {
   assert.equal(state.endReason, "rounds-done");
 });
 
-test("fewer than 2 players left ends the game with not-enough-players and winners by score", () => {
-  const { state, events } = remove(group(["a", "b"]), "b");
+test("fewer than 2 players left ends a competitive game with not-enough-players and winners by score", () => {
+  const { state, events } = remove(remove(group(["a", "b", "c"]), "b").state, "c");
   assert.equal(state.phase, "game-over");
   assert.equal(state.endReason, "not-enough-players");
   assert.deepEqual(state.winners, ["a"]);
@@ -444,3 +447,127 @@ test("a game of 3 that drops to 2 stays competitive", () => {
   assert.equal(s.players.length, 2);
   assert.equal(s.cooperative, false);
 });
+
+const BLUE = { h: 220, s: 90, b: 85 };
+
+/** A duo game of `turns` laps where every target is RED. */
+function duo(turns = 2): HuehintState {
+  const s = group(["a", "b"], turns);
+  for (const r of s.schedule) r.color = RED;
+  return s;
+}
+
+/** Plays the whole duo game: round i the guesser answers `guesses[i]` (RED when missing). */
+function playDuo(s: HuehintState, guesses: (typeof RED | null)[] = []) {
+  let now = 0;
+  let state = s;
+  for (let i = 0; state.phase !== "game-over"; i++) {
+    const giver = state.schedule[state.round].giverId as string;
+    const guesser = giver === "a" ? "b" : "a";
+    const g = guesses[i] === undefined ? RED : guesses[i];
+    if (g === null) {
+      state = tick(act(state, giver, hint(), now).state, fixedCtx(now + GUESS_MS)).state;
+    } else {
+      state = act(act(state, giver, hint(), now).state, guesser, guess(g), now).state;
+    }
+    now += GUESS_MS + REVEAL_MS;
+    state = tick(state, fixedCtx(now)).state;
+  }
+  return state;
+}
+
+test("rankOf cuts at 0.95, 0.85, 0.75, 0.50 and 0.25 of the maximum", () => {
+  const rank = (score: number) => rankOf(score, 4000);
+  const cases: [number, string][] = [
+    [4000, "S"],
+    [3800, "S"],
+    [3799, "A"],
+    [3400, "A"],
+    [3399, "B"],
+    [3000, "B"],
+    [2999, "C"],
+    [2000, "C"],
+    [1999, "D"],
+    [1000, "D"],
+    [999, "E"],
+    [0, "E"],
+  ];
+  for (const [score, expected] of cases) assert.equal(rank(score), expected, String(score));
+  assert.equal(rankOf(0, 0), "E", "nothing revealed yet");
+});
+
+test("the duo wins at B, A and S and loses at C, D and E", () => {
+  for (const r of ["S", "A", "B"] as const) assert.equal(wonBy(r), true, r);
+  for (const r of ["C", "D", "E"] as const) assert.equal(wonBy(r), false, r);
+});
+
+test("duo: team score is one grade per round and max grows with turnsPerPlayer", () => {
+  for (const turns of [1, 2, 3]) {
+    const end = playDuo(duo(turns));
+    assert.deepEqual(teamScore(end), { score: turns * 2000, max: turns * 2000 });
+    assert.equal(end.results.length, turns * 2);
+  }
+});
+
+test("duo: a perfect game ends rounds-done with both players winning", () => {
+  const end = playDuo(duo(2));
+  assert.equal(end.endReason, "rounds-done");
+  assert.deepEqual(end.winners, ["a", "b"]);
+});
+
+test("duo: a game ranked below B has no winners", () => {
+  const end = playDuo(duo(2), [BLUE, BLUE, BLUE, BLUE]);
+  assert.equal(rankOf(teamScore(end).score, teamScore(end).max), "E");
+  assert.equal(end.endReason, "rounds-done");
+  assert.deepEqual(end.winners, []);
+});
+
+test("duo: a round without a hint or without a guess scores 0 and stays in the maximum", () => {
+  const noHint = duo(2);
+  let s = tick(noHint, fixedCtx(HINT_MS)).state;
+  s = tick(s, fixedCtx(HINT_MS + REVEAL_MS)).state;
+  assert.deepEqual(teamScore(s), { score: 0, max: 1000 });
+
+  const unguessed = playDuo(duo(2), [null]);
+  assert.deepEqual(teamScore(unguessed), { score: 3000, max: 4000 });
+  assert.equal(rankOf(3000, 4000), "B");
+  assert.deepEqual(unguessed.winners, ["a", "b"]);
+});
+
+test("duo: sabotaging a guess or a hint only lowers the team score", () => {
+  const honest = teamScore(playDuo(duo(2))).score;
+  // A wrong guess and a misleading hint look the same to the engine: a far-off guess.
+  const sabotaged = teamScore(playDuo(duo(2), [RED, BLUE, RED, RED])).score;
+  assert.ok(sabotaged < honest, `${sabotaged} < ${honest}`);
+  const alsoNoGuess = teamScore(playDuo(duo(2), [RED, null, RED, RED])).score;
+  assert.ok(alsoNoGuess < honest);
+});
+
+test("duo: leaving or ending early gives no winners", () => {
+  const left = remove(duo(2), "b").state;
+  assert.equal(left.endReason, "not-enough-players");
+  assert.deepEqual(left.winners, []);
+  const ended = act(duo(2), SYSTEM_ACTOR, { type: "end" }).state;
+  assert.equal(ended.endReason, "ended");
+  assert.deepEqual(ended.winners, []);
+});
+
+test("a game of 3 that drops to 2 plays on as competitive and finishes with winners by score", () => {
+  let s = remove(group(["a", "b", "c"], 2), "c").state;
+  assert.equal(s.cooperative, false);
+  s = playToEnd(s);
+  assert.equal(s.endReason, "rounds-done");
+  assert.ok(s.winners.length > 0);
+});
+
+/** Plays any remaining rounds with perfect guesses. */
+function playToEnd(start: HuehintState): HuehintState {
+  let now = 0;
+  let state = start;
+  for (const r of state.schedule) r.color = RED;
+  while (state.phase !== "game-over") {
+    state = playRound(state, { a: RED, b: RED }, now).state;
+    now += GUESS_MS + REVEAL_MS;
+  }
+  return state;
+}

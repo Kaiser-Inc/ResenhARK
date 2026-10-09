@@ -1,10 +1,13 @@
 import {
+  HUEHINT_RANKS,
+  HUEHINT_WIN_RANK,
   type Hsb,
   type HuehintConfig,
   type HuehintEndReason,
   type HuehintEvent,
   type HuehintIntent,
   type HuehintPhase,
+  type HuehintRank,
   isValidHint,
 } from "@resenhark/shared";
 import { shuffle } from "../../core/shuffle.js";
@@ -180,13 +183,38 @@ export function totals(s: HuehintState): Map<string, { guess: number; giver: num
   return sums;
 }
 
+/** Cooperative duo: one grade per revealed round, in hundredths. No hint or no guess grades 0. */
+export function teamScore(s: HuehintState): { score: number; max: number } {
+  return {
+    score: s.results.reduce((total, r) => total + (r.giverScore ?? 0), 0),
+    max: s.results.length * 1000,
+  };
+}
+
+/** The best rank whose cutoff the score/max ratio reaches; nothing revealed yet is E. */
+export function rankOf(score: number, max: number): HuehintRank {
+  const ratio = max === 0 ? 0 : score / max;
+  return (HUEHINT_RANKS.find((r) => ratio >= r.min) ?? HUEHINT_RANKS[HUEHINT_RANKS.length - 1])
+    .rank;
+}
+
+export function wonBy(rank: HuehintRank): boolean {
+  const order = HUEHINT_RANKS.map((r) => r.rank);
+  return order.indexOf(rank) <= order.indexOf(HUEHINT_WIN_RANK);
+}
+
 function finish(s: HuehintState, reason: HuehintEndReason, events: HuehintEvent[]): void {
   s.phase = "game-over";
   s.hint = null;
   s.guesses = [];
   s.endReason = reason;
   s.winners = [];
-  if (reason !== "ended" && s.players.length > 0) {
+  if (s.cooperative) {
+    // The duo wins or loses together, and only a finished game is graded.
+    const { score, max } = teamScore(s);
+    if (reason === "rounds-done" && wonBy(rankOf(score, max)))
+      s.winners = s.players.map((p) => p.id);
+  } else if (reason !== "ended" && s.players.length > 0) {
     const t = totals(s);
     const total = (id: string) => (t.get(id)?.guess ?? 0) + (t.get(id)?.giver ?? 0);
     // Highest total; equal totals share the win. A giver-points tiebreak would favor sabotage.
