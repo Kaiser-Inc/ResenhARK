@@ -38,11 +38,11 @@ export function GameRules({
         aria-label={`Regras do ${rules.name}`}
         className="flex list-disc flex-col gap-3 pl-4 text-sm leading-5"
       >
-        {rules.rules.map((rule) => (
+        {(variant === "short" ? rules.shortRules : rules.rules).map((rule) => (
           <li key={rule}>{rule}</li>
         ))}
       </ul>
-      {game === "huehint" ? (
+      {variant === "full" && game === "huehint" ? (
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold">Ranks da dupla · B para vencer</p>
           <table className="w-full text-left text-sm">

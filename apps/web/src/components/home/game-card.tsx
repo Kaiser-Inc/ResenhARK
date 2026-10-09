@@ -62,7 +62,7 @@ export function GameCard({ game }: { game: GameType }) {
     >
       {flipped ? (
         <span id={`${id}-rules`} className="sr-only">
-          {rules.rules.join(" ")}
+          {rules.shortRules.join(" ")}
         </span>
       ) : null}
       <motion.span

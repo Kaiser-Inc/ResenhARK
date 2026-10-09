@@ -80,7 +80,10 @@ export default function HomePage() {
             ))}
           </ol>
         </section>
-        <section aria-label="Jogos" className="grid gap-8 py-2 lg:grid-cols-2 lg:gap-12">
+        <section
+          aria-label="Jogos"
+          className="grid items-start gap-8 py-2 lg:grid-cols-2 lg:gap-12"
+        >
           <GameCard game="hitline" />
           <GameCard game="huehint" />
         </section>

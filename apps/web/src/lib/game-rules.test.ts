@@ -28,13 +28,12 @@ test("Huehint rules document cooperative play, alternation and shared group wins
   assert.doesNotMatch(text, /desempate/i);
 });
 
-test("all rule surfaces show the shared rank thresholds and mark B as the target", () => {
+test("full rule surfaces show the shared rank thresholds and mark B as the target", () => {
   assert.deepEqual(
     HUEHINT_RANK_RULES.map(({ rank }) => rank),
     HUEHINT_RANKS.map(({ rank }) => rank),
   );
   for (const markup of [
-    renderToStaticMarkup(createElement(GameRules, { game: "huehint", variant: "short" })),
     renderToStaticMarkup(createElement(GameRules, { game: "huehint" })),
     renderToStaticMarkup(createElement(RulesPage)),
   ]) {
@@ -47,6 +46,15 @@ test("all rule surfaces show the shared rank thresholds and mark B as the target
     HUEHINT_RANK_RULES.map(({ result }) => result),
     ["Vitória", "Vitória", "Vitória", "Derrota", "Derrota", "Derrota"],
   );
+});
+
+test("home summaries omit the full rules and rank thresholds", () => {
+  for (const game of ["hitline", "huehint"] as const) {
+    const markup = renderToStaticMarkup(createElement(GameRules, { game, variant: "short" }));
+    for (const rule of GAME_RULES[game].shortRules) assert.ok(markup.includes(rule));
+    for (const rule of GAME_RULES[game].rules) assert.ok(!markup.includes(rule));
+    assert.doesNotMatch(markup, /<table|95%|rank é provisório/);
+  }
 });
 
 test("rules show the active configuration instead of hardcoded defaults", () => {
