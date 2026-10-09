@@ -10,6 +10,7 @@ import { validateMessage } from "../domain/room/chat.js";
 import { RateLimiter } from "../domain/room/rate-limiter.js";
 import {
   type Room,
+  foldColors,
   foldPlayed,
   isOnline,
   kick,
@@ -126,10 +127,19 @@ export function registerSocketGateway(
     // A finished Hitline game's songs still count as played.
     const folded = foldPlayed(room);
     const playerIds = seatPlayers(folded, folded.lobby.huehintConfig.maxPlayers);
-    const started = createHuehint(folded.lobby.huehintConfig, playerIds, ctx());
+    const started = createHuehint(
+      folded.lobby.huehintConfig,
+      playerIds,
+      ctx(),
+      folded.lobby.colors ?? [],
+    );
+    const remembered = foldColors(
+      folded,
+      started.state.schedule.map((round) => round.color),
+    );
     return {
       ok: true,
-      room: { ...folded, game: { type: "huehint", state: started.state, playerIds } },
+      room: { ...remembered, game: { type: "huehint", state: started.state, playerIds } },
       events: started.events,
       system: ["Partida de Huehint começou"],
     };

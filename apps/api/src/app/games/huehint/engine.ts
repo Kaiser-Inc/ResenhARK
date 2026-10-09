@@ -68,6 +68,8 @@ export function create(
   config: HuehintConfig,
   playerIds: string[],
   ctx: Ctx,
+  /** Colors the room drew in earlier games, oldest first. */
+  recentColors: Hsb[] = [],
 ): { state: HuehintState; events: HuehintEvent[] } {
   const mode = playerIds.length === 1 ? "solo" : "group";
   const order = shuffle(playerIds, ctx.rng);
@@ -75,7 +77,7 @@ export function create(
     mode === "solo"
       ? Array(SOLO_ROUNDS).fill(null)
       : Array.from({ length: config.turnsPerPlayer }, () => order).flat();
-  const colors = drawColors(givers.length, ctx.rng);
+  const colors = drawColors(givers.length, ctx.rng, recentColors);
   const s: HuehintState = {
     mode,
     cooperative: playerIds.length === 2,

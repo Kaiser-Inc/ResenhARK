@@ -4,6 +4,7 @@ import {
   DEFAULT_HUEHINT_CONFIG,
   type GameType,
   type HitlineConfig,
+  type Hsb,
   type HuehintConfig,
   ROOM_CODE_ALPHABET,
   normalizeName,
@@ -35,6 +36,8 @@ export type Lobby = {
   deck: ImportedPlaylist | null;
   /** Stable keys (see playedKey) of every song already played in this room. */
   played: string[];
+  /** The colors Huehint drew in this room, oldest first, so a new game avoids them. */
+  colors: Hsb[];
 };
 export type { ActiveGame };
 
@@ -53,6 +56,8 @@ export type RoomResult = { ok: true; room: Room } | { ok: false; error: RoomErro
 
 export const MAX_MEMBERS = 20;
 export const OWNER_GRACE_MS = 60_000;
+/** About 15 games of 4 rounds; the palette relaxes its distance with age, so older ones weigh less. */
+export const MAX_COLORS = 60;
 
 export function generateRoomCode(rng: () => number): string {
   return Array.from(
@@ -73,6 +78,7 @@ export function createRoom(code: string, owner: Member, now: number): Room {
       huehintConfig: DEFAULT_HUEHINT_CONFIG,
       deck: null,
       played: [],
+      colors: [],
     },
     game: null,
   };
@@ -124,6 +130,12 @@ export function foldPlayed(room: Room): Room {
   const played = new Set(lobby.played);
   for (const card of deckOf(lobby).cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
   return { ...room, lobby: { ...lobby, played: [...played] } };
+}
+
+/** Adds a new game's colors to the room's memory, keeping the newest MAX_COLORS. Idempotent per call, not per game. */
+export function foldColors(room: Room, colors: Hsb[]): Room {
+  const kept = [...(room.lobby.colors ?? []), ...colors].slice(-MAX_COLORS);
+  return { ...room, lobby: { ...room.lobby, colors: kept } };
 }
 
 export function isOnline(member: Member): boolean {

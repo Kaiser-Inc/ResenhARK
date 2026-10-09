@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { DEFAULT_HUEHINT_CONFIG, type HuehintConfig } from "@resenhark/shared";
+import { seededRng } from "../../core/seeded-rng.js";
 import { fixedCtx } from "../hitline/test-deck.js";
 import { SYSTEM_ACTOR } from "../system.js";
-import { scoreGuess } from "./color.js";
+import { deltaE2000, hsbToLab, scoreGuess } from "./color.js";
 import {
   type HuehintAction,
   type HuehintState,
@@ -571,3 +572,15 @@ function playToEnd(start: HuehintState): HuehintState {
   }
   return state;
 }
+
+test("create keeps the schedule's colors away from the room's recent colors", () => {
+  const recent = [RED];
+  for (let seed = 1; seed <= 100; seed++) {
+    const ctx = { ...fixedCtx(), rng: seededRng(seed) };
+    const { state } = create({ ...cfg, turnsPerPlayer: 2 }, ["a", "b", "c"], ctx, recent);
+    for (const round of state.schedule) {
+      const dE = deltaE2000(hsbToLab(round.color), hsbToLab(RED));
+      assert.ok(dE >= 20, `seed ${seed}: ΔE ${dE}`);
+    }
+  }
+});
