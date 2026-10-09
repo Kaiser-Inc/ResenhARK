@@ -189,13 +189,9 @@ function finish(s: HuehintState, reason: HuehintEndReason, events: HuehintEvent[
   if (reason !== "ended" && s.players.length > 0) {
     const t = totals(s);
     const total = (id: string) => (t.get(id)?.guess ?? 0) + (t.get(id)?.giver ?? 0);
-    const gave = (id: string) => t.get(id)?.giver ?? 0;
-    // Highest total; equal totals (always the case with two players) go to the better hint giver,
-    // so a giver gains nothing from a misleading hint.
+    // Highest total; equal totals share the win. A giver-points tiebreak would favor sabotage.
     const best = Math.max(...s.players.map((p) => total(p.id)));
-    const top = s.players.filter((p) => total(p.id) === best);
-    const bestGiver = Math.max(...top.map((p) => gave(p.id)));
-    s.winners = top.filter((p) => gave(p.id) === bestGiver).map((p) => p.id);
+    s.winners = s.players.filter((p) => total(p.id) === best).map((p) => p.id);
   }
   events.push({ type: "game-over", winners: [...s.winners], reason });
 }

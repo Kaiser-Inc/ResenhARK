@@ -205,16 +205,42 @@ test("the last reveal ends the game with rounds-done; highest total wins; exact 
   assert.deepEqual(end.winners, ["b"]);
 });
 
-test("equal totals are broken by giver points, so a two-player game has a winner and a bad hint never pays", () => {
-  const duo = group(["a", "b"]);
-  duo.schedule[1].color = RED;
-  const r1 = playRound(duo, { b: RED }, 0).state;
-  const end = playRound(r1, { a: ORANGE }, 100_000);
-  const t = totals(end.state);
-  const total = (id: string) => (t.get(id)?.guess ?? 0) + (t.get(id)?.giver ?? 0);
-  assert.equal(total("a"), total("b"), "two players mirror each other's totals");
-  assert.deepEqual(end.state.winners, ["a"], "a gave the better hint");
-  assert.deepEqual(end.events.at(-1), { type: "game-over", winners: ["a"], reason: "rounds-done" });
+test("equal top totals share the win even when their giver points differ", () => {
+  const s = group(["a", "b", "c"]);
+  const played = (
+    round: number,
+    giverId: string,
+    giverScore: number,
+    guesses: [string, number][],
+  ) => ({
+    round,
+    giverId,
+    color: RED,
+    hint: "Vermelho McQueen",
+    outcome: "revealed" as const,
+    guesses: guesses.map(([playerId, score]) => ({ playerId, color: RED, score })),
+    giverScore,
+  });
+  // After two rounds everyone has 1200, but the givers earned 800, 400 and 0.
+  s.results = [
+    played(1, "a", 800, [
+      ["b", 800],
+      ["c", 800],
+    ]),
+    played(2, "b", 400, [
+      ["a", 400],
+      ["c", 400],
+    ]),
+  ];
+  s.round = 2;
+  s.schedule[2].color = RED;
+  const end = playRound(s, { a: RED, b: RED }, 200_000);
+  assert.deepEqual(end.state.winners, ["a", "b", "c"]);
+  assert.deepEqual(end.events.at(-1), {
+    type: "game-over",
+    winners: ["a", "b", "c"],
+    reason: "rounds-done",
+  });
 });
 
 test("with nobody online nothing ticks and nextDeadline is null; the first one back gets a fresh deadline", () => {
