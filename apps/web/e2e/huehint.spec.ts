@@ -97,11 +97,11 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
       const secret = await giver
         .getByRole("region", { name: "Cor secreta" })
         .getByRole("img")
-        .getAttribute("aria-label");
+        .getAttribute("style");
       await giver.reload();
       await expect(
         giver.getByRole("region", { name: "Cor secreta" }).getByRole("img"),
-      ).toHaveAttribute("aria-label", secret as string);
+      ).toHaveAttribute("style", secret as string);
       await giver.getByLabel("Sua dica", { exact: true }).fill("azul 123");
       await expect(giver.getByRole("button", { name: "Enviar dica" })).toBeDisabled();
       await expect(
@@ -144,8 +144,8 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
     if (round === 1) {
       await guessers[0].reload();
       await expect(
-        guessers[0].getByRole("region", { name: "Seu palpite", exact: true }),
-      ).toContainText("H 0° · S 100% · B 100%");
+        guessers[0].getByRole("region", { name: "Seu palpite", exact: true }).getByRole("img"),
+      ).toHaveCSS("background-color", "rgb(255, 0, 0)");
       await expect(guessers[0].getByRole("slider")).toHaveCount(0);
       await expect(guessers[0].getByRole("region", { name: "Cor secreta" })).toHaveCount(0);
     }

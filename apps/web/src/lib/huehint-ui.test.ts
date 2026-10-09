@@ -66,6 +66,14 @@ function render(patch: Partial<HuehintView>, you = "giver") {
   );
 }
 
+test("secret colors have no HSB description in group hints or solo memory", () => {
+  for (const markup of [render({}), render({ mode: "solo", phase: "memorize", giverId: null })]) {
+    assert.match(markup, /aria-label="Cor secreta"/);
+    assert.doesNotMatch(markup, /H \d+°|S \d+%|B \d+%/);
+    assert.doesNotMatch(markup, /aria-label="[^"]*317/);
+  }
+});
+
 test("target rendering is gated by role even when given an overbroad color field", () => {
   assert.match(render({}), /Só você vê esta cor/);
   for (const you of ["guesser", "spectator"]) {
