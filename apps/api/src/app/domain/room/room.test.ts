@@ -1,11 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  MAX_COLORS,
   MAX_MEMBERS,
   type Member,
   type Room,
   addMember,
   createRoom,
+  foldColors,
   generateRoomCode,
   kick,
   leave,
@@ -156,4 +158,26 @@ test("owner leaving with nobody online hands ownership to the next by joinedAt",
 test("a non-owner leaving keeps the owner", () => {
   const room = roomOf("a", [member("a"), member("b")]);
   assert.equal(leave(room, "b").ownerId, "a");
+});
+
+const colorsOf = (n: number, from = 0) =>
+  Array.from({ length: n }, (_, i) => ({ h: (from + i) % 360, s: 50, b: 50 }));
+
+test("a new room remembers no colors", () => {
+  assert.deepEqual(createRoom("KXPMR", member("a"), 0).lobby.colors, []);
+});
+
+test("foldColors appends a game's colors and keeps only the newest MAX_COLORS", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  const once = foldColors(room, colorsOf(4));
+  assert.deepEqual(once.lobby.colors, colorsOf(4));
+  const full = foldColors(once, colorsOf(MAX_COLORS, 100));
+  assert.equal(full.lobby.colors.length, MAX_COLORS);
+  assert.deepEqual(full.lobby.colors, colorsOf(MAX_COLORS, 100));
+});
+
+test("foldColors treats a room saved before the color memory as empty", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  const old = { ...room, lobby: { ...room.lobby, colors: undefined } } as unknown as Room;
+  assert.deepEqual(foldColors(old, colorsOf(2)).lobby.colors, colorsOf(2));
 });

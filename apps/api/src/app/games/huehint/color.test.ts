@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { type Lab, deltaE2000, hsbToLab, scoreFromDeltaE, scoreGuess } from "./color.js";
+import { type Lab, deltaE2000, hsbToLab, lchToHsb, scoreFromDeltaE, scoreGuess } from "./color.js";
 
 // Sharma, Wu and Dalal (2005), "The CIEDE2000 color-difference formula", test data.
 const SHARMA: [Lab, Lab, number][] = [
@@ -38,4 +38,27 @@ test("scoreGuess gives 1000 for the exact color and less for a far one", () => {
   const red = { h: 355, s: 90, b: 85 };
   assert.equal(scoreGuess(red, red), 1000);
   assert.ok(scoreGuess(red, { h: 30, s: 90, b: 90 }) < 400);
+});
+
+const lchOf = (c: Parameters<typeof hsbToLab>[0]) => {
+  const [L, a, b] = hsbToLab(c);
+  return { L, C: Math.hypot(a, b), h: ((Math.atan2(b, a) * 180) / Math.PI + 360) % 360 };
+};
+const hueGap = (a: number, b: number) => Math.min(Math.abs(a - b), 360 - Math.abs(a - b));
+
+test("lchToHsb round-trips an in-gamut color through hsbToLab", () => {
+  const back = lchOf(lchToHsb(60, 40, 30));
+  assert.ok(Math.abs(back.L - 60) < 2, `L ${back.L}`);
+  assert.ok(Math.abs(back.C - 40) < 3, `C ${back.C}`);
+  assert.ok(hueGap(back.h, 30) < 4, `h ${back.h}`);
+});
+
+test("lchToHsb pulls an out-of-gamut color in along chroma, keeping hue and lightness", () => {
+  const color = lchToHsb(90, 120, 100);
+  for (const v of [color.h, color.s, color.b]) assert.ok(Number.isInteger(v));
+  assert.ok(color.h >= 0 && color.h <= 359 && color.s <= 100 && color.b <= 100);
+  const back = lchOf(color);
+  assert.ok(back.C < 120);
+  assert.ok(Math.abs(back.L - 90) < 3, `L ${back.L}`);
+  assert.ok(hueGap(back.h, 100) < 6, `h ${back.h}`);
 });

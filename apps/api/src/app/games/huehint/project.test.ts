@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { DEFAULT_HUEHINT_CONFIG, type Hsb } from "@resenhark/shared";
 import { fixedCtx } from "../hitline/test-deck.js";
 import { SYSTEM_ACTOR } from "../system.js";
-import { type HuehintAction, type HuehintState, apply, create, tick } from "./engine.js";
+import { type HuehintAction, type HuehintState, REVEAL_MS, apply, create, tick } from "./engine.js";
 import { project } from "./project.js";
 
 // Distinct triples that no other field of a view can produce by accident.
@@ -138,4 +138,89 @@ test("solo: memorize shows the color to the player only, then guessing hides it"
   const open = tick(state, fixedCtx(5000)).state;
   assert.equal(project(open, "a").phase, "guessing");
   assert.equal(leaks(project(open, "a"), TARGET), false);
+});
+
+test("a state saved before the cooperative mode projects as competitive with no team", () => {
+  const { state } = start();
+  const old = structuredClone(state) as Partial<HuehintState>;
+  old.cooperative = undefined;
+  const view = project(old as HuehintState, "a");
+  assert.equal(view.cooperative, false);
+  assert.equal(view.team, null);
+});
+
+test("a cooperative game projects cooperative = true", () => {
+  const { state } = create(DEFAULT_HUEHINT_CONFIG, ["a", "b"], fixedCtx());
+  assert.equal(project(state, "a").cooperative, true);
+});
+
+const RED: Hsb = { h: 355, s: 90, b: 85 };
+
+/** A duo game of 2 rounds with RED targets, in the hint phase. */
+function duoGame() {
+  const { state } = create(
+    { ...DEFAULT_HUEHINT_CONFIG, turnsPerPlayer: 1 },
+    ["a", "b"],
+    fixedCtx(),
+  );
+  state.players = ["a", "b"].map((id) => ({ id, online: true }));
+  state.schedule = [
+    { giverId: "a", color: RED },
+    { giverId: "b", color: RED },
+  ];
+  return state;
+}
+/** Plays the duo game's current round with `guessColor`, then lets the reveal time out. */
+function playDuoRound(s: HuehintState, guessColor: Hsb, now: number) {
+  const giver = s.schedule[s.round].giverId as string;
+  const guesser = giver === "a" ? "b" : "a";
+  const hinted = act(s, giver, { type: "give-hint", hint: "Vermelho McQueen" }).state;
+  const guessed = apply(hinted, guesser, { type: "guess", color: guessColor }, fixedCtx(now));
+  assert.ok(guessed.ok);
+  return { revealed: guessed.state, over: tick(guessed.state, fixedCtx(now + REVEAL_MS)).state };
+}
+
+test("duo team: nothing revealed yet is 0 of 0, rank E, not won", () => {
+  const view = project(duoGame(), "a");
+  assert.deepEqual(view.team, { score: 0, max: 0, rank: "E", won: false });
+  assert.deepEqual(view.winners, []);
+});
+
+test("duo team: mid-game it is the partial of the revealed rounds and never won", () => {
+  const { revealed } = playDuoRound(duoGame(), RED, 0);
+  assert.deepEqual(project(revealed, "b").team, { score: 10, max: 10, rank: "S", won: false });
+  assert.deepEqual(project(revealed, "b").winners, []);
+});
+
+test("duo team: a finished rounds-done game carries the final result and winners", () => {
+  const first = playDuoRound(duoGame(), RED, 0).over;
+  const end = playDuoRound(first, RED, 100_000).over;
+  const view = project(end, "a");
+  assert.equal(view.phase, "game-over");
+  assert.deepEqual(view.team, { score: 20, max: 20, rank: "S", won: true });
+  assert.deepEqual(view.winners, ["a", "b"]);
+
+  const lost = playDuoRound(
+    playDuoRound(duoGame(), { h: 220, s: 90, b: 85 }, 0).over,
+    { h: 220, s: 90, b: 85 },
+    100_000,
+  ).over;
+  const lostView = project(lost, "a");
+  assert.equal(lostView.team?.won, false);
+  assert.equal(lostView.team?.rank, "E");
+  assert.deepEqual(lostView.winners, []);
+});
+
+test("duo team: a game ended early or by a departure has no team", () => {
+  const ended = act(duoGame(), SYSTEM_ACTOR, { type: "end" }).state;
+  assert.equal(project(ended, "a").team, null);
+  const left = act(duoGame(), SYSTEM_ACTOR, { type: "remove", playerId: "b" }).state;
+  assert.equal(project(left, "a").team, null);
+});
+
+test("a competitive game has no team at any point", () => {
+  const { state } = start();
+  assert.equal(project(state, "a").team, null);
+  const ended = act(state, SYSTEM_ACTOR, { type: "end" }).state;
+  assert.equal(project(ended, "a").team, null);
 });

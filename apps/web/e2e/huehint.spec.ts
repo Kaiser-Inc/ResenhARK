@@ -1,6 +1,15 @@
 import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
-import { chooseOption, createRoomAs, expect, joinRoomAs, test } from "./support";
+import { HUEHINT_RANKS } from "@resenhark/shared";
+import {
+  chooseOption,
+  createRoomAs,
+  expect,
+  joinRoomAs,
+  peekRoom,
+  test,
+  writeRoom,
+} from "./support";
 
 async function checkAxe(page: Page) {
   // Scan the settled reveal; an opacity entrance temporarily lowers text contrast.
@@ -167,6 +176,7 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
   for (const p of pages) {
     await expect(p.getByRole("region", { name: "Resultado" })).toBeVisible({ timeout: 20_000 });
     await expect(p.getByRole("region", { name: "Resultado" })).toContainText(/venceu|venceram/);
+    await expect(p.getByRole("region", { name: "Resultado" })).not.toContainText("desempate");
     await expect(p.getByRole("region", { name: "Placar final" })).toContainText("Palpites:");
     await expect(p.getByRole("region", { name: "Placar final" })).toContainText("Dicas:");
     await expect(
@@ -235,7 +245,221 @@ test("Huehint spectator has no target or selector and owner can end the game", a
   await expect(spectator.getByRole("region", { name: "Resultado" })).toContainText(
     "Partida encerrada",
   );
+  await expect(spectator.getByRole("region", { name: "Resultado" })).not.toContainText(
+    /Rank|Vitória|venceu|meta B/,
+  );
   await checkAxe(spectator);
+});
+
+test("Huehint duo: alternating givers, collective partial score and final gallery for both players", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90_000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const code = await createRoomAs(page, "Ana");
+  const { page: bia } = await joinRoomAs(browser, code, "Bia");
+  const pages = [page, bia];
+  await configureHuehint(page);
+  await page.getByRole("button", { name: "Iniciar partida" }).click();
+  let firstGiver: Page | undefined;
+  for (let round = 1; round <= 2; round++) {
+    const giver = await giverAmong(pages);
+    const guesser = pages.find((p) => p !== giver) as Page;
+    if (round === 1) firstGiver = giver;
+    else expect(giver).not.toBe(firstGiver);
+    for (const participant of pages) {
+      const board = participant.getByRole("region", { name: "Huehint", exact: true });
+      const giverName = giver === page ? "Ana" : "Bia";
+      const nextName = round === 2 ? "última rodada" : giver === page ? "Bia" : "Ana";
+      await expect(
+        board.getByText(`Dica agora: ${giverName} · Próxima dica: ${nextName}`, { exact: true }),
+      ).toBeVisible();
+      const partial = participant.getByRole("region", { name: "Placar parcial" });
+      await expect(partial).toContainText("Nota da dupla");
+      await expect(partial).toContainText("Rank provisório:");
+      await expect(partial).toContainText("B para vencer");
+      await expect(partial).not.toContainText(/Palpites:|Dicas:/);
+    }
+    await giver.getByLabel("Sua dica", { exact: true }).fill("Vermelho McQueen");
+    await giver.getByRole("button", { name: "Enviar dica" }).click();
+    await keyboardGuess(guesser);
+    await expect(
+      page.getByRole("region", { name: `Revelação da rodada ${round}`, exact: true }),
+    ).toBeVisible();
+    await expect(page.getByRole("region", { name: "Placar parcial" })).toContainText(
+      /\d+,\d{2} \/ \d+,\d{2}/,
+    );
+  }
+  for (const participant of pages) {
+    const result = participant.getByRole("region", { name: "Resultado" });
+    await expect(result).toBeVisible({ timeout: 20_000 });
+    await expect(result.getByLabel(/^Rank [SABCDE]$/)).toBeVisible();
+    await expect(result).toContainText(/A dupla venceu|A dupla não alcançou a meta B/);
+    await expect(participant.getByRole("region", { name: "Contribuições da dupla" })).toContainText(
+      "Palpites:",
+    );
+    await expect(participant.getByRole("region", { name: "Placar final" })).toHaveCount(0);
+    await expect(
+      participant.getByRole("region", { name: "Galeria de rodadas" }).locator("details"),
+    ).toHaveCount(2);
+  }
+  await checkAxe(page);
+});
+
+/** Seed revealed scores in the isolated E2E Redis; the real engine computes the ending and rank. */
+async function seedHuehintFinal(code: string, scoreFor: (round: number, player: number) => number) {
+  const stored = await peekRoom(code);
+  const state = stored.game.state;
+  state.results = state.schedule.map(
+    (scheduled: { giverId: string; color: { h: number; s: number; b: number } }, index: number) => {
+      const guesses = state.players
+        .filter((player: { id: string }) => player.id !== scheduled.giverId)
+        .map((player: { id: string }) => ({
+          playerId: player.id,
+          color: scheduled.color,
+          score: scoreFor(
+            index,
+            state.players.findIndex((p: { id: string }) => p.id === player.id),
+          ),
+        }));
+      return {
+        round: index + 1,
+        giverId: scheduled.giverId,
+        color: scheduled.color,
+        hint: "Vermelho McQueen",
+        outcome: "revealed",
+        guesses,
+        giverScore: Math.round(
+          guesses.reduce((sum: number, guess: { score: number }) => sum + guess.score, 0) /
+            guesses.length,
+        ),
+      };
+    },
+  );
+  state.round = state.schedule.length - 1;
+  state.phase = "reveal";
+  state.hint = null;
+  state.guesses = [];
+  state.deadline = Date.now() - 1;
+  await writeRoom(code, stored);
+}
+
+for (const { rank, min } of HUEHINT_RANKS) {
+  test(`Huehint duo rank ${rank}: shared outcome, contributions and accessible result in both themes`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(90_000);
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    const code = await createRoomAs(page, "Ana");
+    const { page: bia } = await joinRoomAs(browser, code, "Bia");
+    await configureHuehint(page);
+    await page.getByRole("button", { name: "Iniciar partida" }).click();
+    await expect(page.getByRole("region", { name: "Huehint", exact: true })).toBeVisible();
+    await seedHuehintFinal(code, () => Math.round(min * 1000));
+    const won = ["B", "A", "S"].includes(rank);
+    for (const participant of [page, bia]) {
+      await participant.reload();
+      const result = participant.getByRole("region", { name: "Resultado" });
+      await expect(result.getByLabel(`Rank ${rank}`, { exact: true })).toBeVisible();
+      await expect(result).toContainText(
+        won ? "Vitória dos dois!" : "A dupla não alcançou a meta B.",
+      );
+      await expect(result).not.toContainText(/Ana venceu|Bia venceu|desempate|Empate dividido/);
+      await expect(
+        participant.getByRole("region", { name: "Contribuições da dupla" }).getByRole("listitem"),
+      ).toHaveCount(2);
+      await expect(
+        participant.getByRole("region", { name: "Galeria de rodadas" }).locator("details"),
+      ).toHaveCount(2);
+    }
+    for (const theme of ["dark", "light"]) {
+      await page.evaluate(
+        (value) => document.documentElement.classList.toggle("dark", value === "dark"),
+        theme,
+      );
+      for (const width of [390, 1440]) {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(
+          page.getByRole("region", { name: "Resultado" }).getByLabel(`Rank ${rank}`),
+        ).toBeVisible();
+        expect(
+          await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+        ).toBe(true);
+        await checkAxe(page);
+        await page.screenshot({
+          path: `/tmp/resenhark-r5-${rank}-${theme}-${width}.png`,
+          fullPage: true,
+          animations: "disabled",
+        });
+      }
+    }
+  });
+}
+
+test("Huehint duo ends without rank when a player leaves", async ({ page, browser }) => {
+  const code = await createRoomAs(page, "Ana");
+  const { page: bia } = await joinRoomAs(browser, code, "Bia");
+  await configureHuehint(page);
+  await page.getByRole("button", { name: "Iniciar partida" }).click();
+  await expect(bia.getByRole("region", { name: "Huehint", exact: true })).toBeVisible();
+  await bia.getByRole("button", { name: "Sair da sala", exact: true }).click();
+  await bia.getByRole("button", { name: "Sair", exact: true }).click();
+  const result = page.getByRole("region", { name: "Resultado" });
+  await expect(result).toContainText("Partida encerrada");
+  await expect(result).toContainText("menos de 2 jogadores");
+  await expect(result).not.toContainText(/Rank|Vitória|venceu|meta B/);
+});
+
+for (const split of [false, true]) {
+  test(`Huehint three players: ${split ? "split victory" : "unique winner"} without hint tiebreak`, async ({
+    page,
+    browser,
+  }) => {
+    const code = await createRoomAs(page, "Ana");
+    const { page: bia } = await joinRoomAs(browser, code, "Bia");
+    const { page: caio } = await joinRoomAs(browser, code, "Caio");
+    await configureHuehint(page);
+    await page.getByRole("button", { name: "Iniciar partida" }).click();
+    await expect(page.getByRole("region", { name: "Huehint", exact: true })).toBeVisible();
+    const stored = await peekRoom(code);
+    const topId = stored.game.state.players[0].id;
+    const topName = stored.members.find((member: { id: string }) => member.id === topId).name;
+    await seedHuehintFinal(code, (_round, player) => (split || player === 0 ? 1000 : 0));
+    for (const participant of [page, bia, caio]) {
+      await participant.reload();
+      const result = participant.getByRole("region", { name: "Resultado" });
+      await expect(result).toContainText(split ? "Empate dividido:" : `${topName} venceu!`);
+      await expect(result).not.toContainText(/desempate|Rank da dupla/);
+      await expect(participant.getByRole("region", { name: "Placar final" })).toBeVisible();
+    }
+  });
+}
+
+test("Huehint rules page uses the shared rank table with B as the target", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Regras", exact: true }).click();
+  await expect(page).toHaveURL(/\/regras$/);
+  await expect(page.getByRole("heading", { name: "Regras dos jogos" })).toBeVisible();
+  const ranks = page.getByRole("table", { name: "Ranks da dupla por percentual da nota máxima" });
+  for (const { rank, min } of HUEHINT_RANKS) {
+    await expect(
+      ranks
+        .getByRole("row")
+        .filter({ has: page.getByRole("rowheader", { name: rank, exact: true }) }),
+    ).toContainText(`${min * 100}%`);
+  }
+  await expect(
+    ranks.getByRole("row").filter({ has: page.getByRole("rowheader", { name: "B", exact: true }) }),
+  ).toContainText("Vitória · Meta");
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await checkAxe(page);
+    expect(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+    ).toBe(true);
+  }
 });
 
 test("Huehint selector accepts mouse drags and touch taps with integer HSB values", async ({

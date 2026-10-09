@@ -1,10 +1,13 @@
 import {
+  HUEHINT_RANKS,
+  HUEHINT_WIN_RANK,
   type Hsb,
   type HuehintConfig,
   type HuehintEndReason,
   type HuehintEvent,
   type HuehintIntent,
   type HuehintPhase,
+  type HuehintRank,
   isValidHint,
 } from "@resenhark/shared";
 import { shuffle } from "../../core/shuffle.js";
@@ -16,6 +19,8 @@ import { toRoundView } from "./project.js";
 export const REVEAL_MS = 12_000;
 export const MEMORIZE_MS = 5_000;
 export const SOLO_ROUNDS = 5;
+/** The best grade of one round, in hundredths. */
+const ROUND_MAX = 1000;
 
 export type Player = { id: string; online: boolean };
 /** Null giver in solo. */
@@ -33,6 +38,8 @@ export type RoundResult = {
 };
 export type HuehintState = {
   mode: "group" | "solo";
+  /** Set at create when exactly 2 play: the duo shares one team score and nobody wins alone. Absent in old saves. */
+  cooperative: boolean;
   config: HuehintConfig;
   /** In the shuffled giver order. */
   players: Player[];
@@ -63,6 +70,8 @@ export function create(
   config: HuehintConfig,
   playerIds: string[],
   ctx: Ctx,
+  /** Colors the room drew in earlier games, oldest first. */
+  recentColors: Hsb[] = [],
 ): { state: HuehintState; events: HuehintEvent[] } {
   const mode = playerIds.length === 1 ? "solo" : "group";
   const order = shuffle(playerIds, ctx.rng);
@@ -70,9 +79,10 @@ export function create(
     mode === "solo"
       ? Array(SOLO_ROUNDS).fill(null)
       : Array.from({ length: config.turnsPerPlayer }, () => order).flat();
-  const colors = drawColors(givers.length, ctx.rng);
+  const colors = drawColors(givers.length, ctx.rng, recentColors);
   const s: HuehintState = {
     mode,
+    cooperative: playerIds.length === 2,
     config: structuredClone(config),
     players: order.map((id) => ({ id, online: true })),
     schedule: givers.map((giverId, i) => ({ giverId, color: colors[i] })),
@@ -177,22 +187,43 @@ export function totals(s: HuehintState): Map<string, { guess: number; giver: num
   return sums;
 }
 
+/** Cooperative duo: one grade per revealed round, in hundredths. No hint or no guess grades 0. */
+export function teamScore(s: HuehintState): { score: number; max: number } {
+  return {
+    score: s.results.reduce((total, r) => total + (r.giverScore ?? 0), 0),
+    max: s.results.length * ROUND_MAX,
+  };
+}
+
+/** The best rank whose cutoff the score/max ratio reaches; nothing revealed yet is E. */
+export function rankOf(score: number, max: number): HuehintRank {
+  const ratio = max === 0 ? 0 : score / max;
+  return (HUEHINT_RANKS.find((r) => ratio >= r.min) ?? HUEHINT_RANKS[HUEHINT_RANKS.length - 1])
+    .rank;
+}
+
+export function wonBy(rank: HuehintRank): boolean {
+  const order = HUEHINT_RANKS.map((r) => r.rank);
+  return order.indexOf(rank) <= order.indexOf(HUEHINT_WIN_RANK);
+}
+
 function finish(s: HuehintState, reason: HuehintEndReason, events: HuehintEvent[]): void {
   s.phase = "game-over";
   s.hint = null;
   s.guesses = [];
   s.endReason = reason;
   s.winners = [];
-  if (reason !== "ended" && s.players.length > 0) {
+  if (s.cooperative) {
+    // The duo wins or loses together, and only a finished game is graded.
+    const { score, max } = teamScore(s);
+    if (reason === "rounds-done" && wonBy(rankOf(score, max)))
+      s.winners = s.players.map((p) => p.id);
+  } else if (reason !== "ended" && s.players.length > 0) {
     const t = totals(s);
     const total = (id: string) => (t.get(id)?.guess ?? 0) + (t.get(id)?.giver ?? 0);
-    const gave = (id: string) => t.get(id)?.giver ?? 0;
-    // Highest total; equal totals (always the case with two players) go to the better hint giver,
-    // so a giver gains nothing from a misleading hint.
+    // Highest total; equal totals share the win. A giver-points tiebreak would favor sabotage.
     const best = Math.max(...s.players.map((p) => total(p.id)));
-    const top = s.players.filter((p) => total(p.id) === best);
-    const bestGiver = Math.max(...top.map((p) => gave(p.id)));
-    s.winners = top.filter((p) => gave(p.id) === bestGiver).map((p) => p.id);
+    s.winners = s.players.filter((p) => total(p.id) === best).map((p) => p.id);
   }
   events.push({ type: "game-over", winners: [...s.winners], reason });
 }

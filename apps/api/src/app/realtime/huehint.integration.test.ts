@@ -330,3 +330,23 @@ test("starting Huehint with one online member runs solo", async (t) => {
   assert.equal(hue(open)?.color, null);
   assert.ok(open.events.some((e) => e.type === "memorize-ended"));
 });
+
+test("the room remembers a Huehint game's colors across 'Outra rodada' and reset, never in the view", async (t) => {
+  const { app, sessions, clients, owner } = await room(t, ["Ana", "Bia"]);
+  await startHuehint(sessions, clients);
+  const code = sessions[0].code;
+  const first = (await app.store.load(code))?.lobby.colors ?? [];
+  assert.equal(first.length, 4, "2 players × 2 turns draw 4 colors");
+
+  assert.deepEqual(await emit(owner, "game:end"), { ok: true });
+  assert.deepEqual(await emit(owner, "game:start"), { ok: true });
+  const second = (await app.store.load(code))?.lobby.colors ?? [];
+  assert.equal(second.length, 8);
+  assert.deepEqual(second.slice(0, 4), first, "the first game's colors stay at the front");
+
+  assert.deepEqual(await emit(owner, "game:end"), { ok: true });
+  assert.deepEqual(await emit(owner, "game:reset"), { ok: true });
+  assert.equal((await app.store.load(code))?.lobby.colors.length, 8);
+  const view = await stateWhere(clients[1], (s) => s.room.game === null);
+  assert.equal(JSON.stringify(view).includes('"colors"'), false);
+});

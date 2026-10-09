@@ -13,7 +13,15 @@ export function SiteBar() {
       >
         <ResenharkLogo className="h-7 w-auto" />
       </Link>
-      <ThemeToggle />
+      <div className="flex items-center gap-4">
+        <Link
+          href="/regras"
+          className="rounded-md text-sm font-medium outline-hidden focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-ring"
+        >
+          Regras
+        </Link>
+        <ThemeToggle />
+      </div>
     </header>
   );
 }
