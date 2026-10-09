@@ -15,6 +15,11 @@ export const GAME_RULES = {
     name: "Hitline",
     players: "1 a 15 jogadores",
     summary: "Adivinhe o ano da música e monte sua linha do tempo.",
+    shortRules: [
+      "Toca um trecho de música e você encaixa a carta na sua linha do tempo, pelo ano de lançamento.",
+      "Acertar título ou artista dá fichas, que servem para pular, comprar uma carta ou contestar.",
+      "Vence quem completar a linha do tempo primeiro, com 5 a 15 cartas.",
+    ],
     rules: [
       "Toca um trecho de música. Encaixe a música na sua linha do tempo pelo ano de lançamento.",
       "Acertou a posição, a carta é sua. Errou, ela vai para o descarte.",
@@ -26,6 +31,11 @@ export const GAME_RULES = {
     name: "Huehint",
     players: "Solo ou 2 a 15 jogadores",
     summary: "Uma dica, uma cor. Quem chega mais perto?",
+    shortRules: [
+      "Quem dá a dica vê uma cor e a descreve em até 4 palavras. Os outros recriam a cor.",
+      "Cada palpite vale de 0 a 10, e quem deu a dica ganha a média da rodada.",
+      "Jogue solo como um jogo de memória, em dupla de forma cooperativa com um amigo, ou numa competição em grupo.",
+    ],
     rules: [
       'Na sua vez, só você vê uma cor. Dê um nome para ela em até 4 palavras, sem números. Ex.: "Vermelho McQueen".',
       "Os outros recriam a cor ajustando matiz, saturação e brilho.",

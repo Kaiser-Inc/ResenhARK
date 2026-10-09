@@ -97,7 +97,7 @@ test("CA-F12: both cards flip with Enter and Space and expose only their current
     await expect(card).toHaveAttribute("aria-pressed", "true");
     await expect(rules).toBeVisible();
     await expect(card).toHaveAccessibleDescription(
-      game === "Hitline" ? /Toca um trecho de música/ : /Na sua vez, só você vê uma cor/,
+      game === "Hitline" ? /Toca um trecho de música/ : /Quem dá a dica vê uma cor/,
     );
     await expect(card.locator('[data-face="front"]')).toHaveAttribute("aria-hidden", "true");
     expect(
