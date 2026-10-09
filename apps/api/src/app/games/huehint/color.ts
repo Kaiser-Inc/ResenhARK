@@ -30,6 +30,58 @@ export function hsbToLab(color: Hsb): Lab {
   return [116 * fy - 16, 500 * (fx - fy), 200 * (fy - fz)];
 }
 
+const fromLinear = (c: number) => (c <= 0.0031308 ? 12.92 * c : 1.055 * c ** (1 / 2.4) - 0.055);
+
+/** CIELCH (D65) -> linear sRGB, unclamped. */
+function lchToLinearRgb(L: number, C: number, h: number): [number, number, number] {
+  const a = C * Math.cos(h * RAD);
+  const b = C * Math.sin(h * RAD);
+  const fy = (L + 16) / 116;
+  const inverse = (t: number) => (t > 6 / 29 ? t ** 3 : 3 * (6 / 29) ** 2 * (t - 4 / 29));
+  const x = 0.95047 * inverse(fy + a / 500);
+  const y = inverse(fy);
+  const z = 1.08883 * inverse(fy - b / 200);
+  return [
+    3.2404542 * x - 1.5371385 * y - 0.4985314 * z,
+    -0.969266 * x + 1.8760108 * y + 0.041556 * z,
+    0.0556434 * x - 0.2040259 * y + 1.0572252 * z,
+  ];
+}
+
+/**
+ * CIELCH -> HSB. A color outside the sRGB gamut keeps its lightness and hue and loses chroma until
+ * it fits.
+ */
+export function lchToHsb(L: number, C: number, h: number): Hsb {
+  const fits = (c: number) => lchToLinearRgb(L, c, h).every((v) => v >= -0.0005 && v <= 1.0005);
+  let chroma = C;
+  if (!fits(chroma)) {
+    let [low, high] = [0, C];
+    for (let i = 0; i < 20; i++) {
+      const mid = (low + high) / 2;
+      if (fits(mid)) low = mid;
+      else high = mid;
+    }
+    chroma = low;
+  }
+  const [r, g, b] = lchToLinearRgb(L, chroma, h).map((v) =>
+    fromLinear(Math.min(1, Math.max(0, v))),
+  );
+  const max = Math.max(r, g, b);
+  const delta = max - Math.min(r, g, b);
+  let hue = 0;
+  if (delta > 0) {
+    if (max === r) hue = ((g - b) / delta + 6) % 6;
+    else if (max === g) hue = (b - r) / delta + 2;
+    else hue = (r - g) / delta + 4;
+  }
+  return {
+    h: Math.round(hue * 60) % 360,
+    s: Math.round(max === 0 ? 0 : (delta / max) * 100),
+    b: Math.round(max * 100),
+  };
+}
+
 /** CIEDE2000 colour difference (Sharma, Wu and Dalal, 2005), kL = kC = kH = 1. */
 export function deltaE2000([L1, a1, b1]: Lab, [L2, a2, b2]: Lab): number {
   const C1 = Math.hypot(a1, b1);

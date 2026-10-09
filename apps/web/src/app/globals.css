@@ -434,6 +434,7 @@
 }
 
 .game-card-inner {
+  position: relative;
   display: grid;
   height: 100%;
   transform-style: preserve-3d;
@@ -447,7 +448,13 @@
 }
 
 .game-card-back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
   transform: rotateY(180deg);
+}
+.game-card[aria-pressed="true"] .game-card-back {
+  position: static;
 }
 .game-card[aria-pressed="true"] .game-card-inner {
   transform: rotateY(180deg);

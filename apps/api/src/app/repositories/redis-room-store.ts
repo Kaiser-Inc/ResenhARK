@@ -19,6 +19,8 @@ export class RedisRoomStore implements RoomStore {
     // Rooms saved before Huehint have no game choice yet.
     room.lobby.game ??= "hitline";
     room.lobby.huehintConfig ??= DEFAULT_HUEHINT_CONFIG;
+    // Rooms saved before the color memory.
+    room.lobby.colors ??= [];
     return room;
   }
 

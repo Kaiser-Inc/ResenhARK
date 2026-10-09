@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   DEFAULT_HUEHINT_CONFIG,
+  HUEHINT_RANKS,
+  HUEHINT_WIN_RANK,
   hsbSchema,
   huehintConfigSchema,
   huehintIntentSchema,
@@ -81,4 +83,19 @@ test("huehintIntentSchema parses give-hint, guess and next-round", () => {
 test("huehintIntentSchema leaves the hint rules to the engine, so a long hint still parses", () => {
   const long = { type: "give-hint", hint: "x".repeat(500) };
   assert.equal(huehintIntentSchema.safeParse(long).success, true);
+});
+
+test("HUEHINT_RANKS lists S to E with the cutoffs and wins from B", () => {
+  assert.deepEqual(
+    HUEHINT_RANKS.map((r) => [r.rank, r.min]),
+    [
+      ["S", 0.95],
+      ["A", 0.85],
+      ["B", 0.75],
+      ["C", 0.5],
+      ["D", 0.25],
+      ["E", 0],
+    ],
+  );
+  assert.equal(HUEHINT_WIN_RANK, "B");
 });

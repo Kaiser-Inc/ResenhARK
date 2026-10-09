@@ -20,6 +20,8 @@ test("server scores display two decimal places with a comma", () => {
 
 const view: HuehintView = {
   mode: "group",
+  cooperative: false,
+  team: null,
   phase: "hint",
   config: DEFAULT_HUEHINT_CONFIG,
   round: 1,

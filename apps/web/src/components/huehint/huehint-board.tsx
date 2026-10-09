@@ -207,50 +207,69 @@ function RoundReveal({
 }
 
 function Scoreboard({ view, members }: { view: HuehintView; members: MemberView[] }) {
+  if (view.cooperative && view.phase !== "game-over") {
+    return (
+      <section aria-label="Placar parcial" className="flex flex-col gap-3 rounded-xl bg-muted p-4">
+        <h2 className="text-lg font-semibold">Nota da dupla</h2>
+        {view.team ? (
+          <div aria-live="polite" aria-atomic="true" className="flex flex-col gap-2">
+            <p className="font-mono text-xl font-semibold tabular-nums">
+              {formatScore(view.team.score)} / {formatScore(view.team.max)}
+            </p>
+            <p className="font-semibold">Rank provisório: {view.team.rank}</p>
+          </div>
+        ) : null}
+        <p className="text-sm text-muted-foreground">B para vencer</p>
+      </section>
+    );
+  }
+  const title = view.cooperative
+    ? "Contribuições da dupla"
+    : view.phase === "game-over"
+      ? "Placar final"
+      : "Placar parcial";
+  const players = view.cooperative
+    ? view.players
+    : [...view.players].sort((a, b) => b.total - a.total);
   return (
-    <section
-      aria-label={view.phase === "game-over" ? "Placar final" : "Placar parcial"}
-      className="flex flex-col gap-3"
-    >
-      <h2 className="text-lg font-semibold">
-        {view.phase === "game-over" ? "Placar final" : "Placar parcial"}
-      </h2>
-      <ol className="flex flex-col gap-2">
-        {[...view.players]
-          .sort((a, b) => b.total - a.total)
-          .map((player) => {
-            const member = members.find((m) => m.id === player.id);
-            return (
-              <li
-                key={player.id}
-                className="flex flex-wrap items-center gap-3 rounded-xl bg-muted px-4 py-3"
-              >
-                {member ? (
-                  <MemberAvatar
-                    name={member.name}
-                    avatar={member.avatar}
-                    online={player.online}
-                    size={32}
-                    expression={view.winners.includes(player.id) ? "love" : "idle"}
-                  />
-                ) : null}
-                <div className="min-w-0 flex-1">
-                  <p className="font-medium">
-                    {member?.name ?? "Alguém"}
-                    {!player.online ? " · offline" : ""}
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Palpites: {formatScore(player.guessPoints)} · Dicas:{" "}
-                    {formatScore(player.giverPoints)}
-                  </p>
-                </div>
-                <span className="font-mono font-semibold tabular-nums">
-                  {formatScore(player.total)}
-                </span>
-              </li>
-            );
-          })}
-      </ol>
+    <section aria-label={title} className="flex flex-col gap-3">
+      <h2 className="text-lg font-semibold">{title}</h2>
+      <ul className="flex flex-col gap-2">
+        {players.map((player) => {
+          const member = members.find((m) => m.id === player.id);
+          return (
+            <li
+              key={player.id}
+              className="flex flex-wrap items-center gap-3 rounded-xl bg-muted px-4 py-3"
+            >
+              {member ? (
+                <MemberAvatar
+                  name={member.name}
+                  avatar={member.avatar}
+                  online={player.online}
+                  size={32}
+                  expression={
+                    !view.cooperative && view.winners.includes(player.id) ? "love" : "idle"
+                  }
+                />
+              ) : null}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium">
+                  {member?.name ?? "Alguém"}
+                  {!player.online ? " · offline" : ""}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Palpites: {formatScore(player.guessPoints)} · Dicas:{" "}
+                  {formatScore(player.giverPoints)}
+                </p>
+              </div>
+              <span className="font-mono font-semibold tabular-nums">
+                {formatScore(player.total)}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
     </section>
   );
 }
@@ -276,15 +295,19 @@ export function HuehintBoard({
       (view.mode === "group" &&
         view.giverId === room.you &&
         ["hint", "guessing"].includes(view.phase)));
-  const winnerText = view.winners.length
-    ? `${view.winners.map(name).join(" e ")} ${view.winners.length > 1 ? "venceram" : "venceu"}!`
-    : "Partida encerrada";
+  const teamResult = view.cooperative && view.endReason === "rounds-done" ? view.team : null;
+  const winnerText = view.cooperative
+    ? teamResult
+      ? teamResult.won
+        ? "A dupla venceu!"
+        : "A dupla não alcançou a meta B."
+      : "Partida encerrada"
+    : view.winners.length
+      ? view.winners.length > 1
+        ? `Empate dividido: ${view.winners.map(name).join(" e ")} venceram!`
+        : `${name(view.winners[0])} venceu!`
+      : "Partida encerrada";
   const lastRound = view.rounds.at(-1);
-  // The server breaks equal totals by giver points; show why when a loser has the winners' total.
-  const winnerTotal = view.players.find((p) => view.winners.includes(p.id))?.total;
-  const wonOnTiebreak = view.players.some(
-    (p) => !view.winners.includes(p.id) && p.total === winnerTotal,
-  );
   const galleryRounds = view.phase === "reveal" ? view.rounds.slice(0, -1) : view.rounds;
   const phaseText =
     view.phase === "game-over"
@@ -319,6 +342,12 @@ export function HuehintBoard({
       <h1 className="sr-only">Huehint{view.mode === "solo" ? " · treino solo" : ""}</h1>
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {phaseText}
+        {view.phase === "game-over" && teamResult
+          ? ` Rank ${teamResult.rank}. Nota da dupla: ${formatScore(teamResult.score)} / ${formatScore(teamResult.max)}.`
+          : ""}
+        {view.mode === "group" && view.phase !== "game-over"
+          ? ` Dica agora: ${name(view.giverId)}. Próxima dica: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}.`
+          : ""}
         {canceled?.type === "round-canceled"
           ? `. Rodada de ${name(canceled.giverId)} cancelada.`
           : ""}
@@ -332,7 +361,7 @@ export function HuehintBoard({
             <p className="text-sm text-muted-foreground">
               {view.mode === "solo"
                 ? "Sem dador · treino de memória"
-                : `Dador: ${name(view.giverId)} · Próximo: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}`}
+                : `Dica agora: ${name(view.giverId)} · Próxima dica: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}`}
             </p>
           )}
         </div>
@@ -352,6 +381,20 @@ export function HuehintBoard({
       ) : null}
       {view.phase === "game-over" ? (
         <section aria-label="Resultado" className="flex flex-col gap-3 rounded-xl bg-muted p-6">
+          {teamResult ? (
+            <>
+              <p className="text-sm font-medium">Rank da dupla</p>
+              <p
+                aria-label={`Rank ${teamResult.rank}`}
+                className="font-mono text-7xl font-bold leading-none sm:text-8xl"
+              >
+                {teamResult.rank}
+              </p>
+              <p className="font-mono text-xl font-semibold tabular-nums">
+                Nota da dupla: {formatScore(teamResult.score)} / {formatScore(teamResult.max)}
+              </p>
+            </>
+          ) : null}
           <h2 className="text-xl font-semibold">{winnerText}</h2>
           <p className="text-sm text-muted-foreground">
             {view.endReason === "not-enough-players"
@@ -360,8 +403,12 @@ export function HuehintBoard({
                 ? "O dono encerrou a partida."
                 : "Todas as rodadas foram jogadas."}
           </p>
-          {wonOnTiebreak ? (
-            <p className="text-sm font-medium">Venceu no desempate pelas dicas.</p>
+          {teamResult ? (
+            <p className="text-sm font-medium">
+              {teamResult.won
+                ? "Vocês alcançaram B ou melhor. Vitória dos dois!"
+                : "Vocês precisam de B ou melhor para vencer. Tentem juntos outra vez."}
+            </p>
           ) : null}
           {isOwner ? (
             <Button
