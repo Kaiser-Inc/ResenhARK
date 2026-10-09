@@ -56,7 +56,7 @@ export type RoomResult = { ok: true; room: Room } | { ok: false; error: RoomErro
 
 export const MAX_MEMBERS = 20;
 export const OWNER_GRACE_MS = 60_000;
-/** About 15 games of 4 rounds; the palette relaxes its distance with age, so older ones weigh less. */
+/** About 15 games of 4 rounds (more players draw more colors a game); the palette relaxes its distance with age, so older ones weigh less. */
 export const MAX_COLORS = 60;
 
 export function generateRoomCode(rng: () => number): string {
@@ -132,7 +132,7 @@ export function foldPlayed(room: Room): Room {
   return { ...room, lobby: { ...lobby, played: [...played] } };
 }
 
-/** Adds a new game's colors to the room's memory, keeping the newest MAX_COLORS. Idempotent per call, not per game. */
+/** Appends a new game's colors to the room's memory and keeps the newest MAX_COLORS. Call it once per game. */
 export function foldColors(room: Room, colors: Hsb[]): Room {
   const kept = [...(room.lobby.colors ?? []), ...colors].slice(-MAX_COLORS);
   return { ...room, lobby: { ...room.lobby, colors: kept } };

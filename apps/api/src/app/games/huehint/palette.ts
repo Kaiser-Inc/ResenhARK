@@ -32,18 +32,18 @@ export type Family = {
 
 /** 12 perceptual families, sampled in LCH so each one looks like its own named color. */
 export const FAMILIES: Family[] = [
-  { name: "vermelho", l: [40, 60], c: [55, 90], h: [20, 40] },
-  { name: "laranja", l: [60, 75], c: [60, 85], h: [55, 70] },
-  { name: "amarelo", l: [85, 95], c: [70, 95], h: [90, 102] },
-  { name: "lima", l: [75, 88], c: [60, 90], h: [115, 130] },
-  { name: "verde", l: [45, 70], c: [45, 80], h: [140, 160] },
-  { name: "ciano", l: [60, 80], c: [30, 55], h: [190, 215] },
-  { name: "azul", l: [35, 60], c: [50, 90], h: [255, 275] },
-  { name: "roxo", l: [30, 55], c: [50, 80], h: [295, 315] },
-  { name: "lavanda", l: [70, 85], c: [20, 40], h: [275, 295] },
-  { name: "rosa", l: [55, 80], c: [30, 65], h: [340, 365] },
-  { name: "marrom", l: [28, 45], c: [25, 40], h: [50, 70] },
-  { name: "bege", l: [78, 90], c: [12, 24], h: [75, 90] },
+  { name: "red", l: [40, 60], c: [55, 90], h: [20, 40] },
+  { name: "orange", l: [60, 75], c: [60, 85], h: [55, 70] },
+  { name: "yellow", l: [85, 95], c: [70, 95], h: [90, 102] },
+  { name: "lime", l: [75, 88], c: [60, 90], h: [115, 130] },
+  { name: "green", l: [45, 70], c: [45, 80], h: [140, 160] },
+  { name: "cyan", l: [60, 80], c: [30, 55], h: [190, 215] },
+  { name: "blue", l: [35, 60], c: [50, 90], h: [255, 275] },
+  { name: "purple", l: [30, 55], c: [50, 80], h: [295, 315] },
+  { name: "lavender", l: [70, 85], c: [20, 40], h: [275, 295] },
+  { name: "pink", l: [55, 80], c: [30, 65], h: [340, 365] },
+  { name: "brown", l: [28, 45], c: [25, 40], h: [50, 70] },
+  { name: "beige", l: [78, 90], c: [12, 24], h: [75, 90] },
 ];
 
 /** One color inside the family's box, kept to brightness 15..95. */
@@ -94,7 +94,7 @@ export function drawRounds(count: number, rng: () => number, recent: Hsb[] = [])
   let lastFamily: Family | null = null;
   let neutralUsed = false;
   const drawn: DrawnRound[] = [];
-  const earlier: ReturnType<typeof hsbToLab>[] = [];
+  const earlier: Lab[] = [];
   for (let round = 0; round < count; round++) {
     const darkAllowed = !drawn.slice(1 - DARK_WINDOW).some((r) => r.color.b < DARK_BELOW);
     const neutral = !neutralUsed && rng() < NEUTRAL_CHANCE;

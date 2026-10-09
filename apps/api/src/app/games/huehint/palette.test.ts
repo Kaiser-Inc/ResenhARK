@@ -27,7 +27,7 @@ const de = (a: Parameters<typeof hsbToLab>[0], b: Parameters<typeof hsbToLab>[0]
 
 test("there are 12 perceptual families, with pink, brown, cyan, beige and lavender among them", () => {
   assert.equal(FAMILIES.length, 12);
-  for (const name of ["rosa", "marrom", "ciano", "bege", "lavanda"])
+  for (const name of ["pink", "brown", "cyan", "beige", "lavender"])
     assert.ok(
       FAMILIES.some((f) => f.name === name),
       name,

@@ -19,6 +19,8 @@ import { toRoundView } from "./project.js";
 export const REVEAL_MS = 12_000;
 export const MEMORIZE_MS = 5_000;
 export const SOLO_ROUNDS = 5;
+/** The best grade of one round, in hundredths. */
+const ROUND_MAX = 1000;
 
 export type Player = { id: string; online: boolean };
 /** Null giver in solo. */
@@ -189,7 +191,7 @@ export function totals(s: HuehintState): Map<string, { guess: number; giver: num
 export function teamScore(s: HuehintState): { score: number; max: number } {
   return {
     score: s.results.reduce((total, r) => total + (r.giverScore ?? 0), 0),
-    max: s.results.length * 1000,
+    max: s.results.length * ROUND_MAX,
   };
 }
 

@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { DEFAULT_HUEHINT_CONFIG, type Hsb } from "@resenhark/shared";
 import { fixedCtx } from "../hitline/test-deck.js";
 import { SYSTEM_ACTOR } from "../system.js";
-import { type HuehintAction, type HuehintState, apply, create, tick } from "./engine.js";
+import { type HuehintAction, type HuehintState, REVEAL_MS, apply, create, tick } from "./engine.js";
 import { project } from "./project.js";
 
 // Distinct triples that no other field of a view can produce by accident.
@@ -177,7 +177,7 @@ function playDuoRound(s: HuehintState, guessColor: Hsb, now: number) {
   const hinted = act(s, giver, { type: "give-hint", hint: "Vermelho McQueen" }).state;
   const guessed = apply(hinted, guesser, { type: "guess", color: guessColor }, fixedCtx(now));
   assert.ok(guessed.ok);
-  return { revealed: guessed.state, over: tick(guessed.state, fixedCtx(now + 12_000)).state };
+  return { revealed: guessed.state, over: tick(guessed.state, fixedCtx(now + REVEAL_MS)).state };
 }
 
 test("duo team: nothing revealed yet is 0 of 0, rank E, not won", () => {
