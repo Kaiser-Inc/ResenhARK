@@ -152,6 +152,8 @@ A `PublicCard` is `{ id, title, artists, year, spotifyUrl }`. A `RevealView` hol
 | Field | Meaning |
 |---|---|
 | `mode` | `group` or `solo` |
+| `cooperative` | `true` when the game started with exactly 2 players. The duo plays as a team and nobody wins alone |
+| `team` | Cooperative games only, else `null`: `{ score, max, rank, won }`, with `score` and `max` in points with 2 decimals and `rank` from `S` to `E`. While playing it is the partial of the revealed rounds, and `won` is `false`. Only a game over with `endReason: "rounds-done"` carries the final result. A cooperative game that ends by `ended` or `not-enough-players` has `team: null` |
 | `phase` | `hint`, `memorize` (solo), `guessing`, `reveal` or `game-over` |
 | `config` | The game's `HuehintConfig` |
 | `round`, `totalRounds` | 1-based current round and the round count. Departures can lower `totalRounds` |
@@ -163,7 +165,7 @@ A `PublicCard` is `{ id, title, artists, year, spotifyUrl }`. A `RevealView` hol
 | `deadline` | When the current phase ends, in ms. `null` while paused or after game over |
 | `players[]` | `id`, `online`, `guessPoints`, `giverPoints`, `total`, in points with 2 decimals |
 | `rounds[]` | Revealed rounds, oldest first (`HuehintRoundView`) |
-| `winners[]`, `endReason` | Set at game over. `endReason` is `rounds-done`, `ended` or `not-enough-players` |
+| `winners[]`, `endReason` | Set at game over. `endReason` is `rounds-done`, `ended` or `not-enough-players`. Cooperative: every player when `team.won`, else empty |
 
 A `HuehintRoundView` is `{ round, giverId, color, hint, outcome, guesses, giverScore }`. `outcome` is `revealed` or `no-hint`. `guesses` holds `{ playerId, color, score }`, with scores from 0 to 10. `giverScore` is the mean of the guesses (0 with none), or `null` for a `no-hint` round and in solo.
 
