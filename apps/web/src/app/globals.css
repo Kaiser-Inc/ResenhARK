@@ -429,6 +429,22 @@
   transition: transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
 }
 
+/* Taleclue motion is part of play, including with reduced motion enabled. */
+@keyframes taleclue-attention {
+  0%,
+  100% {
+    outline-color: var(--ring);
+  }
+  50% {
+    outline-color: transparent;
+  }
+}
+.taleclue-attention {
+  animation: taleclue-attention 500ms ease-out 2;
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
 .game-card[data-game="huehint"] {
   --game-angle: 1deg;
 }

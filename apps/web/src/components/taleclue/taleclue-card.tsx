@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { taleclueThumbnail } from "@/lib/taleclue";
 import { cn } from "@/lib/utils";
 import { Button as CardButton } from "@base-ui/react/button";
 import { Dialog } from "@base-ui/react/dialog";
@@ -9,17 +10,30 @@ import { CheckIcon, LayersIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 
-function CardArt({ cardId, label }: { cardId: string; label: string }) {
+function CardArt({
+  cardId,
+  label,
+  full = false,
+  spotlight = false,
+  dimmed = false,
+}: { cardId: string; label: string; full?: boolean; spotlight?: boolean; dimmed?: boolean }) {
   const [failed, setFailed] = useState(false);
   const card = TALECLUE_CARDS.find((card) => card.id === cardId);
   return (
-    <div data-card-art className="relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-muted">
+    <div
+      data-card-art
+      className={cn(
+        "relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-muted transition-opacity duration-200",
+        spotlight && "taleclue-attention ring-2 ring-ring",
+        dimmed && "opacity-40",
+      )}
+    >
       {card && !failed ? (
         <img
-          src={card.image}
-          alt={label}
-          width={480}
-          height={720}
+          src={full ? card.image : taleclueThumbnail(card.image)}
+          alt={card.alt}
+          width={full ? 800 : 400}
+          height={full ? 1200 : 600}
           loading="lazy"
           decoding="async"
           className="absolute inset-0 size-full object-cover"
@@ -47,6 +61,8 @@ export function TaleclueCard({
   onSelect,
   note,
   animate = true,
+  spotlight = false,
+  dimmed = false,
 }: {
   cardId: string;
   index: number;
@@ -55,6 +71,8 @@ export function TaleclueCard({
   onSelect?: () => void;
   note?: string;
   animate?: boolean;
+  spotlight?: boolean;
+  dimmed?: boolean;
 }) {
   const label = `Carta ${index + 1}`;
   return (
@@ -74,10 +92,10 @@ export function TaleclueCard({
           onClick={onSelect}
           className={cn(
             "relative w-full rounded-lg outline-hidden ring-1 ring-border transition-[box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-default",
-            selected && "ring-2 ring-primary-text",
+            selected && "taleclue-attention ring-2 ring-ring",
           )}
         >
-          <CardArt cardId={cardId} label={label} />
+          <CardArt cardId={cardId} label={label} spotlight={spotlight} dimmed={dimmed} />
           {selected ? (
             <span className="absolute right-2 top-2 rounded-md bg-primary p-1 text-primary-foreground">
               <CheckIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
@@ -86,7 +104,7 @@ export function TaleclueCard({
           ) : null}
         </CardButton>
       ) : (
-        <CardArt cardId={cardId} label={label} />
+        <CardArt cardId={cardId} label={label} spotlight={spotlight} dimmed={dimmed} />
       )}
       <div className="flex min-h-4 flex-wrap items-center justify-between gap-1 text-xs">
         <span className="text-muted-foreground">{label}</span>
@@ -104,7 +122,7 @@ export function TaleclueCard({
           <Dialog.Viewport className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
             <Dialog.Popup className="pointer-events-auto relative w-[min(480px,calc(100vw-32px),calc((100dvh-96px)*2/3))] outline-hidden transition-[opacity,transform] duration-200 data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0">
               <Dialog.Title className="sr-only">{label}</Dialog.Title>
-              <CardArt cardId={cardId} label={label} />
+              <CardArt cardId={cardId} label={label} full />
               <Dialog.Close render={<Button variant="secondary" className="fixed right-4 top-4" />}>
                 Fechar
               </Dialog.Close>

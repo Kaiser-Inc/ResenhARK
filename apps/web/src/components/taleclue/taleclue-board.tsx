@@ -11,11 +11,14 @@ import { Input } from "@/components/ui/input";
 import { type Send, gameErrorMessage } from "@/lib/game-errors";
 import type { ServerClock } from "@/lib/server-clock";
 import {
+  TALECLUE_REVEAL_STAGES,
   taleclueAction,
   taleclueRevealElapsed,
+  taleclueRevealStage,
   taleclueSelectionValid,
   taleclueWaitingCount,
 } from "@/lib/taleclue";
+import { cn } from "@/lib/utils";
 import {
   CLUE_MAX_LENGTH,
   type GameEvent,
@@ -39,13 +42,6 @@ export type TaleclueDraft = {
   submitted: boolean;
 };
 
-const STAGES = [
-  "Cartas reveladas",
-  "Votos",
-  "Pontos pelos acertos",
-  "Pontos pelas iscas",
-  "Tabuleiro",
-];
 const OUTCOMES = {
   some: "Alguns acertaram.",
   all: "Todos acertaram.",
@@ -69,7 +65,8 @@ function RoundReveal({
   seek?: boolean;
   resumeElapsed?: number;
 }) {
-  const stage = Math.min(4, Math.floor(elapsed / 2400));
+  const { index: stage, active } = taleclueRevealStage(elapsed);
+  const focus = (step: number) => active && stage === step;
   const passed = (step: number) => seek || resumeElapsed > (step === 0 ? 500 : step * 2400);
   const flip = round.steps.find((step) => step.type === "card-flip");
   const votes = round.steps.find((step) => step.type === "votes");
@@ -79,10 +76,11 @@ function RoundReveal({
     <section
       aria-label={`Revelação da rodada ${round.round}`}
       data-reveal-step={stage}
+      data-reveal-active={active}
       className="flex flex-col gap-4"
     >
       <h2 aria-live="polite" aria-atomic="true" className="text-lg font-semibold">
-        {STAGES[stage]}
+        {TALECLUE_REVEAL_STAGES[stage].label}
       </h2>
       <div className={grid}>
         {flip?.cards.map((card, index) => (
@@ -98,6 +96,15 @@ function RoundReveal({
               cardId={card.cardId}
               index={index}
               animate={false}
+              spotlight={
+                (focus(0) && card.narrator) ||
+                (focus(1) && !!votes?.votes.some((vote) => vote.cardId === card.cardId))
+              }
+              dimmed={
+                active &&
+                !(focus(0) && card.narrator) &&
+                !(focus(1) && votes?.votes.some((vote) => vote.cardId === card.cardId))
+              }
               note={
                 card.narrator
                   ? `Narrador: ${nameOf(members, card.ownerId)}`
@@ -112,7 +119,10 @@ function RoundReveal({
                     <motion.span
                       key={vote.voterId}
                       data-voter-id={vote.voterId}
-                      className="break-all rounded-md bg-secondary px-2 py-1 text-xs font-medium"
+                      className={cn(
+                        "break-all rounded-md bg-muted px-2 py-1 text-xs font-medium",
+                        focus(1) ? "taleclue-attention ring-2 ring-ring" : "text-muted-foreground",
+                      )}
                       initial={passed(1) ? false : { opacity: 0, transform: "translateY(-12px)" }}
                       animate={{ opacity: 1, transform: "translateY(0px)" }}
                       transition={{ duration: 0.25 }}
@@ -130,14 +140,18 @@ function RoundReveal({
           initial={passed(2) ? false : { opacity: 0, transform: "translateY(8px)" }}
           animate={{ opacity: 1, transform: "translateY(0px)" }}
           transition={{ duration: 0.25 }}
-          className="flex flex-col gap-2"
+          data-highlighted={focus(2)}
+          className={cn(
+            "flex flex-col gap-2 rounded-md",
+            focus(2) && "taleclue-attention outline-2 outline-offset-4 outline-ring",
+          )}
         >
           <p className="font-medium">{OUTCOMES[correct.outcome]}</p>
           <div className="flex flex-wrap gap-2">
             {correct.awards.map((award) => (
               <span
                 key={award.playerId}
-                className="break-all rounded-md bg-secondary px-2 py-1 text-sm"
+                className="break-all rounded-md bg-muted px-2 py-1 text-sm"
               >
                 {nameOf(members, award.playerId)} +{award.points}
               </span>
@@ -150,12 +164,16 @@ function RoundReveal({
           initial={passed(3) ? false : { opacity: 0, transform: "translateY(8px)" }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25 }}
-          className="flex flex-col gap-2"
+          data-highlighted={focus(3)}
+          className={cn(
+            "flex flex-col gap-2 rounded-md",
+            focus(3) && "taleclue-attention outline-2 outline-offset-4 outline-ring",
+          )}
         >
           <p className="text-sm font-medium">Pontos pelas iscas</p>
           <div className="flex flex-wrap gap-2">
             {decoy.awards.map((award) => (
-              <span key={award.playerId} className="rounded-md bg-secondary px-2 py-1 text-sm">
+              <span key={award.playerId} className="rounded-md bg-muted px-2 py-1 text-sm">
                 {nameOf(members, award.playerId)} +{award.points}
               </span>
             ))}
@@ -470,6 +488,15 @@ export function TaleclueBoard({
   const resumeElapsed = taleclueRevealElapsed(view.deadline, revealStart);
   const seek = view.deadline === null;
   const moves = lastRound?.steps.find((step) => step.type === "board-move")?.moves ?? [];
+  const revealStage = taleclueRevealStage(elapsed);
+  const focusStep = lastRound?.steps.find((step) => step.type === revealStage.type);
+  const focusedPlayers = !revealStage.active
+    ? []
+    : focusStep && "awards" in focusStep
+      ? focusStep.awards.map((award) => award.playerId)
+      : focusStep?.type === "board-move"
+        ? focusStep.moves.filter((move) => move.from !== move.to).map((move) => move.playerId)
+        : [];
   const waiting = taleclueWaitingCount(view);
   const isPlayer = role === "player" && view.players.some((player) => player.id === room.you);
   const owner = room.ownerId === room.you;
@@ -540,6 +567,7 @@ export function TaleclueBoard({
         moves={moves}
         moving={elapsed >= 9600}
         seek={seek || resumeElapsed > 9600}
+        focusedPlayers={focusedPlayers}
       />
       {over ? (
         <GameResult
@@ -558,10 +586,11 @@ export function TaleclueBoard({
       ) : null}
       {!over && view.clue ? (
         <div
+          key={`${view.round}:${view.clue}`}
           data-clue-display
           aria-live="polite"
           aria-atomic="true"
-          className="flex flex-col gap-2 border-l-2 border-primary pl-4"
+          className="taleclue-attention flex flex-col gap-2 border-l-2 border-primary pl-4"
         >
           <p className="text-xs text-muted-foreground">Pista</p>
           <p className="break-words text-2xl font-semibold">“{view.clue}”</p>

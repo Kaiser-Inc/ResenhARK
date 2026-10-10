@@ -1,6 +1,7 @@
 import path from "node:path";
 import type { Page } from "@playwright/test";
 import type { RoomView } from "@resenhark/shared";
+import { TALECLUE_CARDS } from "@resenhark/shared";
 import {
   chooseOption,
   createRoomAs,
@@ -119,8 +120,17 @@ for (const count of [3, 4])
       await first.focus();
       await first.press("Enter");
       const zoom = hand.getByRole("button", { name: "Ampliar carta 1", exact: true });
+      const cardId = await hand.locator("[data-card-id]").first().getAttribute("data-card-id");
+      const card = TALECLUE_CARDS.find((card) => card.id === cardId);
+      if (!card) throw new Error("Missing card definition");
+      await expect(hand.locator("img").first()).toHaveAttribute(
+        "src",
+        `/taleclue/cards/${card.id}.thumb.webp`,
+      );
+      await expect(hand.locator("img").first()).toHaveAttribute("alt", card.alt);
       await zoom.click();
       await expect(giver.getByRole("dialog")).toBeVisible();
+      await expect(giver.getByRole("dialog").locator("img")).toHaveAttribute("src", card.image);
       await giver.getByRole("dialog").locator("[data-card-art]").click();
       await expect(giver.getByRole("dialog")).toBeVisible();
       await giver.keyboard.press("Escape");
@@ -149,6 +159,7 @@ for (const count of [3, 4])
     for (const p of others) {
       await selectCards(p, count === 3 ? 2 : 1);
       await p.getByRole("button", { name: "Jogar iscas", exact: true }).click();
+      if (p === others[0]) await expect(giver.locator("[data-acted]")).toHaveCount(1);
     }
     for (const p of pages) {
       const table = p.getByRole("region", { name: "Mesa", exact: true });
@@ -174,11 +185,12 @@ for (const count of [3, 4])
     }
     const reveal = page.getByRole("region", { name: "Revelação da rodada 1", exact: true });
     await expect(reveal).toHaveAttribute("data-reveal-step", "0");
+    await expect(reveal.getByRole("heading")).toHaveText("Esta era a carta do narrador");
     for (const stage of [1, 2, 3, 4])
       await expect(reveal).toHaveAttribute("data-reveal-step", String(stage), { timeout: 5000 });
     await expect(reveal.locator("[data-owner-id]")).toHaveCount(count === 3 ? 5 : 4);
     await expect(reveal.locator("[data-voter-id]")).toHaveCount(count - 1);
-    if (count === 3) await screenshots(page, "reveal");
+    if (count === 3) await screenshots(page, "fatia-2");
     await expectNoAxeViolations(page);
   });
 

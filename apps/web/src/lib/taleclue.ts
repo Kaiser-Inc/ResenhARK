@@ -5,6 +5,24 @@ import {
   isValidClue,
 } from "@resenhark/shared";
 
+export const TALECLUE_REVEAL_STAGES = [
+  { type: "card-flip", label: "Esta era a carta do narrador", duration: 2400 },
+  { type: "votes", label: "Quem votou em quê", duration: 2400 },
+  { type: "award-correct", label: "Pontos por acertar", duration: 2400 },
+  { type: "award-decoy", label: "Pontos das iscas", duration: 2400 },
+  { type: "board-move", label: "Avanço no tabuleiro", duration: 2400 },
+] as const;
+
+export function taleclueRevealStage(elapsed: number) {
+  const index = Math.min(4, Math.floor(Math.max(0, elapsed) / 2400));
+  return { index, type: TALECLUE_REVEAL_STAGES[index].type, active: elapsed < 12000 };
+}
+
+/** The full image is reserved for the zoom dialog. */
+export function taleclueThumbnail(image: string): string {
+  return image.replace(/\.webp$/, ".thumb.webp");
+}
+
 /** The projection and server clock are the only authority for action eligibility. */
 export function taleclueAction(
   view: TaleclueView,
