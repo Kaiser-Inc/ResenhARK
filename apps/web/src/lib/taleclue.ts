@@ -23,6 +23,34 @@ export function taleclueThumbnail(image: string): string {
   return image.replace(/\.webp$/, ".thumb.webp");
 }
 
+/** Percent x and pixel y keep the path aligned with the board's real width. */
+export function taleclueBoardCell(position: number, target: number, columns = 6) {
+  const house = Math.max(0, Math.min(target, position));
+  const row = Math.floor(house / columns);
+  const column = row % 2 === 0 ? house % columns : columns - 1 - (house % columns);
+  return { row, column, x: (100 * (column + 0.5)) / columns, y: row * (columns === 10 ? 104 : 80) };
+}
+
+/** Three columns fit eight distinct 16 px avatars inside a 390 px board cell. */
+export function taleclueStackOffset(index: number, count: number, spacing = 18) {
+  const columns = Math.min(3, count);
+  return {
+    x: ((index % columns) - (columns - 1) / 2) * spacing,
+    y: Math.floor(index / columns) * spacing,
+  };
+}
+
+export function taleclueMovePath(from: number, to: number): number[] {
+  const direction = Math.sign(to - from);
+  return Array.from({ length: Math.abs(to - from) + 1 }, (_, index) => from + index * direction);
+}
+
+export function taleclueMovePosition(from: number, to: number, elapsed: number): number {
+  const path = taleclueMovePath(from, to);
+  const progress = Math.max(0, Math.min(1, (elapsed - 9600) / 2400));
+  return path[Math.floor(progress * (path.length - 1))];
+}
+
 /** The projection and server clock are the only authority for action eligibility. */
 export function taleclueAction(
   view: TaleclueView,

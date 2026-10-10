@@ -565,8 +565,7 @@ export function TaleclueBoard({
         view={view}
         members={room.members}
         moves={moves}
-        moving={elapsed >= 9600}
-        seek={seek || resumeElapsed > 9600}
+        elapsed={elapsed}
         focusedPlayers={focusedPlayers}
       />
       {over ? (

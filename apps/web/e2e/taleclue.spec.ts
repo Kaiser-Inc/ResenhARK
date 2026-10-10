@@ -358,21 +358,37 @@ test("Taleclue reconnect during reveal seeks the deadline, then shows the projec
   );
   const move = moveStep.moves.find((move: { from: number; to: number }) => move.to > move.from);
   await expect(reveal).toHaveAttribute("data-reveal-step", "4", { timeout: 8000 });
-  const progress = first.locator(`[data-player-id="${move.playerId}"] .bg-primary`);
+  const progress = first.locator(`[data-player-id="${move.playerId}"]`);
+  const fromCell = first.locator(`[data-board-cell="${move.from}"]`);
+  const toCell = first.locator(`[data-board-cell="${move.to}"]`);
+  const fromX = Number(await fromCell.getAttribute("data-x"));
+  const toX = Number(await toCell.getAttribute("data-x"));
+  const fromY = Number(await fromCell.getAttribute("data-y")) + 24;
+  const toY = Number(await toCell.getAttribute("data-y")) + 24;
+  await expect(progress).toHaveAttribute("data-moving", "true");
   // A reconnect skips completed steps but still animates the steps that have not begun.
   await expect
     .poll(
       async () =>
-        progress.evaluate((node) => {
-          const ratio =
-            node.getBoundingClientRect().width /
-            (node.parentElement?.getBoundingClientRect().width ?? 1);
-          return ratio > 0.902 && ratio < 0.998;
-        }),
+        progress.evaluate(
+          (node, [fromX, toX, fromY, toY]) => {
+            const x = Number.parseFloat((node as HTMLElement).style.left);
+            const y = Number.parseFloat((node as HTMLElement).style.top);
+            return (x - fromX) * (toX - x) > 0.5 || (y - fromY) * (toY - y) > 0.5;
+          },
+          [fromX, toX, fromY, toY],
+        ),
       { timeout: 1200, intervals: [50, 75, 100] },
     )
     .toBe(true);
-  await expect(progress).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)", { timeout: 3000 });
+  await expect(progress).toHaveAttribute("data-position", String(move.to), { timeout: 3000 });
+  await expect(progress).toHaveCSS("top", `${toY}px`);
+  for (const projected of moveStep.moves) {
+    await expect(first.locator(`[data-player-id="${projected.playerId}"]`)).toHaveAttribute(
+      "data-position",
+      String(projected.to),
+    );
+  }
   await screenshots(first, "reconexao-reveal");
   await expect(page.getByRole("region", { name: "Resultado", exact: true })).toContainText(
     "Meta de pontos alcançada.",
@@ -411,3 +427,70 @@ async function configureTaleclueOption(page: Page, label: string, value: string)
   await expect(page.getByRole("combobox", { name: label, exact: true })).toContainText(value);
   await expect(page.getByRole("combobox", { name: label, exact: true })).toBeEnabled();
 }
+
+test("Taleclue board: fifty houses and eight visible blobatars in the same house", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(150000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const code = await createRoomAs(page, "Ana");
+  for (const name of ["Bia", "Caio", "Dani", "Eva", "Fábio", "Gabi", "Hugo"])
+    await joinRoomAs(browser, code, name);
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await chooseOption(page, "Meta de pontos", "50");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Taleclue", exact: true })).toBeVisible();
+  const stored = await peekRoom(code);
+  const ids = stored.game.state.players.map((player: { id: string }) => player.id) as string[];
+  for (const [index, id] of ids.entries())
+    stored.game.state.points[id] = [0, 1, 12, 12, 12, 49, 50, 53][index];
+  await writeRoom(code, stored);
+  await page.reload();
+  const board = page.getByRole("region", { name: "Tabuleiro", exact: true });
+  await expect(board.locator("[data-board-cell]")).toHaveCount(51);
+  for (const [index, id] of ids.entries())
+    await expect(board.locator(`[data-player-id="${id}"]`)).toHaveAttribute(
+      "data-position",
+      String(Math.min([0, 1, 12, 12, 12, 49, 50, 53][index], 50)),
+    );
+  await expect(board).toContainText("53 pontos");
+  for (const id of ids) stored.game.state.points[id] = 12;
+  await writeRoom(code, stored);
+  await page.reload();
+  await expect(board.locator('[data-player-id][data-position="12"]')).toHaveCount(8);
+  await screenshots(page, "fatia-3");
+  for (const theme of ["dark", "light"]) {
+    await page.evaluate(
+      (theme) => document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme,
+    );
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(board.locator('[data-player-id][data-position="12"]')).toHaveCount(8);
+      await expect
+        .poll(() =>
+          page
+            .locator("[data-card-id]")
+            .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
+        )
+        .toBe(true);
+      const pieces = await board.locator("[data-player-id] > span").evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const box = node.getBoundingClientRect();
+          return { x: box.x, y: box.y, right: box.right, bottom: box.bottom };
+        }),
+      );
+      for (let i = 0; i < pieces.length; i++)
+        for (let j = i + 1; j < pieces.length; j++) {
+          expect(
+            pieces[i].right <= pieces[j].x ||
+              pieces[j].right <= pieces[i].x ||
+              pieces[i].bottom <= pieces[j].y ||
+              pieces[j].bottom <= pieces[i].y,
+          ).toBe(true);
+        }
+      await expectNoAxeViolations(page);
+    }
+  }
+});
