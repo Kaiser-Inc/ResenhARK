@@ -39,6 +39,7 @@ export function LobbyPanel({
   const { lobby } = room;
   const taleclue = lobby.selectedGame === "taleclue";
   const hitline = lobby.selectedGame === "hitline";
+  const enoughPlayers = !taleclue || room.members.filter((member) => member.online).length >= 3;
   async function act(event: string, payload?: unknown) {
     const ack = await send(event, payload);
     if (!ack.ok) toast.error(gameErrorMessage(ack.error, taleclue ? "taleclue" : undefined));
@@ -163,11 +164,8 @@ export function LobbyPanel({
             <Button
               type="button"
               loading={starting}
-              disabled={
-                !connected ||
-                changing ||
-                (taleclue && room.members.filter((member) => member.online).length < 3)
-              }
+              disabled={!connected || changing || !enoughPlayers}
+              aria-describedby={!enoughPlayers ? "taleclue-player-minimum" : undefined}
               onClick={async () => {
                 setStarting(true);
                 await act("game:start");
@@ -176,6 +174,11 @@ export function LobbyPanel({
             >
               Iniciar partida
             </Button>
+            {!enoughPlayers ? (
+              <p id="taleclue-player-minimum" className="text-sm text-muted-foreground">
+                {gameErrorMessage("not-enough-players", "taleclue")}
+              </p>
+            ) : null}
           </div>
         ) : null}
       </div>

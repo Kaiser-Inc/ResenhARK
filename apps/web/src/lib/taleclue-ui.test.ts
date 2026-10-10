@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
+  type GameEvent,
   type RoomView,
   type TaleclueView,
 } from "@resenhark/shared";
@@ -146,6 +147,7 @@ test("Taleclue lobby exposes its config and requires three online players", () =
   assert.match(lobby, /Tempo das iscas/);
   assert.match(lobby, /Iniciar partida/);
   assert.match(lobby, /disabled/);
+  assert.match(lobby, /Precisa de pelo menos 3 jogadores online para começar/);
   const member = renderToStaticMarkup(
     createElement(LobbyPanel, {
       room: { ...room, game: null, you: "bia" },
@@ -191,4 +193,157 @@ test("a remounted board restores the current draft but ignores a draft from anot
     }),
   );
   assert.doesNotMatch(next, /aria-pressed="true"|value="Porta 42"/);
+});
+
+function renderState(
+  patch: Partial<TaleclueView>,
+  options: {
+    you?: string;
+    role?: "player" | "spectator";
+    events?: GameEvent[];
+    members?: RoomView["members"];
+  } = {},
+) {
+  const you = options.you ?? "ana";
+  const members = (options.members ?? room.members).map((member) =>
+    member.id === you && options.role ? { ...member, role: options.role } : member,
+  );
+  return renderToStaticMarkup(
+    createElement(TaleclueBoard, {
+      room: { ...room, you, members, game: { type: "taleclue", view: { ...view, ...patch } } },
+      events: options.events ?? [],
+      send: async () => ({ ok: true as const }),
+      connected: true,
+      clock: { now: () => 1000, sync: () => {} },
+    }),
+  );
+}
+test("a spectator never renders a hand or personal vote markers even with a broad payload", () => {
+  for (const phase of ["clue", "decoy", "vote"] as const) {
+    const markup = renderState(
+      { phase, table: ["tc-001"], myCards: ["tc-001"], myVote: "tc-001" },
+      { role: "spectator" },
+    );
+    assert.match(markup, /Você está só olhando esta partida/);
+    assert.doesNotMatch(
+      markup,
+      /Sua mão|Enviar pista|Jogar iscas|Confirmar voto|Sua carta|Seu voto|aria-pressed="true"/,
+    );
+    if (phase === "decoy") assert.match(markup, /Aguardando as iscas/);
+    if (phase === "vote") assert.match(markup, /Aguardando os votos/);
+  }
+});
+test("a paused game shows the pause status and read-only hand without an action", () => {
+  const markup = renderState({ deadline: null });
+  assert.match(markup, /Tempo pausado/);
+  assert.match(markup, /Sua mão/);
+  assert.doesNotMatch(markup, /Enviar pista|role="timer"/);
+});
+test("void and automatic decoy events become discrete status messages", () => {
+  const markup = renderState(
+    { phase: "vote" },
+    {
+      events: [
+        { type: "round-voided", round: 1, narratorId: "ana", reason: "no-clue" },
+        { type: "decoy-played", playerId: "departed-id", auto: true },
+        { type: "decoy-played", playerId: "bia", auto: false },
+      ],
+    },
+  );
+  assert.match(markup, /Rodada anulada, sem pontos/);
+  assert.match(markup, /Uma isca foi jogada automaticamente por departed-id/);
+  assert.doesNotMatch(markup, /automaticamente por Bia/);
+  assert.match(markup, /<output/);
+});
+test("every end reason renders the server result without a hand, clock or active narrator", () => {
+  const reasons = {
+    points: "Meta de pontos alcançada",
+    "deck-empty": "O baralho acabou",
+    "not-enough-players": "A partida ficou com menos de 3 jogadores",
+    ended: "O dono encerrou a partida",
+  };
+  for (const endReason of Object.keys(reasons) as (keyof typeof reasons)[]) {
+    const markup = renderState({ phase: "game-over", deadline: null, endReason, winners: ["ana"] });
+    assert.match(markup, new RegExp(reasons[endReason]));
+    assert.doesNotMatch(
+      markup,
+      /Sua mão|Enviar pista|Jogar iscas|Confirmar voto|Tempo pausado|role="timer"|Próximo narrador:/,
+    );
+    assert.match(markup, /Outra rodada/);
+    if (endReason === "ended") {
+      assert.match(markup, /Partida encerrada/);
+      assert.doesNotMatch(markup, /venceu|venceram/);
+    } else assert.match(markup, /Ana venceu!/);
+  }
+  assert.doesNotMatch(
+    renderState({ phase: "game-over", endReason: "points" }, { you: "bia" }),
+    /Outra rodada/,
+  );
+});
+test("a shared victory and scores use the projected winners and points", () => {
+  const markup = renderState({
+    phase: "game-over",
+    endReason: "points",
+    winners: ["bia", "ana"],
+    players: [{ id: "ana", online: true, points: 33, position: 30 }],
+  });
+  assert.match(markup, /Empate dividido: Bia, Ana venceram!/);
+  assert.match(markup, /33 pontos/);
+});
+test("history contains only revealed rounds and does not duplicate the current reveal", () => {
+  const current = { ...round, round: 2 };
+  const during = renderState({
+    phase: "reveal",
+    round: 2,
+    rounds: [round, current],
+    deadline: 16000,
+  });
+  assert.match(during, /Rodadas anteriores/);
+  assert.equal((during.match(/aria-label="Revelação da rodada 2"/g) ?? []).length, 1);
+  assert.equal((during.match(/aria-label="Revelação da rodada 1"/g) ?? []).length, 1);
+  const after = renderState({
+    phase: "game-over",
+    rounds: [round, current],
+    deadline: null,
+    endReason: "ended",
+  });
+  assert.match(after, /Rodadas anteriores/);
+  assert.match(after, /Porta 42/);
+  assert.doesNotMatch(renderState({ rounds: [] }), /Rodadas anteriores/);
+});
+test("revealed card owners and voters remain identifiable after they leave", () => {
+  const markup = renderState(
+    { phase: "game-over", endReason: "ended", rounds: [round] },
+    { members: [room.members[0]] },
+  );
+  assert.match(markup, /data-owner-id="bia"/);
+  assert.match(markup, />bia</);
+  assert.match(markup, /data-voter-id="caio"/);
+  assert.match(markup, />caio</);
+});
+test("all reveal outcomes come from the projected award step, including no votes", () => {
+  for (const [outcome, text] of [
+    ["some", "Alguns acertaram"],
+    ["all", "Todos acertaram"],
+    ["none", "Ninguém acertou"],
+    ["no-votes", "Sem votos nesta rodada"],
+  ] as const) {
+    const projected = {
+      ...round,
+      steps: round.steps.map((step) =>
+        step.type === "award-correct" ? { ...step, outcome, awards: [] } : step,
+      ),
+    };
+    const markup = renderState({ phase: "game-over", endReason: "ended", rounds: [projected] });
+    assert.match(markup, new RegExp(text));
+    assert.doesNotMatch(markup, /[+]3/);
+  }
+});
+
+test("a paused reveal keeps its projected result visible without restarting a timer", () => {
+  const markup = renderState({ phase: "reveal", rounds: [round], deadline: null });
+  assert.match(markup, /Tempo pausado/);
+  assert.match(markup, /data-reveal-step="4"/);
+  assert.match(markup, /data-voter-id="caio"/);
+  assert.doesNotMatch(markup, /role="timer"/);
 });

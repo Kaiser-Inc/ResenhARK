@@ -20,6 +20,8 @@ function CardArt({ cardId, label }: { cardId: string; label: string }) {
           alt={label}
           width={480}
           height={720}
+          loading="lazy"
+          decoding="async"
           className="absolute inset-0 size-full object-cover"
           onError={() => setFailed(true)}
         />
@@ -88,7 +90,7 @@ export function TaleclueCard({
       )}
       <div className="flex min-h-4 flex-wrap items-center justify-between gap-1 text-xs">
         <span className="text-muted-foreground">{label}</span>
-        {note ? <span className="font-medium">{note}</span> : null}
+        {note ? <span className="min-w-0 break-words font-medium">{note}</span> : null}
       </div>
       <Dialog.Root>
         <Dialog.Trigger

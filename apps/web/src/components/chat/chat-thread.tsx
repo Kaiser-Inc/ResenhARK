@@ -90,14 +90,12 @@ export function ChatThread({ messages, loading }: { messages: ChatMessage[]; loa
 
   const isNew = (id: string) => known.current !== null && !known.current.has(id);
   // New message: 4 px up and fade in over 120 ms; opacity only when reduced.
-  const enter = (id: string) =>
-    isNew(id)
-      ? {
-          initial: reduce ? { opacity: 0 } : { opacity: 0, y: 4 },
-          animate: reduce ? { opacity: 1 } : { opacity: 1, y: 0 },
-          transition: FADE,
-        }
-      : { initial: false as const };
+  const enter = (id: string) => ({
+    initial: isNew(id) ? (reduce ? { opacity: 0 } : { opacity: 0, y: 4 }) : (false as const),
+    // Keep the target when another message renders before this entrance finishes.
+    animate: reduce ? { opacity: 1 } : { opacity: 1, y: 0 },
+    transition: FADE,
+  });
 
   return (
     <div

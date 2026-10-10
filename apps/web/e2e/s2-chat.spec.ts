@@ -247,7 +247,12 @@ test("room with chat has no serious accessibility violations", async ({ browser 
   const { ana, bia } = await twoMembersInRoom(browser);
   await sendChat(ana, "olá https://example.com");
   await sendChat(bia, "e aí");
-  await expect(thread(ana).getByText("e aí")).toBeVisible();
+  // Both messages must remain fully readable after a new sender updates the thread.
+  await expect(thread(ana).getByText("e aí", { exact: true })).toHaveCSS("opacity", "1");
+  await expect(thread(ana).locator("p").filter({ hasText: "olá https://example.com" })).toHaveCSS(
+    "opacity",
+    "1",
+  );
   await expectNoAxeViolations(ana);
   await ana.setViewportSize({ width: 390, height: 844 });
   await expectNoAxeViolations(ana);

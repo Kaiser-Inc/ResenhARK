@@ -9,6 +9,7 @@ import {
   joinRoomAs,
   peekRoom,
   test,
+  writeRoom,
 } from "./support";
 
 const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-09-rodada-6-taleclue/ui";
@@ -20,6 +21,9 @@ async function screenshots(page: Page, phase: string, afterResize?: () => Promis
     );
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
+      await expect(page.getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
+        width < 1024 ? 1 : 0,
+      );
       await expect
         .poll(() =>
           page
@@ -55,6 +59,7 @@ for (const count of [3, 4])
   }) => {
     test.setTimeout(180000);
     await page.setViewportSize({ width: 1440, height: 900 });
+    if (count === 4) await page.emulateMedia({ reducedMotion: "reduce" });
     const code = await createRoomAs(page, "Ana");
     const pages = [page];
     for (const name of ["Bia", "Caio", "Dani"].slice(0, count - 1))
@@ -171,3 +176,221 @@ for (const count of [3, 4])
     if (count === 3) await screenshots(page, "reveal");
     await expectNoAxeViolations(page);
   });
+
+async function narrator(pages: Page[]) {
+  await expect
+    .poll(async () => {
+      for (let i = 0; i < pages.length; i++)
+        if (await pages[i].getByLabel("Pista", { exact: true }).isVisible()) return i;
+      return -1;
+    })
+    .toBeGreaterThanOrEqual(0);
+  for (const p of pages) if (await p.getByLabel("Pista", { exact: true }).isVisible()) return p;
+  throw new Error("Missing narrator");
+}
+
+test("Taleclue presence: late spectator, pause, reconnect, owner end and reset", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(150000);
+  const ownerContext = await browser.newContext();
+  const owner = await ownerContext.newPage();
+  const code = await createRoomAs(owner, "Ana");
+  await chooseOption(owner, "Jogo da sala", "Taleclue");
+  await expect(owner.getByRole("button", { name: "Iniciar partida", exact: true })).toBeDisabled();
+  const bia = await joinRoomAs(browser, code, "Bia");
+  await expect(owner.getByRole("button", { name: "Iniciar partida", exact: true })).toBeDisabled();
+  const caio = await joinRoomAs(browser, code, "Caio");
+  await expect(owner.getByRole("button", { name: "Iniciar partida", exact: true })).toBeEnabled();
+  await owner.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  const spectator = await joinRoomAs(browser, code, "Dani");
+  await expect(spectator.page.getByText("Você está só olhando esta partida.")).toBeVisible();
+  await expect(spectator.page.getByRole("region", { name: "Sua mão", exact: true })).toHaveCount(0);
+  await expect(spectator.page.getByLabel("Pista", { exact: true })).toHaveCount(0);
+  await screenshots(spectator.page, "espectador");
+  const storedOwner = await ownerContext.storageState();
+  const url = owner.url();
+  await ownerContext.close();
+  await bia.context.close();
+  await caio.context.close();
+  await expect(spectator.page.getByText("Tempo pausado", { exact: true })).toBeVisible();
+  await screenshots(spectator.page, "pausa");
+  const resumedContext = await browser.newContext({ storageState: storedOwner });
+  const resumed = await resumedContext.newPage();
+  await resumed.goto(url);
+  await expect(resumed.getByRole("region", { name: "Taleclue", exact: true })).toBeVisible();
+  await expect(spectator.page.getByRole("timer", { name: "Tempo restante" })).toBeVisible();
+  await resumed.getByRole("button", { name: "Encerrar partida", exact: true }).click();
+  await resumed.getByRole("button", { name: "Encerrar", exact: true }).click();
+  await expect(resumed.getByRole("region", { name: "Resultado", exact: true })).toContainText(
+    "Partida encerrada",
+  );
+  await expect(resumed.getByText("O dono encerrou a partida.")).toBeVisible();
+  await expect(resumed.getByRole("region", { name: "Sua mão", exact: true })).toHaveCount(0);
+  await expect(resumed.getByRole("timer")).toHaveCount(0);
+  await screenshots(resumed, "resultado-encerrado");
+  await expectNoAxeViolations(resumed);
+  await resumed.getByRole("button", { name: "Outra rodada", exact: true }).click();
+  await expect(resumed.getByRole("region", { name: "Lobby", exact: true })).toBeVisible();
+});
+
+test("Taleclue deadlines: voided clue, automatic decoys, no votes and history", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(150000);
+  const code = await createRoomAs(page, "Ana");
+  const bia = (await joinRoomAs(browser, code, "Bia")).page;
+  const caio = (await joinRoomAs(browser, code, "Caio")).page;
+  const pages = [page, bia, caio];
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await configureTaleclueOption(page, "Tempo da pista", "30 s");
+  await configureTaleclueOption(page, "Tempo das iscas", "20 s");
+  await configureTaleclueOption(page, "Tempo do voto", "20 s");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  await expect(page.getByText("Rodada anulada, sem pontos.")).toBeVisible({ timeout: 40000 });
+  await expect(page.getByRole("heading", { name: "Rodada 2", exact: true })).toBeVisible();
+  const stored = await peekRoom(code);
+  expect(Object.values(stored.game.state.points)).toEqual([0, 0, 0]);
+  const giver = await narrator(pages);
+  await selectCards(giver, 1);
+  await giver.getByLabel("Pista", { exact: true }).fill("Porta 42");
+  await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
+  await expect(page.getByText(/Uma isca foi jogada automaticamente por/)).toHaveCount(2, {
+    timeout: 30000,
+  });
+  const table = page.getByRole("region", { name: "Mesa", exact: true });
+  await expect(table.locator("[data-card-id]")).toHaveCount(5);
+  await expect(table.locator("[data-owner-id], [data-voter-id]")).toHaveCount(0);
+  await screenshots(page, "iscas-automaticas");
+  await expect(page.getByText("Sem votos nesta rodada.", { exact: true })).toBeVisible({
+    timeout: 35000,
+  });
+  const reveal = page.getByRole("region", { name: "Revelação da rodada 2", exact: true });
+  await expect(reveal.locator("[data-voter-id]")).toHaveCount(0);
+  await expect(page.getByRole("heading", { name: "Rodada 3", exact: true })).toBeVisible({
+    timeout: 15000,
+  });
+  const history = page.getByRole("region", { name: "Rodadas anteriores", exact: true });
+  await expect(history.getByText("Rodada 2", { exact: true })).toBeVisible();
+  await expect(history.getByText("Rodada 1", { exact: true })).toHaveCount(0);
+  await history.getByText("Rodada 2", { exact: true }).click();
+  await expect(history.getByText("Sem votos nesta rodada.", { exact: true })).toBeVisible();
+});
+
+test("Taleclue reconnect during reveal seeks the deadline, then shows the projected point victory", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(150000);
+  const code = await createRoomAs(page, "Ana");
+  const pages = [
+    page,
+    (await joinRoomAs(browser, code, "Bia")).page,
+    (await joinRoomAs(browser, code, "Caio")).page,
+  ];
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await chooseOption(page, "Meta de pontos", "10");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Taleclue", exact: true })).toBeVisible();
+  let stored = await peekRoom(code);
+  // Test-only fixture: put the real players one point below the target.
+  for (const player of stored.game.state.players) stored.game.state.points[player.id] = 9;
+  await writeRoom(code, stored);
+  const giver = await narrator(pages);
+  const others = pages.filter((p) => p !== giver);
+  await selectCards(giver, 1);
+  await giver.getByLabel("Pista", { exact: true }).fill("Porta 42");
+  await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
+  for (const p of others) {
+    await selectCards(p, 2);
+    await p.getByRole("button", { name: "Jogar iscas", exact: true }).click();
+  }
+  stored = await peekRoom(code);
+  const narratorCard = stored.game.state.narratorCard as string;
+  const first = others[0];
+  await first
+    .getByRole("region", { name: "Mesa", exact: true })
+    .locator(`[data-card-id="${narratorCard}"]`)
+    .getByRole("button", { name: /^Carta [0-9]+$/ })
+    .click();
+  await first.getByRole("button", { name: "Confirmar voto", exact: true }).click();
+  await first.reload();
+  await expect(
+    first.getByText("Voto enviado. Aguardando os outros jogadores.", { exact: true }),
+  ).toBeVisible();
+  await expect(first.getByRole("button", { name: "Confirmar voto", exact: true })).toHaveCount(0);
+  await others[1]
+    .getByRole("region", { name: "Mesa", exact: true })
+    .locator(`[data-card-id="${narratorCard}"]`)
+    .getByRole("button", { name: /^Carta [0-9]+$/ })
+    .click();
+  await others[1].getByRole("button", { name: "Confirmar voto", exact: true }).click();
+  const reveal = first.getByRole("region", { name: "Revelação da rodada 1", exact: true });
+  await expect(reveal).toHaveAttribute("data-reveal-step", "2", { timeout: 10000 });
+  const before = (await peekRoom(code)).game.state.deadline;
+  await first.reload();
+  await expect
+    .poll(async () => Number(await reveal.getAttribute("data-reveal-step")))
+    .toBeGreaterThanOrEqual(2);
+  expect((await peekRoom(code)).game.state.deadline).toBe(before);
+  const revealState = (await peekRoom(code)).game.state;
+  const moveStep = revealState.results[0].steps.find(
+    (step: { type: string }) => step.type === "board-move",
+  );
+  const move = moveStep.moves.find((move: { from: number; to: number }) => move.to > move.from);
+  await expect(reveal).toHaveAttribute("data-reveal-step", "4", { timeout: 8000 });
+  const progress = first.locator(`[data-player-id="${move.playerId}"] .bg-primary`);
+  // A reconnect skips completed steps but still animates the steps that have not begun.
+  await expect
+    .poll(
+      async () =>
+        progress.evaluate((node) => {
+          const ratio =
+            node.getBoundingClientRect().width /
+            (node.parentElement?.getBoundingClientRect().width ?? 1);
+          return ratio > 0.902 && ratio < 0.998;
+        }),
+      { timeout: 1200, intervals: [50, 75, 100] },
+    )
+    .toBe(true);
+  await expect(progress).toHaveCSS("transform", "matrix(1, 0, 0, 1, 0, 0)", { timeout: 3000 });
+  await screenshots(first, "reconexao-reveal");
+  await expect(page.getByRole("region", { name: "Resultado", exact: true })).toContainText(
+    "Meta de pontos alcançada.",
+    { timeout: 20000 },
+  );
+  await expect(page.getByText(/Empate dividido:/)).toBeVisible();
+  await expect(page.getByRole("region", { name: "Tabuleiro", exact: true })).toContainText(
+    "11 pontos",
+  );
+  await expect(page.getByRole("region", { name: "Sua mão", exact: true })).toHaveCount(0);
+  await screenshots(page, "resultado-pontos");
+  await expectNoAxeViolations(page);
+});
+
+test("Taleclue player departure ends a three-player game with the projected reason", async ({
+  page,
+  browser,
+}) => {
+  const code = await createRoomAs(page, "Ana");
+  const bia = (await joinRoomAs(browser, code, "Bia")).page;
+  await joinRoomAs(browser, code, "Caio");
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  await bia.getByRole("button", { name: "Sair da sala", exact: true }).click();
+  await bia.getByRole("button", { name: "Sair", exact: true }).click();
+  await expect(page.getByRole("region", { name: "Resultado", exact: true })).toContainText(
+    "A partida ficou com menos de 3 jogadores.",
+  );
+  await expect(page.getByRole("region", { name: "Sua mão", exact: true })).toHaveCount(0);
+  await screenshots(page, "resultado-saida");
+});
+
+async function configureTaleclueOption(page: Page, label: string, value: string) {
+  await chooseOption(page, label, value);
+  await expect(page.getByRole("listbox")).toHaveCount(0);
+  await expect(page.getByRole("combobox", { name: label, exact: true })).toContainText(value);
+  await expect(page.getByRole("combobox", { name: label, exact: true })).toBeEnabled();
+}
