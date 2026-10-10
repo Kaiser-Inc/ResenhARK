@@ -55,11 +55,12 @@ test("the intent schema accepts the three intents and rejects a malformed one", 
   assert.equal(parse({ type: "guess" }), false);
 });
 
-test("the placeholder deck has 84 unique ids and images", () => {
-  assert.equal(TALECLUE_CARDS.length, 84);
-  assert.equal(new Set(TALECLUE_CARDS.map((c) => c.id)).size, 84);
-  assert.equal(new Set(TALECLUE_CARDS.map((c) => c.image)).size, 84);
-  assert.equal(TALECLUE_CARDS[0].id, "tc-001");
-  assert.equal(TALECLUE_CARDS[83].id, "tc-084");
-  assert.equal(TALECLUE_CARDS[0].image, "/taleclue/cards/tc-001.webp");
+test("the deck is the 120-card manifest: opaque unique ids and one image per id", () => {
+  assert.equal(TALECLUE_CARDS.length, 120);
+  assert.equal(new Set(TALECLUE_CARDS.map((c) => c.id)).size, 120);
+  for (const card of TALECLUE_CARDS) {
+    assert.match(card.id, /^[0-9a-f]{8}$/);
+    assert.equal(card.image, `/taleclue/cards/${card.id}.webp`);
+    assert.ok(card.alt.length > 0, card.id);
+  }
 });

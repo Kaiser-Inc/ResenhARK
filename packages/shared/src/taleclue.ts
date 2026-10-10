@@ -1,4 +1,5 @@
 import { z } from "zod";
+import deck from "./taleclue-deck.json" with { type: "json" };
 
 /** Fewer players than this cannot fill a table, so a game never starts or goes on below it. */
 export const TALECLUE_MIN_PLAYERS = 3;
@@ -27,13 +28,14 @@ export function isValidClue(clue: string): boolean {
   return t.length >= 1 && t.length <= CLUE_MAX_LENGTH;
 }
 
-/** The images live in the web app; the API only ever sends the id. */
-export type TaleclueCardDef = { id: string; image: string };
-// Placeholders until the real deck lands: same shape, so only the values change.
-export const TALECLUE_CARDS: TaleclueCardDef[] = Array.from({ length: 84 }, (_, i) => {
-  const id = `tc-${String(i + 1).padStart(3, "0")}`;
-  return { id, image: `/taleclue/cards/${id}.webp` };
-});
+/** The images live in the web app (`public/taleclue/cards`); the API only ever sends the id. */
+export type TaleclueCardDef = { id: string; image: string; alt: string };
+// Built from the deck manifest (`taleclue-deck.json`, written by the deck build script).
+export const TALECLUE_CARDS: TaleclueCardDef[] = deck.map(({ id, alt }) => ({
+  id,
+  image: `/taleclue/cards/${id}.webp`,
+  alt,
+}));
 
 export type TalecluePhase = "clue" | "decoy" | "vote" | "reveal" | "game-over";
 export type TaleclueEndReason = "points" | "deck-empty" | "ended" | "not-enough-players";
