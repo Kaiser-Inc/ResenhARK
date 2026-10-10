@@ -8,22 +8,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TALECLUE_OPTIONS, withCurrent } from "@/lib/config-options";
 import type { TaleclueConfig } from "@resenhark/shared";
 import { useId } from "react";
 
 const FIELDS: {
   key: keyof TaleclueConfig;
   label: string;
-  min: number;
-  max: number;
   unit?: string;
 }[] = [
-  { key: "targetPoints", label: "Meta de pontos", min: 10, max: 50 },
-  { key: "clueSeconds", label: "Tempo da pista", min: 30, max: 180, unit: " s" },
-  { key: "decoySeconds", label: "Tempo das iscas", min: 20, max: 120, unit: " s" },
-  { key: "voteSeconds", label: "Tempo do voto", min: 20, max: 120, unit: " s" },
-  { key: "maxPlayers", label: "Máximo de jogadores", min: 3, max: 8 },
+  { key: "targetPoints", label: "Meta de pontos" },
+  { key: "clueSeconds", label: "Tempo da pista", unit: " s" },
+  { key: "decoySeconds", label: "Tempo das iscas", unit: " s" },
+  { key: "voteSeconds", label: "Tempo do voto", unit: " s" },
+  { key: "maxPlayers", label: "Máximo de jogadores" },
 ];
+
 export function TaleclueConfigForm({
   config,
   onChange,
@@ -47,10 +47,12 @@ export function TaleclueConfigForm({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {FIELDS.map((field) => {
-        const options = Array.from({ length: field.max - field.min + 1 }, (_, index) => ({
-          value: String(field.min + index),
-          label: String(field.min + index) + (field.unit ?? ""),
-        }));
+        const options = withCurrent(TALECLUE_OPTIONS[field.key], config[field.key]).map(
+          (value) => ({
+            value: String(value),
+            label: `${value}${field.unit ?? ""}`,
+          }),
+        );
         return (
           <Field key={field.key}>
             <FieldLabel htmlFor={`${id}-${field.key}`}>{field.label}</FieldLabel>
