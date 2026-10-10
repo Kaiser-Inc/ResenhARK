@@ -90,8 +90,8 @@ test("the projected clue precedes the table throughout decoy, vote and reveal", 
 });
 test("decoys use the projected count and submitted players have no send control", () => {
   const patch = { phase: "decoy" as const, clue: "Porta 42" };
-  assert.match(render(patch, "bia"), /Selecione 2 iscas/);
-  assert.match(render({ ...patch, decoyCount: 1 }, "bia"), /Selecione 1 isca/);
+  assert.match(render(patch, "bia"), /Escolha duas iscas/);
+  assert.match(render({ ...patch, decoyCount: 1 }, "bia"), /Escolha uma isca/);
   assert.doesNotMatch(render(patch), /Jogar iscas/);
   assert.doesNotMatch(render({ ...patch, acted: ["bia"] }, "bia"), /Jogar iscas/);
 });
@@ -237,13 +237,13 @@ test("a spectator never renders a hand or personal vote markers even with a broa
       { phase, table: ["tc-001"], myCards: ["tc-001"], myVote: "tc-001" },
       { role: "spectator" },
     );
-    assert.match(markup, /Você está só olhando esta partida/);
+    assert.match(markup, /Você está acompanhando esta partida/);
     assert.doesNotMatch(
       markup,
       /Sua mão|Enviar pista|Jogar iscas|Confirmar voto|Sua carta|Seu voto|aria-pressed="true"/,
     );
-    if (phase === "decoy") assert.match(markup, /Aguardando as iscas/);
-    if (phase === "vote") assert.match(markup, /Aguardando os votos/);
+    if (phase === "decoy") assert.match(markup, /Você está acompanhando esta partida/);
+    if (phase === "vote") assert.match(markup, /sem enviar pistas, iscas ou votos/);
   }
 });
 test("a paused game shows the pause status and read-only hand without an action", () => {
@@ -359,4 +359,43 @@ test("a paused reveal keeps its projected result visible without restarting a ti
   assert.match(markup, /data-reveal-step="4"/);
   assert.match(markup, /data-voter-id="caio"/);
   assert.doesNotMatch(markup, /role="timer"/);
+});
+
+test("phase guidance and the narrator task precede the secondary board", () => {
+  const markup = render();
+  assert.match(markup, /Sua vez de dar a pista/);
+  assert.match(markup, /Entenda esta fase/);
+  assert.ok(markup.indexOf('aria-label="Sua mão"') < markup.indexOf('aria-label="Tabuleiro"'));
+});
+
+test("each role sees approved instructions and sent-action confirmation", () => {
+  assert.match(render({}, "bia"), /Depois, você escolherá duas cartas da sua mão/);
+  assert.match(render({ phase: "decoy", clue: "Porta", decoyCount: 1 }, "bia"), /Escolha uma isca/);
+  assert.match(
+    render({ phase: "decoy", clue: "Porta", decoyCount: 2 }, "bia"),
+    /Escolha duas iscas/,
+  );
+  assert.match(render({ phase: "decoy", acted: ["bia"] }, "bia"), /Iscas enviadas\./);
+  assert.match(render({ phase: "vote" }, "bia"), /Encontre a carta do narrador/);
+  assert.match(render({ phase: "vote", myVote: "tc-001" }, "bia"), /Voto enviado\./);
+});
+
+test("the countdown shows a ring and urgency only for an eligible player", () => {
+  const urgent = render({ deadline: 10000 }, "ana", 1000);
+  assert.match(urgent, /data-urgent="true"/);
+  assert.match(urgent, /stroke-dasharray/);
+  assert.match(render({ deadline: 10000 }, "bia", 1000), /data-urgent="false"/);
+  assert.doesNotMatch(render({ deadline: null }), /data-urgent="true"|role="timer"/);
+});
+test("reveal retains contextual help without duplicating its stage heading", () => {
+  const markup = render({ phase: "reveal", rounds: [round], deadline: 16000 });
+  assert.match(markup, /Entenda esta fase/);
+  assert.match(markup, /Veja a carta do narrador, os votos e os pontos/);
+  assert.equal((markup.match(/Esta era a carta do narrador/g) ?? []).length, 1);
+});
+
+test("the clue task omits an empty table until the clue has been given", () => {
+  assert.doesNotMatch(render(), /aria-label="Mesa"/);
+  assert.doesNotMatch(render({}, "bia"), /aria-label="Mesa"/);
+  assert.match(render({ phase: "decoy", clue: "Porta" }), /aria-label="Mesa"/);
 });

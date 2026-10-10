@@ -310,7 +310,7 @@ for (const count of [3, 4])
     await giver.getByLabel("Pista", { exact: true }).fill("  Porta 42  ");
     await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
     await expect(
-      others[0].getByText(`Selecione ${count === 3 ? 2 : 1} isca${count === 3 ? "s" : ""}`, {
+      others[0].getByText(count === 3 ? "Escolha duas iscas" : "Escolha uma isca", {
         exact: true,
       }),
     ).toBeVisible();
@@ -381,7 +381,7 @@ test("Taleclue presence: late spectator, pause, reconnect, owner end and reset",
   await expect(owner.getByRole("button", { name: "Iniciar partida", exact: true })).toBeEnabled();
   await owner.getByRole("button", { name: "Iniciar partida", exact: true }).click();
   const spectator = await joinRoomAs(browser, code, "Dani");
-  await expect(spectator.page.getByText("Você está só olhando esta partida.")).toBeVisible();
+  await expect(spectator.page.getByText("Você está acompanhando esta partida.")).toBeVisible();
   await expect(spectator.page.getByRole("region", { name: "Sua mão", exact: true })).toHaveCount(0);
   await expect(spectator.page.getByLabel("Pista", { exact: true })).toHaveCount(0);
   await screenshots(spectator.page, "espectador");
@@ -493,9 +493,7 @@ test("Taleclue reconnect during reveal seeks the deadline, then shows the projec
     .click();
   await first.getByRole("button", { name: "Confirmar voto", exact: true }).click();
   await first.reload();
-  await expect(
-    first.getByText("Voto enviado. Aguardando os outros jogadores.", { exact: true }),
-  ).toBeVisible();
+  await expect(first.getByText("Voto enviado.", { exact: true })).toBeVisible();
   await expect(first.getByRole("button", { name: "Confirmar voto", exact: true })).toHaveCount(0);
   await others[1]
     .getByRole("region", { name: "Mesa", exact: true })

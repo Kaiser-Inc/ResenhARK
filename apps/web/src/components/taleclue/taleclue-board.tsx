@@ -3,6 +3,8 @@
 import { useSecondsLeft } from "@/components/hitline/countdown";
 import { RulesSheet } from "@/components/rules-sheet";
 import { TaleclueCard } from "@/components/taleclue/taleclue-card";
+import { TaleclueCountdown } from "@/components/taleclue/taleclue-countdown";
+import { TalecluePhaseGuide } from "@/components/taleclue/taleclue-phase-guide";
 import { TaleclueScoreboard } from "@/components/taleclue/taleclue-scoreboard";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -18,6 +20,7 @@ import {
   taleclueSelectionValid,
   taleclueWaitingCount,
 } from "@/lib/taleclue";
+import { taleclueGuidance } from "@/lib/taleclue-guidance";
 import { cn } from "@/lib/utils";
 import {
   CLUE_MAX_LENGTH,
@@ -48,7 +51,7 @@ const OUTCOMES = {
   none: "Ninguém acertou.",
   "no-votes": "Sem votos nesta rodada.",
 };
-const grid = "grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4 xl:grid-cols-5";
+const grid = "grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4";
 const nameOf = (members: MemberView[], id: string | null) =>
   members.find((member) => member.id === id)?.name ?? id ?? "";
 
@@ -259,32 +262,12 @@ function RoundInteraction({
     }
   }
   const isPlayer = role === "player" && view.players.some((player) => player.id === you);
-  const message = !isPlayer
-    ? view.phase === "clue"
-      ? `${nameOf(members, view.narratorId)} está pensando na pista.`
-      : view.phase === "decoy"
-        ? "Aguardando as iscas."
-        : "Aguardando os votos."
-    : view.phase === "clue"
-      ? view.narratorId === you
-        ? "Escolha uma carta e escreva a pista"
-        : `${nameOf(members, view.narratorId)} está pensando na pista.`
-      : view.phase === "decoy"
-        ? view.narratorId === you
-          ? "Pista enviada. Aguardando as iscas."
-          : view.acted.includes(you) || submitted
-            ? "Iscas enviadas. Aguardando os outros jogadores."
-            : `Selecione ${view.decoyCount} isca${view.decoyCount === 1 ? "" : "s"}`
-        : view.myVote || submitted
-          ? "Voto enviado. Aguardando os outros jogadores."
-          : view.narratorId === you
-            ? "Aguardando os votos."
-            : "Qual é a carta do narrador?";
+  const guidanceView =
+    submitted && view.phase !== "clue" ? { ...view, acted: [...view.acted, you] } : view;
+  const guidance = taleclueGuidance(guidanceView, you, role, nameOf(members, view.narratorId));
   return (
     <>
-      <p aria-live="polite" aria-atomic="true" className="font-medium">
-        {message}
-      </p>
+      <TalecluePhaseGuide guidance={guidance} />
       {action === "give-clue" && !submitted ? (
         <Field data-clue-field className="w-full gap-2">
           <FieldLabel htmlFor={id} className="text-xl font-semibold">
@@ -292,6 +275,7 @@ function RoundInteraction({
           </FieldLabel>
           <Input
             id={id}
+            name="clue"
             form={`${id}-action`}
             value={clue}
             maxLength={CLUE_MAX_LENGTH}
@@ -303,50 +287,52 @@ function RoundInteraction({
           />
         </Field>
       ) : null}
-      <section aria-label="Mesa" className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">Mesa</h2>
-        {view.phase === "vote" ? (
-          <div className={grid}>
-            {view.table.map((card, index) => (
-              <TaleclueCard
-                key={card}
-                cardId={card}
-                index={index}
-                selected={isPlayer && (validSelected.includes(card) || view.myVote === card)}
-                disabled={!allowed || view.myCards.includes(card)}
-                onSelect={() => select(card)}
-                note={
-                  !isPlayer
-                    ? undefined
-                    : view.myCards.includes(card)
-                      ? "Sua carta"
-                      : view.myVote === card
-                        ? "Seu voto"
-                        : undefined
-                }
-              />
-            ))}
-          </div>
-        ) : (
-          <div aria-hidden="true" className="flex flex-wrap gap-2">
-            {[
-              ...(view.clue ? ["narrator"] : []),
-              ...view.acted.flatMap((playerId) =>
-                Array.from({ length: view.decoyCount }, (_, index) => `${playerId}-${index}`),
-              ),
-            ].map((cardKey) => (
-              <motion.div
-                key={cardKey}
-                initial={{ opacity: 0, transform: "translateY(24px)" }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex h-20 w-14 items-center justify-center rounded-lg bg-muted text-muted-foreground"
-              >
-                <LayersIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </section>
+      {view.phase !== "clue" ? (
+        <section aria-label="Mesa" className="flex flex-col gap-4">
+          <h2 className="text-lg font-semibold">Mesa</h2>
+          {view.phase === "vote" ? (
+            <div className={grid}>
+              {view.table.map((card, index) => (
+                <TaleclueCard
+                  key={card}
+                  cardId={card}
+                  index={index}
+                  selected={isPlayer && (validSelected.includes(card) || view.myVote === card)}
+                  disabled={!allowed || view.myCards.includes(card)}
+                  onSelect={() => select(card)}
+                  note={
+                    !isPlayer
+                      ? undefined
+                      : view.myCards.includes(card)
+                        ? "Sua carta"
+                        : view.myVote === card
+                          ? "Seu voto"
+                          : undefined
+                  }
+                />
+              ))}
+            </div>
+          ) : (
+            <div aria-hidden="true" className="flex flex-wrap gap-2">
+              {[
+                ...(view.clue ? ["narrator"] : []),
+                ...view.acted.flatMap((playerId) =>
+                  Array.from({ length: view.decoyCount }, (_, index) => `${playerId}-${index}`),
+                ),
+              ].map((cardKey) => (
+                <motion.div
+                  key={cardKey}
+                  initial={{ opacity: 0, transform: "translateY(24px)" }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex h-20 w-14 items-center justify-center rounded-lg bg-muted text-muted-foreground"
+                >
+                  <LayersIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : null}
       {isPlayer && view.hand.length > 0 ? (
         <section aria-label="Sua mão" className="flex flex-col gap-4">
           <div className="flex items-center justify-between gap-2">
@@ -497,8 +483,12 @@ export function TaleclueBoard({
       : focusStep?.type === "board-move"
         ? focusStep.moves.filter((move) => move.from !== move.to).map((move) => move.playerId)
         : [];
+  const currentDraft = draft === undefined ? localDraft : draft;
+  const submitted = currentDraft?.key === `${view.round}:${view.phase}` && currentDraft.submitted;
+  const canAct =
+    connected && !submitted && taleclueAction(view, room.you, role, clock.now()) !== null;
   const waiting = taleclueWaitingCount(view);
-  const isPlayer = role === "player" && view.players.some((player) => player.id === room.you);
+
   const owner = room.ownerId === room.you;
   const over = view.phase === "game-over";
   const history = view.rounds.filter((round) => round.round !== lastRound?.round);
@@ -524,7 +514,9 @@ export function TaleclueBoard({
               : "min-w-0 flex-1"
           }
         >
-          <h2 className="text-3xl font-semibold">Rodada {view.round}</h2>
+          <h2 className="text-[28px] leading-8 font-semibold tracking-[-0.03em] sm:text-[40px] sm:leading-[44px]">
+            Rodada {view.round}
+          </h2>
           {!over ? (
             <p className="break-words text-sm text-muted-foreground">
               Narrador: {nameOf(room.members, view.narratorId)}
@@ -539,18 +531,30 @@ export function TaleclueBoard({
         {over ? null : view.deadline === null ? (
           <span className="text-sm text-muted-foreground">Tempo pausado</span>
         ) : (
-          <span
-            role="timer"
-            aria-label="Tempo restante"
-            className="font-mono text-lg font-semibold tabular-nums"
-          >
-            {Math.max(0, Math.ceil((view.deadline - clock.now()) / 1000))}s
-          </span>
+          <TaleclueCountdown view={view} clock={clock} canAct={canAct} />
         )}
         <RulesSheet setup={{ type: "taleclue", config: view.config }} />
       </div>
-      {!isPlayer && !over ? (
-        <p className="text-sm text-muted-foreground">Você está só olhando esta partida.</p>
+
+      {!over ? (
+        <ol className="flex flex-wrap gap-4 text-xs text-muted-foreground">
+          {(
+            [
+              ["clue", "Pista"],
+              ["decoy", "Iscas"],
+              ["vote", "Voto"],
+              ["reveal", "Revelação"],
+            ] as const
+          ).map(([phase, label]) => (
+            <li
+              key={phase}
+              aria-current={view.phase === phase ? "step" : undefined}
+              className={cn(view.phase === phase && "font-semibold text-primary-text")}
+            >
+              {label}
+            </li>
+          ))}
+        </ol>
       ) : null}
       {notices.length > 0 ? (
         <output className="flex flex-col gap-1 text-sm text-muted-foreground">
@@ -561,69 +565,85 @@ export function TaleclueBoard({
           ))}
         </output>
       ) : null}
-      <TaleclueScoreboard
-        view={view}
-        members={room.members}
-        moves={moves}
-        elapsed={elapsed}
-        focusedPlayers={focusedPlayers}
-      />
-      {over ? (
-        <GameResult
-          view={view}
-          members={room.members}
-          owner={owner}
-          connected={connected}
-          resetting={resetting}
-          onReset={async () => {
-            setResetting(true);
-            const ack = await send("game:reset");
-            setResetting(false);
-            if (!ack.ok) toast.error(gameErrorMessage(ack.error, "taleclue"));
-          }}
-        />
-      ) : null}
-      {!over && view.clue ? (
-        <div
-          key={`${view.round}:${view.clue}`}
-          data-clue-display
-          aria-live="polite"
-          aria-atomic="true"
-          className="taleclue-attention flex flex-col gap-2 border-l-2 border-primary pl-4"
-        >
-          <p className="text-xs text-muted-foreground">Pista</p>
-          <p className="break-words text-2xl font-semibold">“{view.clue}”</p>
+      <div className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="flex min-w-0 flex-col gap-6">
+          {over ? (
+            <GameResult
+              view={view}
+              members={room.members}
+              owner={owner}
+              connected={connected}
+              resetting={resetting}
+              onReset={async () => {
+                setResetting(true);
+                const ack = await send("game:reset");
+                setResetting(false);
+                if (!ack.ok) toast.error(gameErrorMessage(ack.error, "taleclue"));
+              }}
+            />
+          ) : null}
+          {!over && view.clue ? (
+            <div
+              key={`${view.round}:${view.clue}`}
+              data-clue-display
+              aria-live="polite"
+              aria-atomic="true"
+              className="taleclue-attention flex flex-col gap-2 border-l-2 border-primary pl-4"
+            >
+              <p className="text-xs text-muted-foreground">Pista</p>
+              <p className="break-words text-2xl font-semibold">“{view.clue}”</p>
+            </div>
+          ) : null}
+          {lastRound ? (
+            <>
+              <TalecluePhaseGuide
+                helpOnly
+                guidance={taleclueGuidance(
+                  view,
+                  room.you,
+                  role,
+                  nameOf(room.members, view.narratorId),
+                )}
+              />
+              <RoundReveal
+                key={lastRound.round}
+                round={lastRound}
+                members={room.members}
+                elapsed={elapsed}
+                seek={seek}
+                resumeElapsed={resumeElapsed}
+              />
+            </>
+          ) : view.phase !== "game-over" && view.phase !== "reveal" ? (
+            <RoundInteraction
+              key={`${view.round}-${view.phase}`}
+              view={view}
+              you={room.you}
+              role={role}
+              members={room.members}
+              connected={connected}
+              send={send}
+              clock={clock}
+              draft={draft === undefined ? localDraft : draft}
+              setDraft={onDraftChange ?? setLocalDraft}
+            />
+          ) : null}
+          {waiting > 0 && (view.phase === "decoy" || view.phase === "vote") ? (
+            <p aria-live="polite" aria-atomic="true" className="text-sm text-muted-foreground">
+              {waiting === 1 ? "Falta 1 jogador." : `Faltam ${waiting} jogadores.`}
+            </p>
+          ) : null}
         </div>
-      ) : null}
-      {lastRound ? (
-        <RoundReveal
-          key={lastRound.round}
-          round={lastRound}
-          members={room.members}
-          elapsed={elapsed}
-          seek={seek}
-          resumeElapsed={resumeElapsed}
-        />
-      ) : view.phase !== "game-over" && view.phase !== "reveal" ? (
-        <RoundInteraction
-          key={`${view.round}-${view.phase}`}
-          view={view}
-          you={room.you}
-          role={role}
-          members={room.members}
-          connected={connected}
-          send={send}
-          clock={clock}
-          draft={draft === undefined ? localDraft : draft}
-          setDraft={onDraftChange ?? setLocalDraft}
-        />
-      ) : null}
-      {waiting > 0 && (view.phase === "decoy" || view.phase === "vote") ? (
-        <p aria-live="polite" aria-atomic="true" className="text-sm text-muted-foreground">
-          {waiting === 1 ? "Falta 1 jogador." : `Faltam ${waiting} jogadores.`}
-        </p>
-      ) : null}
-
+        <aside className="min-w-0">
+          <TaleclueScoreboard
+            view={view}
+            members={room.members}
+            moves={moves}
+            elapsed={elapsed}
+            focusedPlayers={focusedPlayers}
+          />
+        </aside>
+      </div>
       {history.length > 0 ? (
         <section aria-label="Rodadas anteriores" className="flex flex-col gap-3">
           <h2 className="text-lg font-semibold">Rodadas anteriores</h2>
