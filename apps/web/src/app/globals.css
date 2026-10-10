@@ -36,6 +36,7 @@
   --warning: oklch(0.53 0.11 75);
   --game-hitline: oklch(0.88 0.1 80);
   --game-huehint: oklch(0.87 0.06 210);
+  --game-taleclue: oklch(0.9 0.065 80);
   --border-strong: oklch(0.86 0.008 286);
   --sidebar: oklch(0.978 0.004 286);
   --sidebar-foreground: oklch(0.21 0.006 285.885);
@@ -75,6 +76,7 @@
   --warning: oklch(0.78 0.1 80);
   --game-hitline: oklch(0.42 0.085 75);
   --game-huehint: oklch(0.38 0.075 210);
+  --game-taleclue: oklch(0.31 0.025 80);
   --border-strong: oklch(0.35 0.009 286);
   --chart-1: oklch(0.785 0.1 274.713);
   --chart-2: oklch(0.585 0.16 277.117);
@@ -127,6 +129,7 @@
   --color-warning: var(--warning);
   --color-game-hitline: var(--game-hitline);
   --color-game-huehint: var(--game-huehint);
+  --color-game-taleclue: var(--game-taleclue);
   --color-border-strong: var(--border-strong);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);

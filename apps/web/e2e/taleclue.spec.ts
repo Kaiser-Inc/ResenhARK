@@ -1,5 +1,5 @@
 import path from "node:path";
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 import type { RoomView } from "@resenhark/shared";
 import { TALECLUE_CARDS } from "@resenhark/shared";
 import {
@@ -12,6 +12,165 @@ import {
   test,
   writeRoom,
 } from "./support";
+
+test("Taleclue home card flips with keyboard, click and touch in both themes", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(120000);
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const card = page.getByRole("button", { name: "Taleclue", exact: true });
+  const rules = card.getByRole("list", { name: "Regras do Taleclue" });
+  for (const theme of ["dark", "light"]) {
+    await page.evaluate(
+      (theme) => document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme,
+    );
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      await expect(card).toHaveAttribute("aria-pressed", "false");
+      await expect(rules).toHaveCount(0);
+      await page.evaluate(() => window.scrollTo(0, 0));
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+        true,
+      );
+      await expectNoAxeViolations(page);
+      await page.screenshot({
+        path: path.join(UI_DIR, `fatia-4-${width}-${theme}.png`),
+        fullPage: true,
+      });
+      await card.focus();
+      await card.press("Enter");
+      await expect(card).toHaveAttribute("aria-pressed", "true");
+      await expect(card).toHaveCSS("outline-style", "solid");
+      await expect(rules).toBeVisible();
+      await expect(card).toHaveAccessibleDescription(/O narrador escolhe uma carta/);
+      await expect(card.locator('[data-face="front"]')).toHaveAttribute("aria-hidden", "true");
+      await expect(card.locator(".game-card-inner")).toHaveCSS("transition-duration", "0.28s");
+      expect(
+        await card
+          .locator('[data-face="back"]')
+          .evaluate((node) => node.scrollHeight <= node.clientHeight),
+      ).toBe(true);
+      await expect
+        .poll(() =>
+          card
+            .locator(".game-card-inner")
+            .evaluate((node) =>
+              node.getAnimations().every((animation) => animation.playState !== "running"),
+            ),
+        )
+        .toBe(true);
+      await expectNoAxeViolations(page);
+      await page.screenshot({
+        path: path.join(UI_DIR, `fatia-4-verso-${width}-${theme}.png`),
+        fullPage: true,
+      });
+      await card.press("Space");
+      await expect(card).toHaveAttribute("aria-pressed", "false");
+      await card.click();
+      await expect(card).toHaveAttribute("aria-pressed", "true");
+      await card.click();
+      await expect(card).toHaveAttribute("aria-pressed", "false");
+    }
+  }
+  const context = await browser.newContext({
+    hasTouch: true,
+    viewport: { width: 390, height: 900 },
+  });
+  const touch = await context.newPage();
+  await touch.goto("/");
+  const touchCard = touch.getByRole("button", { name: "Taleclue", exact: true });
+  await touchCard.tap();
+  await expect(touchCard).toHaveAttribute("aria-pressed", "true");
+  await touchCard.tap();
+  await expect(touchCard).toHaveAttribute("aria-pressed", "false");
+  await context.close();
+});
+
+async function expectCompleteRules(scope: Locator) {
+  for (const text of [
+    "recebe 6 cartas; com 3 jogadores, recebe 7 cartas e joga 2 iscas",
+    "Prazo: 120 s",
+    "Prazo: 45 s",
+    "Prazo: 30 s",
+    "Revelação: em 15 s",
+    "alcança 40 pontos",
+    "divide a vitória",
+    "baralho não puder completar as mãos",
+    "Se o dono encerrar a partida, não há vencedores",
+    "rodada é anulada, sem pontos",
+    "automaticamente",
+    "seu voto não entra na pontuação",
+    "Sem ninguém online, o tempo pausa",
+    "espectador, sem mão",
+    "sem limite",
+    "os bônus das duas são somados",
+    "Só votos enviados contam",
+  ])
+    await expect(scope).toContainText(text);
+  const scoring = scope.getByRole("table", { name: "Pontos por acertar" });
+  await expect(scoring.getByRole("row")).toHaveCount(5);
+  await expect(
+    scoring.getByRole("row", { name: "Alguns acertaram 3 3 0", exact: true }),
+  ).toBeVisible();
+  await expect(
+    scoring.getByRole("row", { name: "Ninguém votou 0 — —", exact: true }),
+  ).toBeVisible();
+}
+
+test("Taleclue complete rules follow room settings in the lobby and the game sheet", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(150000);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  const code = await createRoomAs(page, "Ana");
+  await joinRoomAs(browser, code, "Bia");
+  await joinRoomAs(browser, code, "Caio");
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await configureTaleclueOption(page, "Meta de pontos", "40");
+  await configureTaleclueOption(page, "Tempo da pista", "120 s");
+  await configureTaleclueOption(page, "Tempo das iscas", "45 s");
+  await configureTaleclueOption(page, "Tempo do voto", "30 s");
+  await page.getByRole("button", { name: "Como jogar Taleclue", exact: true }).click();
+  await expectCompleteRules(page.getByRole("region", { name: "Lobby", exact: true }));
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  const trigger = page.getByRole("button", { name: "Regras", exact: true });
+  const sheet = page.getByRole("dialog", { name: "Regras", exact: true });
+  await trigger.click();
+  await expectCompleteRules(sheet);
+  await screenshots(page, "fatia-4-regras", async () => {
+    if (!(await sheet.isVisible())) await trigger.click();
+    await expect(sheet).toBeVisible();
+    await expect
+      .poll(() => sheet.evaluate((node) => getComputedStyle(node).transform))
+      .toBe("matrix(1, 0, 0, 1, 0, 0)");
+    await expectCompleteRules(sheet);
+    for (const key of ["Tab", "Shift+Tab", "Tab"]) {
+      await page.keyboard.press(key);
+      await expect
+        .poll(() => sheet.evaluate((node) => node.contains(document.activeElement)))
+        .toBe(true);
+    }
+    await expectNoAxeViolations(page);
+    await sheet
+      .getByText("Sem ninguém online, o tempo pausa.", { exact: false })
+      .scrollIntoViewIfNeeded();
+    await expectNoAxeViolations(page);
+    await page.screenshot({
+      path: path.join(
+        UI_DIR,
+        `fatia-4-regras-fim-${page.viewportSize()?.width}-${await page.evaluate(() => (document.documentElement.classList.contains("dark") ? "dark" : "light"))}.png`,
+      ),
+    });
+    await sheet.getByRole("heading", { name: "Regras", exact: true }).scrollIntoViewIfNeeded();
+  });
+  await page.keyboard.press("Escape");
+  await expect(sheet).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+});
 
 const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-09-rodada-6-taleclue/ui-polish";
 async function screenshots(page: Page, phase: string, afterResize?: () => Promise<void>) {
