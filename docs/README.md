@@ -13,8 +13,9 @@ Documentation for people who run, change or deploy ResenhARK. It follows the [Di
 | Look up a socket event, an HTTP route or an error code | [Realtime events and HTTP routes](reference/realtime-events.md) |
 | Look up a Hitline rule | [Hitline rules](reference/hitline-rules.md) |
 | Look up a Huehint rule or how a color guess is scored | [Huehint rules](reference/huehint-rules.md) |
+| Look up a Taleclue rule or how a round is scored | [Taleclue rules](reference/taleclue-rules.md) |
 | Understand how the server, Redis and the game engine fit together | [Architecture](explanation/architecture.md) |
-| Understand how hidden cards and colors stay hidden | [Hidden information](explanation/hidden-information.md) |
+| Understand how hidden cards, colors and votes stay hidden | [Hidden information](explanation/hidden-information.md) |
 | Know what the app does not handle yet | [Known limits](explanation/known-limits.md) |
 
 The root [README](../README.md) has the quick start. The product decisions behind the rules are in `.dev-flow/2026-10-04-rodada-1-sala-chat-hitline/spec.md` (in Portuguese).

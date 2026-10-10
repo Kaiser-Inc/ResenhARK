@@ -1,4 +1,9 @@
-import { CHAT_HISTORY, type ChatMessage, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
+import {
+  CHAT_HISTORY,
+  type ChatMessage,
+  DEFAULT_HUEHINT_CONFIG,
+  DEFAULT_TALECLUE_CONFIG,
+} from "@resenhark/shared";
 import type { Redis } from "ioredis";
 import type { Room } from "../domain/room/room.js";
 import { ROOM_TTL_SECONDS, type RoomStore } from "./room-store.js";
@@ -21,6 +26,9 @@ export class RedisRoomStore implements RoomStore {
     room.lobby.huehintConfig ??= DEFAULT_HUEHINT_CONFIG;
     // Rooms saved before the color memory.
     room.lobby.colors ??= [];
+    // Rooms saved before Taleclue.
+    room.lobby.taleclueConfig ??= { ...DEFAULT_TALECLUE_CONFIG };
+    room.lobby.taleclueUsed ??= [];
     return room;
   }
 

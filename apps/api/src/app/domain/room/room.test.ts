@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { create as createTaleclue } from "../../games/taleclue/engine.js";
+import { cfg, ctxAt, syntheticDeck } from "../../games/taleclue/test-helpers.js";
 import {
   MAX_COLORS,
   MAX_MEMBERS,
@@ -8,6 +10,7 @@ import {
   addMember,
   createRoom,
   foldColors,
+  foldTaleclueUsed,
   generateRoomCode,
   kick,
   leave,
@@ -180,4 +183,23 @@ test("foldColors treats a room saved before the color memory as empty", () => {
   const room = createRoom("KXPMR", member("a"), 0);
   const old = { ...room, lobby: { ...room.lobby, colors: undefined } } as unknown as Room;
   assert.deepEqual(foldColors(old, colorsOf(2)).lobby.colors, colorsOf(2));
+});
+
+test("foldTaleclueUsed adds a finished game's dealt cards once and is idempotent", () => {
+  const base = createRoom("KXPMR", member("a"), 0);
+  const started = createTaleclue(cfg, ["a", "b", "c", "d"], syntheticDeck(40), ctxAt(0));
+  const room: Room = {
+    ...base,
+    lobby: { ...base.lobby, taleclueUsed: ["old", started.state.used[0]] },
+    game: { type: "taleclue", state: started.state, playerIds: ["a", "b", "c", "d"] },
+  };
+  const folded = foldTaleclueUsed(room);
+  assert.equal(folded.lobby.taleclueUsed.length, 1 + started.state.used.length);
+  assert.ok(folded.lobby.taleclueUsed.includes("old"));
+  assert.deepEqual(foldTaleclueUsed(folded), folded);
+});
+
+test("foldTaleclueUsed ignores rooms without a Taleclue game", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  assert.equal(foldTaleclueUsed(room), room);
 });
