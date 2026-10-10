@@ -12,7 +12,7 @@ import {
   writeRoom,
 } from "./support";
 
-const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-09-rodada-6-taleclue/ui";
+const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-09-rodada-6-taleclue/ui-polish";
 async function screenshots(page: Page, phase: string, afterResize?: () => Promise<void>) {
   for (const theme of ["dark", "light"]) {
     await page.evaluate(
@@ -40,7 +40,7 @@ async function screenshots(page: Page, phase: string, afterResize?: () => Promis
         true,
       );
       await page.screenshot({
-        path: path.join(UI_DIR, `${phase}-${width}-${theme}.png`),
+        path: path.join(UI_DIR, `${phase === "clue" ? "fatia-1" : phase}-${width}-${theme}.png`),
         fullPage: phase !== "ampliar",
       });
     }
@@ -106,9 +106,14 @@ for (const count of [3, 4])
     let giver: Page | undefined;
     for (const p of pages) if (await p.getByLabel("Pista", { exact: true }).count()) giver = p;
     if (!giver) throw new Error("Missing narrator");
+    await expect(giver.getByLabel("Pista", { exact: true })).toBeFocused();
+    const clueBox = await giver.getByLabel("Pista", { exact: true }).boundingBox();
+    const handBox = await giver.getByRole("region", { name: "Sua mão", exact: true }).boundingBox();
+    expect(clueBox && handBox && clueBox.y + clueBox.height <= handBox.y).toBe(true);
     const others = pages.filter((p) => p !== giver);
     if (count === 3) {
       await screenshots(giver, "clue");
+      await expectNoAxeViolations(giver);
       const hand = giver.getByRole("region", { name: "Sua mão", exact: true });
       const first = hand.getByRole("button", { name: "Carta 1", exact: true });
       await first.focus();

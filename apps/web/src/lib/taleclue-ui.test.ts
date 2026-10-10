@@ -75,6 +75,19 @@ test("only the narrator gets a clue input while every player sees their own hand
   assert.match(render({}, "bia"), /Ana está pensando na pista/);
   assert.doesNotMatch(render({ table: ["tc-099"] }), /data-card-id="tc-099"/);
 });
+test("the narrator clue field precedes the hand in a full-width section", () => {
+  const markup = render();
+  assert.ok(markup.indexOf("<input") < markup.indexOf('aria-label="Sua mão"'));
+  assert.match(markup, /data-clue-field/);
+});
+test("the projected clue precedes the table throughout decoy, vote and reveal", () => {
+  for (const phase of ["decoy", "vote", "reveal"] as const) {
+    const markup = render({ phase, clue: "Porta 42", rounds: phase === "reveal" ? [round] : [] });
+    const table = phase === "reveal" ? 'aria-label="Revelação da rodada 1"' : 'aria-label="Mesa"';
+    assert.ok(markup.indexOf("data-clue-display") >= 0);
+    assert.ok(markup.indexOf("data-clue-display") < markup.indexOf(table));
+  }
+});
 test("decoys use the projected count and submitted players have no send control", () => {
   const patch = { phase: "decoy" as const, clue: "Porta 42" };
   assert.match(render(patch, "bia"), /Selecione 2 iscas/);

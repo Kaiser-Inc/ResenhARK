@@ -267,6 +267,24 @@ function RoundInteraction({
       <p aria-live="polite" aria-atomic="true" className="font-medium">
         {message}
       </p>
+      {action === "give-clue" && !submitted ? (
+        <Field data-clue-field className="w-full gap-2">
+          <FieldLabel htmlFor={id} className="text-xl font-semibold">
+            Pista
+          </FieldLabel>
+          <Input
+            id={id}
+            form={`${id}-action`}
+            value={clue}
+            maxLength={CLUE_MAX_LENGTH}
+            autoComplete="off"
+            autoFocus
+            className="focus:outline-2 focus:outline-offset-2 focus:outline-ring md:text-base"
+            disabled={!allowed}
+            onChange={(event) => change({ clue: event.target.value })}
+          />
+        </Field>
+      ) : null}
       <section aria-label="Mesa" className="flex flex-col gap-4">
         <h2 className="text-lg font-semibold">Mesa</h2>
         {view.phase === "vote" ? (
@@ -345,25 +363,13 @@ function RoundInteraction({
       ) : null}
       {action && !submitted ? (
         <form
+          id={`${id}-action`}
           className="flex flex-col gap-3"
           onSubmit={(event) => {
             event.preventDefault();
             void confirm();
           }}
         >
-          {action === "give-clue" ? (
-            <Field className="max-w-sm">
-              <FieldLabel htmlFor={id}>Pista</FieldLabel>
-              <Input
-                id={id}
-                value={clue}
-                maxLength={CLUE_MAX_LENGTH}
-                autoComplete="off"
-                disabled={!allowed}
-                onChange={(event) => change({ clue: event.target.value })}
-              />
-            </Field>
-          ) : null}
           <Button
             type="submit"
             className="self-start"
@@ -551,7 +557,12 @@ export function TaleclueBoard({
         />
       ) : null}
       {!over && view.clue ? (
-        <div className="flex flex-col gap-1">
+        <div
+          data-clue-display
+          aria-live="polite"
+          aria-atomic="true"
+          className="flex flex-col gap-2 border-l-2 border-primary pl-4"
+        >
           <p className="text-xs text-muted-foreground">Pista</p>
           <p className="break-words text-2xl font-semibold">“{view.clue}”</p>
         </div>
