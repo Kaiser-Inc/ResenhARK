@@ -1,4 +1,9 @@
-import { HUEHINT_RANKS, type HitlineConfig, type HuehintConfig } from "@resenhark/shared";
+import {
+  HUEHINT_RANKS,
+  type HitlineConfig,
+  type HuehintConfig,
+  type TaleclueConfig,
+} from "@resenhark/shared";
 
 /** Thresholds come from the same contract used by the game engine. */
 export const HUEHINT_RANK_RULES = HUEHINT_RANKS.map(({ rank, min }, index) => ({
@@ -48,14 +53,38 @@ export const GAME_RULES = {
       "Sozinho: a cor aparece por 5 s, e você recria de memória.",
     ],
   },
+  taleclue: {
+    name: "Taleclue",
+    players: "3 a 8 jogadores",
+    summary: "Uma pista, várias cartas. Encontre a carta do narrador.",
+    shortRules: [
+      "O narrador escolhe uma carta da mão e dá uma pista de até 30 caracteres.",
+      "Os demais jogam uma isca (duas com três jogadores) e votam sem escolher cartas próprias.",
+      "Alguns acertos dão três pontos ao narrador e a quem acertou; todos ou nenhum dão dois aos votantes. Votos em iscas dão um ponto ao dono.",
+    ],
+    rules: [
+      "O narrador escolhe uma carta da mão e dá uma pista de até 30 caracteres.",
+      "Os demais jogam uma isca (duas com três jogadores) e votam sem escolher cartas próprias.",
+      "Alguns acertos dão três pontos ao narrador e a quem acertou; todos ou nenhum dão dois aos votantes. Votos em iscas dão um ponto ao dono.",
+    ],
+  },
 } as const;
 
 export type GameType = keyof typeof GAME_RULES;
 export type RulesSetup =
   | { type: "hitline"; config: HitlineConfig }
-  | { type: "huehint"; config: HuehintConfig };
+  | { type: "huehint"; config: HuehintConfig }
+  | { type: "taleclue"; config: TaleclueConfig };
 
 export function currentSettings(setup: RulesSetup): string[] {
+  if (setup.type === "taleclue")
+    return [
+      `Meta de pontos: ${setup.config.targetPoints}`,
+      `Tempo da pista: ${setup.config.clueSeconds} s`,
+      `Tempo das iscas: ${setup.config.decoySeconds} s`,
+      `Tempo do voto: ${setup.config.voteSeconds} s`,
+      `Máximo de jogadores: ${setup.config.maxPlayers}`,
+    ];
   return setup.type === "hitline"
     ? [
         `Vence com ${setup.config.targetCards} cartas`,

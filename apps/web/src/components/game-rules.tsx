@@ -21,7 +21,12 @@ export function GameRules({
         className={cn(
           "flex flex-col gap-1",
           variant === "full" && "rounded-md p-4 text-foreground",
-          variant === "full" && (game === "hitline" ? "bg-game-hitline" : "bg-game-huehint"),
+          variant === "full" &&
+            (game === "hitline"
+              ? "bg-game-hitline"
+              : game === "huehint"
+                ? "bg-game-huehint"
+                : "bg-muted"),
         )}
       >
         <Heading className="text-lg leading-7 font-semibold">{rules.name}</Heading>
