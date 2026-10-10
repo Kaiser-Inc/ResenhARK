@@ -1,17 +1,20 @@
 "use client";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
+import type { ServerClock } from "@/lib/server-clock";
 import {
   taleclueBoardCell,
-  taleclueMovePath,
+  taleclueBoardLayout,
   taleclueMovePosition,
+  taleclueMoveRoute,
+  taleclueRevealElapsed,
   taleclueStackOffset,
 } from "@/lib/taleclue";
 import { cn } from "@/lib/utils";
 import type { MemberView, TaleclueStep, TaleclueView } from "@resenhark/shared";
-import { CheckIcon, FlagIcon } from "lucide-react";
+import { CheckIcon, ChevronsDownIcon, FlagIcon } from "lucide-react";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 type BoardMove = Extract<TaleclueStep, { type: "board-move" }>["moves"][number];
 type PawnProps = {
@@ -20,7 +23,9 @@ type PawnProps = {
   move?: BoardMove;
   elapsed: number;
   target: number;
+  width: number;
   columns: number;
+  rowHeight: number;
   number: number;
   offset: { x: number; y: number };
   highlighted: boolean;
@@ -32,47 +37,46 @@ function TalecluePawn({
   move,
   elapsed,
   target,
+  width,
   columns,
+  rowHeight,
   number,
   offset,
   highlighted,
 }: PawnProps) {
   const position = move ? taleclueMovePosition(move.from, move.to, elapsed) : player.position;
-  // A mount or responsive remount seeks the server clock and only plays the remaining path.
+  // Remount only for geometry/phase changes: each route seeks the same server deadline.
   const [animation] = useState(() => {
-    const route = move && elapsed >= 9600 ? taleclueMovePath(position, move.to) : [position];
-    const cells = route.map((house) => taleclueBoardCell(house, target, columns));
+    const cell = taleclueBoardCell(position, target, columns, rowHeight);
+    const route =
+      move && elapsed >= 9600
+        ? taleclueMoveRoute(move.from, move.to, elapsed, target, columns, rowHeight)
+        : { x: [cell.x], y: [cell.y], times: [0], duration: 0 };
     return {
-      left: cells.map((cell) => `${cell.x}%`),
-      top: cells.map((cell) => cell.y + 24),
-      duration: move && elapsed >= 9600 ? Math.max(0, 12000 - elapsed) / 1000 : 0,
+      ...route,
+      x: route.x.map((x) => (x * width) / 100 + offset.x),
+      y: route.y.map((y) => y + 34 + offset.y),
     };
   });
   const moving = !!move && move.from !== move.to && elapsed >= 9600 && elapsed < 12000;
-  const size = columns === 6 ? 16 : 20;
   return (
     <motion.span
       data-player-id={player.id}
       data-position={position}
       data-moving={moving}
       aria-hidden="true"
-      className="absolute z-10"
-      initial={{ left: animation.left[0], top: animation.top[0] }}
-      animate={{ left: animation.left, top: animation.top }}
-      transition={{ duration: animation.duration, ease: "linear" }}
+      className="absolute left-0 top-0 z-10"
+      initial={{ x: animation.x[0], y: animation.y[0] }}
+      animate={{ x: animation.x, y: animation.y }}
+      transition={{ duration: animation.duration, ease: "linear", times: animation.times }}
     >
       <span
         className={cn(
-          "relative inline-flex rounded-full",
+          "relative inline-flex size-6 rounded-full -translate-x-1/2 taleclue-pawn",
           highlighted && "taleclue-selection taleclue-attention",
         )}
-        style={{
-          width: size,
-          height: size,
-          transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`,
-        }}
       >
-        {member ? <MemberAvatar name={member.name} avatar={member.avatar} size={size} /> : null}
+        {member ? <MemberAvatar name={member.name} avatar={member.avatar} size={24} /> : null}
         <span className="absolute -bottom-1 -right-1 rounded-sm bg-background px-0.5 font-mono text-[10px] leading-3 text-foreground">
           {number}
         </span>
@@ -85,110 +89,157 @@ export function TaleclueScoreboard({
   view,
   members,
   moves = [],
-  elapsed = 15000,
+  elapsed: projectedElapsed = 15000,
+  clock,
   focusedPlayers = [],
 }: {
   view: TaleclueView;
   members: MemberView[];
   moves?: BoardMove[];
   elapsed?: number;
+  clock?: ServerClock;
   focusedPlayers?: string[];
 }) {
   const board = useRef<HTMLDivElement>(null);
-  const [columns, setColumns] = useState(6);
+  const viewport = useRef<HTMLElement>(null);
+  const title = useId();
+  const [width, setWidth] = useState(288);
   useEffect(() => {
     const node = board.current;
     if (!node) return;
-    const resize = new ResizeObserver(([entry]) =>
-      setColumns(entry.contentRect.width >= 760 ? 10 : 6),
-    );
+    const resize = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
     resize.observe(node);
     return () => resize.disconnect();
   }, []);
+  const elapsed =
+    clock && view.phase === "reveal" && view.deadline !== null
+      ? taleclueRevealElapsed(view.deadline, clock.now())
+      : projectedElapsed;
   const target = view.config.targetPoints;
+  const layout = taleclueBoardLayout(width, target);
+  const boardWidth = layout.cellWidth * layout.columns;
   const cells = Array.from({ length: target + 1 }, (_, position) => ({
     position,
-    ...taleclueBoardCell(position, target, columns),
+    ...taleclueBoardCell(position, target, layout.columns, layout.rowHeight),
   }));
-  const rowHeight = columns === 10 ? 104 : 80;
-  const height = Math.ceil((target + 1) / columns) * rowHeight;
   const positions = view.players.map((player) => {
     const move = moves.find((move) => move.playerId === player.id);
     return move ? taleclueMovePosition(move.from, move.to, elapsed) : player.position;
   });
+  const followPosition = moves.find((move) => move.from !== move.to);
+  const followY = followPosition
+    ? taleclueBoardCell(
+        taleclueMovePosition(followPosition.from, followPosition.to, elapsed),
+        target,
+        layout.columns,
+        layout.rowHeight,
+      ).y
+    : null;
+  useEffect(() => {
+    const node = viewport.current;
+    if (!node || followY === null || elapsed < 9600 || elapsed > 12000) return;
+    const center = followY + layout.rowHeight / 2;
+    if (center < node.scrollTop + 64 || center > node.scrollTop + node.clientHeight - 64)
+      node.scrollTop = Math.max(0, center - node.clientHeight / 2);
+  }, [followY, elapsed, layout.rowHeight]);
   const name = (id: string) => members.find((member) => member.id === id)?.name ?? id;
   return (
     <section aria-label="Tabuleiro" className="flex flex-col gap-4">
-      <h2 className="text-sm font-semibold">Tabuleiro</h2>
-      <div
-        ref={board}
-        data-taleclue-path
-        data-columns={columns}
-        className="relative w-full"
-        style={{ height }}
+      <h2 id={title} className="text-sm font-semibold">
+        Tabuleiro
+      </h2>
+      <section
+        ref={viewport}
+        aria-label="Avanço no tabuleiro"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: The scrollable board needs keyboard access.
+        tabIndex={0}
+        data-board-viewport
+        className="relative max-h-[384px] overflow-auto rounded-lg border border-border bg-card p-1 outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 xl:max-h-[512px]"
       >
-        <svg
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full"
-          viewBox={`0 0 100 ${height}`}
-          preserveAspectRatio="none"
-          fill="none"
+        <div
+          ref={board}
+          data-taleclue-path
+          data-columns={layout.columns}
+          className="relative w-full"
+          style={{ height: layout.height, minWidth: 96 }}
         >
-          <path
-            d={cells.map((cell, index) => `${index ? "L" : "M"}${cell.x} ${cell.y + 12}`).join(" ")}
-            stroke="var(--border-strong)"
-            strokeWidth="2"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-        {cells.map((cell, position) => (
-          <div
-            key={cell.position}
-            data-board-cell={position}
-            data-x={cell.x}
-            data-y={cell.y}
+          <svg
             aria-hidden="true"
-            className="absolute flex items-start justify-center rounded-md bg-muted pt-1 font-mono text-xs tabular-nums"
-            style={{
-              left: `${(cell.column * 100) / columns}%`,
-              top: cell.y,
-              width: `calc(${100 / columns}% - 4px)`,
-              height: rowHeight - 4,
-            }}
+            className="pointer-events-none absolute inset-0 size-full"
+            viewBox={`0 0 ${boardWidth} ${layout.height}`}
+            fill="none"
           >
-            {position}
-            {position === target ? (
-              <FlagIcon className="ml-1 size-3 text-primary-text" strokeWidth={1.75} />
-            ) : null}
-          </div>
-        ))}
-        {view.players.map((player, index) => {
-          const position = positions[index];
-          const stack = view.players.filter((_, other) => positions[other] === position);
-          const slot = stack.findIndex((other) => other.id === player.id);
-          const acted =
-            (view.phase === "decoy" || view.phase === "vote") && view.acted.includes(player.id);
-          return (
-            <TalecluePawn
-              key={`${player.id}:${view.round}:${view.phase}:${columns}:${elapsed >= 9600 ? "move" : "wait"}`}
-              player={player}
-              member={members.find((member) => member.id === player.id)}
-              move={moves.find((move) => move.playerId === player.id)}
-              elapsed={elapsed}
-              target={target}
-              columns={columns}
-              number={index + 1}
-              offset={taleclueStackOffset(slot, stack.length, columns === 6 ? 18 : 22)}
-              highlighted={
-                focusedPlayers.includes(player.id) ||
-                acted ||
-                (view.phase === "clue" && player.id === view.narratorId)
-              }
+            <path
+              d={cells
+                .map((cell, i) => `${i ? "L" : "M"}${(cell.x * boardWidth) / 100} ${cell.y + 64}`)
+                .join(" ")}
+              stroke="var(--border-strong)"
+              strokeWidth="12"
+              strokeLinejoin="round"
             />
-          );
-        })}
-      </div>
-      <ul className="grid grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+          </svg>
+          {cells.map((cell) => (
+            <div
+              key={cell.position}
+              data-board-cell={cell.position}
+              data-x={cell.x}
+              data-y={cell.y}
+              aria-hidden="true"
+              className="absolute taleclue-house"
+              style={{
+                left: `${(cell.column * 100) / layout.columns}%`,
+                top: cell.y,
+                width: `${100 / layout.columns}%`,
+                height: layout.rowHeight,
+              }}
+            >
+              <span className="taleclue-house-surface absolute inset-x-1 top-1 bottom-2 rounded-lg bg-muted" />
+              <span className="absolute inset-x-0 top-3 flex items-center justify-center gap-1 font-mono text-xs tabular-nums">
+                {cell.position}
+                {cell.position === target ? (
+                  <FlagIcon className="size-3 text-primary-text" strokeWidth={1.75} />
+                ) : null}
+              </span>
+            </div>
+          ))}
+          {view.players.map((player, index) => {
+            const acted =
+              (view.phase === "decoy" || view.phase === "vote") && view.acted.includes(player.id);
+            return (
+              <TalecluePawn
+                key={`${player.id}:${view.round}:${view.phase}:${width}:${elapsed >= 9600 ? "move" : "wait"}`}
+                player={player}
+                member={members.find((member) => member.id === player.id)}
+                move={moves.find((move) => move.playerId === player.id)}
+                elapsed={elapsed}
+                target={target}
+                width={boardWidth}
+                columns={layout.columns}
+                rowHeight={layout.rowHeight}
+                number={index + 1}
+                offset={taleclueStackOffset(index, view.players.length)}
+                highlighted={
+                  focusedPlayers.includes(player.id) ||
+                  acted ||
+                  (view.phase === "clue" && player.id === view.narratorId)
+                }
+              />
+            );
+          })}
+        </div>
+      </section>
+      {layout.height > 384 ? (
+        <ChevronsDownIcon
+          aria-hidden="true"
+          className="mx-auto -mt-3 size-4 text-muted-foreground"
+        />
+      ) : null}
+      <ul
+        className="grid gap-x-6 gap-y-3"
+        style={{
+          gridTemplateColumns: width >= 480 ? "repeat(2, minmax(0, 1fr))" : "minmax(0, 1fr)",
+        }}
+      >
         {view.players.map((player, index) => {
           const member = members.find((member) => member.id === player.id);
           const acted =

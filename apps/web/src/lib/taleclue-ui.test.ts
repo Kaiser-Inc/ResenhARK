@@ -11,6 +11,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { LobbyPanel } from "../components/lobby/lobby-panel";
 import { TaleclueBoard } from "../components/taleclue/taleclue-board";
+import { TaleclueScoreboard } from "../components/taleclue/taleclue-scoreboard";
 import { gameErrorMessage } from "./game-errors";
 
 const view: TaleclueView = {
@@ -408,4 +409,23 @@ test("waiting keeps its sentence stable and adds only hidden decorative motion",
   assert.doesNotMatch(render({ phase: "vote" }, "bia"), /data-waiting="true"/);
   assert.match(render({ phase: "vote", myVote: "tc-001" }, "bia"), /data-waiting="true"/);
   assert.doesNotMatch(render({ phase: "reveal", rounds: [round] }), /data-waiting="true"/);
+});
+
+test("a geometry render uses the current server clock instead of a stale parent tick", () => {
+  const markup = renderToStaticMarkup(
+    createElement(TaleclueScoreboard, {
+      view: {
+        ...view,
+        phase: "reveal",
+        deadline: 5000,
+        players: view.players.map((p) => ({ ...p, points: 4, position: 4 })),
+      },
+      members: room.members,
+      moves: [{ playerId: "ana", from: 0, to: 4 }],
+      elapsed: 0,
+      clock: { now: () => 500, sync: () => {} },
+    }),
+  );
+  assert.match(markup, /data-player-id="ana" data-position="1" data-moving="true"/);
+  assert.match(markup, /translateX\(.*translateY\(/);
 });

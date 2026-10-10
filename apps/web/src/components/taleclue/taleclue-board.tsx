@@ -641,6 +641,7 @@ export function TaleclueBoard({
             view={view}
             members={room.members}
             moves={moves}
+            clock={clock}
             elapsed={elapsed}
             focusedPlayers={focusedPlayers}
           />

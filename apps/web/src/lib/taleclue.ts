@@ -24,19 +24,68 @@ export function taleclueThumbnail(image: string): string {
 }
 
 /** Percent x and pixel y keep the path aligned with the board's real width. */
-export function taleclueBoardCell(position: number, target: number, columns = 6) {
+export function taleclueBoardCell(
+  position: number,
+  target: number,
+  columns = 6,
+  rowHeight = columns === 10 ? 104 : 80,
+) {
   const house = Math.max(0, Math.min(target, position));
   const row = Math.floor(house / columns);
   const column = row % 2 === 0 ? house % columns : columns - 1 - (house % columns);
-  return { row, column, x: (100 * (column + 0.5)) / columns, y: row * (columns === 10 ? 104 : 80) };
+  return { row, column, x: (100 * (column + 0.5)) / columns, y: row * rowHeight };
 }
 
-/** Three columns fit eight distinct 16 px avatars inside a 390 px board cell. */
-export function taleclueStackOffset(index: number, count: number, spacing = 18) {
+/** Stable slots reserve a three-column matrix for upright 24 px pawns. */
+export function taleclueStackOffset(index: number, count: number, spacing = 28) {
   const columns = Math.min(3, count);
   return {
     x: ((index % columns) - (columns - 1) / 2) * spacing,
     y: Math.floor(index / columns) * spacing,
+  };
+}
+
+/** Measure the actual board, including the narrow desktop sidebar. */
+export function taleclueBoardLayout(width: number, target: number) {
+  const columns = Math.max(1, Math.floor(width / 96));
+  const cellWidth = Math.max(96, width / columns);
+  const rowHeight = 128;
+  return { columns, cellWidth, rowHeight, height: Math.ceil((target + 1) / columns) * rowHeight };
+}
+
+/** Seek inside a segment without shifting the arrival times of the remaining houses. */
+export function taleclueMoveRoute(
+  from: number,
+  to: number,
+  elapsed: number,
+  target: number,
+  columns: number,
+  rowHeight: number,
+) {
+  const cells = taleclueMovePath(from, to).map((p) =>
+    taleclueBoardCell(p, target, columns, rowHeight),
+  );
+  const progress = Math.max(0, Math.min(1, (elapsed - 9600) / 2400));
+  if (cells.length === 1 || progress === 1) {
+    const last = cells[cells.length - 1];
+    return { x: [last.x], y: [last.y], times: [0], duration: 0 };
+  }
+  const segment = progress * (cells.length - 1);
+  const index = Math.floor(segment);
+  const a = cells[index];
+  const b = cells[index + 1];
+  const fraction = segment - index;
+  const remaining = cells.slice(index + 1);
+  return {
+    x: [a.x + (b.x - a.x) * fraction, ...remaining.map((c) => c.x)],
+    y: [a.y + (b.y - a.y) * fraction, ...remaining.map((c) => c.y)],
+    times: [
+      0,
+      ...remaining.map(
+        (_, i) => ((index + 1 + i) / (cells.length - 1) - progress) / (1 - progress),
+      ),
+    ],
+    duration: 2.4 * (1 - progress),
   };
 }
 

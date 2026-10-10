@@ -699,3 +699,19 @@
 ::view-transition-new(.page-swap) {
   animation: page-in 150ms ease-out both;
 }
+
+/* The terrain tilts independently so pieces and numbers remain upright. */
+.taleclue-house-surface {
+  transform: perspective(500px) rotateX(18deg);
+  transform-origin: center bottom;
+  box-shadow: 0 5px 0 var(--border-strong), 0 8px 8px
+    color-mix(in oklch, var(--foreground) 12%, transparent);
+}
+.taleclue-pawn {
+  filter: drop-shadow(0 3px 1px color-mix(in oklch, var(--foreground) 12%, transparent));
+}
+@media (max-width: 639px) {
+  .taleclue-house-surface {
+    transform: perspective(500px) rotateX(8deg);
+  }
+}
