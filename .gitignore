@@ -10,3 +10,6 @@ next-env.d.ts
 *.tsbuildinfo
 
 .env*.local
+
+# Taleclue deck: PNGs brutos do Gemini
+.taleclue-raw/
