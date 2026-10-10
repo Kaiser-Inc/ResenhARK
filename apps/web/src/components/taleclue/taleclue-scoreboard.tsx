@@ -64,7 +64,7 @@ function TalecluePawn({
       <span
         className={cn(
           "relative inline-flex rounded-full",
-          highlighted && "taleclue-attention ring-2 ring-ring",
+          highlighted && "taleclue-selection taleclue-attention",
         )}
         style={{
           width: size,
@@ -203,7 +203,7 @@ export function TaleclueScoreboard({
               <span
                 className={cn(
                   "relative inline-flex rounded-full",
-                  acted && "taleclue-attention ring-2 ring-ring",
+                  acted && "taleclue-selection taleclue-attention",
                 )}
               >
                 {member ? (

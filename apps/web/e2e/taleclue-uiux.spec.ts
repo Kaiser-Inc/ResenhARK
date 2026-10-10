@@ -71,6 +71,10 @@ for (const count of [3, 4]) {
         );
         for (const width of [390, 1440]) {
           await giver.setViewportSize({ width, height: 900 });
+          // RoomFrame remounts its game content at the mobile breakpoint.
+          await expect(giver.getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
+            width === 390 ? 1 : 0,
+          );
           const phaseHelp = giver.getByRole("button", { name: "Entenda esta fase", exact: true });
           if ((await phaseHelp.getAttribute("aria-expanded")) !== "true") await phaseHelp.click();
           await expect(
@@ -256,4 +260,180 @@ test("Taleclue countdown: rejected clues preserve the draft and reconnect seeks 
     giver.getByRole("heading", { name: "Sua pista já está na mesa.", exact: true }),
   ).toBeVisible();
   await expect(giver.locator("[data-urgent]")).toHaveAttribute("data-urgent", "false");
+});
+
+async function expectSoftShadow(locator: ReturnType<Page["locator"]>) {
+  await expect
+    .poll(() =>
+      locator.evaluate((node) => {
+        return [getComputedStyle(node), getComputedStyle(node, "::after")].some((style) =>
+          [...style.boxShadow.matchAll(/0px 0px ([\d.]+)px/g)].some(
+            (match) => Number(match[1]) > 0,
+          ),
+        );
+      }),
+    )
+    .toBe(true);
+}
+
+test("Taleclue feedback: soft selection, stable waiting and public action highlights", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180000);
+  const code = await createRoomAs(page, "Ana");
+  const pages = [
+    page,
+    (await joinRoomAs(browser, code, "Bia")).page,
+    (await joinRoomAs(browser, code, "Caio")).page,
+  ];
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  const giver = await narrator(pages);
+  const others = pages.filter((p) => p !== giver);
+  const card = giver
+    .getByRole("region", { name: "Sua mão", exact: true })
+    .getByRole("button", { name: /^Carta [0-9]+$/ })
+    .first();
+  await card.focus();
+  await card.press("Space");
+  await expect(card).toHaveAttribute("aria-pressed", "true");
+  await expectSoftShadow(card);
+  await expect
+    .poll(() => card.evaluate((node) => getComputedStyle(node).outlineStyle))
+    .not.toBe("none");
+  await giver.getByLabel("Pista", { exact: true }).focus();
+  await expect(giver.getByLabel("Pista", { exact: true })).toBeFocused();
+  await expect
+    .poll(() => card.evaluate((node) => getComputedStyle(node).outlineStyle))
+    .toBe("none");
+  await card.focus();
+  await card.press("Space");
+  await expect(card).toHaveAttribute("aria-pressed", "false");
+  await card.press("Space");
+  await expect(card).toHaveAttribute("aria-pressed", "true");
+  const waiting = others[0].locator("[data-phase-guidance]");
+  const sentence = await waiting.locator('[aria-live="polite"]').innerText();
+  await expect(waiting.locator('[data-waiting="true"][aria-hidden="true"]')).toBeVisible();
+  await expect(waiting.locator('[data-waiting="true"] > span')).toHaveCount(3);
+  await expect
+    .poll(() =>
+      waiting
+        .locator('[data-waiting="true"] > span')
+        .first()
+        .evaluate((node) => getComputedStyle(node).animationName),
+    )
+    .not.toBe("none");
+  expect(await waiting.locator('[aria-live="polite"]').innerText()).toBe(sentence);
+  await giver.bringToFront();
+  for (const theme of ["dark", "light"]) {
+    await giver.evaluate(
+      (theme) => document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme,
+    );
+    for (const width of [390, 1440]) {
+      await giver.setViewportSize({ width, height: 900 });
+      await expect(card).toHaveAttribute("aria-pressed", "true");
+      await giver.getByLabel("Pista", { exact: true }).focus();
+      await expectSoftShadow(card);
+      await expect
+        .poll(() =>
+          giver
+            .locator('[aria-label="Sua mão"] [data-card-id]')
+            .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
+        )
+        .toBe(true);
+      await expectNoAxeViolations(giver);
+      // Finish finite entry motion after resize before capturing the live waiting animation.
+      await giver.waitForTimeout(650);
+      await giver.screenshot({
+        path: path.join(UI_DIR, `fatia-2-${width}-${theme}.png`),
+        fullPage: true,
+      });
+    }
+  }
+  await others[0].bringToFront();
+  for (const theme of ["dark", "light"]) {
+    await others[0].evaluate(
+      (theme) => document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme,
+    );
+    for (const width of [390, 1440]) {
+      await others[0].setViewportSize({ width, height: 900 });
+      await expect(others[0].locator('[data-waiting="true"]')).toBeVisible();
+      await expect
+        .poll(() =>
+          others[0]
+            .locator('[aria-label="Sua mão"] [data-card-id]')
+            .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
+        )
+        .toBe(true);
+      await expectNoAxeViolations(others[0]);
+      await others[0].waitForTimeout(650);
+      await others[0].screenshot({
+        path: path.join(UI_DIR, `fatia-2-espera-${width}-${theme}.png`),
+        fullPage: true,
+      });
+    }
+  }
+  expect(await waiting.locator('[aria-live="polite"]').innerText()).toBe(sentence);
+  await giver.getByLabel("Pista", { exact: true }).fill("Porta 42");
+  await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
+  await expect(others[0].locator('[data-waiting="true"]')).toHaveCount(0);
+  await expectSoftShadow(others[0].locator("[data-clue-display]"));
+  await expect
+    .poll(() =>
+      others[0]
+        .locator("[data-clue-display]")
+        .evaluate((node) => node.getAnimations({ subtree: true }).length),
+    )
+    .toBe(0);
+  for (const other of others) {
+    await selectHand(other, 2);
+    await other.getByRole("button", { name: "Jogar iscas", exact: true }).click();
+    if (other === others[0]) {
+      await expect(other.locator('[data-waiting="true"]')).toBeVisible();
+      await expect(giver.locator("[data-acted]")).toHaveCount(1);
+      await expectSoftShadow(giver.locator("[data-acted]").locator(".."));
+    }
+  }
+  for (const other of others) {
+    await expect(other.locator('[data-waiting="true"]')).toHaveCount(0);
+    const allowed = other
+      .getByRole("region", { name: "Mesa", exact: true })
+      .getByRole("button", { name: /^Carta [0-9]+$/ });
+    for (const vote of await allowed.all()) {
+      if (await vote.isEnabled()) {
+        await vote.click();
+        break;
+      }
+    }
+    await other.getByRole("button", { name: "Confirmar voto", exact: true }).click();
+    if (other === others[0]) {
+      await expect(giver.locator("[data-acted]")).toHaveCount(1);
+      await expectSoftShadow(giver.locator("[data-acted]").locator(".."));
+    }
+  }
+  await expect(giver.locator('[data-waiting="true"]')).toHaveCount(0);
+  const reveal = giver.getByRole("region", { name: "Revelação da rodada 1", exact: true });
+  const captions = [
+    "Esta era a carta do narrador",
+    "Quem votou em quê",
+    "Pontos por acertar",
+    "Pontos das iscas",
+    "Avanço no tabuleiro",
+  ];
+  await giver.bringToFront();
+  for (let step = 0; step < captions.length; step++) {
+    await expect(reveal).toHaveAttribute("data-reveal-step", String(step));
+    await expect(reveal.getByRole("heading", { name: captions[step], exact: true })).toBeVisible();
+    // Capture after card entry/flip, inside this step and without disabling game motion.
+    await giver.waitForTimeout(step === 0 ? 900 : 350);
+    await giver.screenshot({
+      path: path.join(UI_DIR, `fatia-2-reveal-${step}.png`),
+      fullPage: true,
+    });
+  }
+  await expect(reveal).toHaveAttribute("data-reveal-active", "false");
+  await expectNoAxeViolations(giver);
 });

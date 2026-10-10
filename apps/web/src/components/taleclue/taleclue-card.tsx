@@ -23,8 +23,8 @@ function CardArt({
     <div
       data-card-art
       className={cn(
-        "relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-muted transition-opacity duration-200",
-        spotlight && "taleclue-attention ring-2 ring-ring",
+        "relative aspect-[2/3] w-full rounded-lg bg-muted transition-opacity duration-200",
+        spotlight && "taleclue-attention",
         dimmed && "opacity-40",
       )}
     >
@@ -36,7 +36,7 @@ function CardArt({
           height={full ? 1200 : 600}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full rounded-lg object-cover"
           onError={() => setFailed(true)}
         />
       ) : (
@@ -80,9 +80,12 @@ export function TaleclueCard({
       data-card-id={cardId}
       className="flex min-w-0 flex-col gap-2"
       initial={animate ? { opacity: 0, transform: "translateY(16px)" } : false}
-      animate={{ opacity: 1, transform: selected ? "translateY(-8px)" : "translateY(0px)" }}
+      animate={{ opacity: 1, transform: selected ? "translateY(-2px)" : "translateY(0px)" }}
       exit={{ opacity: 0, transform: "translateY(-64px) scale(0.85)" }}
-      transition={{ duration: 0.3, delay: animate ? index * 0.035 : 0, ease: [0.23, 1, 0.32, 1] }}
+      transition={{
+        opacity: { duration: 0.3, delay: animate ? index * 0.035 : 0 },
+        transform: { duration: 0.16, ease: [0.23, 1, 0.32, 1] },
+      }}
     >
       {onSelect ? (
         <CardButton
@@ -91,8 +94,8 @@ export function TaleclueCard({
           disabled={disabled}
           onClick={onSelect}
           className={cn(
-            "relative w-full rounded-lg outline-hidden ring-1 ring-border transition-[box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-default",
-            selected && "taleclue-attention ring-2 ring-ring",
+            "relative w-full rounded-lg outline-none ring-1 ring-border focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-default",
+            selected && "taleclue-selection",
           )}
         >
           <CardArt cardId={cardId} label={label} spotlight={spotlight} dimmed={dimmed} />
@@ -118,7 +121,7 @@ export function TaleclueCard({
           Ampliar
         </Dialog.Trigger>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-50 bg-background/70 backdrop-blur-sm transition-opacity duration-150 data-starting-style:opacity-0 data-ending-style:opacity-0" />
+          <Dialog.Backdrop className="fixed inset-0 z-50 bg-background/70 transition-opacity duration-150 data-starting-style:opacity-0 data-ending-style:opacity-0" />
           <Dialog.Viewport className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
             <Dialog.Popup className="pointer-events-auto relative w-[min(480px,calc(100vw-32px),calc((100dvh-96px)*2/3))] outline-hidden transition-[opacity,transform] duration-200 data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0">
               <Dialog.Title className="sr-only">{label}</Dialog.Title>

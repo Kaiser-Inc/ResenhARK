@@ -433,19 +433,54 @@
 }
 
 /* Taleclue motion is part of play, including with reduced motion enabled. */
+.taleclue-selection {
+  box-shadow: 0 0 0.75rem color-mix(in oklch, var(--ring) 45%, transparent);
+}
 @keyframes taleclue-attention {
   0%,
   100% {
-    outline-color: var(--ring);
+    opacity: 0;
   }
   50% {
-    outline-color: transparent;
+    opacity: 1;
   }
 }
 .taleclue-attention {
-  animation: taleclue-attention 500ms ease-out 2;
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
+  position: relative;
+}
+.taleclue-attention::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 1rem color-mix(in oklch, var(--ring) 60%, transparent);
+  opacity: 0;
+  animation: taleclue-attention 250ms var(--ease-out) 2;
+}
+@keyframes taleclue-wait {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+.taleclue-waiting > span {
+  width: 4px;
+  height: 4px;
+  border-radius: 4px;
+  background: currentColor;
+  animation: taleclue-wait 1.2s var(--ease-in-out) infinite;
+}
+.taleclue-waiting > span:nth-child(2) {
+  animation-delay: 120ms;
+}
+.taleclue-waiting > span:nth-child(3) {
+  animation-delay: 240ms;
 }
 
 .game-card[data-game="huehint"] {

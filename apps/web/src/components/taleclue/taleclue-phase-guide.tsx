@@ -20,6 +20,17 @@ export function TalecluePhaseGuide({
         <div aria-live="polite" aria-atomic="true" className="flex flex-col gap-2">
           <h2 id={`${id}-title`} className="break-words text-xl font-semibold">
             {guidance.title}
+            {guidance.waiting ? (
+              <span
+                data-waiting="true"
+                aria-hidden="true"
+                className="taleclue-waiting ml-2 inline-flex gap-1 align-middle text-primary-text"
+              >
+                <span />
+                <span />
+                <span />
+              </span>
+            ) : null}
           </h2>
           <p className="text-sm text-muted-foreground">{guidance.description}</p>
         </div>

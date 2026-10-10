@@ -124,7 +124,7 @@ function RoundReveal({
                       data-voter-id={vote.voterId}
                       className={cn(
                         "break-all rounded-md bg-muted px-2 py-1 text-xs font-medium",
-                        focus(1) ? "taleclue-attention ring-2 ring-ring" : "text-muted-foreground",
+                        focus(1) ? "taleclue-attention" : "text-muted-foreground",
                       )}
                       initial={passed(1) ? false : { opacity: 0, transform: "translateY(-12px)" }}
                       animate={{ opacity: 1, transform: "translateY(0px)" }}
@@ -146,7 +146,8 @@ function RoundReveal({
           data-highlighted={focus(2)}
           className={cn(
             "flex flex-col gap-2 rounded-md",
-            focus(2) && "taleclue-attention outline-2 outline-offset-4 outline-ring",
+            focus(2) && "taleclue-attention",
+            active && !focus(2) && "text-muted-foreground",
           )}
         >
           <p className="font-medium">{OUTCOMES[correct.outcome]}</p>
@@ -165,12 +166,13 @@ function RoundReveal({
       {stage >= 3 && decoy ? (
         <motion.div
           initial={passed(3) ? false : { opacity: 0, transform: "translateY(8px)" }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={{ opacity: 1, transform: "translateY(0px)" }}
           transition={{ duration: 0.25 }}
           data-highlighted={focus(3)}
           className={cn(
             "flex flex-col gap-2 rounded-md",
-            focus(3) && "taleclue-attention outline-2 outline-offset-4 outline-ring",
+            focus(3) && "taleclue-attention",
+            active && !focus(3) && "text-muted-foreground",
           )}
         >
           <p className="text-sm font-medium">Pontos pelas iscas</p>
@@ -323,7 +325,7 @@ function RoundInteraction({
                 <motion.div
                   key={cardKey}
                   initial={{ opacity: 0, transform: "translateY(24px)" }}
-                  animate={{ opacity: 1, y: 0 }}
+                  animate={{ opacity: 1, transform: "translateY(0px)" }}
                   className="flex h-20 w-14 items-center justify-center rounded-lg bg-muted text-muted-foreground"
                 >
                   <LayersIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
@@ -588,7 +590,7 @@ export function TaleclueBoard({
               data-clue-display
               aria-live="polite"
               aria-atomic="true"
-              className="taleclue-attention flex flex-col gap-2 border-l-2 border-primary pl-4"
+              className="taleclue-attention flex flex-col gap-2 rounded-md p-4"
             >
               <p className="text-xs text-muted-foreground">Pista</p>
               <p className="break-words text-2xl font-semibold">“{view.clue}”</p>

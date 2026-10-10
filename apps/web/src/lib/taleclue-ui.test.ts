@@ -399,3 +399,13 @@ test("the clue task omits an empty table until the clue has been given", () => {
   assert.doesNotMatch(render({}, "bia"), /aria-label="Mesa"/);
   assert.match(render({ phase: "decoy", clue: "Porta" }), /aria-label="Mesa"/);
 });
+
+test("waiting keeps its sentence stable and adds only hidden decorative motion", () => {
+  const waiting = render({}, "bia");
+  assert.match(waiting, /Ana está pensando na pista\./);
+  assert.match(waiting, /data-waiting="true" aria-hidden="true"/);
+  assert.doesNotMatch(render(), /data-waiting="true"/);
+  assert.doesNotMatch(render({ phase: "vote" }, "bia"), /data-waiting="true"/);
+  assert.match(render({ phase: "vote", myVote: "tc-001" }, "bia"), /data-waiting="true"/);
+  assert.doesNotMatch(render({ phase: "reveal", rounds: [round] }), /data-waiting="true"/);
+});
