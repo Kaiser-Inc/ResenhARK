@@ -47,6 +47,8 @@ test("the intent schema accepts the three intents and rejects a malformed one", 
   assert.equal(parse({ type: "give-clue", cardId: "tc-001", clue: "x".repeat(500) }), true);
   assert.equal(parse({ type: "play-decoys", cardIds: ["tc-002"] }), true);
   assert.equal(parse({ type: "vote", cardId: "tc-003" }), true);
+  // The engine, not the schema, rejects a wrong number of decoys, so it answers invalid-card.
+  assert.equal(parse({ type: "play-decoys", cardIds: Array(9).fill("tc-004") }), true);
   assert.equal(parse({ type: "play-decoys" }), false);
   assert.equal(parse({ type: "vote" }), false);
   assert.equal(parse({ type: "give-clue", cardId: "tc-001" }), false);

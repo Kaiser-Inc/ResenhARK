@@ -1,4 +1,5 @@
 import {
+  TALECLUE_MIN_PLAYERS,
   type TaleclueConfig,
   type TaleclueEndReason,
   type TaleclueEvent,
@@ -14,7 +15,7 @@ import { type TableCard, type Vote, scoreRound } from "./scoring.js";
 export const REVEAL_MS = 15_000;
 
 export type Player = { id: string; online: boolean };
-export type Decoys = { playerId: string; cardIds: string[]; auto: boolean };
+export type DecoyPlay = { playerId: string; cardIds: string[]; auto: boolean };
 export type TaleclueState = {
   config: TaleclueConfig;
   players: Player[];
@@ -36,7 +37,7 @@ export type TaleclueState = {
   decoyCount: number;
   clue: string | null;
   narratorCard: string | null;
-  decoys: Decoys[];
+  decoys: DecoyPlay[];
   /** Shuffled when the vote opens. */
   table: TableCard[];
   votes: Vote[];
@@ -60,17 +61,22 @@ export type EngineResult =
   | { ok: false; error: RuleError };
 
 /** Three players need a bigger hand and two decoys each to fill the table. */
-export const handSize = (players: number) => (players === 3 ? 7 : 6);
-export const cardsPerDecoy = (players: number) => (players === 3 ? 2 : 1);
+export const handSize = (players: number) => (players === TALECLUE_MIN_PLAYERS ? 7 : 6);
+export const cardsPerDecoy = (players: number) => (players === TALECLUE_MIN_PLAYERS ? 2 : 1);
 /** The deck a game needs to deal every hand and play the first round. */
 export const requiredCards = (players: number) =>
   players * (handSize(players) + cardsPerDecoy(players));
 
+/**
+ * `priority` cards (the ones the room has not seen) sit on top of the draw pile, each group shuffled
+ * on its own, so they are dealt first.
+ */
 export function create(
   config: TaleclueConfig,
   playerIds: string[],
   deck: string[],
   ctx: Ctx,
+  priority: string[] = [],
 ): { state: TaleclueState; events: TaleclueEvent[] } {
   const order = shuffle(playerIds, ctx.rng);
   const s: TaleclueState = {
@@ -80,7 +86,16 @@ export function create(
     turn: 0,
     narratorId: null,
     phase: "clue",
-    deck: shuffle(deck, ctx.rng),
+    deck: [
+      ...shuffle(
+        deck.filter((c) => priority.includes(c)),
+        ctx.rng,
+      ),
+      ...shuffle(
+        deck.filter((c) => !priority.includes(c)),
+        ctx.rng,
+      ),
+    ],
     discard: [],
     hands: Object.fromEntries(order.map((id) => [id, []])),
     used: [],
@@ -162,17 +177,15 @@ const nonNarrators = (s: TaleclueState) => s.players.filter((p) => p.id !== s.na
  */
 function allIn(s: TaleclueState): boolean {
   if (!s.players.some((p) => p.online)) return false;
+  const onlineDone = (acted: (id: string) => boolean) =>
+    nonNarrators(s).every((p) => !p.online || acted(p.id));
   if (s.phase === "decoy") {
     return (
-      s.decoys.some((d) => !d.auto) &&
-      nonNarrators(s).every((p) => !p.online || s.decoys.some((d) => d.playerId === p.id))
+      s.decoys.some((d) => !d.auto) && onlineDone((id) => s.decoys.some((d) => d.playerId === id))
     );
   }
   if (s.phase === "vote") {
-    return (
-      s.votes.length > 0 &&
-      nonNarrators(s).every((p) => !p.online || s.votes.some((v) => v.voterId === p.id))
-    );
+    return s.votes.length > 0 && onlineDone((id) => s.votes.some((v) => v.voterId === id));
   }
   return false;
 }
@@ -232,6 +245,11 @@ function voidRound(
     narratorId: s.narratorId as string,
     reason,
   });
+  nextNarrator(s, ctx, events);
+}
+
+/** The round is over: its cards are discarded and the next narrator in the order starts. */
+function nextNarrator(s: TaleclueState, ctx: Ctx, events: TaleclueEvent[]): void {
   s.discard.push(...roundCards(s));
   s.turn = (s.turn + 1) % s.order.length;
   startRound(s, ctx, events);
@@ -250,9 +268,7 @@ function afterReveal(s: TaleclueState, ctx: Ctx, events: TaleclueEvent[]): void 
     finish(s, "points", events);
     return;
   }
-  s.discard.push(...roundCards(s));
-  s.turn = (s.turn + 1) % s.order.length;
-  startRound(s, ctx, events);
+  nextNarrator(s, ctx, events);
 }
 
 /** Every card the round put on the table, narrator's included. */
@@ -284,11 +300,27 @@ function removePlayer(s: TaleclueState, id: string, ctx: Ctx, events: TaleclueEv
   s.players = s.players.filter((p) => p.id !== id);
   s.discard.push(...(s.hands[id] ?? []));
   delete s.hands[id];
-  if (s.players.length === 0) finish(s, "ended", events);
-  else if (s.players.length < 3) finish(s, "not-enough-players", events);
+  if (s.players.length < TALECLUE_MIN_PLAYERS) finish(s, "not-enough-players", events);
   else if (id === s.narratorId && ["clue", "decoy", "vote"].includes(s.phase)) {
     voidRound(s, "narrator-left", ctx, events);
   } else closeIfAllIn(s, ctx, events);
+}
+
+function hasActed(
+  s: TaleclueState,
+  actorId: string,
+  type: "give-clue" | "play-decoys" | "vote",
+): boolean {
+  if (type === "give-clue") return s.narratorId === actorId && s.narratorCard !== null;
+  if (type === "play-decoys") return s.decoys.some((d) => d.playerId === actorId);
+  return s.votes.some((v) => v.voterId === actorId);
+}
+
+/** The narrator of the round after this one; null once the game is over. */
+export function nextNarratorId(s: TaleclueState): string | null {
+  const len = s.order.length;
+  // `turn` can sit one before the first index after a narrator left, hence the double modulo.
+  return s.phase === "game-over" || len === 0 ? null : s.order[(((s.turn + 1) % len) + len) % len];
 }
 
 export function apply(
@@ -301,6 +333,9 @@ export function apply(
   const events: TaleclueEvent[] = [];
   const system = actorId === SYSTEM_ACTOR;
   const fail = (error: RuleError): EngineResult => ({ ok: false, error });
+  // A repeat of something the player already did, even after the phase moved on, is already-acted.
+  const phaseError = (type: "give-clue" | "play-decoys" | "vote"): EngineResult =>
+    fail(!system && hasActed(s, actorId, type) ? "already-acted" : "wrong-phase");
   if (!system && !s.players.some((p) => p.id === actorId)) return fail("not-a-player");
   if (s.phase === "game-over") return fail("wrong-phase");
 
@@ -314,7 +349,7 @@ export function apply(
       removePlayer(s, action.playerId, ctx, events);
       break;
     case "give-clue": {
-      if (system || s.phase !== "clue") return fail("wrong-phase");
+      if (system || s.phase !== "clue") return phaseError("give-clue");
       if (s.narratorId !== actorId) return fail("not-your-turn");
       if (!isValidClue(action.clue)) return fail("invalid-hint");
       const hand = s.hands[actorId];
@@ -327,7 +362,7 @@ export function apply(
       break;
     }
     case "play-decoys": {
-      if (system || s.phase !== "decoy") return fail("wrong-phase");
+      if (system || s.phase !== "decoy") return phaseError("play-decoys");
       if (s.narratorId === actorId) return fail("not-your-turn");
       if (s.decoys.some((d) => d.playerId === actorId)) return fail("already-acted");
       const hand = s.hands[actorId];
@@ -346,7 +381,7 @@ export function apply(
       break;
     }
     case "vote": {
-      if (system || s.phase !== "vote") return fail("wrong-phase");
+      if (system || s.phase !== "vote") return phaseError("vote");
       if (s.narratorId === actorId) return fail("not-your-turn");
       if (s.votes.some((v) => v.voterId === actorId)) return fail("already-acted");
       const card = s.table.find((t) => t.cardId === action.cardId);

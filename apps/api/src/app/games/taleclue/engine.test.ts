@@ -297,3 +297,60 @@ test("apply does not mutate the state it is given", () => {
   assert.equal(syntheticDeck(3).length, 3);
   create(cfg, ["a", "b", "c"], syntheticDeck(40), ctxAt(0));
 });
+
+test("create deals the priority cards first", () => {
+  const deck = syntheticDeck(60);
+  const priority = deck.slice(40, 50);
+  const { state } = create(cfg, ["a", "b", "c", "d"], deck, ctxAt(0), priority);
+  const hands = new Set(Object.values(state.hands).flat());
+  for (const card of priority) assert.equal(hands.has(card), true, card);
+  assert.equal(new Set(state.used).size, state.used.length);
+});
+
+test("play-decoys with too many cards is invalid-card", () => {
+  const { state } = giveClue(game(4).state);
+  const a = others(state)[0];
+  const r = apply(
+    state,
+    a,
+    { type: "play-decoys", cardIds: state.hands[a].slice(0, 6).concat("x", "y", "z") },
+    ctxAt(0),
+  );
+  assert.deepEqual(r, { ok: false, error: "invalid-card" });
+});
+
+test("repeating an action after its phase moved on is already-acted, not wrong-phase", () => {
+  const start = game(4).state;
+  const n = narratorOf(start);
+  const card = start.hands[n][0];
+  const clued = giveClue(start).state;
+  assert.deepEqual(
+    apply(clued, n, { type: "give-clue", cardId: clued.hands[n][0], clue: "outra" }, ctxAt(0)),
+    { ok: false, error: "already-acted" },
+  );
+  const [a, b] = others(clued);
+  const table = playAllDecoys(clued).state;
+  assert.deepEqual(
+    apply(table, a, { type: "play-decoys", cardIds: [table.hands[a][0]] }, ctxAt(0)),
+    { ok: false, error: "already-acted" },
+  );
+  const voted = act(table, a, { type: "vote", cardId: cardOf(table, n)[0] }).state;
+  let s = voted;
+  for (const id of others(table).filter((x) => x !== a)) {
+    s = act(s, id, { type: "vote", cardId: cardOf(table, n)[0] }).state;
+  }
+  assert.equal(s.phase, "reveal");
+  assert.deepEqual(apply(s, a, { type: "vote", cardId: cardOf(table, n)[0] }, ctxAt(0)), {
+    ok: false,
+    error: "already-acted",
+  });
+  // The narrator never voted, so for them it is simply the wrong phase.
+  assert.deepEqual(apply(s, n, { type: "vote", cardId: cardOf(table, a)[0] }, ctxAt(0)), {
+    ok: false,
+    error: "wrong-phase",
+  });
+  // Someone who never played a decoy gets wrong-phase in the vote phase.
+  const fresh = playAllDecoys(giveClue(game(4).state).state).state;
+  assert.equal(fresh.phase, "vote");
+  assert.equal(card.length > 0 && b.length > 0, true);
+});

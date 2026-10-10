@@ -1,5 +1,5 @@
 import type { TaleclueView } from "@resenhark/shared";
-import { type TaleclueState, nextDeadline } from "./engine.js";
+import { type TaleclueState, nextDeadline, nextNarratorId } from "./engine.js";
 
 // Every field is built explicitly: never spread a state object here, or hidden data leaks.
 export function project(s: TaleclueState, viewerId: string): TaleclueView {
@@ -20,7 +20,6 @@ export function project(s: TaleclueState, viewerId: string): TaleclueView {
       : s.phase === "vote"
         ? s.votes.map((v) => v.voterId)
         : [];
-  const len = s.order.length;
   return {
     phase: s.phase,
     config: {
@@ -32,8 +31,7 @@ export function project(s: TaleclueState, viewerId: string): TaleclueView {
     },
     round: s.round,
     narratorId: over ? null : s.narratorId,
-    // `turn` can sit one before the first index after a narrator left, hence the double modulo.
-    nextNarratorId: over || len === 0 ? null : s.order[(((s.turn + 1) % len) + len) % len],
+    nextNarratorId: nextNarratorId(s),
     clue: over ? null : s.clue,
     decoyCount: s.decoyCount,
     hand: isPlayer && !over ? [...(s.hands[viewerId] ?? [])] : [],

@@ -1,11 +1,14 @@
 import { z } from "zod";
 
+/** Fewer players than this cannot fill a table, so a game never starts or goes on below it. */
+export const TALECLUE_MIN_PLAYERS = 3;
+
 export const taleclueConfigSchema = z.object({
   targetPoints: z.number().int().min(10).max(50),
   clueSeconds: z.number().int().min(30).max(180),
   decoySeconds: z.number().int().min(20).max(120),
   voteSeconds: z.number().int().min(20).max(120),
-  maxPlayers: z.number().int().min(3).max(8),
+  maxPlayers: z.number().int().min(TALECLUE_MIN_PLAYERS).max(8),
 });
 export type TaleclueConfig = z.infer<typeof taleclueConfigSchema>;
 export const DEFAULT_TALECLUE_CONFIG: TaleclueConfig = {
@@ -103,6 +106,6 @@ export type TaleclueIntent =
 export const taleclueIntentSchema: z.ZodType<TaleclueIntent> = z.discriminatedUnion("type", [
   // No max on the clue: Socket.IO caps the payload, and a long clue must get invalid-hint.
   z.object({ type: z.literal("give-clue"), cardId: z.string(), clue: z.string() }),
-  z.object({ type: z.literal("play-decoys"), cardIds: z.array(z.string()).max(8) }),
+  z.object({ type: z.literal("play-decoys"), cardIds: z.array(z.string()) }),
   z.object({ type: z.literal("vote"), cardId: z.string() }),
 ]);

@@ -11,6 +11,8 @@ test("the pool is the cards the room has not dealt yet", () => {
   assert.equal(r.pool.length, 74);
   assert.ok(r.pool.every((c) => !used.includes(c)));
   assert.deepEqual(r.used, used);
+  // Everything is already unseen, so nothing needs priority.
+  assert.deepEqual(r.priority, []);
 });
 
 test("when the unused cards cannot fill the hands the memory resets and the whole deck plays", () => {
@@ -20,6 +22,8 @@ test("when the unused cards cannot fill the hands the memory resets and the whol
   assert.ok(r.ok);
   assert.deepEqual(r.pool, all);
   assert.deepEqual(r.used, []);
+  // The cards the room had not seen are still dealt first.
+  assert.deepEqual(r.priority, all.slice(20));
 });
 
 test("exactly enough unused cards keeps the memory", () => {

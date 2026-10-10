@@ -76,7 +76,7 @@ Deadlines are absolute timestamps stored in the state. After each commit, the hu
 
 ## The room and game boundary
 
-The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and never reads inside the state. Each game module (`games/hitline`, `games/huehint`, `games/taleclue`) knows nothing about members or sockets.
+The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and reads inside the state in one place only: the memory folds (`foldPlayed` reads the Hitline deck, `foldTaleclueUsed` reads the cards Taleclue dealt) that carry what a finished game used into the lobby. Each game module (`games/hitline`, `games/huehint`, `games/taleclue`) knows nothing about members or sockets.
 
 `games/registry.ts` holds the minimal game contract, extracted once Huehint became the second real game. Each game provides four pure functions with the same shape:
 

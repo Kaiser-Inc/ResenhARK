@@ -2,6 +2,7 @@ import {
   type Ack,
   SOCKET_EVENTS,
   TALECLUE_CARDS,
+  TALECLUE_MIN_PLAYERS,
   hitlineConfigSchema,
   huehintConfigSchema,
   selectGameInputSchema,
@@ -158,14 +159,14 @@ export function registerSocketGateway(
     const folded = foldTaleclueUsed(foldPlayed(room));
     const { taleclueConfig } = folded.lobby;
     const playerIds = seatPlayers(folded, taleclueConfig.maxPlayers);
-    if (playerIds.length < 3) return { ok: false, error: "not-enough-players" };
+    if (playerIds.length < TALECLUE_MIN_PLAYERS) return { ok: false, error: "not-enough-players" };
     const deck = pickDeck(
       TALECLUE_CARDS.map((card) => card.id),
       folded.lobby.taleclueUsed ?? [],
       playerIds.length,
     );
     if (!deck.ok) return { ok: false, error: "no-deck" };
-    const started = createTaleclue(taleclueConfig, playerIds, deck.pool, ctx());
+    const started = createTaleclue(taleclueConfig, playerIds, deck.pool, ctx(), deck.priority);
     return {
       ok: true,
       room: {

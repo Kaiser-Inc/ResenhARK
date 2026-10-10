@@ -334,6 +334,9 @@ test("when the room has seen too many cards the memory resets and the game still
   await app.store.save(saved);
   const states = await startTaleclue(clients);
   assert.equal((tc(states[0]) as TaleclueView).hand.length, 7);
+  // The 5 cards the room had not seen are still dealt first.
+  const dealt = new Set(states.flatMap((s) => (tc(s) as TaleclueView).hand));
+  for (const card of TALECLUE_CARDS.slice(0, 5)) assert.equal(dealt.has(card.id), true, card.id);
   const after = await app.store.load(sessions[0].code);
   assert.deepEqual(after?.lobby.taleclueUsed, []);
 });

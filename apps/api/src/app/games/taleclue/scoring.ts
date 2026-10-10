@@ -49,7 +49,8 @@ export function scoreRound(input: {
   for (const card of table) {
     if (card.ownerId === narratorId) continue;
     const count = votes.filter((v) => v.cardId === card.cardId).length;
-    if (count > 0) decoyAwards.set(card.ownerId, (decoyAwards.get(card.ownerId) ?? 0) + count);
+    if (count > 0)
+      decoyAwards.set(card.ownerId, (decoyAwards.get(card.ownerId) ?? 0) + count * DECOY_POINTS);
   }
   for (const id of correctAwards.keys()) if (!active.has(id)) correctAwards.delete(id);
   for (const id of decoyAwards.keys()) if (!active.has(id)) decoyAwards.delete(id);

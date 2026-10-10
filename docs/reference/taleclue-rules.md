@@ -22,7 +22,7 @@ All five values are integers.
 
 ## A round
 
-A round moves through `clue`, `decoy`, `vote` and `reveal`. The game ends in `game-over`. Every player acts once per phase. A second try while the phase is still open returns `already-acted`. If the last action already moved the phase on, the second try returns `wrong-phase`.
+A round moves through `clue`, `decoy`, `vote` and `reveal`. The game ends in `game-over`. Every player acts once per phase, and a second try returns `already-acted`, even when the first action already moved the phase on.
 
 1. **Clue** (`clue`, `clueSeconds`). The narrator sends a card from their hand and a clue. After `trim`, the clue must have 1 to 30 characters; digits are allowed. A bad clue returns `invalid-hint`, and a card that is not in the hand returns `invalid-card`.
 2. **Decoy** (`decoy`, `decoySeconds`). Everyone sees the clue. Each non-narrator sends 1 card from their hand (2 with 3 players). The view's `decoyCount` says how many. Everyone sees who has played, never which card.
@@ -73,7 +73,7 @@ The board position of a player is `min(points, targetPoints)`. Points themselves
 ## The deck
 
 - Within a game no card is dealt twice. When the draw pile runs out, the discards are shuffled back into it. Hands are never recycled.
-- The room remembers the cards it has dealt (`lobby.taleclueUsed`). A new game draws only from the cards the room has not seen. When those cannot fill the hands, the memory resets and the whole deck plays. The memory is updated when a game starts, on `game:reset`, and when the owner changes the Hitline deck.
+- The room remembers the cards it has dealt (`lobby.taleclueUsed`). A new game draws only from the cards the room has not seen. When those cannot fill the hands, the memory resets and the whole deck plays, with the cards the room had not seen dealt first. The memory is updated when a game starts, on `game:reset`, and when the owner changes the Hitline deck.
 - Card ids come from `TALECLUE_CARDS` in `packages/shared/src/taleclue.ts`. The images live in the web app and are found by id. Until the real deck lands, the list holds 84 placeholders (`tc-001` to `tc-084`).
 
 ## Reveal steps
