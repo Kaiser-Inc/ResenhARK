@@ -4,6 +4,7 @@ import { GameConfigForm } from "@/components/lobby/game-config-form";
 import { HowToPlay } from "@/components/lobby/how-to-play";
 import { HuehintConfigForm } from "@/components/lobby/huehint-config-form";
 import { PlaylistImport } from "@/components/lobby/playlist-import";
+import { TaleclueConfigForm } from "@/components/lobby/taleclue-config-form";
 import { Button } from "@/components/ui/button";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { PageHeader } from "@/components/ui/page-header";
@@ -23,6 +24,7 @@ import { toast } from "sonner";
 const GAMES = [
   { value: "hitline", label: "Hitline" },
   { value: "huehint", label: "Huehint" },
+  { value: "taleclue", label: "Taleclue" },
 ];
 
 export function LobbyPanel({
@@ -35,10 +37,11 @@ export function LobbyPanel({
   const isOwner = room.ownerId === room.you;
   const owner = room.members.find((m) => m.id === room.ownerId);
   const { lobby } = room;
+  const taleclue = lobby.selectedGame === "taleclue";
   const hitline = lobby.selectedGame === "hitline";
   async function act(event: string, payload?: unknown) {
     const ack = await send(event, payload);
-    if (!ack.ok) toast.error(gameErrorMessage(ack.error));
+    if (!ack.ok) toast.error(gameErrorMessage(ack.error, taleclue ? "taleclue" : undefined));
     return ack;
   }
   async function configure(event: string, payload: unknown) {
@@ -53,7 +56,9 @@ export function LobbyPanel({
         description={
           hitline
             ? "Escolha o jogo, monte a pilha de músicas e chame o time."
-            : "Uma cor, uma dica. Chame o time ou treine de memória sozinho."
+            : taleclue
+              ? "Uma pista, várias cartas. Encontre a carta do narrador."
+              : "Uma cor, uma dica. Chame o time ou treine de memória sozinho."
         }
       />
       {isOwner ? (
@@ -80,7 +85,9 @@ export function LobbyPanel({
           </Select>
         </Field>
       ) : (
-        <p className="font-medium">Jogo escolhido: {hitline ? "Hitline" : "Huehint"}</p>
+        <p className="font-medium">
+          Jogo escolhido: {GAMES.find((game) => game.value === lobby.selectedGame)?.label}
+        </p>
       )}
       <div className="flex max-w-[960px] flex-col gap-6">
         {!isOwner ? (
@@ -119,6 +126,14 @@ export function LobbyPanel({
               onChange={isOwner ? (config) => void configure("lobby:configure", config) : undefined}
             />
           </>
+        ) : taleclue ? (
+          <TaleclueConfigForm
+            config={lobby.taleclueConfig}
+            disabled={!connected || changing || starting}
+            onChange={
+              isOwner ? (config) => void configure("lobby:configure-taleclue", config) : undefined
+            }
+          />
         ) : (
           <>
             <HuehintConfigForm
@@ -138,7 +153,9 @@ export function LobbyPanel({
           setup={
             hitline
               ? { type: "hitline", config: lobby.config }
-              : { type: "huehint", config: lobby.huehintConfig }
+              : taleclue
+                ? { type: "taleclue", config: lobby.taleclueConfig }
+                : { type: "huehint", config: lobby.huehintConfig }
           }
         />
         {isOwner ? (
@@ -146,7 +163,11 @@ export function LobbyPanel({
             <Button
               type="button"
               loading={starting}
-              disabled={!connected || changing}
+              disabled={
+                !connected ||
+                changing ||
+                (taleclue && room.members.filter((member) => member.online).length < 3)
+              }
               onClick={async () => {
                 setStarting(true);
                 await act("game:start");
