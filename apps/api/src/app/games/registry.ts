@@ -8,8 +8,12 @@ import {
   type HuehintEvent,
   type HuehintIntent,
   type HuehintView,
+  type TaleclueEvent,
+  type TaleclueIntent,
+  type TaleclueView,
   hitlineIntentSchema,
   huehintIntentSchema,
+  taleclueIntentSchema,
 } from "@resenhark/shared";
 import type { ZodType } from "zod";
 import * as hitline from "./hitline/engine.js";
@@ -17,6 +21,8 @@ import { project as projectHitline } from "./hitline/project.js";
 import * as huehint from "./huehint/engine.js";
 import { project as projectHuehint } from "./huehint/project.js";
 import type { Ctx, SystemAction } from "./system.js";
+import * as taleclue from "./taleclue/engine.js";
+import { project as projectTaleclue } from "./taleclue/project.js";
 
 export type { Ctx, SystemAction };
 
@@ -53,11 +59,25 @@ const huehintModule: GameModule<huehint.HuehintState, HuehintIntent, HuehintEven
   intentSchema: huehintIntentSchema,
 };
 
-export const GAMES = { hitline: hitlineModule, huehint: huehintModule };
+const taleclueModule: GameModule<
+  taleclue.TaleclueState,
+  TaleclueIntent,
+  TaleclueEvent,
+  TaleclueView
+> = {
+  apply: taleclue.apply,
+  tick: taleclue.tick,
+  nextDeadline: taleclue.nextDeadline,
+  project: projectTaleclue,
+  intentSchema: taleclueIntentSchema,
+};
+
+export const GAMES = { hitline: hitlineModule, huehint: huehintModule, taleclue: taleclueModule };
 
 export type ActiveGame =
   | { type: "hitline"; state: hitline.HitlineState; playerIds: string[] }
-  | { type: "huehint"; state: huehint.HuehintState; playerIds: string[] };
+  | { type: "huehint"; state: huehint.HuehintState; playerIds: string[] }
+  | { type: "taleclue"; state: taleclue.TaleclueState; playerIds: string[] };
 
 // ponytail: one cast ties `type` to its module; TS cannot correlate the union by itself.
 const moduleOf = (game: ActiveGame) =>

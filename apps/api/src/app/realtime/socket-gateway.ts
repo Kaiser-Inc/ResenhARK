@@ -1,9 +1,11 @@
 import {
   type Ack,
   SOCKET_EVENTS,
+  TALECLUE_CARDS,
   hitlineConfigSchema,
   huehintConfigSchema,
   selectGameInputSchema,
+  taleclueConfigSchema,
 } from "@resenhark/shared";
 import type { Server } from "socket.io";
 import { validateMessage } from "../domain/room/chat.js";
@@ -12,6 +14,7 @@ import {
   type Room,
   foldColors,
   foldPlayed,
+  foldTaleclueUsed,
   isOnline,
   kick,
   leave,
@@ -21,6 +24,8 @@ import { create } from "../games/hitline/engine.js";
 import { create as createHuehint } from "../games/huehint/engine.js";
 import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
 import { SYSTEM_ACTOR } from "../games/system.js";
+import { pickDeck } from "../games/taleclue/deck.js";
+import { create as createTaleclue } from "../games/taleclue/engine.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { RoomStore } from "../repositories/room-store.js";
 import { type MutationResult, type RoomHub, socketRoom } from "./room-hub.js";
@@ -142,6 +147,34 @@ export function registerSocketGateway(
       room: { ...remembered, game: { type: "huehint", state: started.state, playerIds } },
       events: started.events,
       system: ["Partida de Huehint começou"],
+    };
+  };
+
+  /**
+   * Taleclue needs 3 online. The deck is the cards the room has not dealt yet; when those cannot fill
+   * the hands, the room's memory resets and the whole deck plays.
+   */
+  const startTaleclue = (room: Room): MutationResult => {
+    const folded = foldTaleclueUsed(foldPlayed(room));
+    const { taleclueConfig } = folded.lobby;
+    const playerIds = seatPlayers(folded, taleclueConfig.maxPlayers);
+    if (playerIds.length < 3) return { ok: false, error: "not-enough-players" };
+    const deck = pickDeck(
+      TALECLUE_CARDS.map((card) => card.id),
+      folded.lobby.taleclueUsed ?? [],
+      playerIds.length,
+    );
+    if (!deck.ok) return { ok: false, error: "no-deck" };
+    const started = createTaleclue(taleclueConfig, playerIds, deck.pool, ctx());
+    return {
+      ok: true,
+      room: {
+        ...folded,
+        lobby: { ...folded.lobby, taleclueUsed: deck.used },
+        game: { type: "taleclue", state: started.state, playerIds },
+      },
+      events: started.events,
+      system: ["Partida de Taleclue começou"],
     };
   };
 
@@ -310,6 +343,23 @@ export function registerSocketGateway(
     );
 
     socket.on(
+      "lobby:configure-taleclue",
+      intent(async (payload) => {
+        const parsed = taleclueConfigSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return {
+            ok: true,
+            room: { ...room, lobby: { ...room.lobby, taleclueConfig: parsed.data } },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
       "lobby:import",
       intent(async (payload) => {
         const link = (payload as { link?: unknown } | null)?.link;
@@ -327,12 +377,14 @@ export function registerSocketGateway(
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           if (running(room)) return { ok: false, error: "game-running" };
           // A new playlist starts a fresh played-set; a finished game's cards belong to the old deck.
+          // Taleclue has its own deck, so what it dealt stays in the room's memory.
+          const kept = foldTaleclueUsed(room);
           return {
             ok: true,
             room: {
-              ...room,
+              ...kept,
               game: null,
-              lobby: { ...room.lobby, deck: loaded.playlist, played: [] },
+              lobby: { ...kept.lobby, deck: loaded.playlist, played: [] },
             },
           };
         });
@@ -347,9 +399,10 @@ export function registerSocketGateway(
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           if (running(room)) return { ok: false, error: "game-running" };
           // Same as an import: a new deck starts a fresh played-set and drops the finished game.
+          const kept = foldTaleclueUsed(room);
           return {
             ok: true,
-            room: { ...room, game: null, lobby: { ...room.lobby, deck: null, played: [] } },
+            room: { ...kept, game: null, lobby: { ...kept.lobby, deck: null, played: [] } },
           };
         });
         return { ack };
@@ -371,10 +424,13 @@ export function registerSocketGateway(
     socket.on(
       "game:start",
       intent(async () => {
-        const ack = await hub.mutate(code, (folded) => {
-          if (notOwner(folded)) return { ok: false, error: "not-owner" };
-          if (running(folded)) return { ok: false, error: "game-running" };
+        const ack = await hub.mutate(code, (current) => {
+          if (notOwner(current)) return { ok: false, error: "not-owner" };
+          if (running(current)) return { ok: false, error: "game-running" };
+          // Whatever starts next replaces the finished game, so Taleclue's dealt cards are kept first.
+          const folded = foldTaleclueUsed(current);
           if (folded.lobby.game === "huehint") return startHuehint(folded);
+          if (folded.lobby.game === "taleclue") return startTaleclue(folded);
           // A finished game's songs count as played even when the owner skips "Outra rodada".
           const room = foldPlayed(folded);
           const pool = unplayedCards(room.lobby);
@@ -417,7 +473,7 @@ export function registerSocketGateway(
         const ack = await hub.mutate(code, (room) => {
           if (notOwner(room)) return { ok: false, error: "not-owner" };
           if (!room.game || running(room)) return { ok: false, error: "no-game" };
-          return { ok: true, room: { ...foldPlayed(room), game: null } };
+          return { ok: true, room: { ...foldTaleclueUsed(foldPlayed(room)), game: null } };
         });
         return { ack };
       }),
