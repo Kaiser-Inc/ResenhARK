@@ -1,0 +1,1082 @@
+[
+  {
+    "id": "e4ccc2c0",
+    "batch": 1,
+    "scene": "A giant moth resting on a cluster of glowing mushrooms in a misty forest; its wings are two open wooden windows that show a starry night sky inside.",
+    "palette": "deep teal, amber, dusty violet, cream",
+    "alt": "Mariposa gigante pousada em cogumelos luminosos numa floresta com neblina; as asas são duas janelas de madeira abertas, com céu estrelado dentro.",
+    "people": false,
+    "rawFile": "pilot/card1"
+  },
+  {
+    "id": "362ee0b8",
+    "batch": 1,
+    "scene": "A small fox curled up asleep inside an enormous spiral seashell on a quiet beach, while a whale drifts slowly through the sky above like a cloud.",
+    "palette": "coral pink, sand beige, pale sky blue, slate grey",
+    "alt": "Raposa pequena dormindo enrolada numa concha espiral enorme, numa praia calma; uma baleia flutua no céu acima.",
+    "people": false,
+    "rawFile": "pilot/card2"
+  },
+  {
+    "id": "acf5f25c",
+    "batch": 1,
+    "scene": "A tiny lighthouse on the back of a sleeping giant tortoise crossing a calm night sea, its beam sweeping across low clouds.",
+    "palette": "midnight blue, warm yellow light, moss green, pale silver",
+    "alt": "Tartaruga gigante dormindo num mar calmo à noite, com um farol sobre o casco; o feixe de luz cruza nuvens baixas. Três pequenas silhuetas estão ao lado do farol.",
+    "people": true,
+    "rawFile": "pilot/card7"
+  },
+  {
+    "id": "d1205f30",
+    "batch": 1,
+    "scene": "A stag whose antlers are bare winter trees, small lit lanterns hanging from the branches, standing in a snow field at blue hour.",
+    "palette": "ice blue, soft gold, charcoal grey, white",
+    "alt": "Cervo cujos chifres são árvores de inverno sem folhas, com pequenas lanternas acesas penduradas, num campo de neve ao entardecer.",
+    "people": false,
+    "rawFile": "pilot/card8"
+  },
+  {
+    "id": "05b8bcc1",
+    "batch": 1,
+    "scene": "A huge owl perched on a branch, its feathers a deep night sky full of constellations, a dark forest far below.",
+    "palette": "navy, silver, lilac, warm cream",
+    "alt": "Coruja enorme num galho, com penas que formam um céu noturno cheio de constelações, sobre uma floresta escura.",
+    "people": false,
+    "rawFile": "pilot/card9"
+  },
+  {
+    "id": "9e94856d",
+    "batch": 1,
+    "scene": "A tiny dragon the size of a kitten asleep in a nest of autumn leaves inside a hollow tree trunk, a warm ember glow in its breath.",
+    "palette": "burnt orange, deep brown, ember red, olive green",
+    "alt": "Dragão minúsculo dormindo num ninho de folhas de outono dentro de um tronco oco, com um brilho de brasa na respiração.",
+    "people": false,
+    "rawFile": "pilot/card10"
+  },
+  {
+    "id": "e40dc8dc",
+    "batch": 1,
+    "scene": "A jellyfish drifting through a pine forest like a floating lamp, its glowing tendrils trailing between the trunks at twilight.",
+    "palette": "teal, magenta, deep green, pale blue",
+    "alt": "Água-viva flutuando entre pinheiros como uma lâmpada, com tentáculos luminosos entre os troncos, ao crepúsculo.",
+    "people": false,
+    "rawFile": "pilot/card11"
+  },
+  {
+    "id": "3b87008a",
+    "batch": 1,
+    "scene": "A field of sunflowers all turned away from the sun, facing a single small closed bud in the middle.",
+    "palette": "golden yellow, olive green, dusty blue, burnt sienna",
+    "alt": "Campo de girassóis todos virados de costas para o sol, em direção a um único botão fechado no centro.",
+    "people": false,
+    "rawFile": "pilot/card12"
+  },
+  {
+    "id": "00482627",
+    "batch": 1,
+    "scene": "A heron standing in shallow water whose reflection is a different bird, a crane in flight.",
+    "palette": "soft grey, rose, pale teal, cream",
+    "alt": "Garça parada em água rasa; o reflexo mostra outra ave, um grou voando.",
+    "people": false,
+    "rawFile": "pilot/card13"
+  },
+  {
+    "id": "12435889",
+    "batch": 1,
+    "scene": "A rabbit sitting on a crescent moon, fishing with a thin line into a pond of clouds. Full-bleed painting that fills the entire canvas to every edge, no white margin or border.",
+    "palette": "lavender, pale yellow, dusty blue, white",
+    "alt": "Coelho sentado numa lua crescente, pescando com uma linha fina num lago de nuvens.",
+    "people": false,
+    "rawFile": "pilot/card14"
+  },
+  {
+    "id": "22597137",
+    "batch": 1,
+    "scene": "A great old tree with a small door in its trunk, its roots forming a staircase that leads down into a glowing darkness.",
+    "palette": "moss green, warm amber, brown, deep indigo",
+    "alt": "Árvore antiga com uma pequena porta no tronco; as raízes formam uma escada que desce para uma escuridão luminosa.",
+    "people": false,
+    "rawFile": "pilot/card15"
+  },
+  {
+    "id": "223ed497",
+    "batch": 1,
+    "scene": "A snail carrying a tiny village on its shell across a wet leaf after the rain.",
+    "palette": "fresh green, terracotta, pale gold, soft grey",
+    "alt": "Caracol carregando uma pequena vila na concha, sobre uma folha molhada depois da chuva.",
+    "people": false,
+    "rawFile": "pilot/card16"
+  },
+  {
+    "id": "d4c878a1",
+    "batch": 1,
+    "scene": "A giant koi fish swimming through the air above a quiet misty river valley at dawn, its scales catching the first light.",
+    "palette": "orange, pale pink, slate blue, cream",
+    "alt": "Carpa koi gigante nadando no ar sobre um vale de rio com neblina, ao amanhecer, com as escamas refletindo a primeira luz.",
+    "people": false,
+    "rawFile": "pilot/card17"
+  },
+  {
+    "id": "85cf5283",
+    "batch": 1,
+    "scene": "A wolf shaped from fog standing at the edge of a moonlit meadow, its tail dissolving into drifting mist.",
+    "palette": "silver, deep blue, pale green, white",
+    "alt": "Lobo feito de névoa na beira de um campo iluminado pela lua; a cauda se desfaz em bruma.",
+    "people": false,
+    "rawFile": "pilot/card18"
+  },
+  {
+    "id": "f7a74f82",
+    "batch": 1,
+    "scene": "A hummingbird hovering before a flower whose petals are tiny glass bells.",
+    "palette": "emerald green, magenta, pale gold, sky blue",
+    "alt": "Beija-flor parado no ar diante de uma flor cujas pétalas são pequenos sinos de vidro.",
+    "people": false,
+    "rawFile": "pilot/card19"
+  },
+  {
+    "id": "87275309",
+    "batch": 1,
+    "scene": "A school of silver fish swimming through tall golden grass at sunset as if the meadow were underwater.",
+    "palette": "gold, silver, warm orange, olive green",
+    "alt": "Cardume de peixes prateados nadando entre capim dourado ao pôr do sol, como se o campo fosse o fundo do mar.",
+    "people": false,
+    "rawFile": "pilot/card20"
+  },
+  {
+    "id": "f121db93",
+    "batch": 1,
+    "scene": "A big bear sleeping curled around a small campfire that burns without any wood, in a snowy forest.",
+    "palette": "warm orange, brown, deep blue, white",
+    "alt": "Urso grande dormindo enrolado ao redor de uma pequena fogueira sem lenha, numa floresta com neve.",
+    "people": false,
+    "rawFile": "pilot/card21"
+  },
+  {
+    "id": "6cf51b57",
+    "batch": 1,
+    "scene": "A flock of sheep made of clouds grazing on a mountaintop meadow, one dark stormy sheep standing apart.",
+    "palette": "white, sky blue, grey, soft green",
+    "alt": "Rebanho de ovelhas feitas de nuvens pastando num campo no alto da montanha; uma ovelha escura, de tempestade, fica afastada.",
+    "people": false,
+    "rawFile": "pilot/card22"
+  },
+  {
+    "id": "f1e0f745",
+    "batch": 1,
+    "scene": "A cat with feathered wings sleeping on a mossy stone wall under a full moon, a single feather drifting down.",
+    "palette": "slate blue, silver, moss green, warm cream",
+    "alt": "Gato com asas de penas dormindo num muro de pedra com musgo sob a lua cheia, com uma pena caindo.",
+    "people": false,
+    "rawFile": "pilot/card23"
+  },
+  {
+    "id": "d5d30765",
+    "batch": 1,
+    "scene": "A chameleon on a branch whose skin shows a snowy winter scene while the background is green summer.",
+    "palette": "leaf green, white, turquoise, warm yellow",
+    "alt": "Camaleão num galho com a pele mostrando uma paisagem de neve, enquanto o fundo é verde de verão.",
+    "people": false,
+    "rawFile": "pilot/card24"
+  },
+  {
+    "id": "229fd533",
+    "batch": 1,
+    "scene": "A spider weaving a web of moonlight between two tall flowers, glowing dew drops on every thread.",
+    "palette": "silver, deep purple, pale green, white",
+    "alt": "Aranha tecendo uma teia de luar entre duas flores altas, com gotas de orvalho brilhando nos fios.",
+    "people": false,
+    "rawFile": "pilot/card25"
+  },
+  {
+    "id": "e5d82aeb",
+    "batch": 1,
+    "scene": "A seahorse as large as a horse standing on a shallow beach at low tide, tide pools shining around it.",
+    "palette": "coral, turquoise, sand, pale pink",
+    "alt": "Cavalo-marinho do tamanho de um cavalo numa praia rasa na maré baixa, cercado por poças brilhantes.",
+    "people": false,
+    "rawFile": "pilot/card26"
+  },
+  {
+    "id": "3837aab4",
+    "batch": 1,
+    "scene": "A lone mountain peak floating above a lake, its reflection a deep inverted valley, a single tree on the summit.",
+    "palette": "blue-grey, white, pine green, pale pink",
+    "alt": "Pico de montanha flutuando sobre um lago, com o reflexo formando um vale invertido, e uma única árvore no topo.",
+    "people": false,
+    "rawFile": "pilot/card27"
+  },
+  {
+    "id": "6a79c2f4",
+    "batch": 1,
+    "scene": "A large bird landing on a bare branch, its tail feathers turning into red and gold leaves that drift down.",
+    "palette": "red, gold, dark brown, pale blue",
+    "alt": "Ave grande pousando num galho sem folhas; as penas da cauda viram folhas vermelhas e douradas que caem.",
+    "people": false,
+    "rawFile": "pilot/card28"
+  },
+  {
+    "id": "67593662",
+    "batch": 1,
+    "scene": "A frog on a giant lily pad singing to the full moon, ripples spreading in perfect circles around it.",
+    "palette": "green, silver, dark teal, pale yellow",
+    "alt": "Sapo numa vitória-régia gigante cantando para a lua cheia, com ondas em círculos perfeitos ao redor.",
+    "people": false,
+    "rawFile": "pilot/card29"
+  },
+  {
+    "id": "64afa525",
+    "batch": 1,
+    "scene": "A fawn standing in a shallow stream where every ripple becomes a tiny blooming flower.",
+    "palette": "sage green, pale pink, cream, brown",
+    "alt": "Filhote de cervo num riacho raso, onde cada ondulação vira uma pequena flor desabrochando.",
+    "people": false,
+    "rawFile": "pilot/card30"
+  },
+  {
+    "id": "e44dbe14",
+    "batch": 1,
+    "scene": "A swarm of large bees carrying one huge drop of honey like a lantern through a dark forest.",
+    "palette": "honey gold, dark green, brown, cream",
+    "alt": "Enxame de abelhas grandes carregando uma gota enorme de mel como lanterna por uma floresta escura.",
+    "people": false,
+    "rawFile": "pilot/card31"
+  },
+  {
+    "id": "46fbc819",
+    "batch": 1,
+    "scene": "An elephant walking across the night sky along the Milky Way as if it were a road, a village asleep far below.",
+    "palette": "indigo, silver, lilac, warm yellow",
+    "alt": "Elefante caminhando pelo céu noturno sobre a Via Láctea, como numa estrada, com uma vila adormecida lá embaixo.",
+    "people": false,
+    "rawFile": "pilot/card32"
+  },
+  {
+    "id": "aba0ee25",
+    "batch": 1,
+    "scene": "A black swan gliding on a dark lake, its reflection in the water is a white swan, clearly white, not black.",
+    "palette": "deep navy, white, silver, pale rose",
+    "alt": "Cisne negro deslizando num lago escuro à noite; o reflexo na água é um cisne branco e brilhante. Uma lua crescente e nuvens rosadas aparecem no céu.",
+    "people": false,
+    "rawFile": "pilot/card33"
+  },
+  {
+    "id": "b99e0128",
+    "batch": 1,
+    "scene": "A tiny creature, half firefly and half fox, trailing sparks through a forest of giant ferns.",
+    "palette": "deep green, amber, teal, cream",
+    "alt": "Criatura minúscula, meio vaga-lume e meio raposa, deixando faíscas numa floresta de samambaias gigantes.",
+    "people": false,
+    "rawFile": "pilot/card34"
+  },
+  {
+    "id": "887368bb",
+    "batch": 2,
+    "scene": "A porcelain teacup on a table holding a tiny stormy ocean, waves splashing over its rim, a little paper boat riding the highest wave.",
+    "palette": "storm blue, white porcelain, mustard yellow, charcoal grey",
+    "alt": "Xícara de porcelana sobre uma mesa com um mar minúsculo em tempestade; as ondas transbordam e um barquinho de papel sobe na maior delas.",
+    "people": false,
+    "rawFile": "pilot/card3"
+  },
+  {
+    "id": "f5cd3488",
+    "batch": 2,
+    "scene": "A red umbrella floating upside down on a perfectly still lake, used as a boat, with a thin wooden ladder rising from it into low clouds.",
+    "palette": "crimson red, misty grey-green, pale gold, soft white",
+    "alt": "Guarda-chuva vermelho virado, flutuando como barco num lago parado; uma pequena silhueta está sentada dentro dele e uma escada fina de madeira sobe até nuvens baixas.",
+    "people": true,
+    "rawFile": "pilot/card4"
+  },
+  {
+    "id": "3fc0591a",
+    "batch": 2,
+    "scene": "A stack of old suitcases floating down a river like a raft, one of them open and spilling warm light.",
+    "palette": "tan, teal, warm yellow, brown",
+    "alt": "Pilha de malas antigas descendo um rio como uma balsa; uma delas está aberta, deixando escapar luz quente.",
+    "people": false,
+    "rawFile": "pilot/card35"
+  },
+  {
+    "id": "be16bd6b",
+    "batch": 2,
+    "scene": "A bed floating in the middle of a calm sea, its sheets billowing like sails.",
+    "palette": "white, pale blue, coral, sand",
+    "alt": "Cama flutuando no meio de um mar calmo, com os lençóis inflados como velas.",
+    "people": false,
+    "rawFile": "pilot/card36"
+  },
+  {
+    "id": "5420d771",
+    "batch": 2,
+    "scene": "A giant antique key standing upright in a wheat field like a monument, birds circling its bow.",
+    "palette": "gold, bronze, pale blue, wheat yellow",
+    "alt": "Chave antiga gigante fincada num campo de trigo como um monumento, com pássaros voando em volta da argola.",
+    "people": false,
+    "rawFile": "pilot/card37"
+  },
+  {
+    "id": "b3cd6285",
+    "batch": 2,
+    "scene": "An empty armchair on a frozen lake, a lamp hanging from a cloud by a cord, lighting a circle of ice.",
+    "palette": "ice blue, warm yellow, deep red, slate grey",
+    "alt": "Poltrona vazia num lago congelado, com uma lâmpada pendurada numa nuvem por um fio, iluminando um círculo de gelo.",
+    "people": false,
+    "rawFile": "pilot/card38"
+  },
+  {
+    "id": "c28205d6",
+    "batch": 2,
+    "scene": "A giant spoon scooping a small glowing sun out of a calm sea at dusk.",
+    "palette": "orange, deep blue, copper, pink",
+    "alt": "Colher gigante tirando um pequeno sol brilhante de um mar calmo, ao entardecer.",
+    "people": false,
+    "rawFile": "pilot/card39"
+  },
+  {
+    "id": "fd45a56a",
+    "batch": 2,
+    "scene": "A bicycle whose two wheels are full moons, rolling along a quiet country road at night.",
+    "palette": "navy, silver, warm yellow, moss green",
+    "alt": "Bicicleta cujas duas rodas são luas cheias, rolando numa estrada de campo tranquila à noite.",
+    "people": false,
+    "rawFile": "pilot/card47"
+  },
+  {
+    "id": "1df9a1ac",
+    "batch": 2,
+    "scene": "A giant kettle on a hilltop pouring a waterfall of steam into the valley below.",
+    "palette": "copper, pale grey-blue, green, white",
+    "alt": "Chaleira gigante no alto de uma colina derramando uma cachoeira de vapor no vale abaixo.",
+    "people": false,
+    "rawFile": "pilot/card40"
+  },
+  {
+    "id": "9386782a",
+    "batch": 2,
+    "scene": "A pair of boots walking by themselves along a path of puddles, a small flower sprouting at each step.",
+    "palette": "brown, mustard yellow, wet grey, green",
+    "alt": "Par de botas andando sozinho por um caminho de poças; uma pequena flor nasce a cada passo.",
+    "people": false,
+    "rawFile": "pilot/card46"
+  },
+  {
+    "id": "c6367b49",
+    "batch": 2,
+    "scene": "A violin floating on a pond, its curves forming a tiny island with a lone willow tree.",
+    "palette": "warm brown, green, pale gold, blue",
+    "alt": "Violino flutuando num lago, com as curvas formando uma pequena ilha com um salgueiro solitário.",
+    "people": false,
+    "rawFile": "pilot/card41"
+  },
+  {
+    "id": "c8efae95",
+    "batch": 2,
+    "scene": "A street lamp standing alone in a dark forest, rain falling only inside its cone of light.",
+    "palette": "deep green, warm yellow, slate blue, grey",
+    "alt": "Poste de luz sozinho numa floresta escura, com chuva caindo apenas dentro do cone de luz.",
+    "people": false,
+    "rawFile": "pilot/card42"
+  },
+  {
+    "id": "f9256377",
+    "batch": 2,
+    "scene": "A tall mirror leaning against a tree in a sunny field, reflecting a deep night sky instead of the daylight.",
+    "palette": "gold, sky blue, deep indigo, green",
+    "alt": "Espelho alto encostado numa árvore num campo ensolarado, refletindo um céu noturno em vez do dia.",
+    "people": false,
+    "rawFile": "pilot/card43"
+  },
+  {
+    "id": "a998e3fe",
+    "batch": 2,
+    "scene": "A clothesline stretched between two mountains, hung with clouds drying in the wind.",
+    "palette": "white, sky blue, grey-blue, pale yellow",
+    "alt": "Varal esticado entre duas montanhas, com nuvens penduradas secando ao vento.",
+    "people": false,
+    "rawFile": "pilot/card44"
+  },
+  {
+    "id": "e8d4c733",
+    "batch": 2,
+    "scene": "A glass jar on a windowsill holding a small thunderstorm cloud, a houseplant leaning toward it.",
+    "palette": "grey-blue, lightning yellow, green, warm cream",
+    "alt": "Pote de vidro no parapeito de uma janela com uma pequena nuvem de tempestade dentro; uma planta se inclina na direção dele.",
+    "people": false,
+    "rawFile": "pilot/card45"
+  },
+  {
+    "id": "0497b8a6",
+    "batch": 2,
+    "scene": "A hot-air balloon made from a giant patchwork quilt, carrying a small cottage over green fields.",
+    "palette": "mustard, teal, brick red, pale sky blue",
+    "alt": "Balão de ar quente feito de uma colcha de retalhos gigante, carregando uma casinha sobre campos verdes.",
+    "people": false,
+    "rawFile": "pilot/card49"
+  },
+  {
+    "id": "25680316",
+    "batch": 2,
+    "scene": "A grand piano standing in shallow water at the edge of the sea, waves lapping its legs, seagulls resting on its lid.",
+    "palette": "dark blue, silver, sand, white",
+    "alt": "Piano de cauda em água rasa na beira do mar, com ondas batendo nos pés e gaivotas sobre a tampa.",
+    "people": false,
+    "rawFile": "pilot/card48"
+  },
+  {
+    "id": "7c634f8c",
+    "batch": 2,
+    "scene": "A watering can tilted in mid-air, pouring stars instead of water onto a sleeping garden.",
+    "palette": "navy, gold, green, lilac",
+    "alt": "Regador inclinado no ar derramando estrelas, em vez de água, sobre um jardim adormecido.",
+    "people": false,
+    "rawFile": "pilot/card50"
+  },
+  {
+    "id": "182f2d88",
+    "batch": 2,
+    "scene": "An hourglass standing in a desert, its sand falling upward into the sky.",
+    "palette": "ochre, pale blue, burnt orange, cream",
+    "alt": "Ampulheta no deserto, com a areia subindo em direção ao céu.",
+    "people": false,
+    "rawFile": "pilot/card51"
+  },
+  {
+    "id": "23ce7ae7",
+    "batch": 2,
+    "scene": "A giant needle stitching a tear in the evening sky with silver thread above a quiet field.",
+    "palette": "dusk blue, silver, soft pink, grey",
+    "alt": "Agulha gigante costurando um rasgo no céu do entardecer com fio prateado, sobre um campo tranquilo.",
+    "people": false,
+    "rawFile": "pilot/card52"
+  },
+  {
+    "id": "6a60bb0c",
+    "batch": 2,
+    "scene": "A clawfoot bathtub in a flowering meadow, filled with clouds instead of water.",
+    "palette": "white, soft pink, green, pale blue",
+    "alt": "Banheira com pés de garra num campo florido, cheia de nuvens em vez de água.",
+    "people": false,
+    "rawFile": "pilot/card54"
+  },
+  {
+    "id": "530455d2",
+    "batch": 2,
+    "scene": "A lone door frame standing on a beach, a snowy forest visible through it.",
+    "palette": "sand, turquoise, white, dark pine green",
+    "alt": "Batente de porta sozinho numa praia; através dele se vê uma floresta com neve.",
+    "people": false,
+    "rawFile": "pilot/card53"
+  },
+  {
+    "id": "10ccd2ce",
+    "batch": 2,
+    "scene": "A closed brass pocket compass lying in the grass, its lid shut. The lid is engraved only with floral swirls and a plain star shape, no letters, no numbers, no writing of any kind. A tiny golden tree grows out of the lid, a distant glowing hill behind it.",
+    "palette": "brass, green, pale gold, deep blue",
+    "alt": "Bússola de bolso de latão fechada, na grama à noite, com a tampa gravada com volutas e uma estrela; uma pequena árvore dourada brilhante cresce da tampa. Ao fundo, uma colina iluminada com um caminho sinuoso.",
+    "people": false,
+    "rawFile": "pilot/card55"
+  },
+  {
+    "id": "d1fa4682",
+    "batch": 2,
+    "scene": "A tin-can telephone connecting two treehouses with a glowing string across a valley at dusk.",
+    "palette": "warm orange, deep green, silver, dusty purple",
+    "alt": "Telefone de latas ligando duas casas na árvore por um fio brilhante, através de um vale ao entardecer.",
+    "people": false,
+    "rawFile": "pilot/card56"
+  },
+  {
+    "id": "935402a5",
+    "batch": 2,
+    "scene": "A tall candle whose flame holds a tiny sunrise over a hill.",
+    "palette": "wax cream, orange, pink, deep brown",
+    "alt": "Vela alta cuja chama contém um pequeno nascer do sol sobre uma colina.",
+    "people": false,
+    "rawFile": "pilot/card62"
+  },
+  {
+    "id": "68cc4c90",
+    "batch": 2,
+    "scene": "A pair of glasses lying on a hill, one lens showing day and the other showing night.",
+    "palette": "gold, indigo, silver, green",
+    "alt": "Óculos deitados sobre uma colina; uma lente mostra o dia e a outra mostra a noite.",
+    "people": false,
+    "rawFile": "pilot/card57"
+  },
+  {
+    "id": "5622c335",
+    "batch": 2,
+    "scene": "A single old leather boot sailing down a river of petals, a leaf for a sail.",
+    "palette": "brown, pink, green, pale blue",
+    "alt": "Bota velha de couro navegando num rio de pétalas, com uma folha como vela.",
+    "people": false,
+    "rawFile": "pilot/card58"
+  },
+  {
+    "id": "5bb9527e",
+    "batch": 2,
+    "scene": "A birdcage hanging in an open sky with its door open, a small garden growing inside.",
+    "palette": "brass, sky blue, green, pink",
+    "alt": "Gaiola pendurada no céu aberto, com a porta aberta e um pequeno jardim crescendo dentro.",
+    "people": false,
+    "rawFile": "pilot/card59"
+  },
+  {
+    "id": "7fb669ec",
+    "batch": 2,
+    "scene": "A ladder leaning against a full moon, a paintbrush resting on the top rung beside a can of blue paint.",
+    "palette": "silver, navy, white, soft yellow",
+    "alt": "Escada encostada numa lua cheia, com um pincel e uma lata de tinta azul no último degrau.",
+    "people": false,
+    "rawFile": "pilot/card60"
+  },
+  {
+    "id": "2855d25a",
+    "batch": 2,
+    "scene": "A long dining table set for a feast stretching across a still lake, chairs empty, candles lit.",
+    "palette": "candle gold, deep teal, white, brown",
+    "alt": "Mesa de jantar longa, posta para um banquete, atravessando um lago parado, com cadeiras vazias e velas acesas.",
+    "people": false,
+    "rawFile": "pilot/card61"
+  },
+  {
+    "id": "813eb83e",
+    "batch": 3,
+    "scene": "A tall narrow tower of mismatched little houses stacked on top of each other on a lonely hill at dusk, every window lit, a single rope bridge leading from the top into thick fog.",
+    "palette": "indigo, warm orange window light, sage green, lavender fog",
+    "alt": "Torre estreita de casinhas diferentes empilhadas numa colina isolada ao entardecer, com todas as janelas acesas e uma ponte de corda que sai do topo para a névoa.",
+    "people": false,
+    "rawFile": "pilot/card5"
+  },
+  {
+    "id": "67203a73",
+    "batch": 3,
+    "scene": "A small harbor town built among the ribs of a giant ancient skeleton on a beach at sunset.",
+    "palette": "rust orange, dusty pink, teal, bone white",
+    "alt": "Pequeno porto construído entre as costelas de um esqueleto gigante, numa praia ao pôr do sol.",
+    "people": false,
+    "rawFile": "pilot/card63"
+  },
+  {
+    "id": "3316ba6a",
+    "batch": 3,
+    "scene": "A village of tiny houses on the terraces of a floating island, waterfalls spilling off its edge into the clouds.",
+    "palette": "green, white, terracotta, sky blue",
+    "alt": "Vila de casinhas em terraços de uma ilha flutuante, com cachoeiras caindo da borda para as nuvens.",
+    "people": false,
+    "rawFile": "pilot/card64"
+  },
+  {
+    "id": "1948a6ae",
+    "batch": 3,
+    "scene": "A bridge of a thousand paper lanterns stretching across a misty canyon at night.",
+    "palette": "red-orange, deep blue, gold, mist grey",
+    "alt": "Ponte feita de mil lanternas de papel atravessando um desfiladeiro com neblina, à noite.",
+    "people": false,
+    "rawFile": "pilot/card67"
+  },
+  {
+    "id": "a324c817",
+    "batch": 3,
+    "scene": "A desert with a staircase rising from the dunes into the sky, ending at an open door of light.",
+    "palette": "ochre, rose, deep blue, white",
+    "alt": "Deserto com uma escada que sobe das dunas até o céu e termina numa porta aberta de luz.",
+    "people": false,
+    "rawFile": "pilot/card65"
+  },
+  {
+    "id": "97adaf07",
+    "batch": 3,
+    "scene": "A flooded cathedral nave with open sky for a ceiling, young trees growing out of the water.",
+    "palette": "stone grey, green, gold, teal",
+    "alt": "Nave de catedral alagada, com o céu aberto no lugar do teto e árvores jovens crescendo da água.",
+    "people": false,
+    "rawFile": "pilot/card66"
+  },
+  {
+    "id": "59d8d4f4",
+    "batch": 3,
+    "scene": "A snowy village where every chimney sends up a ribbon of smoke in a different color into a twilight sky.",
+    "palette": "snow white, indigo, warm window orange, pink",
+    "alt": "Vila com neve onde cada chaminé solta uma fita de fumaça de uma cor diferente num céu de crepúsculo.",
+    "people": false,
+    "rawFile": "pilot/card68"
+  },
+  {
+    "id": "458c5a26",
+    "batch": 3,
+    "scene": "A long empty wooden train platform in a meadow with a single slim iron lamp post holding one lit lantern. The platform has only the lamp and one bench, nothing else: no signboard, no sign, no board of any kind. Rails vanish into low clouds.",
+    "palette": "faded green, warm yellow, grey-blue, cream",
+    "alt": "Plataforma de trem longa e vazia num campo, com um poste de ferro com lampião aceso e um banco; os trilhos somem na névoa sob nuvens baixas.",
+    "people": false,
+    "rawFile": "pilot/card69"
+  },
+  {
+    "id": "01347a34",
+    "batch": 3,
+    "scene": "A city of tall thin towers rising out of a sea of clouds at dawn, joined by delicate bridges.",
+    "palette": "peach, lavender, pale gold, soft blue",
+    "alt": "Cidade de torres altas e finas que surgem de um mar de nuvens ao amanhecer, ligadas por pontes delicadas.",
+    "people": false,
+    "rawFile": "pilot/card71"
+  },
+  {
+    "id": "cb76c913",
+    "batch": 3,
+    "scene": "A tiny island with one house and one tree in the middle of a vast salt flat that mirrors the sunset sky.",
+    "palette": "coral, violet, white, deep blue",
+    "alt": "Pequena ilha com uma casa e uma árvore no meio de uma salina enorme que reflete o céu do pôr do sol.",
+    "people": false,
+    "rawFile": "pilot/card70"
+  },
+  {
+    "id": "61d7de58",
+    "batch": 3,
+    "scene": "A narrow canyon whose walls are lined with thousands of small lit windows, a river of mist at the bottom.",
+    "palette": "deep blue, warm amber, grey, teal",
+    "alt": "Desfiladeiro estreito com as paredes cobertas por milhares de pequenas janelas acesas, e um rio de névoa no fundo.",
+    "people": false,
+    "rawFile": "pilot/card73"
+  },
+  {
+    "id": "a35cec91",
+    "batch": 3,
+    "scene": "A giant wooden ship stranded on a mountain meadow, covered in flowers and moss, one window glowing.",
+    "palette": "weathered brown, moss green, wildflower pink, sky blue",
+    "alt": "Navio de madeira gigante encalhado num campo de montanha, coberto de flores e musgo, com uma janela acesa.",
+    "people": false,
+    "rawFile": "pilot/card72"
+  },
+  {
+    "id": "1ed34448",
+    "batch": 3,
+    "scene": "A range of mountains hanging upside down from the clouds above a green valley, a waterfall pouring from one peak's tip.",
+    "palette": "slate blue, white, green, pale gold",
+    "alt": "Cadeia de montanhas de cabeça para baixo, pendurada nas nuvens sobre um vale verde, com uma cachoeira caindo da ponta de um pico.",
+    "people": false,
+    "rawFile": "pilot/card74"
+  },
+  {
+    "id": "d3fbaf6d",
+    "batch": 3,
+    "scene": "A stone arch standing in the middle of a shallow sea, the sunrise framed inside it as a perfect circle.",
+    "palette": "gold, pale pink, teal, grey stone",
+    "alt": "Arco de pedra no meio de um mar raso, com o nascer do sol enquadrado dentro dele como um círculo perfeito.",
+    "people": false,
+    "rawFile": "pilot/card76"
+  },
+  {
+    "id": "27c1d905",
+    "batch": 3,
+    "scene": "A rooftop garden city at dusk, glowing windows, a long rope bridge between two chimneys, small birds in the air.",
+    "palette": "dusty rose, deep green, warm yellow, indigo",
+    "alt": "Cidade de jardins nos telhados ao entardecer, com janelas acesas, uma ponte de corda entre duas chaminés e pequenos pássaros no ar.",
+    "people": false,
+    "rawFile": "pilot/card75"
+  },
+  {
+    "id": "ef06eac1",
+    "batch": 3,
+    "scene": "A moonlit bamboo forest path leading to a small pagoda glowing with warm light.",
+    "palette": "deep green, silver, warm gold, midnight blue",
+    "alt": "Caminho num bambuzal à luz da lua, que leva a um pequeno pagode iluminado com luz quente.",
+    "people": false,
+    "rawFile": "pilot/card77"
+  },
+  {
+    "id": "20db5d65",
+    "batch": 3,
+    "scene": "A row of windmills on a coastal cliff whose sails are enormous flower petals, turning in a sunset breeze.",
+    "palette": "pink, orange, sea blue, grass green",
+    "alt": "Fileira de moinhos num penhasco à beira-mar, com pás em forma de grandes pétalas de flor, girando numa brisa de pôr do sol.",
+    "people": false,
+    "rawFile": "pilot/card78"
+  },
+  {
+    "id": "dbf72342",
+    "batch": 3,
+    "scene": "A path of stepping stones across a lake leading to a house whose front door floats on the water.",
+    "palette": "slate blue, warm brown, soft green, white",
+    "alt": "Caminho de pedras sobre um lago que leva a uma casa cuja porta da frente flutua na água.",
+    "people": false,
+    "rawFile": "pilot/card79"
+  },
+  {
+    "id": "5ac435b8",
+    "batch": 3,
+    "scene": "An old Ferris wheel overgrown with vines in a misty meadow, its cabins swaying gently.",
+    "palette": "faded teal, rust, green, pale pink",
+    "alt": "Roda-gigante antiga coberta de trepadeiras num campo com neblina, com as cabines balançando devagar.",
+    "people": false,
+    "rawFile": "pilot/card80"
+  },
+  {
+    "id": "6ba61323",
+    "batch": 3,
+    "scene": "A mountain village of staircase streets, every house a different color, a sea of clouds below at sunrise.",
+    "palette": "orange, teal, mustard, pale pink",
+    "alt": "Vila de montanha com ruas em escadaria e casas de cores diferentes, com um mar de nuvens embaixo ao nascer do sol.",
+    "people": false,
+    "rawFile": "pilot/card81"
+  },
+  {
+    "id": "1e54bcc7",
+    "batch": 3,
+    "scene": "An enormous glass greenhouse dome glowing at night in a snowy field, giant plants pressing against its panes.",
+    "palette": "snow white, emerald green, warm yellow, deep blue",
+    "alt": "Grande estufa de vidro em forma de cúpula, brilhando à noite num campo de neve, com plantas gigantes encostadas nos vidros.",
+    "people": false,
+    "rawFile": "pilot/card82"
+  },
+  {
+    "id": "5f356072",
+    "batch": 3,
+    "scene": "A canal city where the streets are water, lit boats gliding below a spiral bridge at night.",
+    "palette": "deep blue, warm orange, teal, cream",
+    "alt": "Cidade de canais onde as ruas são água, com barcos iluminados passando sob uma ponte em espiral, à noite.",
+    "people": false,
+    "rawFile": "pilot/card83"
+  },
+  {
+    "id": "9a500a86",
+    "batch": 3,
+    "scene": "A sand castle at golden hour with its gate open, the rising tide just touching its walls.",
+    "palette": "gold, sand, turquoise, pink",
+    "alt": "Castelo de areia na hora dourada, com o portão aberto e a maré subindo, tocando as paredes.",
+    "people": false,
+    "rawFile": "pilot/card84"
+  },
+  {
+    "id": "ec28b349",
+    "batch": 3,
+    "scene": "An endless avenue of tall trees under a huge low sun, long shadows across the road, an empty bench at one side.",
+    "palette": "amber, deep green, rust red, soft pink",
+    "alt": "Avenida sem fim de árvores altas sob um sol enorme e baixo, com sombras longas na rua e um banco vazio ao lado.",
+    "people": false,
+    "rawFile": "pilot/card85"
+  },
+  {
+    "id": "5514f50a",
+    "batch": 3,
+    "scene": "A crooked stone wall winding across misty hills, a single wooden door set in the wall.",
+    "palette": "grey-green, brown, pale blue, cream",
+    "alt": "Muro de pedra torto serpenteando por colinas com neblina, com uma única porta de madeira no meio.",
+    "people": false,
+    "rawFile": "pilot/card89"
+  },
+  {
+    "id": "d33e21a2",
+    "batch": 3,
+    "scene": "A circular plaza at night whose tiled floor reflects the stars like water, a lone fountain in the center.",
+    "palette": "midnight blue, silver, teal, pale gold",
+    "alt": "Praça circular à noite, com o piso de ladrilhos refletindo as estrelas como água e uma fonte sozinha no centro.",
+    "people": false,
+    "rawFile": "pilot/card86"
+  },
+  {
+    "id": "2c34f6c8",
+    "batch": 3,
+    "scene": "A cave opening onto a hidden valley glowing at golden hour, crystals shining at the cave mouth.",
+    "palette": "amber, violet, forest green, pale blue",
+    "alt": "Entrada de caverna que se abre para um vale escondido, iluminado na hora dourada, com cristais brilhando na boca da caverna.",
+    "people": false,
+    "rawFile": "pilot/card87"
+  },
+  {
+    "id": "d2592622",
+    "batch": 3,
+    "scene": "A small train crossing a viaduct high above a cloud-filled valley at dusk, a trail of warm window lights.",
+    "palette": "dusty purple, warm orange, cloud white, deep teal",
+    "alt": "Pequeno trem atravessando um viaduto alto sobre um vale cheio de nuvens ao entardecer, deixando um rastro de luzes quentes nas janelas.",
+    "people": false,
+    "rawFile": "pilot/card88"
+  },
+  {
+    "id": "d60bcbf4",
+    "batch": 3,
+    "scene": "A tiny town clustered at the foot of an enormous tree whose canopy covers the entire sky.",
+    "palette": "deep green, warm gold, brown, soft blue",
+    "alt": "Pequena cidade agrupada ao pé de uma árvore enorme, cuja copa cobre todo o céu.",
+    "people": false,
+    "rawFile": "pilot/card91"
+  },
+  {
+    "id": "cd991698",
+    "batch": 3,
+    "scene": "A harbor at night where every boat is a glowing paper lantern floating in still water beside a quiet stone quay.",
+    "palette": "indigo, warm orange, pale gold, slate grey",
+    "alt": "Porto à noite onde cada barco é uma lanterna de papel brilhando na água parada, ao lado de um cais de pedra silencioso.",
+    "people": false,
+    "rawFile": "pilot/card90"
+  },
+  {
+    "id": "037c5375",
+    "batch": 4,
+    "scene": "A small figure seen from behind sitting on a swing that hangs from nothing, above a sea of clouds at sunset; an empty second swing sways beside it.",
+    "palette": "peach, rose, deep plum, soft gold",
+    "alt": "Figura pequena, de costas, sentada num balanço que não prende em nada, sobre um mar de nuvens ao pôr do sol; um segundo balanço vazio se move ao lado.",
+    "people": true,
+    "rawFile": "pilot/card6"
+  },
+  {
+    "id": "eaab2b5d",
+    "batch": 4,
+    "scene": "A small rowboat with a lantern drifting on a calm ocean, the sky mirroring the sea so no horizon can be seen.",
+    "palette": "deep blue, warm yellow, silver, pale teal",
+    "alt": "Pequeno barco a remo com uma lanterna à deriva num oceano calmo; o céu espelha o mar e não se vê o horizonte.",
+    "people": false,
+    "rawFile": "pilot/card92"
+  },
+  {
+    "id": "0a0198db",
+    "batch": 4,
+    "scene": "A house in an empty field with every window open and the curtains blowing outward.",
+    "palette": "pale yellow, sky blue, sage green, white",
+    "alt": "Casa num campo vazio com todas as janelas abertas e as cortinas balançando para fora.",
+    "people": false,
+    "rawFile": "pilot/card93"
+  },
+  {
+    "id": "0fb22e44",
+    "batch": 4,
+    "scene": "A single red balloon tied to a bench in a rainy empty square, the rain stopping just above it.",
+    "palette": "grey blue, brick red, wet cobblestone grey, pale yellow",
+    "alt": "Um balão vermelho amarrado a um banco numa praça vazia e chuvosa, com a chuva parando logo acima dele.",
+    "people": false,
+    "rawFile": "pilot/card95"
+  },
+  {
+    "id": "12e9f17b",
+    "batch": 4,
+    "scene": "Two chairs facing opposite directions at a table by a window, one half of the sky outside stormy and the other half sunny.",
+    "palette": "slate grey, warm gold, brown, pale blue",
+    "alt": "Duas cadeiras viradas em direções opostas numa mesa junto a uma janela; metade do céu lá fora está em tempestade e a outra metade ensolarada.",
+    "people": false,
+    "rawFile": "pilot/card94"
+  },
+  {
+    "id": "b1ad9f4e",
+    "batch": 4,
+    "scene": "A long dim corridor with a door ajar at the end, warm light spilling across the floor.",
+    "palette": "deep brown, warm amber, dusty green, cream",
+    "alt": "Corredor longo e escuro, com uma porta entreaberta no fim e luz quente se espalhando pelo chão.",
+    "people": false,
+    "rawFile": "pilot/card96"
+  },
+  {
+    "id": "502d947b",
+    "batch": 4,
+    "scene": "A ball of red thread rolling away down a hill, the unraveling line stretching back to a lit house.",
+    "palette": "red, snow white, deep blue, warm yellow",
+    "alt": "Novelo de linha vermelha rolando colina abaixo; o fio se desenrola até uma casa iluminada.",
+    "people": false,
+    "rawFile": "pilot/card98"
+  },
+  {
+    "id": "69cd716e",
+    "batch": 4,
+    "scene": "A single green sprout pushing through cracked dry earth under a heavy grey sky, one sunbeam falling on it.",
+    "palette": "dry ochre, grey, bright green, pale gold",
+    "alt": "Um broto verde rompendo a terra seca e rachada sob um céu cinza e pesado, com um único raio de sol sobre ele.",
+    "people": false,
+    "rawFile": "pilot/card97"
+  },
+  {
+    "id": "2c6f5f6a",
+    "batch": 4,
+    "scene": "A tiny silhouette walking up a long winding path toward a huge glowing moon on the horizon.",
+    "palette": "midnight blue, silver, pale gold, dusty violet",
+    "alt": "Pequena silhueta subindo um longo caminho sinuoso em direção a uma lua enorme e brilhante no horizonte.",
+    "people": true,
+    "rawFile": "pilot/card99"
+  },
+  {
+    "id": "694f52e0",
+    "batch": 4,
+    "scene": "An empty bird's nest high in a bare winter tree, a single feather resting inside, soft snow falling.",
+    "palette": "grey, white, soft brown, pale rose",
+    "alt": "Ninho vazio no alto de uma árvore de inverno sem folhas, com uma única pena dentro e neve caindo devagar.",
+    "people": false,
+    "rawFile": "pilot/card100"
+  },
+  {
+    "id": "29fe57fd",
+    "batch": 4,
+    "scene": "A lone wooden chair on an empty stage under a single spotlight, rows of dark seats faintly visible.",
+    "palette": "deep red, warm gold, charcoal, dusty brown",
+    "alt": "Cadeira de madeira sozinha num palco vazio sob um único refletor, com fileiras de poltronas escuras ao fundo.",
+    "people": false,
+    "rawFile": "pilot/card102"
+  },
+  {
+    "id": "b430577e",
+    "batch": 4,
+    "scene": "A boat on a sea split in two: half under a storm, half under a calm sky with a rainbow.",
+    "palette": "storm grey, deep blue, soft gold, pastel rainbow",
+    "alt": "Barco num mar dividido em dois: de um lado, tempestade; do outro, céu calmo com arco-íris.",
+    "people": false,
+    "rawFile": "pilot/card101"
+  },
+  {
+    "id": "09d854b6",
+    "batch": 4,
+    "scene": "Two small paper boats, one white and one blue, drifting together down a stream in a rain gutter.",
+    "palette": "white, blue, grey, pale yellow",
+    "alt": "Dois pequenos barcos de papel, um branco e um azul, descendo juntos por um riacho numa calha de chuva.",
+    "people": false,
+    "rawFile": "pilot/card103"
+  },
+  {
+    "id": "c7bb8b02",
+    "batch": 4,
+    "scene": "A single paper lantern rising alone from a dark hilltop into a vast starry sky.",
+    "palette": "midnight blue, warm orange, gold, dusty purple",
+    "alt": "Uma única lanterna de papel subindo sozinha de uma colina escura para um céu estrelado imenso.",
+    "people": false,
+    "rawFile": "pilot/card104"
+  },
+  {
+    "id": "7255f23c",
+    "batch": 4,
+    "scene": "An overgrown garden gate slightly open, vines and flowers spilling through, a path continuing beyond it.",
+    "palette": "green, dusty pink, weathered white, warm gold",
+    "alt": "Portão de jardim coberto de vegetação, entreaberto, com trepadeiras e flores passando por ele e um caminho que continua do outro lado.",
+    "people": false,
+    "rawFile": "pilot/card106"
+  },
+  {
+    "id": "4c094f16",
+    "batch": 4,
+    "scene": "A small tree casting a long shadow shaped like an enormous tree across a golden field at sunset.",
+    "palette": "gold, deep orange, warm brown, soft purple",
+    "alt": "Árvore pequena projetando uma sombra longa em forma de árvore enorme sobre um campo dourado ao pôr do sol.",
+    "people": false,
+    "rawFile": "pilot/card105"
+  },
+  {
+    "id": "ca579d6d",
+    "batch": 4,
+    "scene": "A snow globe sitting alone on a rock in an empty desert, a tiny winter village inside.",
+    "palette": "ochre, pale blue, white, warm orange",
+    "alt": "Globo de neve sozinho sobre uma pedra num deserto vazio, com uma pequena vila de inverno dentro.",
+    "people": false,
+    "rawFile": "pilot/card107"
+  },
+  {
+    "id": "6c08b01d",
+    "batch": 4,
+    "scene": "A bridge broken in the middle over a river, a lit lantern on each side facing the other.",
+    "palette": "deep blue, warm orange, grey stone, misty teal",
+    "alt": "Ponte quebrada no meio sobre um rio, com uma lanterna acesa em cada lado, uma de frente para a outra.",
+    "people": false,
+    "rawFile": "pilot/card108"
+  },
+  {
+    "id": "b9dbf8f4",
+    "batch": 4,
+    "scene": "A small silhouette seen from behind standing under an enormous tree as golden leaves rain down.",
+    "palette": "gold, deep brown, burnt orange, soft teal",
+    "alt": "Pequena silhueta, de costas, sob uma árvore enorme enquanto folhas douradas caem como chuva.",
+    "people": true,
+    "rawFile": "pilot/card109"
+  },
+  {
+    "id": "01e169b3",
+    "batch": 4,
+    "scene": "A round fishbowl floating high above the clouds, a single goldfish inside looking down at a distant ocean.",
+    "palette": "orange, sky blue, white, deep teal",
+    "alt": "Aquário redondo flutuando acima das nuvens, com um único peixe dourado olhando para um oceano distante.",
+    "people": false,
+    "rawFile": "pilot/card110"
+  },
+  {
+    "id": "3034c4f6",
+    "batch": 4,
+    "scene": "A lone dandelion gone to seed on a cliff edge, its seeds drifting toward a rising sun.",
+    "palette": "pale gold, soft pink, sea blue, white",
+    "alt": "Dente-de-leão sozinho na beira de um penhasco, com as sementes voando em direção ao sol nascente.",
+    "people": false,
+    "rawFile": "pilot/card111"
+  },
+  {
+    "id": "7ff0aff9",
+    "batch": 4,
+    "scene": "A kite stuck in a bare tree at dusk, its long tail trailing in the wind.",
+    "palette": "dusty orange, indigo, pale pink, grey",
+    "alt": "Pipa presa numa árvore sem folhas ao entardecer, com a cauda longa balançando ao vento.",
+    "people": false,
+    "rawFile": "pilot/card112"
+  },
+  {
+    "id": "ddfcf562",
+    "batch": 4,
+    "scene": "A single candle in the window of a small dark house by a storm-lit sea.",
+    "palette": "deep navy, warm candle yellow, stormy grey, teal",
+    "alt": "Uma única vela na janela de uma casinha escura à beira de um mar iluminado por uma tempestade.",
+    "people": false,
+    "rawFile": "pilot/card113"
+  },
+  {
+    "id": "b16c0b20",
+    "batch": 4,
+    "scene": "A line of footprints in fresh snow leading to the middle of a field and stopping abruptly, a single dark feather at the end.",
+    "palette": "white, pale blue, grey, soft pink",
+    "alt": "Fila de pegadas na neve fresca que vai até o meio de um campo e termina de repente, com uma única pena escura no fim.",
+    "people": false,
+    "rawFile": "pilot/card114"
+  },
+  {
+    "id": "59c05dae",
+    "batch": 4,
+    "scene": "Two tree branches curving toward each other like cupped hands, holding a small glowing egg of light.",
+    "palette": "deep green, warm gold, brown, midnight blue",
+    "alt": "Dois galhos de árvore se curvando um em direção ao outro, como mãos em concha, segurando um pequeno ovo de luz.",
+    "people": false,
+    "rawFile": "pilot/card115"
+  },
+  {
+    "id": "22b742e1",
+    "batch": 4,
+    "scene": "A long dining table with a single plate and one lit candle, the shadows of many guests on the wall behind it.",
+    "palette": "warm brown, candle yellow, deep green, dusty rose",
+    "alt": "Mesa de jantar longa com um único prato e uma vela acesa, e sombras de muitos convidados na parede ao fundo.",
+    "people": false,
+    "rawFile": "pilot/card116"
+  },
+  {
+    "id": "2a36f6f9",
+    "batch": 4,
+    "scene": "A cracked full moon with light spilling through its fissures over a quiet lake.",
+    "palette": "silver, deep blue, pale gold, slate",
+    "alt": "Lua cheia rachada, com luz escapando pelas fendas sobre um lago tranquilo.",
+    "people": false,
+    "rawFile": "pilot/card117"
+  },
+  {
+    "id": "958e6398",
+    "batch": 4,
+    "scene": "A small cottage with smoke curling from its chimney at the bottom of a deep green valley under a huge silent aurora.",
+    "palette": "emerald, violet, deep blue, warm window yellow",
+    "alt": "Casinha com fumaça saindo da chaminé no fundo de um vale verde, sob uma aurora enorme e silenciosa.",
+    "people": false,
+    "rawFile": "pilot/card118"
+  },
+  {
+    "id": "338ca581",
+    "batch": 4,
+    "scene": "A ribbon of fog dividing a landscape into a bright day half and a dark night half, a single path crossing both.",
+    "palette": "gold, deep indigo, misty white, green",
+    "alt": "Faixa de névoa dividindo a paisagem em uma metade de dia claro e outra de noite escura, com um único caminho que cruza as duas.",
+    "people": false,
+    "rawFile": "pilot/card119"
+  },
+  {
+    "id": "551a2f88",
+    "batch": 4,
+    "scene": "A single wave frozen just before it breaks, a small boat suspended inside the glassy curve, sunlight shining through.",
+    "palette": "aqua, deep blue, gold, white foam",
+    "alt": "Uma única onda congelada pouco antes de quebrar, com um pequeno barco suspenso dentro da curva de vidro e o sol atravessando a água.",
+    "people": false,
+    "rawFile": "pilot/card120"
+  }
+]
