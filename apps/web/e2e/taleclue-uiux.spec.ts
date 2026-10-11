@@ -106,6 +106,7 @@ for (const count of [3, 4]) {
           expect(
             await giver.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
           ).toBe(true);
+          await giver.evaluate(() => window.scrollTo(0, 0));
           await expectNoAxeViolations(giver);
           await giver.screenshot({
             path: path.join(UI_DIR, `fatia-1-${width}-${theme}.png`),
@@ -247,6 +248,7 @@ test("Taleclue countdown: rejected clues preserve the draft and reconnect seeks 
             .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
         )
         .toBe(true);
+      await giver.evaluate(() => window.scrollTo(0, 0));
       await expectNoAxeViolations(giver);
       await giver.screenshot({
         path: path.join(UI_DIR, `fatia-1-urgencia-${width}-${theme}.png`),
@@ -343,6 +345,7 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
             .evaluateAll((nodes) => nodes.every((node) => getComputedStyle(node).opacity === "1")),
         )
         .toBe(true);
+      await giver.evaluate(() => window.scrollTo(0, 0));
       await expectNoAxeViolations(giver);
       // Finish finite entry motion after resize before capturing the live waiting animation.
       await giver.waitForTimeout(650);
@@ -436,4 +439,295 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
   }
   await expect(reveal).toHaveAttribute("data-reveal-active", "false");
   await expectNoAxeViolations(giver);
+});
+
+type AudioStats = { contexts: number; cancelled: number; starts: { kind: string; at: number }[] };
+async function observeAudio(page: Page, mode: "normal" | "storage" | "resume" = "normal") {
+  await page.addInitScript((mode) => {
+    const stats = { contexts: 0, cancelled: 0, starts: [] as { kind: string; at: number }[] };
+    Object.assign(window, { __taleclueAudio: stats });
+    if (mode === "storage") {
+      const get = Storage.prototype.getItem;
+      const set = Storage.prototype.setItem;
+      Storage.prototype.getItem = function (key) {
+        if (key === "resenhark:taleclue:sound-muted") throw new Error("storage unavailable");
+        return get.call(this, key);
+      };
+      Storage.prototype.setItem = function (key, value) {
+        if (key === "resenhark:taleclue:sound-muted") throw new Error("storage unavailable");
+        return set.call(this, key, value);
+      };
+    }
+    const NativeAudio = window.AudioContext;
+    function track<T extends AudioScheduledSourceNode>(source: T, kind: string) {
+      const start = source.start.bind(source);
+      const stop = source.stop.bind(source);
+      source.start = (when = 0) => {
+        stats.starts.push({ kind, at: when });
+        start(when);
+      };
+      source.stop = (when) => {
+        if (when === undefined) stats.cancelled++;
+        stop(when);
+      };
+      return source;
+    }
+    window.AudioContext = class extends NativeAudio {
+      constructor() {
+        super();
+        stats.contexts++;
+        if (mode === "resume") Object.defineProperty(this, "state", { value: "suspended" });
+      }
+      resume() {
+        return mode === "resume" ? Promise.reject(new Error("autoplay blocked")) : super.resume();
+      }
+      createOscillator() {
+        return track(super.createOscillator(), "tone");
+      }
+      createBufferSource() {
+        return track(super.createBufferSource(), "wood");
+      }
+    };
+  }, mode);
+}
+async function audioStats(page: Page) {
+  return page.evaluate(() => (window as Window & { __taleclueAudio: AudioStats }).__taleclueAudio);
+}
+
+test("Taleclue sound: live clues, synchronized steps, independent mute and silent reconnect", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(180000);
+  await observeAudio(page);
+  const code = await createRoomAs(page, "Ana");
+  const pages = [page];
+  for (const name of ["Bia", "Caio"]) {
+    const joined = (await joinRoomAs(browser, code, name)).page;
+    await observeAudio(joined);
+    await joined.reload();
+    pages.push(joined);
+  }
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  const giver = await narrator(pages);
+  const others = pages.filter((p) => p !== giver);
+  await expect(giver.getByRole("button", { name: "Ativar som", exact: true })).toBeVisible();
+  expect((await audioStats(giver)).contexts).toBe(0);
+  await giver.screenshot({ path: path.join(UI_DIR, "fatia-4-ativar.png"), fullPage: true });
+  for (const player of pages) {
+    if (player === others[0])
+      await player.getByRole("button", { name: "Entenda esta fase", exact: true }).press("Enter");
+    else await player.getByRole("button", { name: "Ativar som", exact: true }).click();
+    await expect(player.getByRole("button", { name: "Som ligado", exact: true })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+  }
+  const muted = others[1];
+  await muted.getByRole("button", { name: "Som ligado", exact: true }).click();
+  await expect(muted.getByRole("button", { name: "Som desligado", exact: true })).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
+  await selectHand(giver, 1);
+  await giver.getByLabel("Pista", { exact: true }).fill("Madeira");
+  await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
+  await expect.poll(async () => (await audioStats(others[0])).starts.length).toBe(1);
+  expect((await audioStats(muted)).starts.length).toBe(0);
+  for (const width of [390, 1440]) {
+    await others[0].setViewportSize({ width, height: 900 });
+    await expect(others[0].getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
+      width === 390 ? 1 : 0,
+    );
+    await expect(
+      others[0].getByRole("button", { name: "Som ligado", exact: true }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect((await audioStats(others[0])).contexts).toBe(1);
+    expect((await audioStats(others[0])).starts.length).toBe(1);
+  }
+  await muted.getByRole("button", { name: "Som desligado", exact: true }).click();
+  await expect(muted.getByRole("button", { name: "Som ligado", exact: true })).toBeVisible();
+  expect((await audioStats(muted)).starts.length).toBe(0);
+  await muted.getByRole("button", { name: "Som ligado", exact: true }).click();
+  for (const other of others) {
+    await selectHand(other, 2);
+    await other.getByRole("button", { name: "Jogar iscas", exact: true }).click();
+  }
+  const stored = await peekRoom(code);
+  const card = stored.game.state.narratorCard as string;
+  for (const other of others) {
+    await other
+      .getByRole("region", { name: "Mesa", exact: true })
+      .locator(`[data-card-id="${card}"]`)
+      .getByRole("button", { name: /^Carta [0-9]+$/ })
+      .click();
+    await other.getByRole("button", { name: "Confirmar voto", exact: true }).click();
+  }
+  await expect
+    .poll(async () => (await audioStats(others[0])).starts.filter((s) => s.kind === "wood").length)
+    .toBe(2);
+  const scheduled = (await audioStats(others[0])).starts.length;
+  await others[0].context().setOffline(true);
+  await expect.poll(async () => (await audioStats(others[0])).cancelled).toBeGreaterThanOrEqual(4);
+  await others[0].context().setOffline(false);
+  await expect(
+    others[0].getByRole("region", { name: "Revelação da rodada 1", exact: true }),
+  ).toBeVisible();
+  await others[0].waitForTimeout(500);
+  expect((await audioStats(others[0])).starts.length).toBe(scheduled);
+  await muted.reload();
+  await expect(muted.getByRole("button", { name: "Som desligado", exact: true })).toBeVisible();
+  expect((await audioStats(muted)).contexts).toBe(0);
+  expect((await audioStats(muted)).starts.length).toBe(0);
+  await muted.screenshot({ path: path.join(UI_DIR, "fatia-4-mudo.png"), fullPage: true });
+  await expectNoAxeViolations(muted);
+  for (const theme of ["dark", "light"]) {
+    await giver.evaluate(
+      (theme) => document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme,
+    );
+    for (const width of [390, 1440]) {
+      await giver.setViewportSize({ width, height: 900 });
+      await expect(giver.getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
+        width === 390 ? 1 : 0,
+      );
+      const activate = giver.getByRole("button", { name: "Ativar som", exact: true });
+      if (await activate.isVisible()) await activate.click();
+      await expect(giver.getByRole("button", { name: "Som ligado", exact: true })).toBeVisible();
+      await giver.evaluate(() => window.scrollTo(0, 0));
+      await expectNoAxeViolations(giver);
+      await giver.screenshot({
+        path: path.join(UI_DIR, `fatia-4-${width}-${theme}.png`),
+        fullPage: true,
+      });
+    }
+  }
+});
+
+for (const mode of ["storage", "resume"] as const) {
+  test(`Taleclue sound: ${mode} failure preserves clue and decoy actions`, async ({
+    page,
+    browser,
+  }) => {
+    test.setTimeout(90000);
+    await observeAudio(page, mode);
+    const code = await createRoomAs(page, "Ana");
+    const pages = [page];
+    for (const name of ["Bia", "Caio"]) {
+      const other = (await joinRoomAs(browser, code, name)).page;
+      await observeAudio(other, mode);
+      await other.reload();
+      pages.push(other);
+    }
+    await chooseOption(page, "Jogo da sala", "Taleclue");
+    await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+    const giver = await narrator(pages);
+    await giver.getByRole("button", { name: "Ativar som", exact: true }).click();
+    if (mode === "resume")
+      await expect(giver.getByRole("button", { name: "Ativar som", exact: true })).toBeVisible();
+    else {
+      await giver.getByRole("button", { name: "Som ligado", exact: true }).click();
+      await expect(giver.getByRole("button", { name: "Som desligado", exact: true })).toBeVisible();
+    }
+    await selectHand(giver, 1);
+    await giver.getByLabel("Pista", { exact: true }).fill("Porta");
+    await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
+    for (const other of pages.filter((p) => p !== giver)) {
+      await selectHand(other, 2);
+      await other.getByRole("button", { name: "Jogar iscas", exact: true }).click();
+    }
+    await expect(giver.getByRole("heading", { name: "Mesa", exact: true })).toBeVisible();
+    if (mode === "resume") expect((await audioStats(giver)).starts.length).toBe(0);
+    await expectNoAxeViolations(giver);
+  });
+}
+
+test("Taleclue lifecycle: paused reveal freezes for an online spectator", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90000);
+  const code = await createRoomAs(page, "Ana");
+  const players = [
+    page,
+    (await joinRoomAs(browser, code, "Bia")).page,
+    (await joinRoomAs(browser, code, "Caio")).page,
+  ];
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  const spectator = (await joinRoomAs(browser, code, "Dani")).page;
+  const giver = await narrator(players);
+  await selectHand(giver, 1);
+  await giver.getByLabel("Pista", { exact: true }).fill("Madeira");
+  await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
+  const others = players.filter((p) => p !== giver);
+  for (const other of others) {
+    await selectHand(other, 2);
+    await other.getByRole("button", { name: "Jogar iscas", exact: true }).click();
+  }
+  const stored = await peekRoom(code);
+  const card = stored.game.state.narratorCard as string;
+  for (const other of others) {
+    await other
+      .getByRole("region", { name: "Mesa", exact: true })
+      .locator(`[data-card-id="${card}"]`)
+      .getByRole("button", { name: /^Carta [0-9]+$/ })
+      .click();
+    await other.getByRole("button", { name: "Confirmar voto", exact: true }).click();
+  }
+  const pawn = spectator.locator(
+    `[data-player-id="${stored.game.state.players.find((p: { id: string }) => p.id !== stored.game.state.narratorId).id}"]`,
+  );
+  await expect(pawn).toHaveAttribute("data-moving", "true", { timeout: 15000 });
+  await Promise.all(players.map((p) => p.context().setOffline(true)));
+  await expect(spectator.getByText("Tempo pausado", { exact: true })).toBeVisible();
+  await expect(pawn).toHaveAttribute("data-moving", "false");
+  expect(Number(await pawn.getAttribute("data-position"))).toBeLessThan(2);
+  const before = await pawn.boundingBox();
+  const position = await pawn.getAttribute("data-position");
+  await spectator.waitForTimeout(700);
+  expect(await pawn.getAttribute("data-position")).toBe(position);
+  const after = await pawn.boundingBox();
+  expect(Math.abs((after?.x ?? 0) - (before?.x ?? 0))).toBeLessThan(1);
+  expect(Math.abs((after?.y ?? 0) - (before?.y ?? 0))).toBeLessThan(1);
+  await page.context().setOffline(false);
+  await expect(spectator.getByText("Tempo pausado", { exact: true })).toHaveCount(0);
+  await expect(
+    spectator.getByRole("region", { name: "Revelação da rodada 1", exact: true }),
+  ).toHaveAttribute("data-reveal-step", "0");
+  await expect(pawn).toHaveAttribute("data-position", "0");
+});
+
+test("Taleclue lifecycle: urgency is announced once across resize and game tab remount", async ({
+  page,
+  browser,
+}) => {
+  test.setTimeout(90000);
+  const code = await createRoomAs(page, "Ana");
+  const players = [
+    page,
+    (await joinRoomAs(browser, code, "Bia")).page,
+    (await joinRoomAs(browser, code, "Caio")).page,
+  ];
+  await chooseOption(page, "Jogo da sala", "Taleclue");
+  await page.getByRole("button", { name: "Iniciar partida", exact: true }).click();
+  const giver = await narrator(players);
+  const stored = await peekRoom(code);
+  stored.game.state.deadline = Date.now() + 9500;
+  await writeRoom(code, stored);
+  await giver.reload();
+  await expect(giver.getByText("Faltam 10 segundos.", { exact: true })).toHaveCount(1);
+  await giver.setViewportSize({ width: 390, height: 900 });
+  await expect(giver.getByRole("tab", { name: "Jogo", exact: true })).toBeVisible();
+  await expect(giver.locator("[data-urgent]")).toHaveAttribute("data-urgent", "true");
+  await expect(giver.getByText("Faltam 10 segundos.", { exact: true })).toHaveCount(0, {
+    timeout: 1000,
+  });
+  await giver.getByRole("tab", { name: "Chat", exact: true }).click();
+  await giver.getByRole("tab", { name: "Jogo", exact: true }).click();
+  await expect(giver.locator("[data-urgent]")).toHaveAttribute("data-urgent", "true");
+  await expect(giver.getByText("Faltam 10 segundos.", { exact: true })).toHaveCount(0, {
+    timeout: 1000,
+  });
 });

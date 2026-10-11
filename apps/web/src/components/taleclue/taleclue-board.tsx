@@ -6,6 +6,10 @@ import { TaleclueCard } from "@/components/taleclue/taleclue-card";
 import { TaleclueCountdown } from "@/components/taleclue/taleclue-countdown";
 import { TalecluePhaseGuide } from "@/components/taleclue/taleclue-phase-guide";
 import { TaleclueScoreboard } from "@/components/taleclue/taleclue-scoreboard";
+import {
+  TaleclueSoundControl,
+  type TaleclueSoundState,
+} from "@/components/taleclue/taleclue-sound-control";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
@@ -14,6 +18,7 @@ import { type Send, gameErrorMessage } from "@/lib/game-errors";
 import type { ServerClock } from "@/lib/server-clock";
 import {
   TALECLUE_REVEAL_STAGES,
+  createTaleclueRevealProgress,
   taleclueAction,
   taleclueRevealElapsed,
   taleclueRevealStage,
@@ -267,6 +272,110 @@ function RoundInteraction({
   const guidanceView =
     submitted && view.phase !== "clue" ? { ...view, acted: [...view.acted, you] } : view;
   const guidance = taleclueGuidance(guidanceView, you, role, nameOf(members, view.narratorId));
+  const table =
+    view.phase !== "clue" ? (
+      <section aria-label="Mesa" className="flex flex-col gap-4">
+        <h2 className="text-lg font-semibold">Mesa</h2>
+        {view.phase === "vote" ? (
+          <div className={grid}>
+            {view.table.map((card, index) => (
+              <TaleclueCard
+                key={card}
+                cardId={card}
+                index={index}
+                selected={isPlayer && (validSelected.includes(card) || view.myVote === card)}
+                disabled={!allowed || view.myCards.includes(card)}
+                onSelect={() => select(card)}
+                note={
+                  !isPlayer
+                    ? undefined
+                    : view.myCards.includes(card)
+                      ? "Sua carta"
+                      : view.myVote === card
+                        ? "Seu voto"
+                        : undefined
+                }
+              />
+            ))}
+          </div>
+        ) : (
+          <div aria-hidden="true" className="flex flex-wrap gap-2">
+            {[
+              ...(view.clue ? ["narrator"] : []),
+              ...view.acted.flatMap((playerId) =>
+                Array.from({ length: view.decoyCount }, (_, index) => `${playerId}-${index}`),
+              ),
+            ].map((cardKey) => (
+              <motion.div
+                key={cardKey}
+                initial={{ opacity: 0, transform: "translateY(24px)" }}
+                animate={{ opacity: 1, transform: "translateY(0px)" }}
+                className="flex h-20 w-14 items-center justify-center rounded-lg bg-muted text-muted-foreground"
+              >
+                <LayersIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </section>
+    ) : null;
+  const hand =
+    isPlayer && view.hand.length > 0 ? (
+      <section aria-label="Sua mão" className="flex flex-col gap-4">
+        <div className="flex items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold">Sua mão</h2>
+          {action === "play-decoys" ? (
+            <span className="font-mono text-sm tabular-nums">
+              {validSelected.length} / {view.decoyCount}
+            </span>
+          ) : null}
+        </div>
+        <div className={grid}>
+          <AnimatePresence>
+            {view.hand.map((card, index) => (
+              <TaleclueCard
+                key={card}
+                cardId={card}
+                index={index}
+                selected={view.phase !== "vote" && validSelected.includes(card)}
+                disabled={
+                  !allowed ||
+                  view.phase === "vote" ||
+                  (action === "play-decoys" &&
+                    validSelected.length >= view.decoyCount &&
+                    !validSelected.includes(card))
+                }
+                onSelect={() => select(card)}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      </section>
+    ) : null;
+  const actionForm =
+    action && !submitted ? (
+      <form
+        id={`${id}-action`}
+        className="flex flex-col gap-3"
+        onSubmit={(event) => {
+          event.preventDefault();
+          void confirm();
+        }}
+      >
+        <Button
+          type="submit"
+          className="self-start"
+          loading={pending}
+          disabled={!allowed || !taleclueSelectionValid(view, validSelected, clue)}
+        >
+          {action === "give-clue"
+            ? "Enviar pista"
+            : action === "play-decoys"
+              ? "Jogar iscas"
+              : "Confirmar voto"}
+        </Button>
+      </form>
+    ) : null;
   return (
     <>
       <TalecluePhaseGuide guidance={guidance} />
@@ -289,107 +398,20 @@ function RoundInteraction({
           />
         </Field>
       ) : null}
-      {view.phase !== "clue" ? (
-        <section aria-label="Mesa" className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">Mesa</h2>
-          {view.phase === "vote" ? (
-            <div className={grid}>
-              {view.table.map((card, index) => (
-                <TaleclueCard
-                  key={card}
-                  cardId={card}
-                  index={index}
-                  selected={isPlayer && (validSelected.includes(card) || view.myVote === card)}
-                  disabled={!allowed || view.myCards.includes(card)}
-                  onSelect={() => select(card)}
-                  note={
-                    !isPlayer
-                      ? undefined
-                      : view.myCards.includes(card)
-                        ? "Sua carta"
-                        : view.myVote === card
-                          ? "Seu voto"
-                          : undefined
-                  }
-                />
-              ))}
-            </div>
-          ) : (
-            <div aria-hidden="true" className="flex flex-wrap gap-2">
-              {[
-                ...(view.clue ? ["narrator"] : []),
-                ...view.acted.flatMap((playerId) =>
-                  Array.from({ length: view.decoyCount }, (_, index) => `${playerId}-${index}`),
-                ),
-              ].map((cardKey) => (
-                <motion.div
-                  key={cardKey}
-                  initial={{ opacity: 0, transform: "translateY(24px)" }}
-                  animate={{ opacity: 1, transform: "translateY(0px)" }}
-                  className="flex h-20 w-14 items-center justify-center rounded-lg bg-muted text-muted-foreground"
-                >
-                  <LayersIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </section>
-      ) : null}
-      {isPlayer && view.hand.length > 0 ? (
-        <section aria-label="Sua mão" className="flex flex-col gap-4">
-          <div className="flex items-center justify-between gap-2">
-            <h2 className="text-lg font-semibold">Sua mão</h2>
-            {action === "play-decoys" ? (
-              <span className="font-mono text-sm tabular-nums">
-                {validSelected.length} / {view.decoyCount}
-              </span>
-            ) : null}
-          </div>
-          <div className={grid}>
-            <AnimatePresence>
-              {view.hand.map((card, index) => (
-                <TaleclueCard
-                  key={card}
-                  cardId={card}
-                  index={index}
-                  selected={view.phase !== "vote" && validSelected.includes(card)}
-                  disabled={
-                    !allowed ||
-                    view.phase === "vote" ||
-                    (action === "play-decoys" &&
-                      validSelected.length >= view.decoyCount &&
-                      !validSelected.includes(card))
-                  }
-                  onSelect={() => select(card)}
-                />
-              ))}
-            </AnimatePresence>
-          </div>
-        </section>
-      ) : null}
-      {action && !submitted ? (
-        <form
-          id={`${id}-action`}
-          className="flex flex-col gap-3"
-          onSubmit={(event) => {
-            event.preventDefault();
-            void confirm();
-          }}
-        >
-          <Button
-            type="submit"
-            className="self-start"
-            loading={pending}
-            disabled={!allowed || !taleclueSelectionValid(view, validSelected, clue)}
-          >
-            {action === "give-clue"
-              ? "Enviar pista"
-              : action === "play-decoys"
-                ? "Jogar iscas"
-                : "Confirmar voto"}
-          </Button>
-        </form>
-      ) : null}
+      {view.phase === "decoy" ? (
+        <>
+          {hand}
+          {actionForm}
+          {table}
+        </>
+      ) : (
+        <>
+          {table}
+          {view.phase === "vote" ? actionForm : null}
+          {hand}
+          {view.phase !== "vote" ? actionForm : null}
+        </>
+      )}
     </>
   );
 }
@@ -452,6 +474,9 @@ export function TaleclueBoard({
   connected,
   draft,
   onDraftChange,
+  sound,
+  revealProgress,
+  urgencyAnnouncements,
 }: {
   room: RoomView;
   events: GameEvent[];
@@ -460,19 +485,22 @@ export function TaleclueBoard({
   connected: boolean;
   draft?: TaleclueDraft | null;
   onDraftChange?: Dispatch<SetStateAction<TaleclueDraft | null>>;
+  sound?: TaleclueSoundState;
+  revealProgress?: ReturnType<typeof createTaleclueRevealProgress>;
+  urgencyAnnouncements?: Set<string>;
 }) {
   const [resetting, setResetting] = useState(false);
   const [localDraft, setLocalDraft] = useState<TaleclueDraft | null>(null);
   // A shared ticking clock drives eligibility and seeks reveal without client phase changes.
   useSecondsLeft(room.game?.type === "taleclue" ? (room.game.view.deadline ?? 0) : 0, clock);
   const [revealStart] = useState(() => clock.now());
+  const [localRevealProgress] = useState(createTaleclueRevealProgress);
   if (room.game?.type !== "taleclue") return null;
   const view = room.game.view;
   const role = room.members.find((member) => member.id === room.you)?.role ?? "spectator";
   const lastRound =
     view.phase === "reveal" ? view.rounds.find((round) => round.round === view.round) : undefined;
-  const elapsed =
-    view.deadline === null ? 15000 : taleclueRevealElapsed(view.deadline, clock.now());
+  const elapsed = (revealProgress ?? localRevealProgress).read(view, clock.now());
   const resumeElapsed = taleclueRevealElapsed(view.deadline, revealStart);
   const seek = view.deadline === null;
   const moves = lastRound?.steps.find((step) => step.type === "board-move")?.moves ?? [];
@@ -509,13 +537,7 @@ export function TaleclueBoard({
     <section aria-label="Taleclue" className="flex flex-col gap-6">
       <h1 className="sr-only">Taleclue</h1>
       <div className="flex flex-wrap items-center gap-4">
-        <div
-          className={
-            !over && view.deadline === null
-              ? "min-w-0 basis-full sm:flex-1 sm:basis-auto"
-              : "min-w-0 flex-1"
-          }
-        >
+        <div className="min-w-0 basis-full sm:flex-1 sm:basis-auto">
           <h2 className="text-[28px] leading-8 font-semibold tracking-[-0.03em] sm:text-[40px] sm:leading-[44px]">
             Rodada {view.round}
           </h2>
@@ -533,9 +555,15 @@ export function TaleclueBoard({
         {over ? null : view.deadline === null ? (
           <span className="text-sm text-muted-foreground">Tempo pausado</span>
         ) : (
-          <TaleclueCountdown view={view} clock={clock} canAct={canAct} />
+          <TaleclueCountdown
+            view={view}
+            clock={clock}
+            canAct={canAct}
+            announcements={urgencyAnnouncements}
+          />
         )}
         <RulesSheet setup={{ type: "taleclue", config: view.config }} />
+        <TaleclueSoundControl sound={sound} />
       </div>
 
       {!over ? (
@@ -608,7 +636,7 @@ export function TaleclueBoard({
                 )}
               />
               <RoundReveal
-                key={lastRound.round}
+                key={`${lastRound.round}:${view.deadline ?? "paused"}`}
                 round={lastRound}
                 members={room.members}
                 elapsed={elapsed}

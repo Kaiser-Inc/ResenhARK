@@ -142,3 +142,25 @@ export function taleclueSelectionValid(view: TaleclueView, selected: string[], c
   if (view.phase === "clue") return selected.length === 1 && isValidClue(clue);
   return view.phase === "decoy" && selected.length === view.decoyCount;
 }
+
+/** Preserve only observed public timing. A paused mount starts without inventing unseen progress. */
+export function createTaleclueRevealProgress() {
+  let previous: { round: number; deadline: number | null; elapsed: number } | undefined;
+  return {
+    read(view: Pick<TaleclueView, "phase" | "round" | "deadline">, now: number): number {
+      if (view.phase !== "reveal") {
+        previous = undefined;
+        return 15000;
+      }
+      const old = previous?.round === view.round ? previous : undefined;
+      const elapsed =
+        view.deadline !== null
+          ? taleclueRevealElapsed(view.deadline, now)
+          : old?.deadline != null
+            ? taleclueRevealElapsed(old.deadline, now)
+            : (old?.elapsed ?? 0);
+      previous = { round: view.round, deadline: view.deadline, elapsed };
+      return elapsed;
+    },
+  };
+}

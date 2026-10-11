@@ -12,16 +12,18 @@ export function TaleclueCountdown({
   view,
   clock,
   canAct,
-}: { view: TaleclueView; clock: ServerClock; canAct: boolean }) {
+  announcements,
+}: { view: TaleclueView; clock: ServerClock; canAct: boolean; announcements?: Set<string> }) {
   const timing = taleclueTiming(view, clock.now(), canAct);
   const phaseKey = `${view.round}:${view.phase}`;
-  const announced = useRef(new Set<string>());
+  const localAnnouncements = useRef(new Set<string>());
+  const announced = announcements ?? localAnnouncements.current;
   const [announcement, setAnnouncement] = useState("");
   useEffect(() => {
-    if (!timing.urgent || announced.current.has(phaseKey)) return;
-    announced.current.add(phaseKey);
+    if (!timing.urgent || announced.has(phaseKey)) return;
+    announced.add(phaseKey);
     setAnnouncement(phaseKey);
-  }, [timing.urgent, phaseKey]);
+  }, [timing.urgent, phaseKey, announced]);
   return (
     <>
       <motion.span

@@ -79,11 +79,10 @@ export function TaleclueCard({
     <motion.div
       data-card-id={cardId}
       className="flex min-w-0 flex-col gap-2"
-      initial={animate ? { opacity: 0, transform: "translateY(16px)" } : false}
-      animate={{ opacity: 1, transform: selected ? "translateY(-2px)" : "translateY(0px)" }}
-      exit={{ opacity: 0, transform: "translateY(-64px) scale(0.85)" }}
+      initial={animate ? { transform: "translateY(16px)" } : false}
+      animate={{ transform: selected ? "translateY(-2px)" : "translateY(0px)" }}
+      exit={{ transform: "translateY(-64px) scale(0.85)" }}
       transition={{
-        opacity: { duration: 0.3, delay: animate ? index * 0.035 : 0 },
         transform: { duration: 0.16, ease: [0.23, 1, 0.32, 1] },
       }}
     >

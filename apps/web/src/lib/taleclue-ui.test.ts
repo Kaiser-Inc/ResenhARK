@@ -354,11 +354,11 @@ test("all reveal outcomes come from the projected award step, including no votes
   }
 });
 
-test("a paused reveal keeps its projected result visible without restarting a timer", () => {
+test("a paused mount shows the first reveal step without inventing elapsed time", () => {
   const markup = renderState({ phase: "reveal", rounds: [round], deadline: null });
   assert.match(markup, /Tempo pausado/);
-  assert.match(markup, /data-reveal-step="4"/);
-  assert.match(markup, /data-voter-id="caio"/);
+  assert.match(markup, /data-reveal-step="0"/);
+  assert.doesNotMatch(markup, /data-voter-id="caio"/);
   assert.doesNotMatch(markup, /role="timer"/);
 });
 
@@ -428,4 +428,47 @@ test("a geometry render uses the current server clock instead of a stale parent 
   );
   assert.match(markup, /data-player-id="ana" data-position="1" data-moving="true"/);
   assert.match(markup, /translateX\(.*translateY\(/);
+});
+
+test("Taleclue renders an inactive individual audio control safely without a browser", () => {
+  assert.match(
+    render(),
+    /<button[^>]*data-taleclue-sound-control="true"[^>]*aria-pressed="false"[^>]*>[\s\S]*?Ativar som[\s\S]*?<\/button>/,
+  );
+});
+
+test("a paused pawn preserves the fraction between houses without scheduling more movement", () => {
+  const markup = renderToStaticMarkup(
+    createElement(TaleclueScoreboard, {
+      view: { ...view, phase: "reveal", deadline: null },
+      members: room.members,
+      moves: [{ playerId: "ana", from: 0, to: 2 }],
+      elapsed: 10200,
+    }),
+  );
+  const pawn = markup.match(
+    /data-player-id="ana" data-position="0" data-moving="false"[^>]*translateX\(([\d.]+)px\)/,
+  );
+  assert.ok(pawn);
+  assert.ok(Math.abs(Number(pawn[1]) - 68) < 0.000001);
+});
+
+test("the board states its target and explains its scrollable trail", () => {
+  const markup = renderToStaticMarkup(
+    createElement(TaleclueScoreboard, {
+      view: { ...view, config: { ...view.config, targetPoints: 50 } },
+      members: room.members,
+    }),
+  );
+  assert.match(markup, /Meta: 50 pontos/);
+  assert.match(markup, /Role para acompanhar a trilha\./);
+});
+test("decoy selection and submission precede the forming table", () => {
+  const markup = render({ phase: "decoy", clue: "Sonho" }, "bia");
+  assert.ok(markup.indexOf('aria-label="Sua mão"') < markup.indexOf('aria-label="Mesa"'));
+  assert.ok(markup.indexOf("Jogar iscas") < markup.indexOf('aria-label="Mesa"'));
+});
+test("vote confirmation precedes the inactive hand", () => {
+  const markup = render({ phase: "vote", clue: "Sonho", table: ["tc-099"] }, "bia");
+  assert.ok(markup.indexOf("Confirmar voto") < markup.indexOf('aria-label="Sua mão"'));
 });

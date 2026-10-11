@@ -634,6 +634,7 @@ test("Taleclue board: fifty houses and eight visible blobatars in the same house
       String(Math.min([0, 1, 12, 12, 12, 49, 50, 53][index], 50)),
     );
   await expect(board).toContainText("53 pontos");
+  await expect(board).toContainText("Meta: 50 pontos");
   for (const house of [0, 12, 50]) {
     for (const id of ids) stored.game.state.points[id] = house;
     await writeRoom(code, stored);
@@ -679,6 +680,9 @@ test("Taleclue board: fifty houses and eight visible blobatars in the same house
           )
           .toBe(24);
         await expect(scroller).toHaveAttribute("tabindex", "0");
+        await expect(board).toContainText("Role para acompanhar a trilha.");
+        if (house === 50) await expect(board.locator("[data-board-more]")).toHaveCount(0);
+        else await expect(board.locator("[data-board-more]")).toHaveCount(1);
         await scroller.focus();
         const beforeScroll = await scroller.evaluate((n) => n.scrollTop);
         await page.keyboard.press(house === 50 ? "ArrowUp" : "ArrowDown");

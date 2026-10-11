@@ -29,6 +29,7 @@ type PawnProps = {
   number: number;
   offset: { x: number; y: number };
   highlighted: boolean;
+  paused: boolean;
 };
 
 function TalecluePawn({
@@ -43,6 +44,7 @@ function TalecluePawn({
   number,
   offset,
   highlighted,
+  paused,
 }: PawnProps) {
   const position = move ? taleclueMovePosition(move.from, move.to, elapsed) : player.position;
   // Remount only for geometry/phase changes: each route seeks the same server deadline.
@@ -52,13 +54,16 @@ function TalecluePawn({
       move && elapsed >= 9600
         ? taleclueMoveRoute(move.from, move.to, elapsed, target, columns, rowHeight)
         : { x: [cell.x], y: [cell.y], times: [0], duration: 0 };
+    const remaining = paused
+      ? { x: [route.x[0]], y: [route.y[0]], times: [0], duration: 0 }
+      : route;
     return {
-      ...route,
-      x: route.x.map((x) => (x * width) / 100 + offset.x),
-      y: route.y.map((y) => y + 34 + offset.y),
+      ...remaining,
+      x: remaining.x.map((x) => (x * width) / 100 + offset.x),
+      y: remaining.y.map((y) => y + 34 + offset.y),
     };
   });
-  const moving = !!move && move.from !== move.to && elapsed >= 9600 && elapsed < 12000;
+  const moving = !paused && !!move && move.from !== move.to && elapsed >= 9600 && elapsed < 12000;
   return (
     <motion.span
       data-player-id={player.id}
@@ -104,17 +109,24 @@ export function TaleclueScoreboard({
   const viewport = useRef<HTMLElement>(null);
   const title = useId();
   const [width, setWidth] = useState(288);
+  const [viewportState, setViewportState] = useState({ height: 384, top: 0 });
   useEffect(() => {
     const node = board.current;
     if (!node) return;
-    const resize = new ResizeObserver(([entry]) => setWidth(entry.contentRect.width));
+    const resize = new ResizeObserver(() => {
+      setWidth(node.clientWidth);
+      const scroll = viewport.current;
+      if (scroll) setViewportState({ height: scroll.clientHeight, top: scroll.scrollTop });
+    });
     resize.observe(node);
+    if (viewport.current) resize.observe(viewport.current);
     return () => resize.disconnect();
   }, []);
   const elapsed =
     clock && view.phase === "reveal" && view.deadline !== null
       ? taleclueRevealElapsed(view.deadline, clock.now())
       : projectedElapsed;
+  const paused = view.phase === "reveal" && view.deadline === null;
   const target = view.config.targetPoints;
   const layout = taleclueBoardLayout(width, target);
   const boardWidth = layout.cellWidth * layout.columns;
@@ -137,22 +149,31 @@ export function TaleclueScoreboard({
     : null;
   useEffect(() => {
     const node = viewport.current;
-    if (!node || followY === null || elapsed < 9600 || elapsed > 12000) return;
+    if (paused || !node || followY === null || elapsed < 9600 || elapsed > 12000) return;
     const center = followY + layout.rowHeight / 2;
     if (center < node.scrollTop + 64 || center > node.scrollTop + node.clientHeight - 64)
       node.scrollTop = Math.max(0, center - node.clientHeight / 2);
-  }, [followY, elapsed, layout.rowHeight]);
+  }, [followY, elapsed, layout.rowHeight, paused]);
   const name = (id: string) => members.find((member) => member.id === id)?.name ?? id;
   return (
     <section aria-label="Tabuleiro" className="flex flex-col gap-4">
-      <h2 id={title} className="text-sm font-semibold">
-        Tabuleiro
-      </h2>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h2 id={title} className="text-sm font-semibold">
+          Tabuleiro
+        </h2>
+        <span className="text-xs text-muted-foreground">Meta: {target} pontos</span>
+      </div>
       <section
         ref={viewport}
         aria-label="Avanço no tabuleiro"
         // biome-ignore lint/a11y/noNoninteractiveTabindex: The scrollable board needs keyboard access.
         tabIndex={0}
+        onScroll={(event) =>
+          setViewportState({
+            height: event.currentTarget.clientHeight,
+            top: event.currentTarget.scrollTop,
+          })
+        }
         data-board-viewport
         className="relative max-h-[384px] overflow-auto rounded-lg border border-border bg-card p-1 outline-none focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 xl:max-h-[512px]"
       >
@@ -207,11 +228,12 @@ export function TaleclueScoreboard({
               (view.phase === "decoy" || view.phase === "vote") && view.acted.includes(player.id);
             return (
               <TalecluePawn
-                key={`${player.id}:${view.round}:${view.phase}:${width}:${elapsed >= 9600 ? "move" : "wait"}`}
+                key={`${player.id}:${view.round}:${view.phase}:${view.deadline ?? "paused"}:${width}:${elapsed >= 9600 ? "move" : "wait"}`}
                 player={player}
                 member={members.find((member) => member.id === player.id)}
                 move={moves.find((move) => move.playerId === player.id)}
                 elapsed={elapsed}
+                paused={paused}
                 target={target}
                 width={boardWidth}
                 columns={layout.columns}
@@ -228,11 +250,13 @@ export function TaleclueScoreboard({
           })}
         </div>
       </section>
-      {layout.height > 384 ? (
-        <ChevronsDownIcon
-          aria-hidden="true"
-          className="mx-auto -mt-3 size-4 text-muted-foreground"
-        />
+      {layout.height > viewportState.height ? (
+        <p className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
+          Role para acompanhar a trilha.
+          {layout.height > viewportState.height + viewportState.top + 1 ? (
+            <ChevronsDownIcon data-board-more aria-hidden="true" className="size-4" />
+          ) : null}
+        </p>
       ) : null}
       <ul
         className="grid gap-x-6 gap-y-3"

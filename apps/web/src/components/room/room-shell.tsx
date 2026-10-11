@@ -27,6 +27,7 @@ import { type RoomActions, RoomSidebar } from "@/components/room/room-sidebar";
 import { useRoomTransition } from "@/components/room/room-transition";
 import { SiteBar } from "@/components/site-bar";
 import { TaleclueBoard, type TaleclueDraft } from "@/components/taleclue/taleclue-board";
+import { useTaleclueSound } from "@/components/taleclue/taleclue-sound-control";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -36,6 +37,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { ServerClock } from "@/lib/server-clock";
 import { clearSession } from "@/lib/session";
+import { createTaleclueRevealProgress } from "@/lib/taleclue";
 import { useRoom } from "@/lib/use-room";
 import { cn } from "@/lib/utils";
 
@@ -308,6 +310,18 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
   const [removeTarget, setRemoveTarget] = useState<MemberView | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
   const connected = status === "connected";
+  const taleclueSound = useTaleclueSound(
+    room?.game?.type === "taleclue" ? room.game.view : null,
+    connected,
+    clock,
+  );
+  const [taleclueRevealProgress] = useState(createTaleclueRevealProgress);
+  const urgencyAnnouncements = useRef(new Set<string>());
+  useEffect(() => {
+    const view = room?.game?.type === "taleclue" ? room.game.view : null;
+    if (!view) urgencyAnnouncements.current.clear();
+    taleclueRevealProgress.read(view ?? { phase: "clue", round: 0, deadline: null }, clock.now());
+  }, [room?.game, clock, taleclueRevealProgress]);
   const [arriving, setArriving] = useState(false);
   const you = room?.you;
 
@@ -407,6 +421,9 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
             />
           ) : room.game?.type === "taleclue" ? (
             <TaleclueBoard
+              sound={taleclueSound}
+              revealProgress={taleclueRevealProgress}
+              urgencyAnnouncements={urgencyAnnouncements.current}
               draft={taleclueDraft}
               onDraftChange={setTaleclueDraft}
               room={room}
