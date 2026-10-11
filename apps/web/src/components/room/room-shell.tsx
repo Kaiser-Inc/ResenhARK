@@ -26,6 +26,7 @@ import { RoomMobileBar } from "@/components/room/room-mobile-bar";
 import { type RoomActions, RoomSidebar } from "@/components/room/room-sidebar";
 import { useRoomTransition } from "@/components/room/room-transition";
 import { SiteBar } from "@/components/site-bar";
+import { TaleclueBoard, type TaleclueDraft } from "@/components/taleclue/taleclue-board";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -296,6 +297,10 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
     code,
     sessionToken,
   );
+  const [taleclueDraft, setTaleclueDraft] = useState<TaleclueDraft | null>(null);
+  useEffect(() => {
+    if (room?.game?.type !== "taleclue") setTaleclueDraft(null);
+  }, [room?.game?.type]);
   const router = useRouter();
   const { finish } = useRoomTransition();
   // After "Sair da sala" the server revokes the token and hangs up: that is not an invalid session.
@@ -389,7 +394,7 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
             : null
         }
         focusOnMount={focusOnMount}
-        scrollPage={room?.game?.type === "hitline"}
+        scrollPage={room?.game?.type === "hitline" || room?.game?.type === "taleclue"}
       >
         {room ? (
           room.game?.type === "huehint" ? (
@@ -400,7 +405,17 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
               clock={clock}
               connected={connected}
             />
-          ) : room.game ? (
+          ) : room.game?.type === "taleclue" ? (
+            <TaleclueBoard
+              draft={taleclueDraft}
+              onDraftChange={setTaleclueDraft}
+              room={room}
+              events={events}
+              send={send}
+              clock={clock}
+              connected={connected}
+            />
+          ) : room.game?.type === "hitline" ? (
             <HitlineBoard
               room={room}
               events={events}

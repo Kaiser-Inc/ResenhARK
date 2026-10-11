@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { DEFAULT_HITLINE_CONFIG, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
+import {
+  DEFAULT_HITLINE_CONFIG,
+  DEFAULT_HUEHINT_CONFIG,
+  DEFAULT_TALECLUE_CONFIG,
+} from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
 import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
 import { projectRoom } from "./project-room.js";
@@ -33,6 +37,7 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
     selectedGame: "hitline",
     config: DEFAULT_HITLINE_CONFIG,
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
+    taleclueConfig: DEFAULT_TALECLUE_CONFIG,
     playlist: { source: "default", name: "Baralho ResenhARK", count: DEFAULT_DECK.cards.length },
     remaining: DEFAULT_DECK.cards.length,
     smallPlaylist: false,

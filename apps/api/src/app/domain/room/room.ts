@@ -2,11 +2,13 @@ import {
   type Avatar,
   DEFAULT_HITLINE_CONFIG,
   DEFAULT_HUEHINT_CONFIG,
+  DEFAULT_TALECLUE_CONFIG,
   type GameType,
   type HitlineConfig,
   type Hsb,
   type HuehintConfig,
   ROOM_CODE_ALPHABET,
+  type TaleclueConfig,
   normalizeName,
 } from "@resenhark/shared";
 import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
@@ -32,12 +34,15 @@ export type Lobby = {
   /** Hitline config. */
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
+  taleclueConfig: TaleclueConfig;
   /** The imported playlist; null plays DEFAULT_DECK. */
   deck: ImportedPlaylist | null;
   /** Stable keys (see playedKey) of every song already played in this room. */
   played: string[];
   /** The colors Huehint drew in this room, oldest first, so a new game avoids them. */
   colors: Hsb[];
+  /** Card ids Taleclue dealt in this room, so a new game prefers cards not seen yet. */
+  taleclueUsed: string[];
 };
 export type { ActiveGame };
 
@@ -76,9 +81,11 @@ export function createRoom(code: string, owner: Member, now: number): Room {
       game: "hitline",
       config: DEFAULT_HITLINE_CONFIG,
       huehintConfig: DEFAULT_HUEHINT_CONFIG,
+      taleclueConfig: DEFAULT_TALECLUE_CONFIG,
       deck: null,
       played: [],
       colors: [],
+      taleclueUsed: [],
     },
     game: null,
   };
@@ -136,6 +143,17 @@ export function foldPlayed(room: Room): Room {
 export function foldColors(room: Room, colors: Hsb[]): Room {
   const kept = [...(room.lobby.colors ?? []), ...colors].slice(-MAX_COLORS);
   return { ...room, lobby: { ...room.lobby, colors: kept } };
+}
+
+/**
+ * Adds the cards a finished Taleclue game dealt to the room's memory. Idempotent, so it runs on
+ * reset, on import and on a start straight from a finished game.
+ */
+export function foldTaleclueUsed(room: Room): Room {
+  const { game, lobby } = room;
+  if (game?.type !== "taleclue") return room;
+  const used = new Set([...(lobby.taleclueUsed ?? []), ...game.state.used]);
+  return { ...room, lobby: { ...lobby, taleclueUsed: [...used] } };
 }
 
 export function isOnline(member: Member): boolean {

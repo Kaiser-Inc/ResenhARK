@@ -1,6 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { DEFAULT_HITLINE_CONFIG, DEFAULT_HUEHINT_CONFIG } from "@resenhark/shared";
+import {
+  DEFAULT_HITLINE_CONFIG,
+  DEFAULT_HUEHINT_CONFIG,
+  DEFAULT_TALECLUE_CONFIG,
+} from "@resenhark/shared";
 import { startTestServer } from "../../test/helpers.js";
 
 test("revokeMemberSessions drops every session of that member only", async () => {
@@ -60,5 +64,7 @@ test("load gives rooms saved before Huehint the default game choice", async () =
   const room = await app.store.load("ABCDE");
   assert.equal(room?.lobby.game, "hitline");
   assert.deepEqual(room?.lobby.huehintConfig, DEFAULT_HUEHINT_CONFIG);
+  assert.deepEqual(room?.lobby.taleclueConfig, DEFAULT_TALECLUE_CONFIG);
+  assert.deepEqual(room?.lobby.taleclueUsed, []);
   await app.close();
 });

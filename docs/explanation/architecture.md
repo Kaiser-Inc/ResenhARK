@@ -4,7 +4,7 @@ ResenhARK is a monorepo with three packages: `apps/api` (the server), `apps/web`
 
 ## The server is the authority
 
-The web app holds no game logic. It sends intents ("draw", "lock this guess") and renders what the server sends back. The game engines (Hitline, Huehint) run only on the server, and so does the Huehint scoring. `packages/shared` carries Zod schemas and types for intents, views and events, not the engine.
+The web app holds no game logic. It sends intents ("draw", "lock this guess") and renders what the server sends back. The game engines (Hitline, Huehint, Taleclue) run only on the server, and so does the scoring. `packages/shared` carries Zod schemas and types for intents, views and events, not the engine.
 
 Every change follows the same path:
 
@@ -70,11 +70,13 @@ The engine in `apps/api/src/app/games/hitline/engine.ts` is made of pure functio
 
 The Huehint engine in `games/huehint/engine.ts` has the same shape. Its `create(config, playerIds, ctx)` takes no deck: it shuffles the giver order and draws every round's color up front. `color.ts` holds the CIEDE2000 scoring and `palette.ts` the color draw. See [Huehint rules](../reference/huehint-rules.md).
 
+The Taleclue engine in `games/taleclue/engine.ts` also takes its deck as a parameter: `create(config, playerIds, deck, ctx)` receives card ids, and the gateway builds that list from `TALECLUE_CARDS` and the room's card memory (`deck.ts`). `scoring.ts` scores a round and builds the reveal steps as pure functions. See [Taleclue rules](../reference/taleclue-rules.md).
+
 Deadlines are absolute timestamps stored in the state. After each commit, the hub arms one `setTimeout` per room for the next deadline (`roomDeadline`, which also covers the owner handover). When it fires, it runs an empty mutation, so the `tick` runs inside the queue like everything else. A stale timer does nothing, because the tick decides from the state.
 
 ## The room and game boundary
 
-The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and never reads inside the state. Each game module (`games/hitline`, `games/huehint`) knows nothing about members or sockets.
+The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and reads inside the state in one place only: the memory folds (`foldPlayed` reads the Hitline deck, `foldTaleclueUsed` reads the cards Taleclue dealt) that carry what a finished game used into the lobby. Each game module (`games/hitline`, `games/huehint`, `games/taleclue`) knows nothing about members or sockets.
 
 `games/registry.ts` holds the minimal game contract, extracted once Huehint became the second real game. Each game provides four pure functions with the same shape:
 
