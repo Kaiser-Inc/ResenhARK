@@ -23,6 +23,9 @@ export default function RulesPage() {
         <section aria-label="Regras do Hitline">
           <GameRules game="hitline" headingLevel={2} />
         </section>
+        <section aria-label="Regras do Taleclue">
+          <GameRules game="taleclue" headingLevel={2} />
+        </section>
       </main>
     </>
   );
