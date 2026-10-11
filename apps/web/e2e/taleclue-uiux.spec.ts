@@ -384,6 +384,26 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
   await giver.getByRole("button", { name: "Enviar pista", exact: true }).click();
   await expect(others[0].locator('[data-waiting="true"]')).toHaveCount(0);
   await expectSoftShadow(others[0].locator("[data-clue-display]"));
+  const highlight = await others[0].locator("[data-clue-display]").evaluate((node) => {
+    const animation = node
+      .getAnimations({ subtree: true })
+      .find(
+        (animation) =>
+          animation instanceof CSSAnimation && animation.animationName === "taleclue-attention",
+      );
+    if (!animation) return { opacity: 0, iterations: 0 };
+    // Inspect the actual halo one second into its timeline, then let it finish normally.
+    animation.pause();
+    animation.currentTime = 1000;
+    const result = {
+      opacity: Number(getComputedStyle(node, "::after").opacity),
+      iterations: animation.effect?.getTiming().iterations,
+    };
+    animation.play();
+    return result;
+  });
+  expect(highlight.iterations).toBe(1);
+  expect(highlight.opacity).toBeGreaterThanOrEqual(0.9);
   await expect
     .poll(() =>
       others[0]
@@ -431,7 +451,7 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
     await expect(reveal).toHaveAttribute("data-reveal-step", String(step));
     await expect(reveal.getByRole("heading", { name: captions[step], exact: true })).toBeVisible();
     // Capture after card entry/flip, inside this step and without disabling game motion.
-    await giver.waitForTimeout(step === 0 ? 900 : 350);
+    await giver.waitForTimeout(step === 0 ? 1500 : 700);
     await giver.screenshot({
       path: path.join(UI_DIR, `fatia-2-reveal-${step}.png`),
       fullPage: true,

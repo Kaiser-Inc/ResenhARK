@@ -34,12 +34,12 @@ export function TaleclueCountdown({
           timing.urgent && "text-destructive",
         )}
         animate={{
-          transform: timing.urgent ? ["scale(1)", "scale(1.05)", "scale(1)"] : "scale(1)",
+          transform: timing.urgent ? ["scale(1)", "scale(1.08)", "scale(1)"] : "scale(1)",
         }}
         transition={
           timing.urgent
-            ? { duration: 1.6, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }
-            : { duration: 0.12 }
+            ? { duration: 2.4, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }
+            : { duration: 0.2 }
         }
       >
         <svg aria-hidden="true" viewBox="0 0 44 44" className="absolute inset-0 -rotate-90">

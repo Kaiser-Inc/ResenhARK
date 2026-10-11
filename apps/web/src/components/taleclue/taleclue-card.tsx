@@ -23,8 +23,8 @@ function CardArt({
     <div
       data-card-art
       className={cn(
-        "relative aspect-[2/3] w-full rounded-lg bg-muted transition-opacity duration-200",
-        spotlight && "taleclue-attention",
+        "relative aspect-[2/3] w-full rounded-lg bg-muted transition-opacity duration-[400ms]",
+        spotlight && "taleclue-selection taleclue-attention",
         dimmed && "opacity-40",
       )}
     >
@@ -83,7 +83,7 @@ export function TaleclueCard({
       animate={{ transform: selected ? "translateY(-2px)" : "translateY(0px)" }}
       exit={{ transform: "translateY(-64px) scale(0.85)" }}
       transition={{
-        transform: { duration: 0.16, ease: [0.23, 1, 0.32, 1] },
+        transform: { duration: 0.28, ease: [0.23, 1, 0.32, 1] },
       }}
     >
       {onSelect ? (

@@ -98,7 +98,7 @@ function RoundReveal({
             className="flex min-w-0 flex-col gap-2"
             initial={passed(0) ? false : { transform: "rotateY(90deg)" }}
             animate={{ transform: "rotateY(0deg)" }}
-            transition={{ duration: 0.45, delay: passed(0) ? 0 : index * 0.08 }}
+            transition={{ duration: 0.7, delay: passed(0) ? 0 : index * 0.1 }}
           >
             <TaleclueCard
               cardId={card.cardId}
@@ -129,11 +129,13 @@ function RoundReveal({
                       data-voter-id={vote.voterId}
                       className={cn(
                         "break-all rounded-md bg-muted px-2 py-1 text-xs font-medium",
-                        focus(1) ? "taleclue-attention" : "text-muted-foreground",
+                        focus(1)
+                          ? "taleclue-selection taleclue-attention"
+                          : "text-muted-foreground",
                       )}
-                      initial={passed(1) ? false : { opacity: 0, transform: "translateY(-12px)" }}
-                      animate={{ opacity: 1, transform: "translateY(0px)" }}
-                      transition={{ duration: 0.25 }}
+                      initial={passed(1) ? false : { transform: "translateY(-12px)" }}
+                      animate={{ transform: "translateY(0px)" }}
+                      transition={{ duration: 0.45 }}
                     >
                       {nameOf(members, vote.voterId)}
                     </motion.span>
@@ -145,13 +147,13 @@ function RoundReveal({
       </div>
       {stage >= 2 && correct ? (
         <motion.div
-          initial={passed(2) ? false : { opacity: 0, transform: "translateY(8px)" }}
-          animate={{ opacity: 1, transform: "translateY(0px)" }}
-          transition={{ duration: 0.25 }}
+          initial={passed(2) ? false : { transform: "translateY(8px)" }}
+          animate={{ transform: "translateY(0px)" }}
+          transition={{ duration: 0.45 }}
           data-highlighted={focus(2)}
           className={cn(
             "flex flex-col gap-2 rounded-md",
-            focus(2) && "taleclue-attention",
+            focus(2) && "taleclue-selection taleclue-attention",
             active && !focus(2) && "text-muted-foreground",
           )}
         >
@@ -170,13 +172,13 @@ function RoundReveal({
       ) : null}
       {stage >= 3 && decoy ? (
         <motion.div
-          initial={passed(3) ? false : { opacity: 0, transform: "translateY(8px)" }}
-          animate={{ opacity: 1, transform: "translateY(0px)" }}
-          transition={{ duration: 0.25 }}
+          initial={passed(3) ? false : { transform: "translateY(8px)" }}
+          animate={{ transform: "translateY(0px)" }}
+          transition={{ duration: 0.45 }}
           data-highlighted={focus(3)}
           className={cn(
             "flex flex-col gap-2 rounded-md",
-            focus(3) && "taleclue-attention",
+            focus(3) && "taleclue-selection taleclue-attention",
             active && !focus(3) && "text-muted-foreground",
           )}
         >
