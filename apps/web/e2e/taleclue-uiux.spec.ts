@@ -101,8 +101,7 @@ for (const count of [3, 4]) {
           const clue = await giver.getByLabel("Pista", { exact: true }).boundingBox();
           if (!hand || !board || !clue) throw new Error("Game geometry is unavailable");
           expect(clue.y).toBeLessThan(hand.y);
-          if (width === 390) expect(hand.y).toBeLessThan(board.y);
-          else expect(hand.x + hand.width).toBeLessThanOrEqual(board.x);
+          expect(hand.y + hand.height).toBeLessThanOrEqual(board.y);
           expect(
             await giver.evaluate(() => document.documentElement.scrollWidth <= innerWidth),
           ).toBe(true);
@@ -314,6 +313,7 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
   await expect(card).toHaveAttribute("aria-pressed", "false");
   await card.press("Space");
   await expect(card).toHaveAttribute("aria-pressed", "true");
+  await expect(giver.locator("[data-narrator-card]")).toHaveCount(0);
   const waiting = others[0].locator("[data-phase-guidance]");
   const sentence = await waiting.locator('[aria-live="polite"]').innerText();
   await expect(waiting.locator('[data-waiting="true"][aria-hidden="true"]')).toBeVisible();
@@ -450,6 +450,22 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
   for (let step = 0; step < captions.length; step++) {
     await expect(reveal).toHaveAttribute("data-reveal-step", String(step));
     await expect(reveal.getByRole("heading", { name: captions[step], exact: true })).toBeVisible();
+    if (step === 3) {
+      const details = await reveal.evaluate((node) => ({
+        narrators: node.querySelectorAll("[data-narrator-card]").length,
+        paddedAwards: Array.from(node.querySelectorAll("[data-highlighted]")).every((award) => {
+          const style = getComputedStyle(award);
+          return [
+            style.paddingTop,
+            style.paddingRight,
+            style.paddingBottom,
+            style.paddingLeft,
+          ].every((padding) => Number.parseFloat(padding) >= 12);
+        }),
+      }));
+      expect(details).toEqual({ narrators: 1, paddedAwards: true });
+      await expect(reveal.locator("[data-narrator-card]")).toHaveText(/^Narrador: (Ana|Bia|Caio)$/);
+    }
     // Capture after card entry/flip, inside this step and without disabling game motion.
     await giver.waitForTimeout(step === 0 ? 1500 : 700);
     await giver.screenshot({
@@ -459,6 +475,45 @@ test("Taleclue feedback: soft selection, stable waiting and public action highli
   }
   await expect(reveal).toHaveAttribute("data-reveal-active", "false");
   await expectNoAxeViolations(giver);
+  const history = giver.getByRole("region", { name: "Rodadas anteriores", exact: true });
+  await expect(history).toBeVisible();
+  for (const theme of ["dark", "light"]) {
+    await giver.evaluate(
+      (theme) => document.documentElement.classList.toggle("dark", theme === "dark"),
+      theme,
+    );
+    for (const width of [390, 1440]) {
+      await giver.setViewportSize({ width, height: 900 });
+      await expect(giver.getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
+        width === 390 ? 1 : 0,
+      );
+      const details = history.locator("details").first();
+      if ((await details.getAttribute("open")) === null) await details.locator("summary").click();
+      await expect(history.locator("[data-narrator-card]")).toBeVisible();
+      expect(
+        await history.locator("[data-narrator-card]").evaluate((node) => {
+          const text = node.querySelector("span")?.firstChild;
+          if (!text || text.nodeType !== Node.TEXT_NODE) return 0;
+          const label = document.createRange();
+          label.setStart(text, 0);
+          label.setEnd(text, "Narrador:".length);
+          return label.getClientRects().length;
+        }),
+      ).toBe(1);
+      const board = await giver
+        .getByRole("region", { name: "Tabuleiro", exact: true })
+        .boundingBox();
+      const previous = await history.boundingBox();
+      if (!board || !previous) throw new Error("Board/history geometry is unavailable");
+      expect(board.y + board.height).toBeLessThanOrEqual(previous.y);
+      await expectNoAxeViolations(giver);
+      await giver.evaluate(() => window.scrollTo(0, 0));
+      await giver.screenshot({
+        path: path.join(UI_DIR, `ajuste-layout-${width}-${theme}.png`),
+        fullPage: true,
+      });
+    }
+  }
 });
 
 type AudioStats = { contexts: number; cancelled: number; starts: { kind: string; at: number }[] };

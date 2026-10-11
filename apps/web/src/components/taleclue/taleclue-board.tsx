@@ -37,7 +37,7 @@ import {
   type TaleclueRoundView,
   type TaleclueView,
 } from "@resenhark/shared";
-import { LayersIcon } from "lucide-react";
+import { LayersIcon, MicIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { type Dispatch, type SetStateAction, useId, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -56,7 +56,7 @@ const OUTCOMES = {
   none: "Ninguém acertou.",
   "no-votes": "Sem votos nesta rodada.",
 };
-const grid = "grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4 xl:grid-cols-3 2xl:grid-cols-4";
+const grid = "grid grid-cols-3 gap-x-3 gap-y-4 sm:grid-cols-4";
 const nameOf = (members: MemberView[], id: string | null) =>
   members.find((member) => member.id === id)?.name ?? id ?? "";
 
@@ -100,6 +100,24 @@ function RoundReveal({
             animate={{ transform: "rotateY(0deg)" }}
             transition={{ duration: 0.7, delay: passed(0) ? 0 : index * 0.1 }}
           >
+            <div
+              data-narrator-card={card.narrator ? "" : undefined}
+              className={cn(
+                "flex min-h-12 items-center gap-1 rounded-md px-2 py-2 text-xs font-semibold sm:min-h-10 sm:gap-2 sm:px-3 sm:text-sm",
+                card.narrator
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground",
+              )}
+            >
+              {card.narrator ? (
+                <MicIcon aria-hidden="true" className="size-4 shrink-0" strokeWidth={1.75} />
+              ) : null}
+              <span className="min-w-0 break-words">
+                {card.narrator
+                  ? `Narrador: ${nameOf(members, card.ownerId)}`
+                  : nameOf(members, card.ownerId)}
+              </span>
+            </div>
             <TaleclueCard
               cardId={card.cardId}
               index={index}
@@ -112,11 +130,6 @@ function RoundReveal({
                 active &&
                 !(focus(0) && card.narrator) &&
                 !(focus(1) && votes?.votes.some((vote) => vote.cardId === card.cardId))
-              }
-              note={
-                card.narrator
-                  ? `Narrador: ${nameOf(members, card.ownerId)}`
-                  : nameOf(members, card.ownerId)
               }
             />
             {stage >= 1 ? (
@@ -152,7 +165,7 @@ function RoundReveal({
           transition={{ duration: 0.45 }}
           data-highlighted={focus(2)}
           className={cn(
-            "flex flex-col gap-2 rounded-md",
+            "flex flex-col gap-2 rounded-md p-3",
             focus(2) && "taleclue-selection taleclue-attention",
             active && !focus(2) && "text-muted-foreground",
           )}
@@ -177,7 +190,7 @@ function RoundReveal({
           transition={{ duration: 0.45 }}
           data-highlighted={focus(3)}
           className={cn(
-            "flex flex-col gap-2 rounded-md",
+            "flex flex-col gap-2 rounded-md p-3",
             focus(3) && "taleclue-selection taleclue-attention",
             active && !focus(3) && "text-muted-foreground",
           )}
@@ -597,7 +610,7 @@ export function TaleclueBoard({
           ))}
         </output>
       ) : null}
-      <div className="grid min-w-0 gap-8 xl:grid-cols-[minmax(0,1fr)_320px]">
+      <div className="flex min-w-0 flex-col gap-8">
         <div className="flex min-w-0 flex-col gap-6">
           {over ? (
             <GameResult
