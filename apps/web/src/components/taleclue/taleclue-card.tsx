@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { taleclueThumbnail } from "@/lib/taleclue";
 import { cn } from "@/lib/utils";
 import { Button as CardButton } from "@base-ui/react/button";
 import { Dialog } from "@base-ui/react/dialog";
@@ -9,20 +10,33 @@ import { CheckIcon, LayersIcon } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";
 
-function CardArt({ cardId, label }: { cardId: string; label: string }) {
+function CardArt({
+  cardId,
+  label,
+  full = false,
+  spotlight = false,
+  dimmed = false,
+}: { cardId: string; label: string; full?: boolean; spotlight?: boolean; dimmed?: boolean }) {
   const [failed, setFailed] = useState(false);
   const card = TALECLUE_CARDS.find((card) => card.id === cardId);
   return (
-    <div data-card-art className="relative aspect-[2/3] w-full overflow-hidden rounded-lg bg-muted">
+    <div
+      data-card-art
+      className={cn(
+        "relative aspect-[2/3] w-full rounded-lg bg-muted transition-opacity duration-[400ms]",
+        spotlight && "taleclue-selection taleclue-attention",
+        dimmed && "opacity-40",
+      )}
+    >
       {card && !failed ? (
         <img
-          src={card.image}
-          alt={label}
-          width={480}
-          height={720}
+          src={full ? card.image : taleclueThumbnail(card.image)}
+          alt={card.alt}
+          width={full ? 800 : 400}
+          height={full ? 1200 : 600}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 size-full object-cover"
+          className="absolute inset-0 size-full rounded-lg object-cover"
           onError={() => setFailed(true)}
         />
       ) : (
@@ -47,6 +61,8 @@ export function TaleclueCard({
   onSelect,
   note,
   animate = true,
+  spotlight = false,
+  dimmed = false,
 }: {
   cardId: string;
   index: number;
@@ -55,16 +71,20 @@ export function TaleclueCard({
   onSelect?: () => void;
   note?: string;
   animate?: boolean;
+  spotlight?: boolean;
+  dimmed?: boolean;
 }) {
   const label = `Carta ${index + 1}`;
   return (
     <motion.div
       data-card-id={cardId}
       className="flex min-w-0 flex-col gap-2"
-      initial={animate ? { opacity: 0, transform: "translateY(16px)" } : false}
-      animate={{ opacity: 1, transform: selected ? "translateY(-8px)" : "translateY(0px)" }}
-      exit={{ opacity: 0, transform: "translateY(-64px) scale(0.85)" }}
-      transition={{ duration: 0.3, delay: animate ? index * 0.035 : 0, ease: [0.23, 1, 0.32, 1] }}
+      initial={animate ? { transform: "translateY(16px)" } : false}
+      animate={{ transform: selected ? "translateY(-2px)" : "translateY(0px)" }}
+      exit={{ transform: "translateY(-64px) scale(0.85)" }}
+      transition={{
+        transform: { duration: 0.28, ease: [0.23, 1, 0.32, 1] },
+      }}
     >
       {onSelect ? (
         <CardButton
@@ -73,11 +93,11 @@ export function TaleclueCard({
           disabled={disabled}
           onClick={onSelect}
           className={cn(
-            "relative w-full rounded-lg outline-hidden ring-1 ring-border transition-[box-shadow,transform] duration-150 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-default",
-            selected && "ring-2 ring-primary-text",
+            "relative w-full rounded-lg outline-none ring-1 ring-border focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-4 focus-visible:outline-ring disabled:cursor-default",
+            selected && "taleclue-selection",
           )}
         >
-          <CardArt cardId={cardId} label={label} />
+          <CardArt cardId={cardId} label={label} spotlight={spotlight} dimmed={dimmed} />
           {selected ? (
             <span className="absolute right-2 top-2 rounded-md bg-primary p-1 text-primary-foreground">
               <CheckIcon aria-hidden="true" className="size-4" strokeWidth={1.75} />
@@ -86,7 +106,7 @@ export function TaleclueCard({
           ) : null}
         </CardButton>
       ) : (
-        <CardArt cardId={cardId} label={label} />
+        <CardArt cardId={cardId} label={label} spotlight={spotlight} dimmed={dimmed} />
       )}
       <div className="flex min-h-4 flex-wrap items-center justify-between gap-1 text-xs">
         <span className="text-muted-foreground">{label}</span>
@@ -100,11 +120,11 @@ export function TaleclueCard({
           Ampliar
         </Dialog.Trigger>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 z-50 bg-background/70 backdrop-blur-sm transition-opacity duration-150 data-starting-style:opacity-0 data-ending-style:opacity-0" />
+          <Dialog.Backdrop className="fixed inset-0 z-50 bg-background/70 transition-opacity duration-150 data-starting-style:opacity-0 data-ending-style:opacity-0" />
           <Dialog.Viewport className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center p-4">
             <Dialog.Popup className="pointer-events-auto relative w-[min(480px,calc(100vw-32px),calc((100dvh-96px)*2/3))] outline-hidden transition-[opacity,transform] duration-200 data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0">
               <Dialog.Title className="sr-only">{label}</Dialog.Title>
-              <CardArt cardId={cardId} label={label} />
+              <CardArt cardId={cardId} label={label} full />
               <Dialog.Close render={<Button variant="secondary" className="fixed right-4 top-4" />}>
                 Fechar
               </Dialog.Close>

@@ -86,6 +86,7 @@ export default function HomePage() {
         >
           <GameCard game="hitline" />
           <GameCard game="huehint" />
+          <GameCard game="taleclue" />
         </section>
       </main>
     </>

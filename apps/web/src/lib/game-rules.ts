@@ -1,9 +1,36 @@
 import {
+  DEFAULT_TALECLUE_CONFIG,
   HUEHINT_RANKS,
   type HitlineConfig,
   type HuehintConfig,
   type TaleclueConfig,
 } from "@resenhark/shared";
+
+export function taleclueFullRules(config: TaleclueConfig = DEFAULT_TALECLUE_CONFIG): string[] {
+  return [
+    "Jogue com 3 a 8 jogadores. Cada pessoa recebe 6 cartas; com 3 jogadores, recebe 7 cartas e joga 2 iscas. O narrador muda a cada rodada.",
+    `Pista: o narrador escolhe uma carta da mão e escreve uma pista de 1 a 30 caracteres. Prazo: ${config.clueSeconds} s.`,
+    `Iscas: os demais escolhem 1 carta que combine com a pista; com 3 jogadores, escolhem 2. Prazo: ${config.decoySeconds} s.`,
+    `Voto: as cartas são embaralhadas na mesa. Cada pessoa, exceto o narrador, vota na carta que acredita ser dele. Não vale votar nas próprias cartas. Prazo: ${config.voteSeconds} s.`,
+    "Revelação: em 15 s, veja a carta do narrador, os votos, os pontos pelos acertos, os pontos das iscas e o avanço no tabuleiro.",
+    "Cada voto em uma isca dá 1 ponto a quem a jogou, além dos pontos da tabela, sem limite. Com 2 iscas, os bônus das duas são somados. Só votos enviados contam.",
+    `A partida termina após a revelação em que alguém alcança ${config.targetPoints} pontos. Vence quem tem mais pontos; empate na maior pontuação divide a vitória. Os pontos podem ultrapassar a meta; a posição no tabuleiro para na última casa.`,
+    "O jogo também termina se o baralho não puder completar as mãos ou restarem menos de 3 jogadores; vence a maior pontuação. Se o dono encerrar a partida, não há vencedores.",
+    "Se o narrador não enviar a pista no prazo, a rodada é anulada, sem pontos. Se alguém não jogar as iscas, o servidor escolhe cartas da sua mão automaticamente. Se alguém não votar, seu voto não entra na pontuação.",
+    "Sem ninguém online, o tempo pausa. Quando alguém volta, a fase reinicia seu prazo completo. Quem entra durante a partida acompanha como espectador, sem mão.",
+  ];
+}
+
+export const TALECLUE_SCORING_RULES = {
+  caption: "Pontos por acertar",
+  headers: ["Situação", "Narrador", "Quem acertou", "Quem errou"],
+  rows: [
+    ["Alguns acertaram", "3", "3", "0"],
+    ["Todos acertaram", "0", "2", "—"],
+    ["Ninguém acertou", "0", "—", "2"],
+    ["Ninguém votou", "0", "—", "—"],
+  ],
+} as const;
 
 /** Thresholds come from the same contract used by the game engine. */
 export const HUEHINT_RANK_RULES = HUEHINT_RANKS.map(({ rank, min }, index) => ({
@@ -62,11 +89,7 @@ export const GAME_RULES = {
       "Os demais jogam uma isca (duas com três jogadores) e votam sem escolher cartas próprias.",
       "Alguns acertos dão três pontos ao narrador e a quem acertou; todos ou nenhum dão dois aos votantes. Votos em iscas dão um ponto ao dono.",
     ],
-    rules: [
-      "O narrador escolhe uma carta da mão e dá uma pista de até 30 caracteres.",
-      "Os demais jogam uma isca (duas com três jogadores) e votam sem escolher cartas próprias.",
-      "Alguns acertos dão três pontos ao narrador e a quem acertou; todos ou nenhum dão dois aos votantes. Votos em iscas dão um ponto ao dono.",
-    ],
+    rules: taleclueFullRules(),
   },
 } as const;
 

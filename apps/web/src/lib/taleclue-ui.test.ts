@@ -11,6 +11,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { LobbyPanel } from "../components/lobby/lobby-panel";
 import { TaleclueBoard } from "../components/taleclue/taleclue-board";
+import { TaleclueScoreboard } from "../components/taleclue/taleclue-scoreboard";
 import { gameErrorMessage } from "./game-errors";
 
 const view: TaleclueView = {
@@ -75,10 +76,23 @@ test("only the narrator gets a clue input while every player sees their own hand
   assert.match(render({}, "bia"), /Ana está pensando na pista/);
   assert.doesNotMatch(render({ table: ["tc-099"] }), /data-card-id="tc-099"/);
 });
+test("the narrator clue field precedes the hand in a full-width section", () => {
+  const markup = render();
+  assert.ok(markup.indexOf("<input") < markup.indexOf('aria-label="Sua mão"'));
+  assert.match(markup, /data-clue-field/);
+});
+test("the projected clue precedes the table throughout decoy, vote and reveal", () => {
+  for (const phase of ["decoy", "vote", "reveal"] as const) {
+    const markup = render({ phase, clue: "Porta 42", rounds: phase === "reveal" ? [round] : [] });
+    const table = phase === "reveal" ? 'aria-label="Revelação da rodada 1"' : 'aria-label="Mesa"';
+    assert.ok(markup.indexOf("data-clue-display") >= 0);
+    assert.ok(markup.indexOf("data-clue-display") < markup.indexOf(table));
+  }
+});
 test("decoys use the projected count and submitted players have no send control", () => {
   const patch = { phase: "decoy" as const, clue: "Porta 42" };
-  assert.match(render(patch, "bia"), /Selecione 2 iscas/);
-  assert.match(render({ ...patch, decoyCount: 1 }, "bia"), /Selecione 1 isca/);
+  assert.match(render(patch, "bia"), /Escolha duas iscas/);
+  assert.match(render({ ...patch, decoyCount: 1 }, "bia"), /Escolha uma isca/);
   assert.doesNotMatch(render(patch), /Jogar iscas/);
   assert.doesNotMatch(render({ ...patch, acted: ["bia"] }, "bia"), /Jogar iscas/);
 });
@@ -224,13 +238,13 @@ test("a spectator never renders a hand or personal vote markers even with a broa
       { phase, table: ["tc-001"], myCards: ["tc-001"], myVote: "tc-001" },
       { role: "spectator" },
     );
-    assert.match(markup, /Você está só olhando esta partida/);
+    assert.match(markup, /Você está acompanhando esta partida/);
     assert.doesNotMatch(
       markup,
       /Sua mão|Enviar pista|Jogar iscas|Confirmar voto|Sua carta|Seu voto|aria-pressed="true"/,
     );
-    if (phase === "decoy") assert.match(markup, /Aguardando as iscas/);
-    if (phase === "vote") assert.match(markup, /Aguardando os votos/);
+    if (phase === "decoy") assert.match(markup, /Você está acompanhando esta partida/);
+    if (phase === "vote") assert.match(markup, /sem enviar pistas, iscas ou votos/);
   }
 });
 test("a paused game shows the pause status and read-only hand without an action", () => {
@@ -340,10 +354,121 @@ test("all reveal outcomes come from the projected award step, including no votes
   }
 });
 
-test("a paused reveal keeps its projected result visible without restarting a timer", () => {
+test("a paused mount shows the first reveal step without inventing elapsed time", () => {
   const markup = renderState({ phase: "reveal", rounds: [round], deadline: null });
   assert.match(markup, /Tempo pausado/);
-  assert.match(markup, /data-reveal-step="4"/);
-  assert.match(markup, /data-voter-id="caio"/);
+  assert.match(markup, /data-reveal-step="0"/);
+  assert.doesNotMatch(markup, /data-voter-id="caio"/);
   assert.doesNotMatch(markup, /role="timer"/);
+});
+
+test("phase guidance and the narrator task precede the secondary board", () => {
+  const markup = render();
+  assert.match(markup, /Sua vez de dar a pista/);
+  assert.match(markup, /Entenda esta fase/);
+  assert.ok(markup.indexOf('aria-label="Sua mão"') < markup.indexOf('aria-label="Tabuleiro"'));
+});
+
+test("each role sees approved instructions and sent-action confirmation", () => {
+  assert.match(render({}, "bia"), /Depois, você escolherá duas cartas da sua mão/);
+  assert.match(render({ phase: "decoy", clue: "Porta", decoyCount: 1 }, "bia"), /Escolha uma isca/);
+  assert.match(
+    render({ phase: "decoy", clue: "Porta", decoyCount: 2 }, "bia"),
+    /Escolha duas iscas/,
+  );
+  assert.match(render({ phase: "decoy", acted: ["bia"] }, "bia"), /Iscas enviadas\./);
+  assert.match(render({ phase: "vote" }, "bia"), /Encontre a carta do narrador/);
+  assert.match(render({ phase: "vote", myVote: "tc-001" }, "bia"), /Voto enviado\./);
+});
+
+test("the countdown shows a ring and urgency only for an eligible player", () => {
+  const urgent = render({ deadline: 10000 }, "ana", 1000);
+  assert.match(urgent, /data-urgent="true"/);
+  assert.match(urgent, /stroke-dasharray/);
+  assert.match(render({ deadline: 10000 }, "bia", 1000), /data-urgent="false"/);
+  assert.doesNotMatch(render({ deadline: null }), /data-urgent="true"|role="timer"/);
+});
+test("reveal retains contextual help without duplicating its stage heading", () => {
+  const markup = render({ phase: "reveal", rounds: [round], deadline: 16000 });
+  assert.match(markup, /Entenda esta fase/);
+  assert.match(markup, /Veja a carta do narrador, os votos e os pontos/);
+  assert.equal((markup.match(/Esta era a carta do narrador/g) ?? []).length, 1);
+});
+
+test("the clue task omits an empty table until the clue has been given", () => {
+  assert.doesNotMatch(render(), /aria-label="Mesa"/);
+  assert.doesNotMatch(render({}, "bia"), /aria-label="Mesa"/);
+  assert.match(render({ phase: "decoy", clue: "Porta" }), /aria-label="Mesa"/);
+});
+
+test("waiting keeps its sentence stable and adds only hidden decorative motion", () => {
+  const waiting = render({}, "bia");
+  assert.match(waiting, /Ana está pensando na pista\./);
+  assert.match(waiting, /data-waiting="true" aria-hidden="true"/);
+  assert.doesNotMatch(render(), /data-waiting="true"/);
+  assert.doesNotMatch(render({ phase: "vote" }, "bia"), /data-waiting="true"/);
+  assert.match(render({ phase: "vote", myVote: "tc-001" }, "bia"), /data-waiting="true"/);
+  assert.doesNotMatch(render({ phase: "reveal", rounds: [round] }), /data-waiting="true"/);
+});
+
+test("a geometry render uses the current server clock instead of a stale parent tick", () => {
+  const markup = renderToStaticMarkup(
+    createElement(TaleclueScoreboard, {
+      view: {
+        ...view,
+        phase: "reveal",
+        deadline: 5000,
+        players: view.players.map((p) => ({ ...p, points: 4, position: 4 })),
+      },
+      members: room.members,
+      moves: [{ playerId: "ana", from: 0, to: 4 }],
+      elapsed: 0,
+      clock: { now: () => 500, sync: () => {} },
+    }),
+  );
+  assert.match(markup, /data-player-id="ana" data-position="1" data-moving="true"/);
+  assert.match(markup, /translateX\(.*translateY\(/);
+});
+
+test("Taleclue renders an inactive individual audio control safely without a browser", () => {
+  assert.match(
+    render(),
+    /<button[^>]*data-taleclue-sound-control="true"[^>]*aria-pressed="false"[^>]*>[\s\S]*?Ativar som[\s\S]*?<\/button>/,
+  );
+});
+
+test("a paused pawn preserves the fraction between houses without scheduling more movement", () => {
+  const markup = renderToStaticMarkup(
+    createElement(TaleclueScoreboard, {
+      view: { ...view, phase: "reveal", deadline: null },
+      members: room.members,
+      moves: [{ playerId: "ana", from: 0, to: 2 }],
+      elapsed: 10200,
+    }),
+  );
+  const pawn = markup.match(
+    /data-player-id="ana" data-position="0" data-moving="false"[^>]*translateX\(([\d.]+)px\)/,
+  );
+  assert.ok(pawn);
+  assert.ok(Math.abs(Number(pawn[1]) - 68) < 0.000001);
+});
+
+test("the board states its target and explains its scrollable trail", () => {
+  const markup = renderToStaticMarkup(
+    createElement(TaleclueScoreboard, {
+      view: { ...view, config: { ...view.config, targetPoints: 50 } },
+      members: room.members,
+    }),
+  );
+  assert.match(markup, /Meta: 50 pontos/);
+  assert.match(markup, /Role para acompanhar a trilha\./);
+});
+test("decoy selection and submission precede the forming table", () => {
+  const markup = render({ phase: "decoy", clue: "Sonho" }, "bia");
+  assert.ok(markup.indexOf('aria-label="Sua mão"') < markup.indexOf('aria-label="Mesa"'));
+  assert.ok(markup.indexOf("Jogar iscas") < markup.indexOf('aria-label="Mesa"'));
+});
+test("vote confirmation precedes the inactive hand", () => {
+  const markup = render({ phase: "vote", clue: "Sonho", table: ["tc-099"] }, "bia");
+  assert.ok(markup.indexOf("Confirmar voto") < markup.indexOf('aria-label="Sua mão"'));
 });

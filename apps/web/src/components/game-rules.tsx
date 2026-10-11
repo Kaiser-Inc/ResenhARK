@@ -3,7 +3,9 @@ import {
   type GameType,
   HUEHINT_RANK_RULES,
   type RulesSetup,
+  TALECLUE_SCORING_RULES,
   currentSettings,
+  taleclueFullRules,
 } from "@/lib/game-rules";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +16,13 @@ export function GameRules({
   headingLevel = 3,
 }: { game: GameType; variant?: "short" | "full"; setup?: RulesSetup; headingLevel?: 2 | 3 }) {
   const rules = GAME_RULES[game];
+  const fullTaleclue = variant === "full" && game === "taleclue";
+  const text =
+    variant === "short"
+      ? rules.shortRules
+      : fullTaleclue
+        ? taleclueFullRules(setup?.type === "taleclue" ? setup.config : undefined)
+        : rules.rules;
   const Heading = headingLevel === 2 ? "h2" : "h3";
   return (
     <div className="flex flex-col gap-4">
@@ -26,7 +35,7 @@ export function GameRules({
               ? "bg-game-hitline"
               : game === "huehint"
                 ? "bg-game-huehint"
-                : "bg-muted"),
+                : "bg-game-taleclue"),
         )}
       >
         <Heading className="text-lg leading-7 font-semibold">{rules.name}</Heading>
@@ -43,10 +52,51 @@ export function GameRules({
         aria-label={`Regras do ${rules.name}`}
         className="flex list-disc flex-col gap-3 pl-4 text-sm leading-5"
       >
-        {(variant === "short" ? rules.shortRules : rules.rules).map((rule) => (
+        {(fullTaleclue ? text.slice(0, 5) : text).map((rule) => (
           <li key={rule}>{rule}</li>
         ))}
       </ul>
+      {fullTaleclue ? (
+        <>
+          <table className="w-full text-left text-sm">
+            <caption className="mb-2 text-left font-semibold">
+              {TALECLUE_SCORING_RULES.caption}
+            </caption>
+            <thead>
+              <tr className="border-b border-border bg-muted">
+                {TALECLUE_SCORING_RULES.headers.map((header) => (
+                  <th key={header} scope="col" className="px-2 py-3">
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {TALECLUE_SCORING_RULES.rows.map(([situation, ...scores]) => (
+                <tr key={situation} className="border-b border-border">
+                  <th scope="row" className="px-2 py-3 font-medium">
+                    {situation}
+                  </th>
+                  {scores.map((score, index) => (
+                    <td
+                      key={TALECLUE_SCORING_RULES.headers[index + 1]}
+                      className="px-2 py-3 font-mono"
+                    >
+                      {score}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="text-sm leading-5">{text[5]}</p>
+          <ul className="flex list-disc flex-col gap-3 pl-4 text-sm leading-5">
+            {text.slice(6).map((rule) => (
+              <li key={rule}>{rule}</li>
+            ))}
+          </ul>
+        </>
+      ) : null}
       {variant === "full" && game === "huehint" ? (
         <div className="flex flex-col gap-2">
           <p className="text-sm font-semibold">Ranks da dupla · B para vencer</p>
