@@ -14,12 +14,13 @@ const concepts: Concept[] = JSON.parse(
   readFileSync(new URL("./concepts.json", import.meta.url), "utf8"),
 );
 
-test("concepts.json: 120 conceitos, 30 por lote, ids hex únicos e cenas diferentes", () => {
-  assert.equal(concepts.length, 120);
-  for (const b of [1, 2, 3, 4]) assert.equal(concepts.filter((c) => c.batch === b).length, 30);
-  assert.equal(new Set(concepts.map((c) => c.id)).size, 120);
+test("concepts.json: 200 conceitos (lotes 1 a 4 e 6 de 30, lote 5 de 50), ids hex únicos e cenas diferentes", () => {
+  assert.equal(concepts.length, 200);
+  for (const b of [1, 2, 3, 4, 6]) assert.equal(concepts.filter((c) => c.batch === b).length, 30);
+  assert.equal(concepts.filter((c) => c.batch === 5).length, 50);
+  assert.equal(new Set(concepts.map((c) => c.id)).size, 200);
   assert.ok(concepts.every((c) => /^[0-9a-f]{8}$/.test(c.id)));
-  assert.equal(new Set(concepts.map((c) => c.scene)).size, 120);
+  assert.equal(new Set(concepts.map((c) => c.scene)).size, 200);
   assert.ok(concepts.every((c) => c.alt.length > 20 && c.palette.length > 0));
 });
 

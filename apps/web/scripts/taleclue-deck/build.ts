@@ -139,13 +139,13 @@ async function main() {
   }
 
   const deck = concepts
-    .filter((c) => provenance[c.id]?.approved && findSource(c))
+    .filter((c) => provenance[c.id]?.approved && existsSync(new URL(`${c.id}.webp`, outDir)))
     .map(({ id, alt, batch }) => ({ id, alt, batch }));
   writeFileSync(manifestPath, `${JSON.stringify(deck, null, 2)}\n`);
   writeFileSync(provenancePath, `${JSON.stringify(provenance, null, 2)}\n`);
 
   console.log(`${built} cartas convertidas, ${deck.length} no manifesto de ${concepts.length}.`);
-  for (const b of [1, 2, 3, 4]) {
+  for (const b of [...new Set(concepts.map((c) => c.batch))]) {
     const n = concepts.filter((c) => c.batch === b).length;
     const miss = missing.filter((c) => c.batch === b);
     console.log(

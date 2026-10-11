@@ -6,7 +6,7 @@ import { type Concept, promptOf } from "./deck.js";
 const dir = new URL("./", import.meta.url);
 const concepts: Concept[] = JSON.parse(readFileSync(new URL("concepts.json", dir), "utf8"));
 
-for (const batch of [1, 2, 3, 4]) {
+for (const batch of [...new Set(concepts.map((c) => c.batch))]) {
   const list = concepts.filter((c) => c.batch === batch);
   const body = list
     .map(
