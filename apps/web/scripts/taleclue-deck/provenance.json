@@ -27,11 +27,25 @@
     "date": "2026-10-09",
     "approved": true
   },
+  "85992317": {
+    "prompt": "A massive stone gate standing alone in the middle of a busy city crosswalk at noon, a swirling red portal inside it, a crowd of silhouettes frozen mid-step looking at it. Every billboard and shop sign in the city is a plain blank colored panel with no lettering of any kind. Palette: concrete grey, red, mustard, white.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
   "87275309": {
     "prompt": "A school of silver fish swimming through tall golden grass at sunset as if the meadow were underwater. Palette: gold, silver, warm orange, olive green. No people.",
     "batch": 1,
     "model": "Gemini app, Nano Banana Pro (@cartas)",
     "date": "2026-10-09",
+    "approved": true
+  },
+  "94511224": {
+    "prompt": "A pianist seen from behind playing a grand piano strapped to the back of a running elephant across a sunlit savanna, the notes flying away as colorful birds. Palette: ochre, orange, olive green, pink.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
     "approved": true
   },
   "e4ccc2c0": {
@@ -837,6 +851,552 @@
     "batch": 4,
     "model": "Gemini app, Nano Banana Pro (@cartas)",
     "date": "2026-10-10",
+    "approved": true
+  },
+  "072465c4": {
+    "prompt": "A rough unfinished wooden ship already sailing across a sunny sea while a carpenter seen from behind hammers planks onto its stern in mid-voyage, loose boards flying. Palette: warm timber brown, tangerine, sea green, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "d1fe4a72": {
+    "prompt": "Six stone pedestals of increasing height climbing a rocky hillside under a bright afternoon sky, a small adventurer seen from behind standing on the lowest one, looking up at the tallest. Palette: sandstone, rust red, olive green, pale yellow.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f00a2a32": {
+    "prompt": "A tiny knight in a plain round helmet feeding glowing orange orbs to a house-sized sprouting plant in a sunny clearing, its leaves already towering over the trees. Palette: orange, leaf green, cream, warm brown.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "6d63071d": {
+    "prompt": "A long line of campfires stretching across a vast red desert toward the horizon, every one lit except the last, a lone figure seen from behind standing at the final cold pile of wood. Palette: terracotta, orange, ochre, dusty pink.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "e5e9dca8": {
+    "prompt": "A giant ripe tomato rising like a sun over a wheat field, thin slices drawn across the sky like segments of a timer, a scarecrow looking up at it. Palette: tomato red, wheat yellow, olive green, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "024572d8": {
+    "prompt": "A tiny creature made of rippling sound waves living inside the open vent of a sleeping computer tower on a sunny desk, a real cat watching it curiously. Palette: peach, mint green, warm grey, soft yellow. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f910a0ff": {
+    "prompt": "An entire busy village inside a single glass jar sitting under a plain desk lamp in a cozy workshop, tiny villagers waving from a tiny balcony. Palette: amber, walnut brown, cream, sage green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "cddb9b5f": {
+    "prompt": "A wise owl whose feathers are made of printed circuit traces, perched on a tall stack of blank books in a sunlit library, a small robot dusting its wing. Palette: copper, forest green, parchment, rust. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "246c5cf0": {
+    "prompt": "Three small figures pulling one enormous red kite up a grassy hill in strong wind, the kite taller than the hill, the ropes taut. Palette: red, bright green, white, sunflower yellow.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "ae57c276": {
+    "prompt": "A stone golem sitting in a market square holding a sealed wooden chest, the crowd around it seeing only a long shadow of what is inside, a shadow shaped like a dragon. Palette: sandstone, olive green, terracotta, mustard.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "d97ab8be": {
+    "prompt": "A painter seen from behind spilling a bucket of every color onto a cobblestone street, all the colors flowing uphill together toward one single pink puddle. Palette: magenta, orange, lime green, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "508c957c": {
+    "prompt": "A long washing line stretching across village rooftops hung with giant vinyl records of every size, drying in the wind, the smallest at one end and the biggest at the other. Palette: tangerine, brick red, butter yellow, olive green. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "06061932": {
+    "prompt": "A tightrope walker with a balancing pole crossing between two towers made of stacked books high above a sunny city, a flock of paper birds circling. Palette: sunflower yellow, brick red, olive green, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "af75866c": {
+    "prompt": "A river of silvery fish squeezed through one tiny narrow gap in an old stone dam, a huge crowd of them piled up behind it, while on the other side only a trickle flows. Palette: steel grey, moss green, amber, white. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "127dfc1f": {
+    "prompt": "A single seed sprouting inside a glass bottle until a whole forest bursts from its neck and spills over a kitchen table. Palette: lime green, earth brown, cream, tomato red. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "7f1f996c": {
+    "prompt": "A clockwork windmill on a hill grinding handfuls of stars into flour while a baker sleeps in a hammock beneath it under a straw hat, warm loaves rising into the dawn. Palette: flour white, peach, wheat, rust.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "c08b6729": {
+    "prompt": "A tiny corner bakery with an enormous brass robot arm kneading dough through the front window while the baker sits outside reading a book with its cover turned away. Palette: butter yellow, copper, brick red, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "ace90e1d": {
+    "prompt": "A student at a wooden desk in the middle of a busy town square, writing in a huge open blank book, a crowd of colorful silhouettes gathered around watching over the shoulder. Palette: pink, orange, mint green, warm brown.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "e62de568": {
+    "prompt": "A jangada with a patched triangular sail skimming over a glittering sea at midday, a fisherman seen from behind at the tiller, flying fish leaping beside it. Palette: coral, sun yellow, turquoise, sand.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "64291a49": {
+    "prompt": "A festa junina bonfire in a village square at dusk with strings of red and yellow triangular flags, silhouettes dancing in a ring around the fire, sparks rising. Palette: fire orange, red, sunflower yellow, deep brown.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "bffcf7ad": {
+    "prompt": "A lone mandacaru cactus in a cracked dry riverbed with one enormous pink flower blooming at its top, vultures circling lazily in a hot white sky. Palette: dusty pink, sun-baked ochre, olive green, bone white. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "5693c00f": {
+    "prompt": "A giant papier-mâché ox with sparkling cloth dancing through a village square, masked musicians seen from behind following it. Palette: red, sunflower yellow, hot pink, green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "a1221fdb": {
+    "prompt": "An old woman seen from behind weaving a lace curtain that turns into clouds as it leaves her loom, the clouds drifting out of an open window. Palette: lace white, terracotta, soft pink, olive green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f88e96b1": {
+    "prompt": "A giant cracked egg the size of a house in a sunny wheat field, a dragon's tail sticking out of one side, a tiny farmer seen from behind holding a frying pan. Palette: eggshell cream, wheat yellow, dragon red, grass green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f3aaed38": {
+    "prompt": "A knight in dented armor and a full helmet kneeling to hand a flower to an enormous sleeping mountain troll whose head is a boulder, in golden morning light. Palette: moss green, stone grey, rose pink, butter yellow.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "843b1f5d": {
+    "prompt": "A rooftop duel between two masked fencers in colorful carnival costumes under a red sky, one blade snapping in half and flying toward the viewer. Palette: crimson, mustard, emerald green, plum.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "df717e18": {
+    "prompt": "A towering wave made entirely of white bedsheets crashing over a coastal town, clothespins flying like seagulls. Palette: white, coral, mustard, sage green. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f8ab0d04": {
+    "prompt": "A circus tent being lifted into the sky by hundreds of balloons, the ringmaster seen from behind hanging on to a rope with one hand, his top hat flying away. The tent is plain striped fabric with no sign, no banner and no lettering of any kind. Palette: red and white stripes, sunflower yellow, grass green, pink.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "0faf77ce": {
+    "prompt": "A giant hand-shaped cloud reaching down to pluck a single apple from a tiny orchard, the farmer seen from behind holding up a basket to it. Palette: apple red, soft grey, leaf green, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "8b6fc6c8": {
+    "prompt": "A lion made of autumn leaves roaring on a hillside, its mane exploding into a swirl of red and orange leaves that sweep across the whole valley. Palette: red, orange, chestnut brown, mustard. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "8dd2238c": {
+    "prompt": "A mechanical whale made of brass pipes and rivets sailing across a sandy desert and pulling a tiny caravan, steam rising from its spout. Palette: copper, sand, rust, pale pink.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "c1620d2d": {
+    "prompt": "A queen whose long dress is an entire garden, seated on a throne in a sunny courtyard, her face hidden under a wide hat of sunflowers, bees circling around her. Palette: sunflower yellow, leaf green, white, rose.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "9431eb0f": {
+    "prompt": "A tiny astronaut in a round helmet with a mirrored visor planting a blank flag on top of a giant strawberry floating in space, its seeds scattering like stars. Palette: strawberry red, cream, leaf green, pink.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "59aa33f0": {
+    "prompt": "A magician in a tall hat seen from behind pulling an entire steam train out of a hat while a crowd of silhouettes gasps. Palette: plum, scarlet, mustard, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "6d6b4df3": {
+    "prompt": "A volcano erupting rainbow confetti instead of lava over a quiet fishing village at noon, villagers as small silhouettes running toward it with open arms. Palette: magenta, lemon yellow, lime green, orange.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "1b4a08bd": {
+    "prompt": "A giant sleeping cat curled around an entire small town like a hill, smoke from chimneys rising out of its fur, a postman on a bicycle riding along its tail. Palette: ginger orange, brick red, cream, grass green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "49a6a17b": {
+    "prompt": "A thundercloud shaped like an angry bull charging across a field of wheat toward a lone scarecrow who tips its hat. Palette: charcoal grey, wheat yellow, plum, white.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "b0bb238c": {
+    "prompt": "A giant pair of scissors cutting a path through a dense jungle of paper plants, a paper explorer in a pith helmet walking behind it. Palette: leaf green, paper white, orange, brown.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "bd2d3f16": {
+    "prompt": "A giant orange peeled in one long spiral that forms a staircase winding up into the sky, a tiny figure climbing it. Palette: orange, peach, leaf green, white.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "ea06f215": {
+    "prompt": "A field of identical white paper-cut birds flying in a perfect grid across a pale pink sky, one of them bright red and slightly larger. Palette: white, pale pink, bright red, cream. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "d2625f45": {
+    "prompt": "A soap bubble held on a wand, containing a whole tiny landscape of fields and a river, its surface swirling with rainbow colors. Palette: pastel rainbow, leaf green, peach, white. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "6d805bcc": {
+    "prompt": "A spice market seen from above where heaps of red, yellow and green powders flow into one another forming a huge mandala, a single line of footprints crossing it. Palette: chili red, saffron yellow, herb green, cream. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f617202a": {
+    "prompt": "An impossible staircase maze in warm terracotta stone where the steps loop back on themselves, one figure seen from behind walking up and a second figure walking upside down on the same stairs. Palette: terracotta, sand, rose, cream.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "cfaa8dd1": {
+    "prompt": "A knitted landscape where hills, trees and clouds are all made of colorful wool, two giant knitting needles resting across the horizon. Palette: mustard, coral, olive green, cream. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "2c47f9c9": {
+    "prompt": "A kitchen where every cooking pot has sprouted a tiny volcano, steam clouds drifting out the window, a cook in an apron seen from behind calmly stirring one. Palette: brick red, lemon yellow, cream, avocado green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "9615b97a": {
+    "prompt": "A packed city bus driving along the top of a bridge of clouds, passenger silhouettes in every window, a goat standing on the roof. The bus has no route number, no sign and no lettering anywhere. Palette: mustard, orange, cream, sage green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "0fa3678f": {
+    "prompt": "A laundromat at midday where every washing machine window shows a different weather: a snowstorm, a desert, a jungle, a rainstorm. Palette: white, orange, leaf green, pink. No people.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "1b2d43da": {
+    "prompt": "A family dinner table crossed by a flowing river with tiny fishing boats, grandparent silhouettes passing dishes across a bridge made of bread. Palette: warm brown, tomato red, butter yellow, leaf green.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "f0eb24ea": {
+    "prompt": "A giant chessboard on a cliff edge where the pieces are tiny houses and towers, a figure in a long coat seen from behind studying one move while a storm approaches from one side. Palette: ivory, charcoal brown, crimson, ochre.",
+    "batch": 5,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "3eb8944d": {
+    "prompt": "A lone knight in rusted armor and a closed helm sitting beside a small fire of embers in the ash of a ruined cathedral hall, a broken sword planted upright in the cinders, shafts of pale dusty daylight falling through the collapsed roof. Palette: ash grey, ember orange, rust, bone white.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "12f3e1bf": {
+    "prompt": "A colossal armored giant asleep sitting against a cliff, vines growing across its shoulders, a tiny figure seen from behind climbing its outstretched arm like a stairway at dawn. Palette: moss green, iron grey, dawn pink, rust.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "dbda423c": {
+    "prompt": "A huge bronze bell hanging in a hollow stone tower with no walls, its rope swinging by itself, wind pushing grey ash across a plain of dead trees. Palette: bronze, ash grey, dusty beige, olive green. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "cc3bfb57": {
+    "prompt": "A wasteland of countless swords planted in the ground like crosses, a knight seen from behind walking among them toward a pale low sun, a single crow on one of the hilts. Palette: steel grey, sepia, pale yellow, rust red.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "31bb6607": {
+    "prompt": "A foggy city of crooked gothic rooftops at dawn, a hunter in a long coat and wide-brimmed hat seen from behind carrying a curved blade on one shoulder, shadowy figures watching from the windows. Palette: sepia, dusty rose, ink grey, crimson.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "9b9cb02d": {
+    "prompt": "A lone rider on a pale horse crossing a flooded plain of broken statues of giant hands toward a tower wrapped in thorny roots under an overcast sky. Palette: pale grey-green, bone white, rust, muted pink.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "96002b18": {
+    "prompt": "A schoolyard at sunset where a monstrous many-armed shadow rises from a drain behind a tiny student seen from behind, long black ink-like tendrils curling over the empty benches. Palette: tangerine sunset, plum, charcoal, cream.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "5314aaab": {
+    "prompt": "A giant hand made of black ink pressing down on a quiet school rooftop, a student seen from behind raising both arms to hold up the sky. Palette: ink grey, cream, vermilion, pale yellow.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "07690a72": {
+    "prompt": "A young hero in a worn cape seen from behind standing on the rubble of a collapsed building at dawn, one arm lined with cracks of glowing energy, a crowd of silhouettes watching through the smoke. Palette: rubble grey, orange, red, cream.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "edc8bd03": {
+    "prompt": "A giant stone hero statue being held up from falling by a single small figure with one outstretched hand, civilians cheering below as dust drifts, in a bright sunny sky. Palette: sandstone, sun yellow, crimson, white.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "d2c85bd4": {
+    "prompt": "A colossal humanoid robot's head half-buried in a green hillside like a monument, wildflowers growing in its eye sockets, a child and a dog sitting on its brow. Palette: rust, meadow green, cream, peach.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "1c518406": {
+    "prompt": "A once-busy city street overtaken by a green jungle, a rusted car covered in moss, a small figure with a backpack seen from behind walking beside a tall giraffe. Palette: moss green, rust, warm beige, sun yellow.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "a6c6beb5": {
+    "prompt": "Two travelers, one tall and one small, seen from behind sitting on the edge of a collapsed bridge at sunrise, sharing a single can of food, the ruined skyline behind them. Palette: rust, peach, olive green, soft grey.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "e01df09d": {
+    "prompt": "A great dragon with weathered scales perched on a snowy mountain peak, roaring at a tiny village below whose smoke rises in thin lines, hunters in furs as small silhouettes on a ridge. Palette: ice white, slate grey, ember orange, fur brown.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "fec27bca": {
+    "prompt": "A monster hunter seen from behind at the edge of a misty swamp village, a sword on his back and a belt of glass vials, a huge horned beast skull on a stake at the gate. Palette: swamp green, rust, mud brown, bone white.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "42728d6d": {
+    "prompt": "A fork in a muddy road with three blank carved wooden signposts pointing in different directions, each with a different small offering hung on it: a coin, a feather and a bone, a saddled horse waiting alone. Palette: mud brown, autumn orange, olive green, grey. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "626eea00": {
+    "prompt": "An underground kingdom of tiny insect citizens inside a vast cavern, crooked towers carved from a giant fossilized shell, a small armored beetle with a needle-thin lance crossing a stone bridge. Palette: bone white, soot grey, amber, moss green. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "2da166c3": {
+    "prompt": "A vast cavern pond of pale water under a ceiling of glowing mushrooms, a small hooded wanderer seen from behind in a tattered cloak sitting on a bench by a lamp post, a tiny moth circling the lamp. Palette: pale grey, mushroom pink, soot grey, soft yellow.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "2a751415": {
+    "prompt": "A grand abandoned mansion hall with a double staircase, vines creeping across the marble floor, a lone figure seen from behind pointing a flashlight beam at a statue whose shadow is wrong, dust drifting in afternoon light. Palette: marble cream, dark green, oxblood, brass.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "aeb9ba79": {
+    "prompt": "A rusted iron gate and a gravel path leading to a boarded-up manor under a heavy grey sky, a single crow on the gatepost, one window faintly lit on the top floor. Palette: charcoal, rust, moss green, dull yellow. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "cc544b57": {
+    "prompt": "A lone traveler seen from behind with a paraglider on their back standing at the edge of a floating island above a vast green land of ancient ruins, shafts of morning light. Palette: grass green, stone beige, sunrise orange, white.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "de7b6116": {
+    "prompt": "A colossal armored beast with a shell the size of a mountain sleeping in a valley while tiny hunters as silhouettes set up camp at its feet, banner flags fluttering. Palette: sand, rust, olive green, ivory.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "2934c85b": {
+    "prompt": "Two round doorways of pink light hovering at opposite ends of a bare white room, a figure stepping out of one while their own shadow already walks out of the other. Palette: white, pink, light grey, lemon yellow.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "9a744dd7": {
+    "prompt": "A tiny figure and an enormous winged creature facing each other across a narrow stone bridge over a bottomless fog-filled chasm, the creature's wings spread wide like a sunrise. Palette: sunrise pink, ash grey, bone white, burnt orange.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-10",
+    "approved": true
+  },
+  "a9de673e": {
+    "prompt": "An investigator seen from behind standing before a wall covered in photographs of blurred shapes with no faces, a web of red string spreading from the wall across the room, out of the open window and over a field toward a distant hill. Palette: dusty red, paper beige, olive green, ink brown.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-11",
+    "approved": true
+  },
+  "1c2aa946": {
+    "prompt": "A lone figure seen from behind standing in a ruined hall while hundreds of shadow silhouettes with red eyes rise from the floor in perfect rows behind him, a cracked stone archway ahead. Palette: plum, ash grey, bone white, blood red.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-11",
+    "approved": true
+  },
+  "e4c97989": {
+    "prompt": "An abandoned living room with sunlight pouring through a hole in the roof, a thick bloom of pale mushrooms covering the walls, a single worn teddy bear on a chair in the light. Palette: sepia, sage green, cream, rust. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-11",
+    "approved": true
+  },
+  "d187597c": {
+    "prompt": "A horned iron helmet half-buried in the snow of a mountain pass, a raven perched on it, a winter sunrise coloring the peaks pink. Palette: snow white, rose pink, iron grey, brown. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-11",
+    "approved": true
+  },
+  "17ab9eef": {
+    "prompt": "A child's bedroom at dusk where the shadows of the toys on the wall are enormous and wrong, one shadow standing up on its own while every toy sits perfectly still. Palette: mustard, plum, warm brown, cream. No people.",
+    "batch": 6,
+    "model": "Gemini app, Nano Banana Pro (@cartas)",
+    "date": "2026-10-11",
     "approved": true
   }
 }
