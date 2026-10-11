@@ -2,8 +2,9 @@ import { z } from "zod";
 import type { HitlineConfig, HitlineEvent, HitlineView } from "./hitline.js";
 import type { HuehintConfig, HuehintEvent, HuehintView } from "./huehint.js";
 import type { Avatar } from "./room.js";
+import type { TaleclueConfig, TaleclueEvent, TaleclueView } from "./taleclue.js";
 
-export const GAME_TYPES = ["hitline", "huehint"] as const;
+export const GAME_TYPES = ["hitline", "huehint", "taleclue"] as const;
 export type GameType = (typeof GAME_TYPES)[number];
 export const selectGameInputSchema = z.object({ game: z.enum(GAME_TYPES) });
 
@@ -35,6 +36,10 @@ export type ErrorCode =
   | "not-a-player"
   | "invalid-hint"
   | "already-guessed"
+  | "not-enough-players"
+  | "invalid-card"
+  | "own-card"
+  | "already-acted"
   | "server-error"
   // Client-side only: an emit that got no ack in time.
   | "timeout";
@@ -56,6 +61,7 @@ export type LobbyView = {
   /** Hitline config (kept under this name for compatibility). */
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
+  taleclueConfig: TaleclueConfig;
   /** The room's deck: the built-in "Baralho ResenhARK" until the owner imports a playlist. */
   playlist: { source: "default" | "playlist"; name: string; count: number };
   /** Songs not yet played in this room; below `count` once rounds were played. */
@@ -65,8 +71,9 @@ export type LobbyView = {
 };
 export type GameView =
   | { type: "hitline"; view: HitlineView }
-  | { type: "huehint"; view: HuehintView };
-export type GameEvent = HitlineEvent | HuehintEvent;
+  | { type: "huehint"; view: HuehintView }
+  | { type: "taleclue"; view: TaleclueView };
+export type GameEvent = HitlineEvent | HuehintEvent | TaleclueEvent;
 
 export const CHAT_MAX_LENGTH = 500;
 export const CHAT_HISTORY = 200;

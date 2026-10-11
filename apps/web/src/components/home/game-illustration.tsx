@@ -27,7 +27,7 @@ export function GameIllustration({ game }: { game: GameType }) {
             <circle key={x} cx={x} cy="145" r="4" fill="currentColor" />
           ))}
         </>
-      ) : (
+      ) : game === "huehint" ? (
         <>
           {[32, 112, 192].map((x, index) => (
             <rect
@@ -48,6 +48,27 @@ export function GameIllustration({ game }: { game: GameType }) {
             </g>
           ))}
         </>
+      ) : (
+        <g data-story-cards="true">
+          <g transform="translate(52 38) rotate(-12 36 54)">
+            <rect width="72" height="108" rx="6" fill="currentColor" fillOpacity=".08" />
+            <circle cx="36" cy="34" r="14" />
+            <path d="m10 88 20-28 12 16 10-12 10 24Z" />
+          </g>
+          <g transform="translate(196 38) rotate(12 36 54)">
+            <rect width="72" height="108" rx="6" fill="currentColor" fillOpacity=".08" />
+            <path d="M36 84V52m0 16-12-12m12 4 12-14" />
+            <path d="M18 50a18 18 0 1 1 36 0Z" />
+            <path d="M16 88h40" />
+          </g>
+          <g transform="translate(124 22)">
+            <rect width="72" height="108" rx="6" fill="var(--game-taleclue)" />
+            <path d="M22 88V42a14 14 0 0 1 28 0v46Z" />
+            <path d="M14 88h44m-8-38 10-6m-10-4 8-10m-16-6 2-10" />
+            <circle cx="42" cy="64" r="2" fill="currentColor" />
+          </g>
+          <path d="M140 158h40m-30-10h20" opacity=".5" />
+        </g>
       )}
     </svg>
   );

@@ -45,6 +45,24 @@ Every member receives the same events, so no Huehint event carries the color or 
 
 Scores are computed on the server. Projection tests (`games/huehint/project.test.ts`) check every phase for the giver, a guesser and a spectator, and they check the events. Socket tests (`realtime/huehint.integration.test.ts`) check what each connected client receives.
 
+## Taleclue: hands, authorship and votes
+
+In Taleclue, the secrets are every player's hand, who played which card on the table, and who voted for what. `apps/api/src/app/games/taleclue/project.ts` follows the same field-by-field rule.
+
+| Data | What the viewer sees |
+|---|---|
+| Hands | Only your own, in `hand`. A spectator never has one |
+| Cards on the table, before the reveal | In `vote`, the card ids in table order and nothing else: no owner, and no mark for the narrator's card. `myCards` lists only your own |
+| Who has acted | Ids in `acted`, never the card or the vote |
+| Votes, before the reveal | Only your own, in `myVote` |
+| Revealed rounds | Everything: owners, votes, points and board moves, in `rounds` |
+
+The narrator's card and the decoys are shuffled with the server's random generator, so the order says nothing about authorship.
+
+No Taleclue event carries a card or a vote before the reveal. `clue-given` names only the clue, `decoy-played` and `vote-cast` name only the player, and `round-revealed` is the first event with owners and votes. A decoy played by the server for an absent player is marked `auto: true`, which says that the player did not play but not which card the server chose.
+
+Projection tests (`games/taleclue/project.test.ts`) check every phase for the narrator, a player and a spectator, and they check the events. Socket tests (`realtime/taleclue.integration.test.ts`) record every `room:state` payload that each of 5 connected clients receives during a round and check that none shows a foreign card, an owner or a vote before the reveal.
+
 ## Audio without a leak
 
 The clip must reach a browser `<audio>` element without revealing the song. The server uses its own endpoint.
@@ -74,6 +92,7 @@ Anything else throws, so a bad provider response cannot make the server call an 
 - The provider's preview URL.
 - Other members' session tokens or audio tickets.
 - The turn player's typed guess text before the reveal, for anyone but the turn player.
+- In Taleclue, other players' hands, who played each card on the table and who voted for what, until the reveal.
 - In Huehint, the current color before the reveal (except for the giver, or the solo player while memorizing), the colors of future rounds, and other players' guesses before the reveal.
 
 The chat renders as text, never as HTML.

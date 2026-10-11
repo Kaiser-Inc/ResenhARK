@@ -1,6 +1,6 @@
 # Realtime events and HTTP routes
 
-The contracts live in `packages/shared/src` (`realtime.ts`, `hitline.ts`, `huehint.ts`, `room.ts`). The handlers are in `apps/api/src/app/realtime/socket-gateway.ts` and `apps/api/src/app/http/routes`.
+The contracts live in `packages/shared/src` (`realtime.ts`, `hitline.ts`, `huehint.ts`, `taleclue.ts`, `room.ts`). The handlers are in `apps/api/src/app/realtime/socket-gateway.ts` and `apps/api/src/app/http/routes`.
 
 ## Join flow
 
@@ -25,16 +25,17 @@ A failed intent never changes state. The state comes back through `room:state`, 
 | `chat:send` | `{ text: string }`, 1 to 500 characters after trim | Any member | `invalid-message`, `rate-limited`, `invalid-session`, `server-error` |
 | `room:leave` | none | Any member | `invalid-session` |
 | `room:kick` | `{ targetId: string }` | Owner | `invalid-input`, `not-owner`, `invalid-target` |
-| `lobby:select-game` | `{ game: "hitline" \| "huehint" }` | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
+| `lobby:select-game` | `{ game: "hitline" \| "huehint" \| "taleclue" }` | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `lobby:configure` | `HitlineConfig` (below) | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `lobby:configure-huehint` | `HuehintConfig` (below) | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
+| `lobby:configure-taleclue` | `TaleclueConfig` (below) | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `lobby:import` | `{ link: string }`, 1 to 500 characters | Owner, no game running | `invalid-input`, `room-not-found`, `not-owner`, `game-running`, `playlist-invalid-link`, `playlist-no-access`, `playlist-empty`, `spotify-disconnected` |
 | `lobby:reset-played` | none | Owner, no game running | `not-owner`, `game-running` |
 | `lobby:use-default-deck` | none | Owner, no game running | `not-owner`, `game-running` |
-| `game:start` | none | Owner, no game running. Starts the selected game | `not-owner`, `game-running`, and for Hitline only `playlist-empty`, `playlist-exhausted` |
+| `game:start` | none | Owner, no game running. Starts the selected game | `not-owner`, `game-running`, for Hitline only `playlist-empty`, `playlist-exhausted`, and for Taleclue only `not-enough-players`, `no-deck` |
 | `game:end` | none | Owner, game running | `not-owner`, `no-game` |
 | `game:reset` | none | Owner, game finished | `not-owner`, `no-game` |
-| `game:action` | `HitlineIntent` or `HuehintIntent` (below), validated against the running game | Players | `invalid-input`, `no-game`, and the rule errors below |
+| `game:action` | `HitlineIntent`, `HuehintIntent` or `TaleclueIntent` (below), validated against the running game | Players | `invalid-input`, `no-game`, and the rule errors below |
 
 Every room starts with the built-in "Baralho ResenhARK". `lobby:import` replaces the deck, clears the played set and removes a finished game. `lobby:use-default-deck` does the same with the built-in deck, so the owner can drop an imported playlist. `game:reset` is the "Outra rodada" button: it clears the finished game and keeps the playlist and the played set. `lobby:reset-played` is "Recomeçar músicas".
 
@@ -52,6 +53,20 @@ Every room starts with the built-in "Baralho ResenhARK". `lobby:import` replaces
 ```
 
 All four values are integers.
+
+### `TaleclueConfig`
+
+```ts
+{
+  targetPoints: number; // 10 to 50, default 30
+  clueSeconds: number;  // 30 to 180, default 90
+  decoySeconds: number; // 20 to 120, default 60
+  voteSeconds: number;  // 20 to 120, default 60
+  maxPlayers: number;   // 3 to 8, default 8
+}
+```
+
+All five values are integers.
 
 ### `HitlineIntent`
 
@@ -93,6 +108,18 @@ Sent in `game:action`. A color is `Hsb`: `{ h: 0 to 359, s: 0 to 100, b: 0 to 10
 
 Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `already-guessed`. The full rules are in [Huehint rules](huehint-rules.md).
 
+### `TaleclueIntent`
+
+Sent in `game:action`. Card ids are strings from `TALECLUE_CARDS`.
+
+| `type` | Extra fields | Rule |
+|---|---|---|
+| `give-clue` | `cardId: string`, `clue: string` | Narrator, phase `clue`, once. The card must be in the hand. The clue must pass `isValidClue`: 1 to 30 characters after trim, digits allowed |
+| `play-decoys` | `cardIds: string[]` | Players except the narrator, phase `decoy`, once. Exactly `decoyCount` distinct cards from the hand (1, or 2 with 3 players) |
+| `vote` | `cardId: string` | Players except the narrator, phase `vote`, once. The card must be on the table and not yours |
+
+Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `invalid-card`, `own-card`, `already-acted`. The full rules are in [Taleclue rules](taleclue-rules.md).
+
 ## Server to client
 
 | Event | Payload | Meaning |
@@ -111,14 +138,16 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `al
   ownerId: string;
   members: { id; name; avatar; online: boolean; isOwner: boolean;
              role: "player" | "spectator" | "member" }[];
-  lobby: { selectedGame: "hitline" | "huehint";
+  lobby: { selectedGame: "hitline" | "huehint" | "taleclue";
            config: HitlineConfig;
            huehintConfig: HuehintConfig;
+           taleclueConfig: TaleclueConfig;
            playlist: { source: "default" | "playlist"; name: string; count: number };
            remaining: number;          // songs not played yet in this room
            smallPlaylist: boolean };   // remaining < min(online, maxPlayers) x targetCards x 2
   game: { type: "hitline"; view: HitlineView }
       | { type: "huehint"; view: HuehintView }
+      | { type: "taleclue"; view: TaleclueView }
       | null;
   serverNow: number;    // server clock in ms, for deadline countdowns
 }
@@ -169,6 +198,28 @@ A `PublicCard` is `{ id, title, artists, year, spotifyUrl }`. A `RevealView` hol
 
 A `HuehintRoundView` is `{ round, giverId, color, hint, outcome, guesses, giverScore }`. `outcome` is `revealed` or `no-hint`. `guesses` holds `{ playerId, color, score }`, with scores from 0 to 10. `giverScore` is the mean of the guesses (0 with none), or `null` for a `no-hint` round and in solo.
 
+### `TaleclueView`
+
+| Field | Meaning |
+|---|---|
+| `phase` | `clue`, `decoy`, `vote`, `reveal` or `game-over` |
+| `config` | The game's `TaleclueConfig` |
+| `round` | The current round, starting at 1. A void round uses its number |
+| `narratorId`, `nextNarratorId` | Current and next narrator. `null` after game over |
+| `clue` | The clue once given, else `null` |
+| `decoyCount` | Cards each non-narrator plays this round: 1, or 2 with 3 players |
+| `hand` | Your own cards. Empty for a spectator and after game over |
+| `table` | Card ids on the table, in table order, only in `vote` and `reveal`. Never with an owner |
+| `myCards` | Your cards on the table this round, the narrator's included. Use it to block votes on your own cards |
+| `myVote` | Your vote in `vote` and `reveal`, else `null` |
+| `acted[]` | Ids of who already acted in `decoy` or `vote`. Never what they did |
+| `players[]` | `id`, `online`, `points`, `position` (`min(points, targetPoints)`) |
+| `deadline` | When the current phase ends, in ms. `null` while paused or after game over |
+| `rounds[]` | Revealed rounds, oldest first (`TaleclueRoundView`) |
+| `winners[]`, `endReason` | Set at game over. `endReason` is `points`, `deck-empty`, `ended` or `not-enough-players` |
+
+A `TaleclueRoundView` is `{ round, narratorId, clue, steps }`. `steps` always holds five entries, in this order: `card-flip` (`cards`: `cardId`, `ownerId`, `narrator`), `votes` (`votes`: `voterId`, `cardId`), `award-correct` (`outcome`: `some`, `all`, `none` or `no-votes`, and `awards`: `playerId`, `points`), `award-decoy` (`awards`) and `board-move` (`moves`: `playerId`, `from`, `to`). The client only animates them.
+
 ### `GameEvent`
 
 Hitline events:
@@ -201,6 +252,19 @@ Huehint events. None carries the secret color or a guess before the reveal, beca
 | `round-canceled` | `giverId` (the giver left during the hint) |
 | `game-over` | `winners`, `reason` |
 
+Taleclue events. None carries a card or a vote before the reveal, because every member receives the same events:
+
+| `type` | Fields |
+|---|---|
+| `game-started` | none |
+| `round-started` | `round` (1-based), `narratorId` |
+| `clue-given` | `clue` |
+| `decoy-played` | `playerId`, `auto` (`true` when the server played for them) |
+| `vote-cast` | `playerId` |
+| `round-revealed` | `round` (`TaleclueRoundView`) |
+| `round-voided` | `round`, `narratorId`, `reason` (`no-clue` or `narrator-left`) |
+| `game-over` | `winners`, `reason` |
+
 ### `ChatMessage`
 
 ```ts
@@ -228,7 +292,7 @@ System messages announce joins, leaves, kicks, a new owner, the start of a game 
 | `playlist-no-access` | The connected account cannot read the playlist |
 | `playlist-empty` | The playlist has no usable tracks, or too few to start a game |
 | `playlist-exhausted` | Every song was already played in this room |
-| `no-deck` | No longer sent: every room has the built-in deck. Kept in the type for old clients |
+| `no-deck` | Taleclue: the card deck is smaller than the game needs. Never sent for Hitline or Huehint |
 | `game-running` | The action needs no running game |
 | `no-game` | The action needs a game |
 | `not-your-turn` | Only the turn player (Hitline) or the giver (Huehint hint) can do this, or the giver tried to guess |
@@ -239,8 +303,12 @@ System messages announce joins, leaves, kicks, a new owner, the start of a game 
 | `invalid-slot` | The slot does not exist |
 | `already-decided` | You already contested or passed |
 | `not-a-player` | You are a spectator |
-| `invalid-hint` | Huehint: the hint breaks the length, word, digit or `#` rule |
+| `invalid-hint` | Huehint: the hint breaks the length, word, digit or `#` rule. Taleclue: the clue is empty or longer than 30 characters |
 | `already-guessed` | Huehint: you already guessed this round |
+| `not-enough-players` | Taleclue: fewer than 3 members online at `game:start` |
+| `invalid-card` | Taleclue: the card is not in your hand or on the table, or the number of decoys is wrong |
+| `own-card` | Taleclue: you cannot vote for your own card |
+| `already-acted` | Taleclue: you already acted in this phase |
 | `server-error` | Unexpected failure on the server |
 | `timeout` | Client only: no ack arrived in time |
 

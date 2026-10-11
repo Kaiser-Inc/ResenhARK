@@ -36,6 +36,7 @@
   --warning: oklch(0.53 0.11 75);
   --game-hitline: oklch(0.88 0.1 80);
   --game-huehint: oklch(0.87 0.06 210);
+  --game-taleclue: oklch(0.9 0.065 80);
   --border-strong: oklch(0.86 0.008 286);
   --sidebar: oklch(0.978 0.004 286);
   --sidebar-foreground: oklch(0.21 0.006 285.885);
@@ -75,6 +76,7 @@
   --warning: oklch(0.78 0.1 80);
   --game-hitline: oklch(0.42 0.085 75);
   --game-huehint: oklch(0.38 0.075 210);
+  --game-taleclue: oklch(0.31 0.025 80);
   --border-strong: oklch(0.35 0.009 286);
   --chart-1: oklch(0.785 0.1 274.713);
   --chart-2: oklch(0.585 0.16 277.117);
@@ -127,6 +129,7 @@
   --color-warning: var(--warning);
   --color-game-hitline: var(--game-hitline);
   --color-game-huehint: var(--game-huehint);
+  --color-game-taleclue: var(--game-taleclue);
   --color-border-strong: var(--border-strong);
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -429,6 +432,58 @@
   transition: transform 200ms var(--ease-out, cubic-bezier(0.23, 1, 0.32, 1));
 }
 
+/* Taleclue motion is part of play, including with reduced motion enabled. */
+.taleclue-selection {
+  box-shadow: 0 0 1rem color-mix(in oklch, var(--ring) 50%, transparent);
+}
+@keyframes taleclue-attention {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  25%,
+  65% {
+    opacity: 1;
+  }
+}
+.taleclue-attention {
+  position: relative;
+}
+.taleclue-attention::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow: 0 0 1.25rem color-mix(in oklch, var(--ring) 65%, transparent);
+  opacity: 0;
+  animation: taleclue-attention 1600ms var(--ease-in-out) 1;
+}
+@keyframes taleclue-wait {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+.taleclue-waiting > span {
+  width: 4px;
+  height: 4px;
+  border-radius: 4px;
+  background: currentColor;
+  animation: taleclue-wait 1.8s var(--ease-in-out) infinite;
+}
+.taleclue-waiting > span:nth-child(2) {
+  animation-delay: 180ms;
+}
+.taleclue-waiting > span:nth-child(3) {
+  animation-delay: 360ms;
+}
+
 .game-card[data-game="huehint"] {
   --game-angle: 1deg;
 }
@@ -644,4 +699,20 @@
 
 ::view-transition-new(.page-swap) {
   animation: page-in 150ms ease-out both;
+}
+
+/* The terrain tilts independently so pieces and numbers remain upright. */
+.taleclue-house-surface {
+  transform: perspective(500px) rotateX(18deg);
+  transform-origin: center bottom;
+  box-shadow: 0 5px 0 var(--border-strong), 0 8px 8px
+    color-mix(in oklch, var(--foreground) 12%, transparent);
+}
+.taleclue-pawn {
+  filter: drop-shadow(0 3px 1px color-mix(in oklch, var(--foreground) 12%, transparent));
+}
+@media (max-width: 639px) {
+  .taleclue-house-surface {
+    transform: perspective(500px) rotateX(8deg);
+  }
 }

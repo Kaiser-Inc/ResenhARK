@@ -100,7 +100,7 @@ test("CA-F13: game colors stay within the chroma limit and have 4.5:1 text contr
         });
         return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
       };
-      return ["--game-hitline", "--game-huehint"].map((token) => {
+      return ["--game-hitline", "--game-huehint", "--game-taleclue"].map((token) => {
         const [hi, lo] = [luminance("--foreground"), luminance(token)].sort((a, b) => b - a);
         return {
           token,

@@ -22,7 +22,7 @@ export default defineConfig({
   webServer: [
     {
       command: "PATH=$HOME/.local/bin:$PATH pnpm --filter api dev",
-      cwd: repoRoot,
+      cwd: process.env.E2E_API_WORKTREE ?? repoRoot,
       port: API_PORT,
       reuseExistingServer: false,
       timeout: 60_000,

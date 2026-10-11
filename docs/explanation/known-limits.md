@@ -43,4 +43,5 @@ Real-time features use WebSockets (Socket.IO). A network that blocks WebSocket t
 - The interface is in Brazilian Portuguese only.
 - Voice and video are not in the app. Use Google Meet.
 - SiteSpy and Codetalk are not built yet. Huehint has its server and contracts, and its interface is in progress.
+- Taleclue has its server and contracts. Its cards are 84 placeholders until the real deck lands, and its interface is in progress.
 - Huehint's score curve and color weights are a first calibration, not tuned by real play yet.

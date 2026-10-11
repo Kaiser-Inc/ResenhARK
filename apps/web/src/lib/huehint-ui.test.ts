@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { DEFAULT_HUEHINT_CONFIG, type HuehintView, type RoomView } from "@resenhark/shared";
+import {
+  DEFAULT_HUEHINT_CONFIG,
+  DEFAULT_TALECLUE_CONFIG,
+  type HuehintView,
+  type RoomView,
+} from "@resenhark/shared";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { HuehintBoard } from "../components/huehint/huehint-board";
@@ -63,6 +68,7 @@ const room: RoomView = {
   ],
   lobby: {
     selectedGame: "huehint",
+    taleclueConfig: DEFAULT_TALECLUE_CONFIG,
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
     config: { targetCards: 10, contestSeconds: 10, guessSeconds: 60, maxPlayers: 15 },
     playlist: { source: "default", name: "Baralho ResenhARK", count: 40 },

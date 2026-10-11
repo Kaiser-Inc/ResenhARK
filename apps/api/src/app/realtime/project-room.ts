@@ -15,6 +15,7 @@ export function projectRoom(room: Room, viewerId: string, now: number): RoomView
     selectedGame: lobby.game,
     config: { ...lobby.config },
     huehintConfig: { ...lobby.huehintConfig },
+    taleclueConfig: { ...lobby.taleclueConfig },
     playlist: {
       source: lobby.deck ? "playlist" : "default",
       name: deck.name,

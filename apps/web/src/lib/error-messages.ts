@@ -29,6 +29,10 @@ export const ERROR_MESSAGES: Record<ErrorCode, string> = {
   "invalid-hint": "Dica inválida: até 30 caracteres e 4 palavras, sem números nem #",
   "already-guessed": "Você já enviou seu palpite",
   "server-error": "Algo deu errado no servidor. Tenta de novo.",
+  "not-enough-players": "Precisa de pelo menos 3 jogadores online para começar.",
+  "invalid-card": "Essa carta ou quantidade de cartas não vale agora.",
+  "own-card": "Você não pode votar na sua própria carta.",
+  "already-acted": "Você já enviou sua ação nesta fase.",
   timeout: "Sem resposta do servidor. Tenta de novo.",
 };
 

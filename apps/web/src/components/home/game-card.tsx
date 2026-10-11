@@ -12,7 +12,8 @@ export function GameCard({ game }: { game: GameType }) {
   const [flipped, setFlipped] = useState(false);
   const id = useId();
   const rules = GAME_RULES[game];
-  const reducedMotion = useReduced();
+  const prefersReducedMotion = useReduced();
+  const reducedMotion = game !== "taleclue" && prefersReducedMotion;
   const pointerX = useSpring(0, { duration: 0.5, bounce: 0.2 });
   const pointerY = useSpring(0, { duration: 0.5, bounce: 0.2 });
   const tilt = useTransform(
@@ -68,7 +69,11 @@ export function GameCard({ game }: { game: GameType }) {
       <motion.span
         className={cn(
           "game-card-tilt grid h-full rounded-lg",
-          game === "hitline" ? "bg-game-hitline" : "bg-game-huehint",
+          game === "hitline"
+            ? "bg-game-hitline"
+            : game === "huehint"
+              ? "bg-game-huehint"
+              : "bg-game-taleclue",
         )}
         style={{ transform: reducedMotion ? "none" : tilt }}
       >
