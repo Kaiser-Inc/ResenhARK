@@ -5,6 +5,7 @@ Ilustração digital surreal, estilo storybook. Textura de pincel visível, luz 
 - **Cor:** 3 a 5 cores dominantes por carta (definidas no prompt), saturação média, sem preto puro.
 - **Composição:** um sujeito focal com silhueta clara, fundo simples, bom contraste de valor para ler em miniatura (400×600). Nada importante nos 8% externos.
 - **Ambiguidade:** a cena sugere uma história sem contá-la; evitar símbolos de um único significado.
+- **Lote 5:** metade das cenas tem personagem. Rosto sempre escondido (de costas, máscara, capacete, chapéu, sombra) e a figura pode ocupar mais da carta. Paletas quentes e cena de dia; azul, noite e brilho dourado ficam raros.
 - **Pessoas:** por padrão `No people.` no prompt. Só silhueta pequena ou de costas, sem rosto, quando a cena pede.
 - **Proibido:** texto, letras, números, assinatura, marca d'água, logotipos, marcas, pessoas reais, personagens protegidos.
 
