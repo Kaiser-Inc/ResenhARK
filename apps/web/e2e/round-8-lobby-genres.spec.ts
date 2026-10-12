@@ -199,7 +199,7 @@ for (const error of ["not-owner", "game-running", "invalid-input"] as const) {
   });
 }
 
-test("pending events disable the lobby without optimistic chip changes; disconnect blocks actions", async ({
+test("pending filters respond immediately, preserve rapid choices and leave other controls enabled", async ({
   page,
 }) => {
   let hold = false;
@@ -222,16 +222,31 @@ test("pending events disable the lobby without optimistic chip changes; disconne
   await createRoomAs(page, "Ana");
   hold = true;
   const rock = votes(page).getByRole("button", { name: "Rock, 0 votos", exact: true });
+  const before = await rock.boundingBox();
   await rock.click();
-  await expect(rock).toBeDisabled();
+  await expect(rock).toBeEnabled();
+  await expect(rock).toHaveAttribute("aria-pressed", "true");
+  await expect(votes(page)).toHaveAttribute("aria-busy", "true");
+  expect((await rock.boundingBox())?.width).toBe(before?.width);
+  await expect(sources(page).getByRole("button").first()).toBeEnabled();
+  await expect(decades(page).getByRole("button").first()).toBeEnabled();
+  await expect(page.getByRole("combobox", { name: "Jogo da sala" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeEnabled();
+  const pop = votes(page).getByRole("button", { name: "Pop, 0 votos", exact: true });
+  await pop.click();
+  await rock.click();
+  await expect(pop).toHaveAttribute("aria-pressed", "true");
   await expect(rock).toHaveAttribute("aria-pressed", "false");
-  await expect(sources(page).getByRole("button").first()).toBeDisabled();
-  await expect(decades(page).getByRole("button").first()).toBeDisabled();
-  await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeDisabled();
   release();
-  await expect(
-    votes(page).getByRole("button", { name: "Rock, 1 voto", exact: true }),
-  ).toHaveAttribute("aria-pressed", "true");
+  await expect(votes(page)).toHaveAttribute("aria-busy", "false");
+  await expect(votes(page).getByRole("button", { name: /^Pop,/ })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await expect(votes(page).getByRole("button", { name: /^Rock,/ })).toHaveAttribute(
+    "aria-pressed",
+    "false",
+  );
   await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeEnabled();
   disconnect();
   await expect(page.getByRole("button", { name: "Iniciar partida" })).toBeDisabled();
@@ -279,7 +294,7 @@ test("owner and member lobby screenshots, focus and accessibility at 390px and 1
         const bounds = await lobby.boundingBox();
         await screen.setViewportSize({
           width,
-          height: Math.max(900, Math.ceil((bounds?.height ?? 900) + 160)),
+          height: Math.max(900, Math.ceil((bounds?.y ?? 0) + (bounds?.height ?? 900) + 80)),
         });
         await screen.getByRole("main").evaluate((main) => {
           main.scrollTop = 0;

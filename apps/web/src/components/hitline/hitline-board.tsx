@@ -1,6 +1,6 @@
 "use client";
 
-import type { Ack, PublicCard, RoomView } from "@resenhark/shared";
+import type { PublicCard, RoomView } from "@resenhark/shared";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -11,8 +11,7 @@ import { RevealPanel } from "@/components/hitline/reveal-panel";
 import { Scoreboard } from "@/components/hitline/scoreboard";
 import { StatusStrip } from "@/components/hitline/status-strip";
 import { type TakenGap, Timeline } from "@/components/hitline/timeline";
-import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { GameActions, RoomHeader } from "@/components/room/room-header";
 import { disabledReason } from "@/lib/error-messages";
 import { type Send, gameErrorMessage } from "@/lib/game-errors";
 import type { ServerClock } from "@/lib/server-clock";
@@ -24,18 +23,9 @@ type HitlineBoardProps = {
   send: Send;
   clock: ServerClock;
   connected: boolean;
-  /** Owner only: the server drops the finished game and every client goes back to the lobby. */
-  onNewGame: () => Promise<Ack>;
 };
 
-export function HitlineBoard({
-  room,
-  events,
-  send,
-  clock,
-  connected,
-  onNewGame,
-}: HitlineBoardProps) {
+export function HitlineBoard({ room, events, send, clock, connected }: HitlineBoardProps) {
   const view = room.game?.type === "hitline" ? room.game.view : undefined;
   const drawId = view?.draw?.id ?? null;
   const timelineLength =
@@ -121,7 +111,19 @@ export function HitlineBoard({
     <section aria-label="Hitline" className="flex flex-col gap-8 pb-40 lg:pb-0">
       <h1 className="sr-only">Hitline</h1>
       <Announcer events={events} view={view} members={room.members} you={room.you} clock={clock} />
-      <StatusStrip view={view} turnMember={turnMember} isTurn={isTurn} clock={clock} />
+      <RoomHeader
+        actions={
+          <GameActions
+            setup={{ type: "hitline", config: view.config }}
+            owner={isOwner}
+            over={view.phase === "game-over"}
+            connected={connected}
+            send={send}
+          />
+        }
+      >
+        <StatusStrip view={view} turnMember={turnMember} isTurn={isTurn} clock={clock} />
+      </RoomHeader>
       {isSpectator ? (
         <p className="text-sm text-muted-foreground">
           Você está assistindo. Entra na próxima partida.
@@ -136,7 +138,6 @@ export function HitlineBoard({
             view={view}
             members={room.members}
             isOwner={isOwner}
-            onNewGame={onNewGame}
             celebrate={events.some((e) => e.type === "game-over")}
           />
           {roundSummary}
@@ -192,25 +193,6 @@ export function HitlineBoard({
           ) : null}
         </div>
       )}
-      {isOwner && view.phase !== "game-over" ? (
-        <div>
-          <ConfirmDialog
-            trigger={
-              <Button type="button" variant="outline" disabled={!connected}>
-                Encerrar partida
-              </Button>
-            }
-            title="Encerrar a partida?"
-            description="Todo mundo vê o resultado agora."
-            confirmLabel="Encerrar"
-            variant="destructive"
-            onConfirm={async () => {
-              const ack = await send("game:end");
-              if (!ack.ok) toast.error(gameErrorMessage(ack.error));
-            }}
-          />
-        </div>
-      ) : null}
     </section>
   );
 }

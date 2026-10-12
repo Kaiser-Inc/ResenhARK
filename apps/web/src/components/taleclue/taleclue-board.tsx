@@ -1,7 +1,7 @@
 "use client";
 
 import { useSecondsLeft } from "@/components/hitline/countdown";
-import { RulesSheet } from "@/components/rules-sheet";
+import { GameActions, RoomHeader, RoomPanelCycle } from "@/components/room/room-header";
 import { TaleclueCard } from "@/components/taleclue/taleclue-card";
 import { TaleclueCountdown } from "@/components/taleclue/taleclue-countdown";
 import { TalecluePhaseGuide } from "@/components/taleclue/taleclue-phase-guide";
@@ -11,7 +11,6 @@ import {
   type TaleclueSoundState,
 } from "@/components/taleclue/taleclue-sound-control";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { type Send, gameErrorMessage } from "@/lib/game-errors";
@@ -39,7 +38,7 @@ import {
 } from "@resenhark/shared";
 import { LayersIcon, MicIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { type Dispatch, type SetStateAction, useId, useRef, useState } from "react";
+import { type Dispatch, type SetStateAction, useContext, useId, useRef, useState } from "react";
 import { toast } from "sonner";
 
 export type TaleclueDraft = {
@@ -442,16 +441,10 @@ function GameResult({
   view,
   members,
   owner,
-  connected,
-  resetting,
-  onReset,
 }: {
   view: TaleclueView;
   members: MemberView[];
   owner: boolean;
-  connected: boolean;
-  resetting: boolean;
-  onReset: () => void;
 }) {
   const winners = view.endReason === "ended" ? [] : view.winners;
   const names = winners.map((id) => nameOf(members, id));
@@ -472,11 +465,7 @@ function GameResult({
       {view.endReason ? (
         <p className="text-sm text-muted-foreground">{END_REASONS[view.endReason]}</p>
       ) : null}
-      {owner ? (
-        <Button className="self-start" loading={resetting} disabled={!connected} onClick={onReset}>
-          Outra rodada
-        </Button>
-      ) : null}
+      {!owner ? <p className="text-sm text-muted-foreground">Aguardando o dono</p> : null}
     </section>
   );
 }
@@ -504,7 +493,7 @@ export function TaleclueBoard({
   revealProgress?: ReturnType<typeof createTaleclueRevealProgress>;
   urgencyAnnouncements?: Set<string>;
 }) {
-  const [resetting, setResetting] = useState(false);
+  const panelCycle = useContext(RoomPanelCycle);
   const [localDraft, setLocalDraft] = useState<TaleclueDraft | null>(null);
   // A shared ticking clock drives eligibility and seeks reveal without client phase changes.
   useSecondsLeft(room.game?.type === "taleclue" ? (room.game.view.deadline ?? 0) : 0, clock);
@@ -551,35 +540,47 @@ export function TaleclueBoard({
   return (
     <section aria-label="Taleclue" className="flex flex-col gap-6">
       <h1 className="sr-only">Taleclue</h1>
-      <div className="flex flex-wrap items-center gap-4">
-        <div className="min-w-0 basis-full sm:flex-1 sm:basis-auto">
-          <h2 className="text-[28px] leading-8 font-semibold tracking-[-0.03em] sm:text-[40px] sm:leading-[44px]">
-            Rodada {view.round}
-          </h2>
-          {!over ? (
-            <p className="break-words text-sm text-muted-foreground">
-              Narrador: {nameOf(room.members, view.narratorId)}
-            </p>
-          ) : null}
-          {!over && view.nextNarratorId ? (
-            <p className="break-words text-xs text-muted-foreground">
-              Próximo narrador: {nameOf(room.members, view.nextNarratorId)}
-            </p>
-          ) : null}
-        </div>
-        {over ? null : view.deadline === null ? (
-          <span className="text-sm text-muted-foreground">Tempo pausado</span>
-        ) : (
-          <TaleclueCountdown
-            view={view}
-            clock={clock}
-            canAct={canAct}
-            announcements={urgencyAnnouncements}
+      <RoomHeader
+        actions={
+          <GameActions
+            setup={{ type: "taleclue", config: view.config }}
+            owner={owner}
+            over={over}
+            connected={connected}
+            send={send}
           />
-        )}
-        <RulesSheet setup={{ type: "taleclue", config: view.config }} />
-        <TaleclueSoundControl sound={sound} />
-      </div>
+        }
+      >
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="min-w-0 basis-full sm:flex-1 sm:basis-auto">
+            <h2 className="text-[28px] leading-8 font-semibold tracking-[-0.03em] sm:text-[40px] sm:leading-[44px]">
+              Rodada {view.round}
+            </h2>
+            {!over ? (
+              <p className="break-words text-sm text-muted-foreground">
+                Narrador: {nameOf(room.members, view.narratorId)}
+              </p>
+            ) : null}
+            {!over && view.nextNarratorId ? (
+              <p className="break-words text-xs text-muted-foreground">
+                Próximo narrador: {nameOf(room.members, view.nextNarratorId)}
+              </p>
+            ) : null}
+          </div>
+          {over ? null : view.deadline === null ? (
+            <span className="text-sm text-muted-foreground">Tempo pausado</span>
+          ) : (
+            <TaleclueCountdown
+              key={panelCycle}
+              view={view}
+              clock={clock}
+              canAct={canAct}
+              announcements={urgencyAnnouncements}
+            />
+          )}
+          <TaleclueSoundControl sound={sound} />
+        </div>
+      </RoomHeader>
 
       {!over ? (
         <ol className="flex flex-wrap gap-4 text-xs text-muted-foreground">
@@ -612,21 +613,7 @@ export function TaleclueBoard({
       ) : null}
       <div className="flex min-w-0 flex-col gap-8">
         <div className="flex min-w-0 flex-col gap-6">
-          {over ? (
-            <GameResult
-              view={view}
-              members={room.members}
-              owner={owner}
-              connected={connected}
-              resetting={resetting}
-              onReset={async () => {
-                setResetting(true);
-                const ack = await send("game:reset");
-                setResetting(false);
-                if (!ack.ok) toast.error(gameErrorMessage(ack.error, "taleclue"));
-              }}
-            />
-          ) : null}
+          {over ? <GameResult view={view} members={room.members} owner={owner} /> : null}
           {!over && view.clue ? (
             <div
               key={`${view.round}:${view.clue}`}
@@ -705,26 +692,6 @@ export function TaleclueBoard({
             </details>
           ))}
         </section>
-      ) : null}
-      {owner && !over ? (
-        <div>
-          <ConfirmDialog
-            trigger={
-              <Button variant="outline" disabled={!connected}>
-                Encerrar partida
-              </Button>
-            }
-            title="Encerrar a partida?"
-            description="Todo mundo vê o resultado agora."
-            confirmLabel="Encerrar"
-            variant="destructive"
-            confirmDisabled={!connected}
-            onConfirm={async () => {
-              const ack = await send("game:end");
-              if (!ack.ok) toast.error(gameErrorMessage(ack.error, "taleclue"));
-            }}
-          />
-        </div>
       ) : null}
     </section>
   );

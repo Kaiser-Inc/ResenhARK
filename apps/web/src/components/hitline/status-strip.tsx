@@ -3,7 +3,6 @@ import type { HitlineView, MemberView } from "@resenhark/shared";
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
 import { Countdown, useSecondsLeft } from "@/components/hitline/countdown";
 import { TokenStack } from "@/components/hitline/token-stack";
-import { RulesSheet } from "@/components/rules-sheet";
 import type { ServerClock } from "@/lib/server-clock";
 
 const PHASES: Record<HitlineView["phase"], string> = {
@@ -70,7 +69,6 @@ export function StatusStrip({ view, turnMember, isTurn, clock }: StatusStripProp
       </div>
       {turnPlayer && view.phase !== "game-over" ? <TokenStack count={turnPlayer.tokens} /> : null}
       {showTimer ? <Countdown key={deadline} deadline={deadline} clock={clock} /> : null}
-      <RulesSheet setup={{ type: "hitline", config: view.config }} />
     </div>
   );
 }

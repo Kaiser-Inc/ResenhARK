@@ -34,12 +34,20 @@ async function copyLink(code: string) {
 
 export function RoomCode({ code }: { code: string }) {
   return (
-    <div className="flex flex-col items-start gap-2">
-      <p className="text-xs text-muted-foreground">Código da sala</p>
-      <p translate="no" className="font-mono text-xl leading-7 font-semibold tracking-[0.15em]">
+    <div className="flex flex-col items-center gap-2">
+      <p className="text-center text-xs text-muted-foreground">Código da sala</p>
+      <p
+        translate="no"
+        className="whitespace-nowrap text-center font-mono text-3xl leading-10 font-semibold tracking-[0.15em] text-primary-text"
+      >
         {code}
       </p>
-      <Button type="button" variant="outline" onClick={() => copyLink(code)}>
+      <Button
+        type="button"
+        variant="outline"
+        className="w-full justify-start"
+        onClick={() => copyLink(code)}
+      >
         <LinkIcon aria-hidden="true" strokeWidth={1.75} />
         Copiar link
       </Button>

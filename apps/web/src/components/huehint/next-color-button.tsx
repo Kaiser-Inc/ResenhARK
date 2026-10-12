@@ -9,6 +9,7 @@ import { toast } from "sonner";
 export function NextColorButton({ send, connected }: { send: Send; connected: boolean }) {
   const [pending, setPending] = useState(false);
   const busy = useRef(false);
+  const root = useRef<HTMLDivElement>(null);
 
   async function advance() {
     if (!connected || busy.current) return;
@@ -24,6 +25,12 @@ export function NextColorButton({ send, connected }: { send: Send; connected: bo
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (
+        root.current?.closest(
+          '[inert], [hidden], [data-hidden], [data-ending-style], [aria-hidden="true"]',
+        )
+      )
+        return;
       if (event.key !== "Enter" || event.repeat || event.isComposing || event.defaultPrevented)
         return;
       const target = event.target instanceof Element ? event.target : null;
@@ -41,7 +48,7 @@ export function NextColorButton({ send, connected }: { send: Send; connected: bo
   });
 
   return (
-    <div className="flex items-center gap-2">
+    <div ref={root} className="flex items-center gap-2">
       <Button type="button" loading={pending} disabled={!connected} onClick={() => void advance()}>
         Próxima cor
       </Button>
