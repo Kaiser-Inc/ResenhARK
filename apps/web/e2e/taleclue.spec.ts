@@ -181,9 +181,9 @@ async function screenshots(page: Page, phase: string, afterResize?: () => Promis
     );
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await expect(page.getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
-        width < 1024 ? 1 : 0,
-      );
+      const gameTab = page.getByRole("tab", { name: "Jogo", exact: true, includeHidden: true });
+      if (width < 1024) await expect(gameTab).toBeVisible();
+      else await expect(gameTab).toBeHidden();
       await expect
         .poll(() =>
           page

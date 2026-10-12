@@ -1,12 +1,13 @@
-import type { LobbyView } from "@resenhark/shared";
+import type { Ack, LobbyView } from "@resenhark/shared";
 import { CheckIcon } from "lucide-react";
 import { useId } from "react";
 
+import { useChipSelection } from "@/components/lobby/use-chip-selection";
 import { Button } from "@/components/ui/button";
 
 export function GenrePicker({
   genres,
-  selected,
+  selected: serverSelected,
   label,
   votes = false,
   disabled,
@@ -17,12 +18,13 @@ export function GenrePicker({
   label: string;
   votes?: boolean;
   disabled: boolean;
-  onChange?: (genres: number[]) => void;
+  onChange?: (genres: number[]) => Promise<Ack>;
 }) {
   const reasonId = useId();
+  const { selected, busy, change } = useChipSelection(serverSelected, onChange);
   const visible = onChange ? genres : genres.filter((genre) => selected.includes(genre.id));
   return (
-    <fieldset aria-label={label} className="flex flex-wrap gap-2">
+    <fieldset aria-label={label} aria-busy={busy} className="flex flex-wrap gap-2">
       {visible.map((genre) => {
         const pressed = selected.includes(genre.id);
         const unavailable = genre.available === 0;
@@ -40,18 +42,20 @@ export function GenrePicker({
             aria-describedby={unavailable ? reasonId : undefined}
             title={unavailable ? "Sem músicas disponíveis nas épocas marcadas." : undefined}
             disabled={disabled || !onChange || (votes && unavailable)}
-            className="rounded-full transition-colors active:scale-100 aria-pressed:border-primary-text aria-pressed:bg-secondary aria-pressed:text-primary-text"
+            className="rounded-full transition-colors duration-150 active:not-aria-disabled:scale-100 aria-pressed:border-primary-text aria-pressed:bg-secondary aria-pressed:text-primary-text"
             onClick={() =>
-              onChange?.(
+              void change(
                 pressed ? selected.filter((id) => id !== genre.id) : [...selected, genre.id],
               )
             }
           >
-            {pressed ? (
-              <CheckIcon aria-hidden="true" strokeWidth={1.75} className="size-3.5" />
-            ) : null}
+            <CheckIcon
+              aria-hidden="true"
+              strokeWidth={1.75}
+              className={pressed ? "size-3.5 shrink-0 visible" : "size-3.5 shrink-0 invisible"}
+            />
             {genre.name}
-            {votes ? <span className="tabular-nums">{genre.votes}</span> : null}
+            {votes ? <span className="w-[2ch] text-right tabular-nums">{genre.votes}</span> : null}
           </Button>
         );
       })}

@@ -112,7 +112,7 @@ export function HitlineLobby({
               label="Seu voto"
               votes
               disabled={disabled}
-              onChange={(genres) => void onAction("lobby:vote-genres", { genres })}
+              onChange={(genres) => onAction("lobby:vote-genres", { genres })}
             />
           </div>
           <div className="flex flex-col gap-3">
@@ -137,9 +137,7 @@ export function HitlineLobby({
               selected={lobby.genres.filter((genre) => genre.selected).map((genre) => genre.id)}
               label="Lista da partida"
               disabled={disabled}
-              onChange={
-                isOwner ? (genres) => void onAction("lobby:set-genres", { genres }) : undefined
-              }
+              onChange={isOwner ? (genres) => onAction("lobby:set-genres", { genres }) : undefined}
             />
           </div>
         </>
@@ -147,9 +145,7 @@ export function HitlineLobby({
       <DecadeFilter
         decades={lobby.decades}
         disabled={disabled}
-        onChange={
-          isOwner ? (decades) => void onAction("lobby:set-decades", { decades }) : undefined
-        }
+        onChange={isOwner ? (decades) => onAction("lobby:set-decades", { decades }) : undefined}
       />
       <div className="flex flex-col gap-3">
         <output aria-live="polite" className="text-base font-medium tabular-nums">

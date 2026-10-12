@@ -1,13 +1,12 @@
 "use client";
-import { RulesSheet } from "@/components/rules-sheet";
 
 import { MemberAvatar } from "@/components/avatar/member-avatar";
 import { Countdown } from "@/components/hitline/countdown";
 import { useReduced } from "@/components/hitline/motion";
 import { ColorSelector } from "@/components/huehint/color-selector";
 import { NextColorButton } from "@/components/huehint/next-color-button";
+import { GameActions, RoomHeader } from "@/components/room/room-header";
 import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { type Send, gameErrorMessage } from "@/lib/game-errors";
@@ -282,7 +281,6 @@ export function HuehintBoard({
   connected,
 }: { room: RoomView; events: GameEvent[]; send: Send; clock: ServerClock; connected: boolean }) {
   const [pending, setPending] = useState(false);
-  const [resetting, setResetting] = useState(false);
   if (room.game?.type !== "huehint") return null;
   const view = room.game.view;
   const screen = huehintScreen(view, room.you);
@@ -352,28 +350,39 @@ export function HuehintBoard({
           ? `. Rodada de ${name(canceled.giverId)} cancelada.`
           : ""}
       </div>
-      <div className="flex flex-wrap items-center gap-4 rounded-xl bg-muted p-4">
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <p className="font-semibold">
-            Rodada {view.round} / {view.totalRounds}
-          </p>
-          {view.phase === "game-over" ? null : (
-            <p className="text-sm text-muted-foreground">
-              {view.mode === "solo"
-                ? "Sem dador · treino de memória"
-                : `Dica agora: ${name(view.giverId)} · Próxima dica: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}`}
+      <RoomHeader
+        actions={
+          <GameActions
+            setup={{ type: "huehint", config: view.config }}
+            owner={isOwner}
+            over={view.phase === "game-over"}
+            connected={connected}
+            send={send}
+          />
+        }
+      >
+        <div className="flex flex-wrap items-center gap-4 rounded-xl bg-muted p-4">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <p className="font-semibold">
+              Rodada {view.round} / {view.totalRounds}
             </p>
+            {view.phase === "game-over" ? null : (
+              <p className="text-sm text-muted-foreground">
+                {view.mode === "solo"
+                  ? "Sem dador · treino de memória"
+                  : `Dica agora: ${name(view.giverId)} · Próxima dica: ${view.nextGiverId ? name(view.nextGiverId) : "última rodada"}`}
+              </p>
+            )}
+          </div>
+          {view.deadline !== null ? (
+            <Countdown key={view.deadline} deadline={view.deadline} clock={clock} />
+          ) : (
+            <span className="text-sm text-muted-foreground">
+              {view.phase === "game-over" ? "Tempo encerrado" : "Tempo pausado"}
+            </span>
           )}
         </div>
-        {view.deadline !== null ? (
-          <Countdown key={view.deadline} deadline={view.deadline} clock={clock} />
-        ) : (
-          <span className="text-sm text-muted-foreground">
-            {view.phase === "game-over" ? "Tempo encerrado" : "Tempo pausado"}
-          </span>
-        )}
-        <RulesSheet setup={{ type: "huehint", config: view.config }} />
-      </div>
+      </RoomHeader>
       {!player ? (
         <p className="text-sm text-muted-foreground">
           Você está assistindo. Entra na próxima partida.
@@ -410,22 +419,7 @@ export function HuehintBoard({
                 : "Vocês precisam de B ou melhor para vencer. Tentem juntos outra vez."}
             </p>
           ) : null}
-          {isOwner ? (
-            <Button
-              type="button"
-              className="self-start"
-              loading={resetting}
-              disabled={!connected}
-              onClick={async () => {
-                setResetting(true);
-                const ack = await send("game:reset");
-                setResetting(false);
-                if (!ack.ok) toast.error(gameErrorMessage(ack.error));
-              }}
-            >
-              Outra rodada
-            </Button>
-          ) : null}
+          {!isOwner ? <p className="text-sm text-muted-foreground">Aguardando o dono</p> : null}
         </section>
       ) : (
         <>
@@ -534,26 +528,6 @@ export function HuehintBoard({
             </details>
           ))}
         </section>
-      ) : null}
-      {isOwner && view.phase !== "game-over" ? (
-        <div>
-          <ConfirmDialog
-            trigger={
-              <Button type="button" variant="outline" disabled={!connected}>
-                Encerrar partida
-              </Button>
-            }
-            title="Encerrar a partida?"
-            description="Todo mundo vê o resultado agora."
-            confirmLabel="Encerrar"
-            variant="destructive"
-            confirmDisabled={!connected}
-            onConfirm={async () => {
-              const ack = await send("game:end");
-              if (!ack.ok) toast.error(gameErrorMessage(ack.error));
-            }}
-          />
-        </div>
       ) : null}
     </section>
   );

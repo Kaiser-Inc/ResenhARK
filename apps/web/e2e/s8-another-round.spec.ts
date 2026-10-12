@@ -22,7 +22,10 @@ test("another round: lobby counts the remaining songs and nothing played is deal
   );
   expect(round1).toHaveLength(2);
 
-  await result.getByRole("button", { name: "Outra rodada" }).click();
+  await page
+    .locator('[data-slot="room-header-actions"]')
+    .getByRole("button", { name: "Outra rodada", exact: true })
+    .click();
   await expect(page.getByText("Restam 38 de 40 músicas")).toBeVisible();
   await expect(page.getByRole("button", { name: "Recomeçar músicas" })).toBeVisible();
 
