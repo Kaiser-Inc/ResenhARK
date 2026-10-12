@@ -99,3 +99,11 @@ test("rejectedByCut counts only tracks the cut turns away, not known or repeated
   ];
   assert.equal(rejectedByCut(tracks, 300_000), 3);
 });
+
+test("resolveYear ignores placeholder and future years from either source", () => {
+  assert.deepEqual(resolveYear("2007-11-20", 1900, 2026), { year: 2007, verified: false });
+  assert.deepEqual(resolveYear("2027-01-01", 1987, 2026), { year: 1987, verified: true });
+  assert.equal(resolveYear("2027-01-01", null, 2026), null);
+  assert.equal(resolveYear("1900-01-01", null, 2026), null);
+  assert.deepEqual(resolveYear("1931-05-01", null, 2026), { year: 1931, verified: false });
+});

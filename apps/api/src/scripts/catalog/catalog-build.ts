@@ -59,16 +59,22 @@ export function rejectedByCut(tracks: PlaylistTrack[], minRank: number): number 
   return rejected;
 }
 
+/** Years either source reports as 1900 or in the future are placeholders, not releases. */
+const MIN_YEAR = 1920;
+
 /** Remasters and compilations only ever date later, so the earlier year is the closer one. */
 export function resolveYear(
   deezerDate: string | undefined,
   mbYear: number | null,
+  maxYear = new Date().getFullYear(),
 ): { year: number; verified: boolean } | null {
+  const valid = (y: number | null): y is number => y !== null && y >= MIN_YEAR && y <= maxYear;
   const parsed = Number.parseInt(deezerDate?.slice(0, 4) ?? "", 10);
-  const deezerYear = Number.isFinite(parsed) && parsed > 0 ? parsed : null;
-  const years = [deezerYear, mbYear].filter((y): y is number => y !== null);
+  const deezerYear = valid(Number.isFinite(parsed) ? parsed : null) ? parsed : null;
+  const mb = valid(mbYear) ? mbYear : null;
+  const years = [deezerYear, mb].filter((y): y is number => y !== null);
   if (years.length === 0) return null;
-  return { year: Math.min(...years), verified: mbYear !== null };
+  return { year: Math.min(...years), verified: mb !== null };
 }
 
 export const resolveGenre = (albumGenreId: number | undefined): number =>
