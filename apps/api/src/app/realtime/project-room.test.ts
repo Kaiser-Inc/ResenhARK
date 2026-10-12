@@ -1,11 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  DECADES,
+  DECADE_LABELS,
   DEFAULT_HITLINE_CONFIG,
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
+  HITLINE_GENRES,
+  decadeOf,
 } from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
+import type { CatalogCard } from "../games/hitline/catalog.js";
 import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
 import { projectRoom } from "./project-room.js";
 
@@ -23,7 +28,7 @@ const member = (id: string, connections: number): Member => ({
 test("projectRoom shows presence and ownership from the viewer's side", () => {
   const room = createRoom("ABCDE", member("ana", 1), 0);
   room.members.push(member("bia", 0));
-  const view = projectRoom(room, "bia", 42);
+  const view = projectRoom(room, "bia", 42, []);
   assert.equal(view.you, "bia");
   assert.equal(view.serverNow, 42);
   assert.deepEqual(
@@ -38,9 +43,27 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
     config: DEFAULT_HITLINE_CONFIG,
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
     taleclueConfig: DEFAULT_TALECLUE_CONFIG,
-    playlist: { source: "default", name: "Baralho ResenhARK", count: DEFAULT_DECK.cards.length },
+    playlist: { source: "default", name: "Baralho da galera", count: DEFAULT_DECK.cards.length },
     remaining: DEFAULT_DECK.cards.length,
     smallPlaylist: false,
+    source: "genres",
+    genres: HITLINE_GENRES.map((g) => ({
+      id: g.id,
+      name: g.name,
+      votes: 0,
+      selected: false,
+      available: 0,
+    })),
+    myGenres: [],
+    genreMode: "votes",
+    decades: DECADES.map((id) => ({
+      id,
+      label: DECADE_LABELS[id],
+      selected: id !== "pre60",
+      available: DEFAULT_DECK.cards.filter((c) => decadeOf(c.year) === id).length,
+    })),
+    available: DEFAULT_DECK.cards.length,
+    galeraFallback: true,
   });
   assert.equal(view.game, null);
 });
@@ -58,13 +81,51 @@ test("projectRoom counts remaining songs and sizes the small-playlist warning ag
   room.lobby = {
     ...room.lobby,
     config: { ...DEFAULT_HITLINE_CONFIG, targetCards: 5 },
+    source: "playlist",
     deck: { name: "P", cards: Array.from({ length: 12 }, (_, i) => card(i)) },
   };
   // 1 online player, N=5: warns below 10 songs.
-  assert.equal(projectRoom(room, "ana", 0).lobby.smallPlaylist, false);
+  assert.equal(projectRoom(room, "ana", 0, []).lobby.smallPlaylist, false);
   room.lobby.played = ["t0|a", "t1|a", "t2|a"];
-  const view = projectRoom(room, "ana", 0).lobby;
+  const view = projectRoom(room, "ana", 0, []).lobby;
   assert.deepEqual(view.playlist, { source: "playlist", name: "P", count: 12 });
   assert.equal(view.remaining, 9);
   assert.equal(view.smallPlaylist, true);
+});
+
+test("projectRoom scans the catalog once per room state, however many viewers it serves", () => {
+  let scans = 0;
+  class CountingCatalog extends Array<CatalogCard> {
+    static get [Symbol.species]() {
+      return Array;
+    }
+    filter(...args: Parameters<Array<CatalogCard>["filter"]>) {
+      scans++;
+      return super.filter(...args);
+    }
+  }
+  const catalog = CountingCatalog.from(
+    { length: 50 },
+    (_, i): CatalogCard => ({
+      id: `cat-${i}`,
+      title: `T${i}`,
+      artists: ["A"],
+      year: 1990,
+      isrc: `ISRC${i}`,
+      spotifyUrl: null,
+      deezerId: i,
+      genre: 132,
+    }),
+  );
+  const room = createRoom("ABCDE", member("ana", 1), 0);
+  room.members.push(member("bia", 1));
+  room.lobby.genreVotes = { ana: [132], bia: [152] };
+  const first = projectRoom(room, "ana", 0, catalog);
+  const afterOne = scans;
+  assert.ok(afterOne > 0);
+  const second = projectRoom(room, "bia", 0, catalog);
+  assert.equal(scans, afterOne);
+  assert.deepEqual(first.lobby.myGenres, [132]);
+  assert.deepEqual(second.lobby.myGenres, [152]);
+  assert.deepEqual(first.lobby.genres, second.lobby.genres);
 });

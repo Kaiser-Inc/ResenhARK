@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  DEFAULT_DECADES,
   DEFAULT_HITLINE_CONFIG,
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
@@ -66,5 +67,33 @@ test("load gives rooms saved before Huehint the default game choice", async () =
   assert.deepEqual(room?.lobby.huehintConfig, DEFAULT_HUEHINT_CONFIG);
   assert.deepEqual(room?.lobby.taleclueConfig, DEFAULT_TALECLUE_CONFIG);
   assert.deepEqual(room?.lobby.taleclueUsed, []);
+  await app.close();
+});
+
+test("a room saved before genre sources loads with the new lobby defaults", async () => {
+  const app = await startTestServer();
+  const { store } = app;
+  const lobby = {
+    game: "hitline",
+    config: DEFAULT_HITLINE_CONFIG,
+    huehintConfig: DEFAULT_HUEHINT_CONFIG,
+    taleclueConfig: DEFAULT_TALECLUE_CONFIG,
+    deck: null,
+    played: [],
+    colors: [],
+    taleclueUsed: [],
+  };
+  const imported = { ...lobby, deck: { name: "Mine", cards: [] } };
+  await store.redis.set("room:OLDRM", JSON.stringify({ code: "OLDRM", members: [], lobby }));
+  await store.redis.set(
+    "room:OLDPL",
+    JSON.stringify({ code: "OLDPL", members: [], lobby: imported }),
+  );
+  const plain = await store.load("OLDRM");
+  assert.equal(plain?.lobby.source, "genres");
+  assert.deepEqual(plain?.lobby.genreVotes, {});
+  assert.equal(plain?.lobby.ownerGenres, null);
+  assert.deepEqual(plain?.lobby.decades, DEFAULT_DECADES);
+  assert.equal((await store.load("OLDPL"))?.lobby.source, "playlist");
   await app.close();
 });

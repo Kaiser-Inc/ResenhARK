@@ -105,7 +105,7 @@ test("without an import the room plays the default deck and counts its songs as 
   const lobby = await stateWhere(clients[1], (x) => x.room.lobby.remaining === count);
   assert.deepEqual(lobby.room.lobby.playlist, {
     source: "default",
-    name: "Baralho ResenhARK",
+    name: "Baralho da galera",
     count,
   });
   assert.deepEqual(await emit(owner, "game:start"), { ok: true });
@@ -387,7 +387,7 @@ test("lobby:use-default-deck is owner-only, blocked mid-game, and brings the def
   assert.deepEqual(await emit(owner, "lobby:use-default-deck"), { ok: true });
   const count = DEFAULT_DECK.cards.length;
   const s = await stateWhere(clients[1], (x) => x.room.lobby.playlist.source === "default");
-  assert.deepEqual(s.room.lobby.playlist, { source: "default", name: "Baralho ResenhARK", count });
+  assert.deepEqual(s.room.lobby.playlist, { source: "default", name: "Baralho da galera", count });
   assert.equal(s.room.lobby.remaining, count);
 });
 

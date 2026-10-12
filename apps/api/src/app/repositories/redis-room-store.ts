@@ -1,6 +1,7 @@
 import {
   CHAT_HISTORY,
   type ChatMessage,
+  DEFAULT_DECADES,
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
 } from "@resenhark/shared";
@@ -29,6 +30,11 @@ export class RedisRoomStore implements RoomStore {
     // Rooms saved before Taleclue.
     room.lobby.taleclueConfig ??= { ...DEFAULT_TALECLUE_CONFIG };
     room.lobby.taleclueUsed ??= [];
+    // Rooms saved before genre sources: an imported playlist stays, the rest plays genres.
+    room.lobby.source ??= room.lobby.deck ? "playlist" : "genres";
+    room.lobby.genreVotes ??= {};
+    room.lobby.ownerGenres ??= null;
+    room.lobby.decades ??= [...DEFAULT_DECADES];
     return room;
   }
 

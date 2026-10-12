@@ -75,7 +75,13 @@ const taleclueModule: GameModule<
 export const GAMES = { hitline: hitlineModule, huehint: huehintModule, taleclue: taleclueModule };
 
 export type ActiveGame =
-  | { type: "hitline"; state: hitline.HitlineState; playerIds: string[] }
+  | {
+      type: "hitline";
+      state: hitline.HitlineState;
+      playerIds: string[];
+      /** Played keys of every card the game started with; absent in games saved before sampled decks. */
+      startKeys?: string[];
+    }
   | { type: "huehint"; state: huehint.HuehintState; playerIds: string[] }
   | { type: "taleclue"; state: taleclue.TaleclueState; playerIds: string[] };
 

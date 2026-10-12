@@ -1,0 +1,48 @@
+name: Hitline catalog
+
+on:
+  schedule:
+    - cron: "0 9 * * 1" # Mondays 09:00 UTC
+  workflow_dispatch:
+
+# Needs Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests".
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter api exec tsx src/scripts/catalog/build.ts
+      - name: Open a pull request with the new songs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- apps/api/src/app/games/hitline/catalog.json; then
+            echo "No new songs this week."
+            exit 0
+          fi
+          # One fixed branch: an unmerged PR from an earlier week is updated, not duplicated.
+          branch="chore/hitline-catalog"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$branch"
+          git add apps/api/src/app/games/hitline/catalog.json apps/api/src/scripts/catalog/report.md
+          git commit -m "chore(api): weekly Hitline catalog refresh"
+          git push --force origin "$branch"
+          # A pull request body is capped at 65,536 characters.
+          head -c 60000 apps/api/src/scripts/catalog/report.md > "$RUNNER_TEMP/pr-body.md"
+          title="chore(api): Hitline catalog refresh $(date +%Y-%m-%d)"
+          gh pr create --base main --head "$branch" --title "$title" --body-file "$RUNNER_TEMP/pr-body.md" \
+            || gh pr edit "$branch" --title "$title" --body-file "$RUNNER_TEMP/pr-body.md"

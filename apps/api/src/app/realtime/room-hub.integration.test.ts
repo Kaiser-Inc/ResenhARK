@@ -24,6 +24,7 @@ async function setup(t: { after: (fn: () => Promise<void>) => void }) {
     store: app.store,
     io: app.io,
     audio: { findPreviewUrl: async () => null },
+    catalog: [],
     now: app.clock.now,
     rng: Math.random,
     newId: () => "x",

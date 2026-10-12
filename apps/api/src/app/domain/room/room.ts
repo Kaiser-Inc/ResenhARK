@@ -1,19 +1,25 @@
 import {
   type Avatar,
+  DEFAULT_DECADES,
   DEFAULT_HITLINE_CONFIG,
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
+  type Decade,
   type GameType,
+  HITLINE_GENRES,
   type HitlineConfig,
+  type HitlineSource,
   type Hsb,
   type HuehintConfig,
   ROOM_CODE_ALPHABET,
   type TaleclueConfig,
   normalizeName,
 } from "@resenhark/shared";
+import type { CatalogCard } from "../../games/hitline/catalog.js";
 import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
 import type { Card } from "../../games/hitline/engine.js";
 import { normalizeTitle } from "../../games/hitline/normalize.js";
+import { inDecades } from "../../games/hitline/pool.js";
 import { type ActiveGame, gameDeadline } from "../../games/registry.js";
 import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 
@@ -35,6 +41,14 @@ export type Lobby = {
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
   taleclueConfig: TaleclueConfig;
+  /** Where Hitline songs come from. `playlist` exactly when `deck` is set. */
+  source: HitlineSource;
+  /** Genres each member voted for, by member id. */
+  genreVotes: Record<string, number[]>;
+  /** The owner's own genre list; null follows the votes. */
+  ownerGenres: number[] | null;
+  /** Decades that may be drawn, whatever the source. */
+  decades: Decade[];
   /** The imported playlist; null plays DEFAULT_DECK. */
   deck: ImportedPlaylist | null;
   /** Stable keys (see playedKey) of every song already played in this room. */
@@ -82,6 +96,10 @@ export function createRoom(code: string, owner: Member, now: number): Room {
       config: DEFAULT_HITLINE_CONFIG,
       huehintConfig: DEFAULT_HUEHINT_CONFIG,
       taleclueConfig: DEFAULT_TALECLUE_CONFIG,
+      source: "genres",
+      genreVotes: {},
+      ownerGenres: null,
+      decades: [...DEFAULT_DECADES],
       deck: null,
       played: [],
       colors: [],
@@ -117,25 +135,56 @@ export function playedKey(card: Card): string {
 
 /** The deck the room plays: the imported playlist, else the default deck. */
 export function deckOf(lobby: Lobby): ImportedPlaylist {
-  return lobby.deck ?? DEFAULT_DECK;
+  return lobby.source === "playlist" && lobby.deck ? lobby.deck : DEFAULT_DECK;
 }
 
-/** Deck cards not played yet in this room. */
-export function unplayedCards(lobby: Lobby): Card[] {
-  const played = new Set(lobby.played);
-  return deckOf(lobby).cards.filter((card) => !played.has(playedKey(card)));
+/** The owner's list, else every genre a current member voted for, in the lobby's order. */
+export function effectiveGenres(room: Room): number[] {
+  const { ownerGenres, genreVotes } = room.lobby;
+  if (ownerGenres) return ownerGenres;
+  const voted = new Set(room.members.flatMap((m) => genreVotes[m.id] ?? []));
+  return HITLINE_GENRES.map((g) => g.id).filter((id) => voted.has(id));
+}
+
+/**
+ * Where the next game draws from: the genre catalog narrowed to the listed genres, or the
+ * room's deck. `genres` is set only for a genre game; no listed genre plays the Baralho da galera.
+ */
+export function sourceCards(
+  room: Room,
+  catalog: CatalogCard[],
+): { cards: Card[]; genres: number[] | null } {
+  const { lobby } = room;
+  if (lobby.source !== "genres") return { cards: deckOf(lobby).cards, genres: null };
+  const genres = effectiveGenres(room);
+  if (genres.length === 0) return { cards: DEFAULT_DECK.cards, genres: null };
+  const listed = new Set(genres);
+  return { cards: catalog.filter((card) => listed.has(card.genre)), genres };
+}
+
+/** Cards the next game can draw: the source minus what this room already played. */
+export function playablePool(room: Room, catalog: CatalogCard[]): Card[] {
+  const played = new Set(room.lobby.played);
+  return inDecades(sourceCards(room, catalog).cards, room.lobby.decades).filter(
+    (card) => !played.has(playedKey(card)),
+  );
 }
 
 /**
  * Every card that left the deck (dealt, drawn, skipped, bought, audio-missing) counts as played.
- * Idempotent, so it runs both on reset and on a start straight from a finished game.
+ * A game remembers the cards it started with (`startKeys`), so a sampled catalog deck never marks
+ * the rest of the catalog as played. Idempotent, so it runs both on reset and on a start straight
+ * from a finished game.
  */
 export function foldPlayed(room: Room): Room {
   const { game, lobby } = room;
   if (game?.type !== "hitline") return room;
-  const inDeck = new Set(game.state.deck.map((card) => card.id));
+  const inDeck = new Set(game.state.deck.map(playedKey));
+  // Games saved before sampled decks started with the room's whole deck. Keys, not ids: the
+  // built-in deck's ids changed when they started coming from the Deezer track.
+  const started = game.startKeys ?? deckOf(lobby).cards.map(playedKey);
   const played = new Set(lobby.played);
-  for (const card of deckOf(lobby).cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
+  for (const key of started) if (!inDeck.has(key)) played.add(key);
   return { ...room, lobby: { ...lobby, played: [...played] } };
 }
 
@@ -167,6 +216,18 @@ function nextOnline(members: Member[], exceptId: string): Member | undefined {
   return members.filter((m) => m.id !== exceptId && isOnline(m)).sort(byJoinedAt)[0];
 }
 
+/** The owner's own genre list belongs to them: a new owner starts from the members' votes. */
+const withoutOwnerList = (room: Room): Room => ({
+  ...room,
+  lobby: { ...room.lobby, ownerGenres: null },
+});
+
+/** A departed member's votes must not linger in the room. */
+function withoutVotes(room: Room, memberId: string): Room {
+  const { [memberId]: _gone, ...genreVotes } = room.lobby.genreVotes;
+  return { ...room, lobby: { ...room.lobby, genreVotes } };
+}
+
 export function transferOwnershipIfAway(
   room: Room,
   now: number,
@@ -177,7 +238,7 @@ export function transferOwnershipIfAway(
   }
   const heir = nextOnline(room.members, owner.id);
   if (!heir) return { room, newOwnerId: null };
-  return { room: { ...room, ownerId: heir.id }, newOwnerId: heir.id };
+  return { room: withoutOwnerList({ ...room, ownerId: heir.id }), newOwnerId: heir.id };
 }
 
 export function kick(room: Room, actorId: string, targetId: string): RoomResult {
@@ -185,14 +246,16 @@ export function kick(room: Room, actorId: string, targetId: string): RoomResult 
   if (targetId === actorId || !room.members.some((m) => m.id === targetId)) {
     return { ok: false, error: "invalid-target" };
   }
-  return { ok: true, room: { ...room, members: room.members.filter((m) => m.id !== targetId) } };
+  const kicked = { ...room, members: room.members.filter((m) => m.id !== targetId) };
+  return { ok: true, room: withoutVotes(kicked, targetId) };
 }
 
 export function leave(room: Room, memberId: string): Room {
   const members = room.members.filter((m) => m.id !== memberId);
-  if (room.ownerId !== memberId) return { ...room, members };
+  const rest = withoutVotes({ ...room, members }, memberId);
+  if (room.ownerId !== memberId) return rest;
   const heir = nextOnline(members, memberId) ?? [...members].sort(byJoinedAt)[0];
-  return { ...room, members, ownerId: heir?.id ?? room.ownerId };
+  return withoutOwnerList({ ...rest, ownerId: heir?.id ?? room.ownerId });
 }
 
 /** When the room next needs a tick (owner handover or game deadline), or null. */

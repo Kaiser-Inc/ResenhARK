@@ -19,8 +19,10 @@ test("the built-in deck has no repeated song and 20% to 30% of Brazilian songs",
   assert.ok(share >= 0.2 && share <= 0.3, `Brazilian share ${share}`);
 });
 
-test("DEFAULT_DECK cards carry the Deezer id and stable ids", () => {
+test("DEFAULT_DECK is the Baralho da galera, with ids from the Deezer track", () => {
+  assert.equal(DEFAULT_DECK.name, "Baralho da galera");
   assert.equal(DEFAULT_DECK.cards.length, songs.length);
-  assert.equal(DEFAULT_DECK.cards[0].id, "default-0");
+  assert.equal(DEFAULT_DECK.cards[0].id, `default-${songs[0].deezerId}`);
   assert.equal(DEFAULT_DECK.cards[0].deezerId, songs[0].deezerId);
+  assert.equal(new Set(DEFAULT_DECK.cards.map((c) => c.id)).size, songs.length);
 });

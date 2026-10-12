@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { seededRng } from "../../core/seeded-rng.js";
+import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
+import { create as createHitline } from "../../games/hitline/engine.js";
 import { create as createTaleclue } from "../../games/taleclue/engine.js";
 import { cfg, ctxAt, syntheticDeck } from "../../games/taleclue/test-helpers.js";
 import {
@@ -10,10 +13,12 @@ import {
   addMember,
   createRoom,
   foldColors,
+  foldPlayed,
   foldTaleclueUsed,
   generateRoomCode,
   kick,
   leave,
+  playedKey,
   roomDeadline,
   tickRoom,
   transferOwnershipIfAway,
@@ -202,4 +207,72 @@ test("foldTaleclueUsed adds a finished game's dealt cards once and is idempotent
 test("foldTaleclueUsed ignores rooms without a Taleclue game", () => {
   const room = createRoom("KXPMR", member("a"), 0);
   assert.equal(foldTaleclueUsed(room), room);
+});
+
+test("foldPlayed with startKeys counts only the cards that left the pile, not the rest of the catalog", () => {
+  const cards = Array.from({ length: 5 }, (_, i) => ({
+    id: `cat-${i}`,
+    title: `T${i}`,
+    artists: ["A"],
+    year: 1990,
+    isrc: `ISRC${i}`,
+    spotifyUrl: null,
+  }));
+  const dealt = cards.slice(0, 4);
+  const started = createHitline(
+    { targetCards: 5, contestSeconds: 15, guessSeconds: 120, maxPlayers: 15 },
+    ["a", "b"],
+    dealt,
+    { now: 0, rng: seededRng(1), newId: () => "id" },
+  );
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.game = {
+    type: "hitline",
+    state: started.state,
+    playerIds: ["a", "b"],
+    startKeys: dealt.map(playedKey),
+  };
+  const folded = foldPlayed(room);
+  // 2 players took one card each; the other 2 are still in the pile, and cat-4 was never in the game.
+  assert.equal(folded.lobby.played.length, 2);
+  assert.ok(!folded.lobby.played.includes(playedKey(cards[4])));
+  assert.deepEqual(foldPlayed(folded).lobby.played, folded.lobby.played);
+});
+
+test("a game saved with position-based default ids still folds only the cards it dealt", () => {
+  // Before the Baralho da galera used Deezer ids, cards were `default-{position}`.
+  const legacy = DEFAULT_DECK.cards.map((card, i) => ({ ...card, id: `default-${i}` }));
+  const started = createHitline(
+    { targetCards: 5, contestSeconds: 15, guessSeconds: 120, maxPlayers: 15 },
+    ["a", "b"],
+    legacy,
+    { now: 0, rng: seededRng(1), newId: () => "id" },
+  );
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.lobby.source = "galera";
+  room.game = { type: "hitline", state: started.state, playerIds: ["a", "b"] };
+  assert.equal(foldPlayed(room).lobby.played.length, 2);
+});
+
+test("leave and kick drop the departed member's genre votes", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.members.push(member("b"), member("c"));
+  room.lobby.genreVotes = { a: [132], b: [152], c: [80] };
+  assert.deepEqual(Object.keys(leave(room, "b").lobby.genreVotes).sort(), ["a", "c"]);
+  const kicked = kick(room, "a", "c");
+  assert.ok(kicked.ok);
+  assert.deepEqual(Object.keys(kicked.room.lobby.genreVotes).sort(), ["a", "b"]);
+});
+
+test("the owner's own genre list does not pass to the next owner", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.members.push({ ...member("b"), joinedAt: 1, connections: 1 });
+  room.lobby.ownerGenres = [80];
+  assert.equal(leave(room, "a").ownerId, "b");
+  assert.equal(leave(room, "a").lobby.ownerGenres, null);
+  assert.equal(leave(room, "b").lobby.ownerGenres?.[0], 80, "a non-owner leaving keeps the list");
+  const away = { ...room, members: [{ ...room.members[0], offlineSince: 0 }, room.members[1]] };
+  const moved = transferOwnershipIfAway(away, 120_000);
+  assert.equal(moved.newOwnerId, "b");
+  assert.equal(moved.room.lobby.ownerGenres, null);
 });
