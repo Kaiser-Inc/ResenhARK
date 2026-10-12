@@ -1,11 +1,17 @@
 import type { GameView, LobbyView, RoomView } from "@resenhark/shared";
 import { settings } from "../core/settings.js";
 import { type Room, deckOf, isOnline, unplayedCards } from "../domain/room/room.js";
+import type { CatalogCard } from "../games/hitline/catalog.js";
 import { isRunning, projectGame } from "../games/registry.js";
 import { audioPath } from "../http/audio-tickets.js";
 
 /** What `viewerId` is allowed to see of the room. Never add hidden game data here. */
-export function projectRoom(room: Room, viewerId: string, now: number): RoomView {
+export function projectRoom(
+  room: Room,
+  viewerId: string,
+  now: number,
+  _catalog: CatalogCard[],
+): RoomView {
   const { game, lobby } = room;
   const onlineCount = room.members.filter(isOnline).length;
   const cap = Math.min(onlineCount, lobby.config.maxPlayers);

@@ -21,6 +21,7 @@ import {
   leave,
   unplayedCards,
 } from "../domain/room/room.js";
+import type { CatalogCard } from "../games/hitline/catalog.js";
 import { create } from "../games/hitline/engine.js";
 import { create as createHuehint } from "../games/huehint/engine.js";
 import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
@@ -39,13 +40,14 @@ export function registerSocketGateway(
     store: RoomStore;
     hub: RoomHub;
     playlists: PlaylistSource;
+    catalog: CatalogCard[];
     now: () => number;
     rng: () => number;
     newId: () => string;
     onError: (err: unknown) => void;
   },
 ): void {
-  const { store, hub, playlists, now, rng, newId, onError } = deps;
+  const { store, hub, playlists, catalog, now, rng, newId, onError } = deps;
   const ctx = () => ({ now: now(), rng, newId });
   const running = (room: Room) => isRunning(room.game);
   const chatLimiter = new RateLimiter(5, 5000);
