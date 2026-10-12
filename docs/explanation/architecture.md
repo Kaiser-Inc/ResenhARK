@@ -74,9 +74,21 @@ The Taleclue engine in `games/taleclue/engine.ts` also takes its deck as a param
 
 Deadlines are absolute timestamps stored in the state. After each commit, the hub arms one `setTimeout` per room for the next deadline (`roomDeadline`, which also covers the owner handover). When it fires, it runs an empty mutation, so the `tick` runs inside the queue like everything else. A stale timer does nothing, because the tick decides from the state.
 
+## The Hitline genre catalog
+
+The genres source plays from a catalog of about 5,900 songs (`games/hitline/catalog.json`). The catalog stays out of the room. The API loads it once at boot and passes it to the gateway and to `projectRoom` as the `catalog` dependency of `createServer`, so tests can hand the server a small catalog of their own.
+
+The room stores only the selection: the source, each member's genre vote, the owner's own list and the marked decades. When a game starts, pure functions in `games/hitline/pool.ts` filter the catalog by genre and decade and draw a bounded deck with equal shares per genre. The game then keeps the played keys of the cards it started with (`startKeys`).
+
+Keeping the catalog out of the room is about Redis. The room is one JSON document saved on every mutation. A deck of 5,900 cards inside the game would make each save about 1.5 MB, on every move of every player. A drawn deck holds at most a few hundred cards, and `startKeys` keeps "Outra rodada" from marking the cards that were never dealt as played.
+
+The lobby view counts the songs available per genre and per decade. Every viewer of a broadcast gets the same counts, so `projectRoom` computes them once per room state and shares them across the viewers. A mutation saves a new room object, which is what invalidates the counts.
+
+A script outside the server builds the catalog, and a weekly workflow runs it. See [Update the Hitline catalog](../how-to/update-hitline-catalog.md).
+
 ## The room and game boundary
 
-The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and reads inside the state in one place only: the memory folds (`foldPlayed` reads the Hitline deck, `foldTaleclueUsed` reads the cards Taleclue dealt) that carry what a finished game used into the lobby. Each game module (`games/hitline`, `games/huehint`, `games/taleclue`) knows nothing about members or sockets.
+The room module (`apps/api/src/app/domain/room`) knows members, ownership, chat and the lobby. It stores a game as `{ type, state, playerIds }` and reads inside the state in one place only: the memory folds (`foldPlayed` compares the cards a Hitline game started with to what is left in its deck, `foldTaleclueUsed` reads the cards Taleclue dealt) that carry what a finished game used into the lobby. Each game module (`games/hitline`, `games/huehint`, `games/taleclue`) knows nothing about members or sockets.
 
 `games/registry.ts` holds the minimal game contract, extracted once Huehint became the second real game. Each game provides four pure functions with the same shape:
 

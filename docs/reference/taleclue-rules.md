@@ -73,8 +73,8 @@ The board position of a player is `min(points, targetPoints)`. Points themselves
 ## The deck
 
 - Within a game no card is dealt twice. When the draw pile runs out, the discards are shuffled back into it. Hands are never recycled.
-- The room remembers the cards it has dealt (`lobby.taleclueUsed`). A new game draws only from the cards the room has not seen. When those cannot fill the hands, the memory resets and the whole deck plays, with the cards the room had not seen dealt first. The memory is updated when a game starts, on `game:reset`, and when the owner changes the Hitline deck.
-- Card ids come from `TALECLUE_CARDS` in `packages/shared/src/taleclue.ts`. The images live in the web app and are found by id. Until the real deck lands, the list holds 84 placeholders (`tc-001` to `tc-084`).
+- The room remembers the cards it has dealt (`lobby.taleclueUsed`). A new game draws only from the cards the room has not seen. When those cannot fill the hands, the memory resets and the whole deck plays, with the cards the room had not seen dealt first. The memory is updated when a game starts, on `game:reset`, and when the owner changes the Hitline song source.
+- Card ids come from `TALECLUE_CARDS` in `packages/shared/src/taleclue.ts`, built from the 200-card manifest `taleclue-deck.json`. Each id is an opaque 8-character code, and each card has a Portuguese alt text. The images live in the web app and are found by id. See [Build the Taleclue deck](../how-to/build-taleclue-deck.md).
 
 ## Reveal steps
 

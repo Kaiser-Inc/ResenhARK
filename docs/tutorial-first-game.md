@@ -1,6 +1,6 @@
 # Tutorial: your first game
 
-You will run ResenhARK on your machine and play a solo Hitline game with the development deck. It takes about 10 minutes. You do not need Spotify.
+You will run ResenhARK on your machine and play a solo Hitline game with the development deck. It takes about 15 minutes. You do not need Spotify.
 
 You need Node 22, pnpm 9.15 and Docker.
 
@@ -30,18 +30,21 @@ You should see `{"status":"ok","redis":"ok"}`.
 2. Click **Criar sala**.
 3. Type a name in **Seu nome**, pick a color and a shape for your avatar, and click **Criar e entrar**.
 
-You land on `/sala/<code>`, where the code is 5 letters. You are the owner of the room. The chat is on the side, and the lobby shows Hitline with SiteSpy and Codetalk marked "em breve".
+You land on `/sala/<code>`, where the code is 5 letters. You are the owner of the room. The chat is on the side. The lobby opens on Hitline, and **Jogo da sala** lets you switch to Huehint or Taleclue.
 
-## 3. Import the development deck
+## 3. Load the development deck
 
-1. In **Link da playlist**, paste `https://open.spotify.com/playlist/dev`.
-2. Click **Importar playlist**.
+Hitline has three song sources under **Fonte das músicas**. **Gêneros** is marked by default. This tutorial uses the development deck, which comes in through the **Playlist** source.
 
-The page shows "40 faixas prontas". With the default fixture source the link is not read: any link that contains `playlist` loads the same 40-song deck. A link without `playlist` fails with "Link inválido".
+1. Click **Playlist**.
+2. In **Link da playlist**, paste `https://open.spotify.com/playlist/dev`.
+3. Click **Importar playlist**.
 
-## 4. Set the game to two cards
+The lobby shows "Baralho de desenvolvimento · 40 músicas". With the default fixture source the link is not read: any link that contains `playlist` loads the same 40-song deck. A link without `playlist` fails with "Link inválido".
 
-Open **Cartas para vencer** and pick `2`. The first player to reach 2 cards in their timeline wins, so one correct guess ends the game.
+## 4. Set the game to five cards
+
+Open **Cartas para vencer** and pick `5`, the smallest choice. The first player to reach 5 cards in their timeline wins. You start with one card, so four correct guesses end the game.
 
 Click **Iniciar partida**. You start with one revealed card and 2 tokens.
 
@@ -62,12 +65,13 @@ If the position was right, the card joins your timeline. If not, it is discarded
 
 ## 7. Finish and play again
 
-Repeat steps 5 and 6 until your timeline has 2 cards. The **Resultado** region shows you as the winner.
+Repeat steps 5 and 6 until your timeline has 5 cards. The **Resultado** region shows you as the winner.
 
-Click **Outra rodada**. You return to the lobby with the same playlist, and the lobby now says how many songs remain. The songs already drawn in this room do not come back. Click **Iniciar partida** to play another game.
+Click **Outra rodada**, at the top next to **Regras**. You return to the lobby with the same playlist, and the lobby now says how many songs remain. The songs already drawn in this room do not come back. Click **Iniciar partida** to play another game.
 
 ## Next steps
 
-- Join the same room from a second browser to try the contest window and the chat: open the room URL and enter another name.
+- Play with the genre catalog: click **Gêneros** under **Fonte das músicas**, vote for a genre under **Seu voto**, and unmark a decade under **Épocas** to see **músicas disponíveis** change. The clips come from Deezer, so you need internet access.
+- Join the same room from a second browser to try the contest window, the genre votes and the chat: open the room URL and enter another name.
 - Connect a real playlist: [Connect Spotify](how-to/connect-spotify.md).
 - Learn every rule: [Hitline rules](reference/hitline-rules.md).

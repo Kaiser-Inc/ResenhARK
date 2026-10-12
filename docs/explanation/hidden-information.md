@@ -85,6 +85,10 @@ Before downloading a preview, the server checks the URL (`isAllowedAudioUrl` in 
 
 Anything else throws, so a bad provider response cannot make the server call an arbitrary host. The download also refuses redirects (`redirect: "error"`), stops after 10 seconds and caps the size at 2 MB. An empty body counts as a missing preview.
 
+## Hitline genre votes
+
+The room stores each member's genre vote by member id, but the lobby view carries only a count per genre and the viewer's own vote (`myGenres`). Nobody sees who voted for what, and the owner sees the same counts as everyone else.
+
 ## What the client never receives
 
 - The contents or order of the deck.
@@ -93,6 +97,7 @@ Anything else throws, so a bad provider response cannot make the server call an 
 - Other members' session tokens or audio tickets.
 - The turn player's typed guess text before the reveal, for anyone but the turn player.
 - In Taleclue, other players' hands, who played each card on the table and who voted for what, until the reveal.
+- Who voted for which Hitline genre.
 - In Huehint, the current color before the reveal (except for the giver, or the solo player while memorizing), the colors of future rounds, and other players' guesses before the reveal.
 
 The chat renders as text, never as HTML.

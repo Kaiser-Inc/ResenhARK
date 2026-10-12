@@ -21,8 +21,13 @@ Because the API refuses to boot in production without every required variable, t
 
 1. Open `https://<web>/admin/spotify`, enter `ADMIN_PASSWORD`, click **Conectar Spotify** and approve in Spotify. The page must show "Conectado".
 2. Create a room, share the code and join from a second browser.
-3. Import the team playlist. The admin's Spotify account must be able to read it. Check the track count and the warning when the playlist is too small for players x N x 2.
-4. Start a match and play one round, including a contest.
+3. In the Hitline lobby, vote for a genre from both browsers and check that the vote count and **músicas disponíveis** change.
+4. Click **Playlist** and import a playlist. The admin's Spotify account must be able to read it. Check the song count and the warning when the playlist is too small for players x N x 2.
+5. Start a match and play one round, including a contest.
+
+## Weekly catalog refresh
+
+Once the repository is on GitHub, `.github/workflows/hitline-catalog.yml` refreshes the Hitline genre catalog every Monday and opens a pull request into `main`. Turn on **Settings > Actions > General > Allow GitHub Actions to create and approve pull requests**, or the run fails when it opens the pull request. Merging that pull request deploys the new songs like any other change. See [Update the Hitline catalog](update-hitline-catalog.md).
 
 ## Docker image (api)
 
@@ -46,7 +51,7 @@ Plans change, so recheck them before you rely on them.
 
 ## Operating on free tiers
 
-**Wake the API about 1 minute before the daily** by opening the web app. The first request wakes it. Do not point an uptime pinger at it: it would keep the instance awake and spend the Redis budget on `/health` pings.
+**Wake the API about 1 minute before a session** by opening the web app. The first request wakes it. Do not point an uptime pinger at it: it would keep the instance awake and spend the Redis budget on `/health` pings.
 
 **A sleep does not lose rooms.** State lives in Redis. Connected clients drop and reconnect when the API wakes, and the API rehydrates its timers at boot (see [Architecture](../explanation/architecture.md)).
 
