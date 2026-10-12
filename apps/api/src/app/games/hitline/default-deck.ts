@@ -2,14 +2,14 @@ import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 import songs from "./default-deck.json" with { type: "json" };
 
 /**
- * The deck every room plays until the owner imports a playlist. Loaded once and never copied
- * into a room: `lobby.deck === null` means this deck. Ids are stable by position, so the
- * played-set and a finished game's cards keep matching across games.
+ * The Baralho da galera: the songs the team collected, played when the owner picks it or when
+ * no genre is chosen. Loaded once and never copied into a room: `lobby.deck === null` means this
+ * deck. Ids come from the Deezer track, so they survive reordering and rebuilding the list.
  */
 export const DEFAULT_DECK: ImportedPlaylist = {
-  name: "Baralho ResenhARK",
-  cards: songs.map((song, index) => ({
-    id: `default-${index}`,
+  name: "Baralho da galera",
+  cards: songs.map((song) => ({
+    id: `default-${song.deezerId}`,
     title: song.title,
     artists: song.artists,
     year: song.year,

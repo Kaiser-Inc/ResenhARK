@@ -4,8 +4,8 @@ import { deckLabel, smallDeckWarning } from "./lobby-copy";
 
 test("deck labels identify the default and imported decks", () => {
   assert.equal(
-    deckLabel({ source: "default", name: "Baralho ResenhARK", count: 40 }),
-    "Baralho ResenhARK · 40 músicas",
+    deckLabel({ source: "default", name: "Baralho da galera", count: 40 }),
+    "Baralho da galera · 40 músicas",
   );
   assert.equal(deckLabel({ source: "playlist", name: "Resenha", count: 3 }), "Resenha · 3 músicas");
 });

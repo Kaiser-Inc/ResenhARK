@@ -179,15 +179,12 @@ export function playablePool(room: Room, catalog: CatalogCard[]): Card[] {
 export function foldPlayed(room: Room): Room {
   const { game, lobby } = room;
   if (game?.type !== "hitline") return room;
+  const inDeck = new Set(game.state.deck.map(playedKey));
+  // Games saved before sampled decks started with the room's whole deck. Keys, not ids: the
+  // built-in deck's ids changed when they started coming from the Deezer track.
+  const started = game.startKeys ?? deckOf(lobby).cards.map(playedKey);
   const played = new Set(lobby.played);
-  if (game.startKeys) {
-    const inDeck = new Set(game.state.deck.map(playedKey));
-    for (const key of game.startKeys) if (!inDeck.has(key)) played.add(key);
-  } else {
-    // Games saved before sampled decks started with the room's whole deck.
-    const inDeck = new Set(game.state.deck.map((card) => card.id));
-    for (const card of deckOf(lobby).cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
-  }
+  for (const key of started) if (!inDeck.has(key)) played.add(key);
   return { ...room, lobby: { ...lobby, played: [...played] } };
 }
 

@@ -50,7 +50,7 @@ const room: RoomView = {
     taleclueConfig: DEFAULT_TALECLUE_CONFIG,
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
     config: { targetCards: 10, contestSeconds: 10, guessSeconds: 60, maxPlayers: 15 },
-    playlist: { source: "default", name: "Baralho ResenhARK", count: 40 },
+    playlist: { source: "default", name: "Baralho da galera", count: 40 },
     remaining: 40,
     smallPlaylist: false,
     source: "genres",

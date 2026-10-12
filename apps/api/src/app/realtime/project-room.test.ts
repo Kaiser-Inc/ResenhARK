@@ -42,7 +42,7 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
     config: DEFAULT_HITLINE_CONFIG,
     huehintConfig: DEFAULT_HUEHINT_CONFIG,
     taleclueConfig: DEFAULT_TALECLUE_CONFIG,
-    playlist: { source: "default", name: "Baralho ResenhARK", count: DEFAULT_DECK.cards.length },
+    playlist: { source: "default", name: "Baralho da galera", count: DEFAULT_DECK.cards.length },
     remaining: DEFAULT_DECK.cards.length,
     smallPlaylist: false,
     source: "genres",

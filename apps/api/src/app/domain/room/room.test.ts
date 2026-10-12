@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { seededRng } from "../../core/seeded-rng.js";
+import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
 import { create as createHitline } from "../../games/hitline/engine.js";
 import { create as createTaleclue } from "../../games/taleclue/engine.js";
 import { cfg, ctxAt, syntheticDeck } from "../../games/taleclue/test-helpers.js";
@@ -236,4 +237,19 @@ test("foldPlayed with startKeys counts only the cards that left the pile, not th
   assert.equal(folded.lobby.played.length, 2);
   assert.ok(!folded.lobby.played.includes(playedKey(cards[4])));
   assert.deepEqual(foldPlayed(folded).lobby.played, folded.lobby.played);
+});
+
+test("a game saved with position-based default ids still folds only the cards it dealt", () => {
+  // Before the Baralho da galera used Deezer ids, cards were `default-{position}`.
+  const legacy = DEFAULT_DECK.cards.map((card, i) => ({ ...card, id: `default-${i}` }));
+  const started = createHitline(
+    { targetCards: 5, contestSeconds: 15, guessSeconds: 120, maxPlayers: 15 },
+    ["a", "b"],
+    legacy,
+    { now: 0, rng: seededRng(1), newId: () => "id" },
+  );
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.lobby.source = "galera";
+  room.game = { type: "hitline", state: started.state, playerIds: ["a", "b"] };
+  assert.equal(foldPlayed(room).lobby.played.length, 2);
 });

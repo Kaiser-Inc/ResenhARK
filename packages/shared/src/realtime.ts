@@ -63,7 +63,7 @@ export type LobbyView = {
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
   taleclueConfig: TaleclueConfig;
-  /** The room's deck: the built-in "Baralho ResenhARK" until the owner imports a playlist. */
+  /** The deck in use: the genre catalog, the built-in "Baralho da galera" or the owner's imported playlist. */
   playlist: { source: "default" | "playlist"; name: string; count: number };
   /** Songs not yet played in this room; below `count` once rounds were played. */
   remaining: number;
