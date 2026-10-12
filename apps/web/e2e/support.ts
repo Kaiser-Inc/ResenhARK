@@ -33,10 +33,7 @@ export const test = base.extend<{ closeLeakedContexts: undefined }>({
   ],
 });
 
-export const UI_DIR = path.resolve(
-  __dirname,
-  "../../../.dev-flow/2026-10-04-rodada-1-sala-chat-hitline/ui",
-);
+export const UI_DIR = process.env.E2E_UI_DIR ?? path.resolve(__dirname, "../output/playwright");
 
 export async function setTheme(page: Page, theme: "dark" | "light") {
   await page.addInitScript((value) => localStorage.setItem("theme", value), theme);
@@ -111,10 +108,21 @@ export async function chooseOption(page: Page, label: string, option: string) {
  * The lobby only offers 5 or more cards to win; a smaller N (a quick solo win) is
  * written straight into the running game in the e2e Redis.
  */
+export async function openPlaylistImport(page: Page) {
+  const input = page.getByLabel("Link da playlist");
+  if (!(await input.isVisible()))
+    await page
+      .getByRole("group", { name: "Fonte das músicas" })
+      .getByRole("button", { name: "Playlist", exact: true })
+      .click();
+  await expect(input).toBeVisible();
+}
+
 export async function importDeckAndStart(page: Page, targetCards = "2") {
+  await openPlaylistImport(page);
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByRole("button", { name: "Voltar ao baralho ResenhARK" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Usar Baralho da galera" })).toBeVisible();
   const quick = Number(targetCards) < 5;
   await chooseOption(page, "Cartas para vencer", quick ? "5" : targetCards);
   await page.getByRole("button", { name: "Iniciar partida" }).click();

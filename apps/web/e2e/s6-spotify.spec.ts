@@ -2,6 +2,7 @@ import {
   createRoomAs,
   expect,
   expectNoAxeViolations,
+  openPlaylistImport,
   setTheme,
   shot,
   test,
@@ -52,6 +53,7 @@ for (const [name, width, height] of [
     await setTheme(page, "dark");
     await page.setViewportSize({ width, height });
     await createRoomAs(page, "Ana");
+    await openPlaylistImport(page);
     await expect(
       page.getByText("Funciona com playlists do Spotify em que Kaiser é colaborador."),
     ).toBeVisible();
@@ -66,15 +68,19 @@ test("admin page links back home", async ({ page }) => {
 
 test("lobby shows the invalid link message", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/album/abc");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(
-    page.getByText("Link inválido. Cole o link de uma playlist do Spotify."),
+    page
+      .locator('[data-slot="field-error"]')
+      .getByText("Link inválido. Cole o link de uma playlist do Spotify."),
   ).toBeVisible();
 });
 
 test("lobby shows the no access and empty messages", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/private");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(
@@ -87,9 +93,12 @@ test("lobby shows the no access and empty messages", async ({ page }) => {
 
 test("lobby offers a Conectar Spotify link when Spotify is disconnected", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/disconnected");
   await page.getByRole("button", { name: "Importar playlist" }).click();
-  await expect(page.getByText(/Spotify desconectado/)).toBeVisible();
+  await expect(
+    page.locator('[data-slot="field-error"]').getByText(/Spotify desconectado/),
+  ).toBeVisible();
   await expect(page.getByRole("link", { name: "Conectar Spotify" })).toHaveAttribute(
     "href",
     "/admin/spotify",
@@ -98,6 +107,7 @@ test("lobby offers a Conectar Spotify link when Spotify is disconnected", async 
 
 test("reveal shows a QR code next to the Spotify link when the card has one", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   // The tiny deck has 3 cards and 2 carry a link, so one of the first two draws has it.
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
   await page.getByRole("button", { name: "Importar playlist" }).click();

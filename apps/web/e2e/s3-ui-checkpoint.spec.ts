@@ -4,6 +4,7 @@ import {
   expect,
   importDeckAndStart,
   joinRoomAs,
+  openPlaylistImport,
   setTheme,
   shot,
   test,
@@ -35,12 +36,15 @@ for (const viewport of VIEWPORTS) {
       });
 
       const code = await createRoomAs(page, "Ana");
+      await openPlaylistImport(page);
       await expect(page.getByLabel("Link da playlist")).toBeVisible();
       await shot(page, name("lobby-empty"));
 
       await page.getByLabel("Link da playlist").fill("isso nao e link");
       await page.getByRole("button", { name: "Importar playlist" }).click();
-      await expect(page.getByText("Link inválido")).toBeVisible();
+      await expect(
+        page.locator('[data-slot="field-error"]').getByText("Link inválido"),
+      ).toBeVisible();
       await shot(page, name("lobby-error"));
 
       slow = true;

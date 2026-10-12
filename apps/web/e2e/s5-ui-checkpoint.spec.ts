@@ -1,5 +1,13 @@
 import type { Browser, Page } from "@playwright/test";
-import { createRoomAs, expect, importDeckAndStart, setTheme, shot, test } from "./support";
+import {
+  createRoomAs,
+  expect,
+  importDeckAndStart,
+  openPlaylistImport,
+  setTheme,
+  shot,
+  test,
+} from "./support";
 
 const VIEWPORTS = [
   { name: "390", width: 390, height: 844 },
@@ -32,6 +40,7 @@ for (const viewport of VIEWPORTS) {
       await ana.setViewportSize(viewport);
       await setTheme(ana, theme);
       const code = await createRoomAs(ana, "Ana");
+      await openPlaylistImport(ana);
       const bia = await joinAs(browser, code, "Bia", viewport, theme);
       await importDeckAndStart(ana, "10");
       const draw = (p: Page) => p.getByRole("button", { name: "Puxar carta" });
@@ -58,6 +67,7 @@ for (const viewport of VIEWPORTS) {
       await page.setViewportSize(viewport);
       await setTheme(page, theme);
       await createRoomAs(page, "Ana");
+      await openPlaylistImport(page);
       await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
       await page.getByRole("button", { name: "Importar playlist" }).click();
       await page.getByRole("button", { name: "Iniciar partida" }).click();

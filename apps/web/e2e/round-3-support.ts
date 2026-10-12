@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 import type { Page } from "@playwright/test";
 import { expect } from "./support";
 
-const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-06-rodada-3-ui-ux/ui";
+const UI_DIR = process.env.E2E_UI_DIR ?? path.resolve(__dirname, "../output/playwright/round-3");
 
 export async function checkpoint(
   page: Page,
