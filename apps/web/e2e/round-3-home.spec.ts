@@ -1,5 +1,6 @@
+import path from "node:path";
 import { checkpoint } from "./round-3-support";
-import { createRoomAs, expect, test } from "./support";
+import { UI_DIR, createRoomAs, expect, test } from "./support";
 
 for (const reduced of [false, true])
   test(`Home CTA scrambles, handles interrupted hover and opens the form (${reduced ? "reduced" : "full"} motion)`, async ({
@@ -56,7 +57,7 @@ test("CA-F11: approved hero, actions, steps and cards adapt to desktop and mobil
     const create = await page
       .getByRole("button", { name: "Criar sala", exact: true })
       .boundingBox();
-    const code = await page.getByLabel("Código da sala", { exact: true }).boundingBox();
+    const code = await page.getByLabel("Entrar com código da sala", { exact: true }).boundingBox();
     const enter = await page.getByRole("button", { name: "Entrar", exact: true }).boundingBox();
     expect(create).not.toBeNull();
     expect(code).not.toBeNull();
@@ -64,6 +65,12 @@ test("CA-F11: approved hero, actions, steps and cards adapt to desktop and mobil
     expect(Math.abs((enter?.y ?? 0) - (code?.y ?? 1))).toBeLessThan(1);
     expect(create?.y).toBeGreaterThan((code?.y ?? 0) + (code?.height ?? 0));
     expect(create?.width).toBeCloseTo((enter?.x ?? 0) + (enter?.width ?? 0) - (code?.x ?? 0), 0);
+    await page
+      .locator(".home-create-room")
+      .locator("..")
+      .screenshot({
+        path: path.join(UI_DIR, `quick-home-actions-${width}.png`),
+      });
   }
   const boat = await page.getByTestId("hero-boat").boundingBox();
   const heading = await title.boundingBox();

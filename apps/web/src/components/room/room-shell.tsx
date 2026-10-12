@@ -1,7 +1,7 @@
 "use client";
 
 import type { ErrorCode, MemberView } from "@resenhark/shared";
-import { UserXIcon } from "lucide-react";
+import { ChevronRightIcon, UserXIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -111,13 +111,30 @@ function RoomFrame({
   const layout = useLayout();
   const [tab, setTab] = useState<"game" | "chat">("game");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [wideChatClosed, setWideChatClosed] = useState(false);
+  useEffect(() => {
+    try {
+      setWideChatClosed(localStorage.getItem("resenhark:chat:wide-closed") === "true");
+    } catch {
+      // Storage is optional; the chat starts open.
+    }
+  }, []);
+  function changeWideChat(closed: boolean) {
+    setWideChatClosed(closed);
+    try {
+      localStorage.setItem("resenhark:chat:wide-closed", String(closed));
+    } catch {
+      // Keep the toggle usable when storage is unavailable.
+    }
+  }
   const mainRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (focusOnMount) mainRef.current?.focus();
   }, [focusOnMount]);
 
   const sheetShown = layout === "mid" && sheetOpen;
-  const chatVisible = layout === "wide" || sheetShown || (layout === "narrow" && tab === "chat");
+  const chatVisible =
+    (layout === "wide" && !wideChatClosed) || sheetShown || (layout === "narrow" && tab === "chat");
   const onVisibleChange = chat?.onVisibleChange;
   useEffect(() => {
     onVisibleChange?.(chatVisible);
@@ -185,7 +202,18 @@ function RoomFrame({
               </Tabs>
             </main>
           ) : (
-            <div className="flex min-h-0 flex-1">
+            <div
+              className={cn(
+                "min-h-0 flex-1",
+                layout === "wide"
+                  ? "grid transition-[grid-template-columns] duration-300 ease-drawer"
+                  : "flex",
+                layout === "wide" &&
+                  (wideChatClosed
+                    ? "grid-cols-[minmax(0,1fr)_0px]"
+                    : "grid-cols-[minmax(0,1fr)_360px]"),
+              )}
+            >
               <main
                 ref={mainRef}
                 id="main-content"
@@ -194,8 +222,15 @@ function RoomFrame({
               >
                 <div className="mx-auto flex max-w-[1600px] items-start justify-between gap-4 px-4 py-8 sm:px-6 lg:py-12">
                   <div className="min-w-0 flex-1">{children}</div>
-                  {layout === "mid" ? (
-                    <Button type="button" variant="outline" onClick={() => setSheetOpen(true)}>
+                  {layout === "mid" || (layout === "wide" && wideChatClosed) ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="mt-2"
+                      onClick={() =>
+                        layout === "wide" ? changeWideChat(false) : setSheetOpen(true)
+                      }
+                    >
                       Chat
                       <UnreadBadge count={unread} />
                     </Button>
@@ -205,15 +240,34 @@ function RoomFrame({
               {layout === "wide" ? (
                 <aside
                   aria-label="Chat"
+                  aria-hidden={wideChatClosed}
+                  inert={wideChatClosed}
                   className={cn(
-                    "relative flex w-[360px] shrink-0 flex-col before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border",
+                    "relative min-h-0 min-w-0 max-h-dvh overflow-hidden before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border",
                     scrollPage && "sticky top-0 h-dvh",
                   )}
                 >
-                  <div className="flex h-14 shrink-0 items-center px-4">
-                    <h2 className="text-base font-semibold">Chat</h2>
+                  <div
+                    data-slot="wide-chat-content"
+                    className={cn(
+                      "absolute inset-y-0 right-0 flex min-h-0 w-[360px] flex-col transition-transform duration-300 ease-drawer",
+                      wideChatClosed ? "translate-x-full" : "translate-x-0",
+                    )}
+                  >
+                    <div className="flex h-14 shrink-0 items-center justify-between px-4">
+                      <h2 className="text-base font-semibold">Chat</h2>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Recolher chat"
+                        onClick={() => changeWideChat(true)}
+                      >
+                        <ChevronRightIcon aria-hidden="true" strokeWidth={1.75} />
+                      </Button>
+                    </div>
+                    {panel}
                   </div>
-                  {panel}
                 </aside>
               ) : null}
             </div>
