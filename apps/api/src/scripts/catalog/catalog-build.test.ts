@@ -121,10 +121,12 @@ test("isPlausibleYear accepts whole years from 1920 up to the limit and nothing 
 });
 
 test("isPlausibleYear follows the clock when no limit is given", (t) => {
-  t.mock.timers.enable({ apis: ["Date"], now: new Date("2027-03-01T00:00:00Z") });
+  // Local-time dates: the limit comes from getFullYear(), so the test must not depend on the time zone.
+  t.mock.timers.enable({ apis: ["Date"], now: new Date(2026, 11, 31, 23, 59, 59) });
+  assert.equal(isPlausibleYear(2026), true);
+  assert.equal(isPlausibleYear(2027), false);
+  t.mock.timers.reset();
+  t.mock.timers.enable({ apis: ["Date"], now: new Date(2027, 0, 1, 0, 0, 0) });
   assert.equal(isPlausibleYear(2027), true);
   assert.equal(isPlausibleYear(2028), false);
-  t.mock.timers.reset();
-  t.mock.timers.enable({ apis: ["Date"], now: new Date("2026-12-31T23:59:59Z") });
-  assert.equal(isPlausibleYear(2027), false);
 });
