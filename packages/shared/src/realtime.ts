@@ -1,6 +1,6 @@
 import { z } from "zod";
-import type { HitlineConfig, HitlineEvent, HitlineView } from "./hitline.js";
 import type { Decade, HitlineSource } from "./hitline-catalog.js";
+import type { HitlineConfig, HitlineEvent, HitlineView } from "./hitline.js";
 import type { HuehintConfig, HuehintEvent, HuehintView } from "./huehint.js";
 import type { Avatar } from "./room.js";
 import type { TaleclueConfig, TaleclueEvent, TaleclueView } from "./taleclue.js";
