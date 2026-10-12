@@ -104,7 +104,13 @@ test("decades change availability, keep one selection and disable empty genres a
     "aria-pressed",
     "true",
   );
-  const before = await available(page).innerText();
+  // The chips are optimistic: aria-pressed shows the click, not the server state. The member only sees
+  // the genre list once the server applied it, so wait for that before reading the baseline count.
+  await expect(list(member).getByRole("button", { name: "MPB", exact: true })).toBeVisible();
+  await expect
+    .poll(async () => (await available(page).innerText()) === (await available(member).innerText()))
+    .toBe(true);
+  const before = await available(member).innerText();
   await expect(decades(page).getByRole("button", { name: /^Antes dos 60s,/ })).toHaveAttribute(
     "aria-pressed",
     "false",
@@ -112,9 +118,14 @@ test("decades change availability, keep one selection and disable empty genres a
   await decades(page)
     .getByRole("button", { name: /^Anos 80,/ })
     .click();
-  await expect(available(page)).not.toHaveText(before);
-  await expect(available(member)).toHaveText(await available(page).innerText());
+  // The member loses the "Anos 80" chip only after the server applied the new decade list.
   await expect(decades(member).getByRole("button", { name: /^Anos 80,/ })).toHaveCount(0);
+  await expect
+    .poll(async () => {
+      const mine = await available(page).innerText();
+      return mine === (await available(member).innerText()) && mine !== before;
+    })
+    .toBe(true);
   await expect(page.getByRole("button", { name: "Recomeçar músicas" })).toHaveCount(0);
   for (const label of ["Anos 70", "Anos 90", "Anos 2000", "Anos 2010", "Anos 2020"]) {
     await decades(page)
