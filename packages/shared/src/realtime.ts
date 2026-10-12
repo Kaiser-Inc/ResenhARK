@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { HitlineConfig, HitlineEvent, HitlineView } from "./hitline.js";
+import type { Decade, HitlineSource } from "./hitline-catalog.js";
 import type { HuehintConfig, HuehintEvent, HuehintView } from "./huehint.js";
 import type { Avatar } from "./room.js";
 import type { TaleclueConfig, TaleclueEvent, TaleclueView } from "./taleclue.js";
@@ -68,6 +69,19 @@ export type LobbyView = {
   remaining: number;
   /** True when the playlist is likely too short for the players and target. */
   smallPlaylist: boolean;
+  /** Where Hitline songs come from. */
+  source: HitlineSource;
+  /** Every genre of the catalog: votes of the members present, whether the list has it, songs left. */
+  genres: { id: number; name: string; votes: number; selected: boolean; available: number }[];
+  /** Genres the viewer voted for. */
+  myGenres: number[];
+  /** `manual` once the owner edited the list; `votes` while it follows the members' votes. */
+  genreMode: "votes" | "manual";
+  decades: { id: Decade; label: string; selected: boolean; available: number }[];
+  /** Songs the next game can still draw after the source, decade and played filters. */
+  available: number;
+  /** True when the genre source has no genre in the list, so the game plays the Baralho da galera. */
+  galeraFallback: boolean;
 };
 export type GameView =
   | { type: "hitline"; view: HitlineView }

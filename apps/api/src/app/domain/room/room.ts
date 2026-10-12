@@ -1,10 +1,14 @@
 import {
   type Avatar,
+  DEFAULT_DECADES,
   DEFAULT_HITLINE_CONFIG,
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
+  type Decade,
   type GameType,
+  HITLINE_GENRES,
   type HitlineConfig,
+  type HitlineSource,
   type Hsb,
   type HuehintConfig,
   ROOM_CODE_ALPHABET,
@@ -35,6 +39,14 @@ export type Lobby = {
   config: HitlineConfig;
   huehintConfig: HuehintConfig;
   taleclueConfig: TaleclueConfig;
+  /** Where Hitline songs come from. `playlist` exactly when `deck` is set. */
+  source: HitlineSource;
+  /** Genres each member voted for, by member id. */
+  genreVotes: Record<string, number[]>;
+  /** The owner's own genre list; null follows the votes. */
+  ownerGenres: number[] | null;
+  /** Decades that may be drawn, whatever the source. */
+  decades: Decade[];
   /** The imported playlist; null plays DEFAULT_DECK. */
   deck: ImportedPlaylist | null;
   /** Stable keys (see playedKey) of every song already played in this room. */
@@ -82,6 +94,10 @@ export function createRoom(code: string, owner: Member, now: number): Room {
       config: DEFAULT_HITLINE_CONFIG,
       huehintConfig: DEFAULT_HUEHINT_CONFIG,
       taleclueConfig: DEFAULT_TALECLUE_CONFIG,
+      source: "genres",
+      genreVotes: {},
+      ownerGenres: null,
+      decades: [...DEFAULT_DECADES],
       deck: null,
       played: [],
       colors: [],
@@ -117,7 +133,15 @@ export function playedKey(card: Card): string {
 
 /** The deck the room plays: the imported playlist, else the default deck. */
 export function deckOf(lobby: Lobby): ImportedPlaylist {
-  return lobby.deck ?? DEFAULT_DECK;
+  return lobby.source === "playlist" && lobby.deck ? lobby.deck : DEFAULT_DECK;
+}
+
+/** The owner's list, else every genre a current member voted for, in the lobby's order. */
+export function effectiveGenres(room: Room): number[] {
+  const { ownerGenres, genreVotes } = room.lobby;
+  if (ownerGenres) return ownerGenres;
+  const voted = new Set(room.members.flatMap((m) => genreVotes[m.id] ?? []));
+  return HITLINE_GENRES.map((g) => g.id).filter((id) => voted.has(id));
 }
 
 /** Deck cards not played yet in this room. */

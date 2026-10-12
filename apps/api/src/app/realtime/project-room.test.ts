@@ -1,9 +1,12 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  DECADES,
+  DECADE_LABELS,
   DEFAULT_HITLINE_CONFIG,
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
+  HITLINE_GENRES,
 } from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
 import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
@@ -41,6 +44,24 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
     playlist: { source: "default", name: "Baralho ResenhARK", count: DEFAULT_DECK.cards.length },
     remaining: DEFAULT_DECK.cards.length,
     smallPlaylist: false,
+    source: "genres",
+    genres: HITLINE_GENRES.map((g) => ({
+      id: g.id,
+      name: g.name,
+      votes: 0,
+      selected: false,
+      available: 0,
+    })),
+    myGenres: [],
+    genreMode: "votes",
+    decades: DECADES.map((id) => ({
+      id,
+      label: DECADE_LABELS[id],
+      selected: id !== "pre60",
+      available: 0,
+    })),
+    available: DEFAULT_DECK.cards.length,
+    galeraFallback: true,
   });
   assert.equal(view.game, null);
 });
@@ -58,6 +79,7 @@ test("projectRoom counts remaining songs and sizes the small-playlist warning ag
   room.lobby = {
     ...room.lobby,
     config: { ...DEFAULT_HITLINE_CONFIG, targetCards: 5 },
+    source: "playlist",
     deck: { name: "P", cards: Array.from({ length: 12 }, (_, i) => card(i)) },
   };
   // 1 online player, N=5: warns below 10 songs.

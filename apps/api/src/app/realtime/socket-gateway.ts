@@ -3,9 +3,12 @@ import {
   SOCKET_EVENTS,
   TALECLUE_CARDS,
   TALECLUE_MIN_PLAYERS,
+  decadesInputSchema,
+  genresInputSchema,
   hitlineConfigSchema,
   huehintConfigSchema,
   selectGameInputSchema,
+  sourceInputSchema,
   taleclueConfigSchema,
 } from "@resenhark/shared";
 import type { Server } from "socket.io";
@@ -387,7 +390,7 @@ export function registerSocketGateway(
             room: {
               ...kept,
               game: null,
-              lobby: { ...kept.lobby, deck: loaded.playlist, played: [] },
+              lobby: { ...kept.lobby, source: "playlist", deck: loaded.playlist, played: [] },
             },
           };
         });
@@ -405,7 +408,94 @@ export function registerSocketGateway(
           const kept = foldTaleclueUsed(room);
           return {
             ok: true,
-            room: { ...kept, game: null, lobby: { ...kept.lobby, deck: null, played: [] } },
+            room: {
+              ...kept,
+              game: null,
+              lobby: { ...kept.lobby, source: "galera", deck: null, played: [] },
+            },
+          };
+        });
+        return { ack };
+      }),
+    );
+
+    // Genre votes, the owner's list, decades and source only change in the lobby, never mid-game.
+    const unique = (ids: number[]) => [...new Set(ids)];
+
+    socket.on(
+      "lobby:vote-genres",
+      intent(async (payload) => {
+        const parsed = genresInputSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (running(room)) return { ok: false, error: "game-running" };
+          const genreVotes = { ...room.lobby.genreVotes, [memberId]: unique(parsed.data.genres) };
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, genreVotes } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:set-genres",
+      intent(async (payload) => {
+        const parsed = genresInputSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          const ownerGenres = unique(parsed.data.genres);
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, ownerGenres } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:follow-votes",
+      intent(async () => {
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, ownerGenres: null } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:set-decades",
+      intent(async (payload) => {
+        const parsed = decadesInputSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          const decades = [...new Set(parsed.data.decades)];
+          return { ok: true, room: { ...room, lobby: { ...room.lobby, decades } } };
+        });
+        return { ack };
+      }),
+    );
+
+    socket.on(
+      "lobby:set-source",
+      intent(async (payload) => {
+        const parsed = sourceInputSchema.safeParse(payload);
+        if (!parsed.success) return { ack: { ok: false, error: "invalid-input" } };
+        const ack = await hub.mutate(code, (room) => {
+          if (notOwner(room)) return { ok: false, error: "not-owner" };
+          if (running(room)) return { ok: false, error: "game-running" };
+          if (room.lobby.source === parsed.data.source) return { ok: true, room };
+          // A new source starts a fresh played-set and drops the finished game, like an import.
+          const kept = foldTaleclueUsed(room);
+          return {
+            ok: true,
+            room: {
+              ...kept,
+              game: null,
+              lobby: { ...kept.lobby, source: parsed.data.source, deck: null, played: [] },
+            },
           };
         });
         return { ack };

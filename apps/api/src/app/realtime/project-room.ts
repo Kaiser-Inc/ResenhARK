@@ -1,6 +1,19 @@
-import type { GameView, LobbyView, RoomView } from "@resenhark/shared";
+import {
+  DECADES,
+  DECADE_LABELS,
+  type GameView,
+  HITLINE_GENRES,
+  type LobbyView,
+  type RoomView,
+} from "@resenhark/shared";
 import { settings } from "../core/settings.js";
-import { type Room, deckOf, isOnline, unplayedCards } from "../domain/room/room.js";
+import {
+  type Room,
+  deckOf,
+  effectiveGenres,
+  isOnline,
+  unplayedCards,
+} from "../domain/room/room.js";
 import type { CatalogCard } from "../games/hitline/catalog.js";
 import { isRunning, projectGame } from "../games/registry.js";
 import { audioPath } from "../http/audio-tickets.js";
@@ -17,6 +30,8 @@ export function projectRoom(
   const cap = Math.min(onlineCount, lobby.config.maxPlayers);
   const deck = deckOf(lobby);
   const remaining = unplayedCards(lobby).length;
+  const listed = new Set(effectiveGenres(room));
+  const chosenDecades = new Set(lobby.decades);
   const lobbyView: LobbyView = {
     selectedGame: lobby.game,
     config: { ...lobby.config },
@@ -29,6 +44,24 @@ export function projectRoom(
     },
     remaining,
     smallPlaylist: remaining < cap * lobby.config.targetCards * 2,
+    source: lobby.source,
+    genres: HITLINE_GENRES.map((g) => ({
+      id: g.id,
+      name: g.name,
+      votes: room.members.filter((m) => lobby.genreVotes[m.id]?.includes(g.id)).length,
+      selected: listed.has(g.id),
+      available: 0,
+    })),
+    myGenres: lobby.genreVotes[viewerId] ?? [],
+    genreMode: lobby.ownerGenres ? "manual" : "votes",
+    decades: DECADES.map((id) => ({
+      id,
+      label: DECADE_LABELS[id],
+      selected: chosenDecades.has(id),
+      available: 0,
+    })),
+    available: remaining,
+    galeraFallback: lobby.source === "genres" && listed.size === 0,
   };
   const active = isRunning(game);
   let gameView: GameView | null = null;
