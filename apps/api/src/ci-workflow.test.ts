@@ -72,3 +72,22 @@ test("job web-build runs the production build of the web app", () => {
   assert.match(job, /run: pnpm install --frozen-lockfile\n/);
   assert.match(job, /run: pnpm --filter web build\n/);
 });
+
+test("job docker-api builds the image, boots it in production mode and waits for /health", () => {
+  const job = jobBlock("docker-api");
+  assert.match(job, /^ {4}name: docker-api$/m);
+  assert.match(job, /^ {4}timeout-minutes: \d+$/m);
+  assert.match(job, /image: redis:7-alpine/);
+  assert.match(job, /--health-cmd "redis-cli ping"/);
+  assert.match(job, /docker build -f apps\/api\/Dockerfile /);
+  assert.match(job, /-e NODE_ENV=production/);
+  assert.match(job, /-e PLAYLIST_SOURCE=fixture/);
+  assert.match(job, /\/health/);
+  assert.match(job, /exit 1/);
+  assert.match(job, /docker logs/);
+});
+
+test("the workflow has exactly the three checks that branch protection will require", () => {
+  const names = [...workflow.matchAll(/^ {2}([a-z][a-z-]*):\n {4}name: \1$/gm)].map((m) => m[1]);
+  assert.deepEqual(names, ["ci", "web-build", "docker-api"]);
+});
