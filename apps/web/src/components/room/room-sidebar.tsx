@@ -68,11 +68,17 @@ export function RoomPeople({
   );
 }
 
-export function LeaveRoom({ actions }: { actions: RoomActions }) {
+export function LeaveRoom({
+  actions,
+  className,
+}: {
+  actions: RoomActions;
+  className?: string;
+}) {
   return (
     <ConfirmDialog
       trigger={
-        <Button type="button" variant="outline" disabled={actions.disabled}>
+        <Button type="button" variant="outline" className={className} disabled={actions.disabled}>
           <LogOutIcon aria-hidden="true" strokeWidth={1.75} />
           Sair da sala
         </Button>
@@ -126,13 +132,9 @@ export function RoomSidebar({
       <div className="min-h-0 flex-1 overflow-y-auto px-4 py-2">
         <RoomPeople members={members} actions={actions} />
       </div>
-      <div className="flex flex-col gap-3 border-border border-t p-4">
-        {actions ? (
-          <div className="flex">
-            <LeaveRoom actions={actions} />
-          </div>
-        ) : null}
-        <ThemeRow />
+      <div className="flex flex-col gap-2 border-border border-t p-4">
+        {actions ? <LeaveRoom actions={actions} className="w-full justify-start" /> : null}
+        <ThemeToggle label="Tema" />
       </div>
     </aside>
   );
