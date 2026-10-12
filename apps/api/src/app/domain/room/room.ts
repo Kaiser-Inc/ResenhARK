@@ -19,6 +19,7 @@ import type { CatalogCard } from "../../games/hitline/catalog.js";
 import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
 import type { Card } from "../../games/hitline/engine.js";
 import { normalizeTitle } from "../../games/hitline/normalize.js";
+import { inDecades } from "../../games/hitline/pool.js";
 import { type ActiveGame, gameDeadline } from "../../games/registry.js";
 import type { ImportedPlaylist } from "../../gateways/ports/playlist-source.js";
 
@@ -164,7 +165,9 @@ export function sourceCards(
 /** Cards the next game can draw: the source minus what this room already played. */
 export function playablePool(room: Room, catalog: CatalogCard[]): Card[] {
   const played = new Set(room.lobby.played);
-  return sourceCards(room, catalog).cards.filter((card) => !played.has(playedKey(card)));
+  return inDecades(sourceCards(room, catalog).cards, room.lobby.decades).filter(
+    (card) => !played.has(playedKey(card)),
+  );
 }
 
 /**

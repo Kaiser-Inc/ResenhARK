@@ -259,3 +259,46 @@ test("a genre pool too small for the players blocks the start", async (t) => {
   const s = await stateWhere(owner, (x) => x.room.lobby.available === 2);
   assert.equal(s.room.lobby.smallPlaylist, true);
 });
+
+test("the decade filter applies to the genre catalog", async (t) => {
+  const { owner, clients } = await room(t, ["Ana", "Bia"], withCatalog());
+  await emit(clients[1], "lobby:vote-genres", { genres: [132] });
+  assert.deepEqual(await emit(owner, "lobby:set-decades", { decades: ["1980s"] }), { ok: true });
+  const s = await stateWhere(
+    owner,
+    (x) => x.room.lobby.decades.filter((d) => d.selected).length === 1,
+  );
+  // Years are 1970 + (i % 50), so 20 of each genre's 100 songs fall in one decade.
+  assert.equal(s.room.lobby.available, 20);
+  assert.equal(new Map(s.room.lobby.genres.map((g) => [g.id, g.available])).get(132), 20);
+  // Decade counts ignore the decade filter itself: they show what each decade holds.
+  assert.equal(new Map(s.room.lobby.decades.map((d) => [d.id, d.available])).get("1970s"), 20);
+});
+
+test("the decade filter applies to the Baralho da galera and to an imported playlist", async (t) => {
+  const { owner } = await room(t, ["Ana"], withCatalog());
+  await emit(owner, "lobby:set-source", { source: "galera" });
+  await emit(owner, "lobby:set-decades", { decades: ["1990s"] });
+  const nineties = DEFAULT_DECK.cards.filter((c) => c.year >= 1990 && c.year < 2000).length;
+  await stateWhere(
+    owner,
+    (x) => x.room.lobby.source === "galera" && x.room.lobby.available === nineties,
+  );
+  await emit(owner, "lobby:import", { link: "x" }); // the fake playlist spans 1960 to 1979
+  await emit(owner, "lobby:set-decades", { decades: ["1970s"] });
+  await stateWhere(
+    owner,
+    (x) => x.room.lobby.source === "playlist" && x.room.lobby.available === 10,
+  );
+});
+
+test("a decade filter that empties the pool blocks the start", async (t) => {
+  const { owner, clients } = await room(t, ["Ana", "Bia"], withCatalog());
+  await emit(clients[1], "lobby:vote-genres", { genres: [132] });
+  await emit(owner, "lobby:set-decades", { decades: ["pre60"] });
+  await stateWhere(
+    owner,
+    (x) => x.room.lobby.available === 0 && x.room.lobby.galeraFallback === false,
+  );
+  assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "playlist-empty" });
+});

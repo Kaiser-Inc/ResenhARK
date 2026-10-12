@@ -19,6 +19,7 @@ import {
 } from "../domain/room/room.js";
 import type { CatalogCard } from "../games/hitline/catalog.js";
 import type { Card } from "../games/hitline/engine.js";
+import { inDecades } from "../games/hitline/pool.js";
 import { isRunning, projectGame } from "../games/registry.js";
 import { audioPath } from "../http/audio-tickets.js";
 
@@ -38,7 +39,7 @@ export function projectRoom(
   const remaining = playablePool(room, catalog).length;
   // ponytail: recounts the catalog on every projection (8k cards per viewer per broadcast); cache per lobby if it shows in profiles.
   const byGenre = new Map<number, number>();
-  for (const card of unplayed(catalog)) {
+  for (const card of unplayed(inDecades(catalog, lobby.decades))) {
     const genre = (card as CatalogCard).genre;
     byGenre.set(genre, (byGenre.get(genre) ?? 0) + 1);
   }
