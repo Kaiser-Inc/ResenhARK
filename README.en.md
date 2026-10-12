@@ -1,5 +1,7 @@
 # ResenhARK
 
+[![CI](https://github.com/Kaiser-Inc/ResenhARK/actions/workflows/ci.yml/badge.svg)](https://github.com/Kaiser-Inc/ResenhARK/actions/workflows/ci.yml)
+
 Board games for web hangouts with friends. What's today's resenha going to be? Create a room, send the code to the crew and play together. No sign-up, straight from the browser.
 
 [Português](README.md) · [resenhark.vercel.app](https://resenhark.vercel.app)
@@ -42,6 +44,7 @@ ResenhARK started as the game room of a work team's casual daily, with a single 
 | `packages/shared` | Zod contracts used by the api and the web app |
 | Hitline catalog | Deezer and MusicBrainz, refreshed weekly by GitHub Actions |
 | Quality | Biome, `tsx --test`, Playwright |
+| CI | GitHub Actions: lint, typecheck, tests, web build and a boot test of the API image |
 
 ## Quick start
 
@@ -67,7 +70,7 @@ apps/
 packages/
   shared/         shared schemas and types
 docs/             documentation
-.github/          weekly Hitline catalog workflow
+.github/          workflows: CI and the weekly Hitline catalog refresh
 ```
 
 ## Documentation
@@ -75,7 +78,7 @@ docs/             documentation
 Documentation lives in [`docs/`](docs/README.md):
 
 - Tutorial: [your first game](docs/tutorial-first-game.md)
-- How-to guides: [connect Spotify](docs/how-to/connect-spotify.md), [update the Hitline catalog](docs/how-to/update-hitline-catalog.md), [rebuild the Baralho da galera](docs/how-to/rebuild-default-deck.md), [deploy](docs/how-to/deploy.md), [run the tests](docs/how-to/run-tests.md)
+- How-to guides: [connect Spotify](docs/how-to/connect-spotify.md), [update the Hitline catalog](docs/how-to/update-hitline-catalog.md), [rebuild the Baralho da galera](docs/how-to/rebuild-default-deck.md), [deploy](docs/how-to/deploy.md), [run the tests](docs/how-to/run-tests.md), [run the CI checks and protect main](docs/how-to/run-ci-and-protect-main.md)
 - Reference: [environment variables](docs/reference/environment-variables.md), [realtime events](docs/reference/realtime-events.md), rules for [Hitline](docs/reference/hitline-rules.md), [Huehint](docs/reference/huehint-rules.md) and [Taleclue](docs/reference/taleclue-rules.md)
 - Explanation: [architecture](docs/explanation/architecture.md), [hidden information](docs/explanation/hidden-information.md), [known limits](docs/explanation/known-limits.md)
 
@@ -89,7 +92,7 @@ pnpm --filter web test:e2e   # Playwright, production build of the web app
 make down                    # stop Redis
 ```
 
-Test details are in [run the tests](docs/how-to/run-tests.md).
+Test details are in [run the tests](docs/how-to/run-tests.md). Every pull request and every push to `develop` and `main` runs lint, typecheck, the tests, the web build and a boot test of the API image. To reproduce each check on your machine, see [run the CI checks and protect main](docs/how-to/run-ci-and-protect-main.md).
 
 ## License
 

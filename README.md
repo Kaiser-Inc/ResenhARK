@@ -1,5 +1,7 @@
 # ResenhARK
 
+[![CI](https://github.com/Kaiser-Inc/ResenhARK/actions/workflows/ci.yml/badge.svg)](https://github.com/Kaiser-Inc/ResenhARK/actions/workflows/ci.yml)
+
 Plataforma de jogos de tabuleiro para web-rolês com os amigos. Qual vai ser a resenha de hoje? Crie uma sala, mande o código pra galera e joguem juntos. Sem cadastro, direto do navegador.
 
 [English](README.en.md) · [resenhark.vercel.app](https://resenhark.vercel.app)
@@ -42,6 +44,7 @@ O ResenhARK começou como a sala de jogos da Casual Daily de um time de trabalho
 | `packages/shared` | Contratos Zod usados pela api e pelo web |
 | Catálogo do Hitline | Deezer e MusicBrainz, atualizado toda semana por GitHub Actions |
 | Qualidade | Biome, `tsx --test`, Playwright |
+| CI | GitHub Actions: lint, tipos, testes, build do web e boot da imagem da API |
 
 ## Início rápido
 
@@ -67,7 +70,7 @@ apps/
 packages/
   shared/         schemas e tipos compartilhados
 docs/             documentação (em inglês)
-.github/          workflow semanal do catálogo do Hitline
+.github/          workflows: CI e atualização semanal do catálogo do Hitline
 ```
 
 ## Documentação
@@ -75,7 +78,7 @@ docs/             documentação (em inglês)
 A documentação fica em [`docs/`](docs/README.md), em inglês:
 
 - Tutorial: [seu primeiro jogo](docs/tutorial-first-game.md)
-- Como fazer: [conectar o Spotify](docs/how-to/connect-spotify.md), [atualizar o catálogo do Hitline](docs/how-to/update-hitline-catalog.md), [refazer o Baralho da galera](docs/how-to/rebuild-default-deck.md), [fazer o deploy](docs/how-to/deploy.md), [rodar os testes](docs/how-to/run-tests.md)
+- Como fazer: [conectar o Spotify](docs/how-to/connect-spotify.md), [atualizar o catálogo do Hitline](docs/how-to/update-hitline-catalog.md), [refazer o Baralho da galera](docs/how-to/rebuild-default-deck.md), [fazer o deploy](docs/how-to/deploy.md), [rodar os testes](docs/how-to/run-tests.md), [rodar o CI e proteger a main](docs/how-to/run-ci-and-protect-main.md)
 - Referência: [variáveis de ambiente](docs/reference/environment-variables.md), [eventos em tempo real](docs/reference/realtime-events.md), regras do [Hitline](docs/reference/hitline-rules.md), do [Huehint](docs/reference/huehint-rules.md) e do [Taleclue](docs/reference/taleclue-rules.md)
 - Explicação: [arquitetura](docs/explanation/architecture.md), [informação oculta](docs/explanation/hidden-information.md), [limites conhecidos](docs/explanation/known-limits.md)
 
@@ -89,7 +92,7 @@ pnpm --filter web test:e2e   # Playwright, build de produção do web
 make down                    # para o Redis
 ```
 
-Os detalhes dos testes estão em [rodar os testes](docs/how-to/run-tests.md).
+Os detalhes dos testes estão em [rodar os testes](docs/how-to/run-tests.md). Todo pull request e todo push para `develop` e `main` roda lint, tipos, testes, o build do web e o boot da imagem da API. Para reproduzir cada check na sua máquina, veja [rodar o CI e proteger a main](docs/how-to/run-ci-and-protect-main.md).
 
 ## Licença
 
