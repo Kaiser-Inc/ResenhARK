@@ -9,10 +9,7 @@ const API_PORT = Number(new URL(API_URL).port || 80);
 
 export default defineConfig({
   testDir: "./e2e",
-  outputDir: path.resolve(
-    __dirname,
-    "../../.dev-flow/2026-10-04-rodada-1-sala-chat-hitline/ui/test-results",
-  ),
+  outputDir: path.resolve(__dirname, "output/playwright/test-results"),
   globalSetup: "./e2e/global-setup.ts",
   timeout: 30_000,
   expect: { timeout: 15_000 },
@@ -21,8 +18,8 @@ export default defineConfig({
   reporter: "list",
   webServer: [
     {
-      command: "PATH=$HOME/.local/bin:$PATH pnpm --filter api dev",
-      cwd: process.env.E2E_API_WORKTREE ?? repoRoot,
+      command: "PATH=$HOME/.local/bin:$PATH pnpm --filter web exec tsx e2e/genre-api-fixture.ts",
+      cwd: repoRoot,
       port: API_PORT,
       reuseExistingServer: false,
       timeout: 60_000,

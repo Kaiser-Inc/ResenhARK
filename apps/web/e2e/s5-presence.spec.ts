@@ -3,6 +3,7 @@ import {
   expect,
   importDeckAndStart,
   joinRoomAs,
+  openPlaylistImport,
   startTwoPlayerGame,
   test,
 } from "./support";
@@ -17,6 +18,7 @@ test("offline turn player shows a waiting countdown", async ({ browser }) => {
 
 test("late joiner watches as spectator", async ({ browser, page: ana }) => {
   const code = await createRoomAs(ana, "Ana");
+  await openPlaylistImport(ana);
   await importDeckAndStart(ana, "10");
   await expect(ana.getByRole("button", { name: "Puxar carta" })).toBeVisible();
   const { page: caio } = await joinRoomAs(browser, code, "Caio");
@@ -30,6 +32,7 @@ test("late joiner watches as spectator", async ({ browser, page: ana }) => {
 
 test("owner ends the game with confirmation and returns to the lobby", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await importDeckAndStart(page);
   await page.getByRole("button", { name: "Encerrar partida" }).click();
   await expect(page.getByRole("alertdialog")).toContainText("Encerrar a partida?");
@@ -46,6 +49,7 @@ test("owner ends the game with confirmation and returns to the lobby", async ({ 
 
 test("an empty pile ends the game with the tiebreak explained", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/tiny");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await page.getByRole("button", { name: "Iniciar partida" }).click();

@@ -5,6 +5,7 @@ import {
   expectNoAxeViolations,
   importDeckAndStart,
   joinRoomAs,
+  openPlaylistImport,
   test,
 } from "./support";
 
@@ -14,6 +15,7 @@ test("solo game: import, start, draw, guess, reveal", async ({ page }) => {
     if (message.type() === "error") mediaErrors.push(message.text());
   });
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await expectNoAxeViolations(page);
   await importDeckAndStart(page);
 
@@ -39,6 +41,7 @@ test("solo game: import, start, draw, guess, reveal", async ({ page }) => {
 
 test("keyboard: arrows move focus between gaps and Enter chooses", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await importDeckAndStart(page);
   await page.getByRole("button", { name: "Puxar carta" }).click();
   const gaps = page.getByRole("button", { name: /Inserir/ });
@@ -60,6 +63,7 @@ test("gaps stay visible but disabled for a player waiting for the turn", async (
   const context = await browser.newContext();
   const ana = await context.newPage();
   const code = await createRoomAs(ana, "Ana");
+  await openPlaylistImport(ana);
   const { page: bia } = await joinRoomAs(browser, code, "Bia");
   await importDeckAndStart(ana);
   const timeline = bia.getByRole("list", { name: /^Timeline de / });
@@ -74,6 +78,7 @@ test("non-owner sees the waiting state in the lobby", async ({ browser }) => {
   const context = await browser.newContext();
   const ana = await context.newPage();
   const code = await createRoomAs(ana, "Ana");
+  await openPlaylistImport(ana);
   const { page: bia } = await joinRoomAs(browser, code, "Bia");
 
   await expect(bia.getByText("Aguardando Ana iniciar")).toBeVisible();
@@ -87,6 +92,7 @@ test("non-owner sees the waiting state in the lobby", async ({ browser }) => {
 
 test("small playlist warning appears for a big N", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await page.getByLabel("Link da playlist").fill("https://open.spotify.com/playlist/dev");
   await page.getByRole("button", { name: "Importar playlist" }).click();
   await expect(page.getByText(/· 40 músicas/)).toBeVisible();
@@ -103,6 +109,7 @@ test("small playlist warning appears for a big N", async ({ page }) => {
 
 test("owner starts a new game after the game is over", async ({ page }) => {
   await createRoomAs(page, "Ana");
+  await openPlaylistImport(page);
   await importDeckAndStart(page);
   await expect(page.getByRole("button", { name: "Puxar carta" })).toBeVisible();
   await page.getByRole("button", { name: "Encerrar partida" }).click();
