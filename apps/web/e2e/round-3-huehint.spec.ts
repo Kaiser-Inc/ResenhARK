@@ -48,7 +48,11 @@ test("CA-F3: Enter and click advance solo reveal immediately, including the fina
       await page.keyboard.press("Enter");
     } else await page.getByRole("button", { name: "Próxima cor" }).click();
     if (round < 5)
-      await expect(page.getByText(`Rodada ${round + 1} / 5`, { exact: true })).toBeVisible({
+      await expect(
+        page
+          .locator('[data-slot="room-header"]')
+          .getByText(`Rodada ${round + 1} / 5`, { exact: true }),
+      ).toBeVisible({
         timeout: 4000,
       });
     else

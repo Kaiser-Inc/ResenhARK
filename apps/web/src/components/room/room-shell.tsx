@@ -1,7 +1,7 @@
 "use client";
 
 import type { ErrorCode, MemberView } from "@resenhark/shared";
-import { UserXIcon } from "lucide-react";
+import { ChevronRightIcon, UserXIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -22,6 +22,7 @@ import { HitlineBoard } from "@/components/hitline/hitline-board";
 import { HuehintBoard } from "@/components/huehint/huehint-board";
 import { LobbyPanel } from "@/components/lobby/lobby-panel";
 import { ConnectionBanner } from "@/components/room/connection-banner";
+import { RoomChatAction, RoomPanelCycle } from "@/components/room/room-header";
 import { RoomMobileBar } from "@/components/room/room-mobile-bar";
 import { type RoomActions, RoomSidebar } from "@/components/room/room-sidebar";
 import { useRoomTransition } from "@/components/room/room-transition";
@@ -111,13 +112,30 @@ function RoomFrame({
   const layout = useLayout();
   const [tab, setTab] = useState<"game" | "chat">("game");
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [wideChatClosed, setWideChatClosed] = useState(false);
+  useEffect(() => {
+    try {
+      setWideChatClosed(localStorage.getItem("resenhark:chat:wide-closed") === "true");
+    } catch {
+      // Storage is optional; the chat starts open.
+    }
+  }, []);
+  function changeWideChat(closed: boolean) {
+    setWideChatClosed(closed);
+    try {
+      localStorage.setItem("resenhark:chat:wide-closed", String(closed));
+    } catch {
+      // Keep the toggle usable when storage is unavailable.
+    }
+  }
   const mainRef = useRef<HTMLElement>(null);
   useEffect(() => {
     if (focusOnMount) mainRef.current?.focus();
   }, [focusOnMount]);
 
   const sheetShown = layout === "mid" && sheetOpen;
-  const chatVisible = layout === "wide" || sheetShown || (layout === "narrow" && tab === "chat");
+  const chatVisible =
+    (layout === "wide" && !wideChatClosed) || sheetShown || (layout === "narrow" && tab === "chat");
   const onVisibleChange = chat?.onVisibleChange;
   useEffect(() => {
     onVisibleChange?.(chatVisible);
@@ -125,6 +143,28 @@ function RoomFrame({
 
   const panel = chat?.panel ?? <ChatSkeleton />;
   const unread = chat?.unread ?? 0;
+  const chatAction =
+    layout === "wide" && !wideChatClosed ? null : (
+      <Button
+        type="button"
+        variant="outline"
+        onClick={() =>
+          layout === "narrow"
+            ? setTab("chat")
+            : layout === "wide"
+              ? changeWideChat(false)
+              : setSheetOpen(true)
+        }
+      >
+        Chat
+        <UnreadBadge count={unread} />
+      </Button>
+    );
+  const content = (
+    <RoomPanelCycle.Provider value={`${layout}:${layout === "narrow" ? tab : "game"}`}>
+      <RoomChatAction.Provider value={chatAction}>{children}</RoomChatAction.Provider>
+    </RoomPanelCycle.Provider>
+  );
 
   return (
     <div className={cn("flex flex-col", scrollPage ? "min-h-dvh" : "h-dvh")}>
@@ -138,21 +178,36 @@ function RoomFrame({
         />
         <div className="flex min-w-0 flex-1 flex-col">
           <RoomMobileBar code={code} members={members} actions={actions} />
-          {layout === "narrow" ? (
+          <div
+            className={cn(
+              "min-h-0 flex-1",
+              layout === "wide"
+                ? "grid transition-[grid-template-columns] duration-300 ease-drawer"
+                : "flex",
+              layout === "wide" &&
+                (wideChatClosed
+                  ? "grid-cols-[minmax(0,1fr)_0px]"
+                  : "grid-cols-[minmax(0,1fr)_360px]"),
+            )}
+          >
             <main
               ref={mainRef}
               id="main-content"
               tabIndex={-1}
-              className="flex min-h-0 flex-1 flex-col"
+              className={cn(
+                "min-h-0 min-w-0 flex-1",
+                layout === "narrow" && "flex flex-col",
+                layout !== "narrow" && !scrollPage && "overflow-y-auto",
+              )}
             >
               <Tabs
-                value={tab}
+                value={layout === "narrow" ? tab : "game"}
                 onValueChange={(value) => setTab(value === "chat" ? "chat" : "game")}
-                className="min-h-0 flex-1 gap-0"
+                className={cn("gap-0", layout === "narrow" && "min-h-0 flex-1")}
               >
                 <TabsList
                   className={cn(
-                    "w-full shrink-0 px-4",
+                    "w-full shrink-0 px-4 lg:hidden",
                     scrollPage && "sticky top-0 z-10 bg-background",
                   )}
                 >
@@ -164,60 +219,76 @@ function RoomFrame({
                 </TabsList>
                 <TabsContent
                   value="game"
+                  keepMounted
                   style={scrollPage ? { animation: "none" } : undefined}
-                  className={cn("min-h-0", !scrollPage && "overflow-y-auto")}
+                  className={cn(
+                    "min-h-0 [&[hidden]]:hidden",
+                    layout === "narrow" && !scrollPage && "overflow-y-auto",
+                  )}
                 >
-                  <div className="px-4 py-8">{children}</div>
+                  <div
+                    data-slot="room-content"
+                    className="mx-auto max-w-[1600px] px-4 py-8 lg:px-6 lg:py-12"
+                  >
+                    {content}
+                  </div>
                 </TabsContent>
                 <TabsContent
                   value="chat"
                   keepMounted
-                  className={cn("flex min-h-0 flex-col", scrollPage && "h-[calc(100dvh-88px)]")}
+                  className={cn(
+                    "flex min-h-0 flex-col [&[hidden]]:hidden",
+                    scrollPage && "h-[calc(100dvh-88px)]",
+                  )}
                 >
-                  {contest ? (
-                    <output className="flex shrink-0 items-center gap-1 bg-secondary px-4 py-2 text-sm font-medium">
-                      Contestação aberta ·{" "}
-                      <Countdown deadline={contest.deadline} clock={contest.clock} />
-                    </output>
+                  {layout === "narrow" ? (
+                    <>
+                      {contest ? (
+                        <output className="flex shrink-0 items-center gap-1 bg-secondary px-4 py-2 text-sm font-medium">
+                          Contestação aberta ·{" "}
+                          <Countdown deadline={contest.deadline} clock={contest.clock} />
+                        </output>
+                      ) : null}
+                      {panel}
+                    </>
                   ) : null}
-                  {panel}
                 </TabsContent>
               </Tabs>
             </main>
-          ) : (
-            <div className="flex min-h-0 flex-1">
-              <main
-                ref={mainRef}
-                id="main-content"
-                tabIndex={-1}
-                className={cn("min-h-0 min-w-0 flex-1", !scrollPage && "overflow-y-auto")}
+            {layout === "wide" ? (
+              <aside
+                aria-label="Chat"
+                aria-hidden={wideChatClosed}
+                inert={wideChatClosed}
+                className={cn(
+                  "relative min-h-0 min-w-0 max-h-dvh overflow-hidden before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border",
+                  scrollPage && "sticky top-0 h-dvh",
+                )}
               >
-                <div className="mx-auto flex max-w-[1600px] items-start justify-between gap-4 px-4 py-8 sm:px-6 lg:py-12">
-                  <div className="min-w-0 flex-1">{children}</div>
-                  {layout === "mid" ? (
-                    <Button type="button" variant="outline" onClick={() => setSheetOpen(true)}>
-                      Chat
-                      <UnreadBadge count={unread} />
-                    </Button>
-                  ) : null}
-                </div>
-              </main>
-              {layout === "wide" ? (
-                <aside
-                  aria-label="Chat"
+                <div
+                  data-slot="wide-chat-content"
                   className={cn(
-                    "relative flex w-[360px] shrink-0 flex-col before:absolute before:inset-y-0 before:left-0 before:w-px before:bg-border",
-                    scrollPage && "sticky top-0 h-dvh",
+                    "absolute inset-y-0 right-0 flex min-h-0 w-[360px] flex-col transition-transform duration-300 ease-drawer",
+                    wideChatClosed ? "translate-x-full" : "translate-x-0",
                   )}
                 >
-                  <div className="flex h-14 shrink-0 items-center px-4">
+                  <div className="flex h-14 shrink-0 items-center justify-between px-4">
                     <h2 className="text-base font-semibold">Chat</h2>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      aria-label="Recolher chat"
+                      onClick={() => changeWideChat(true)}
+                    >
+                      <ChevronRightIcon aria-hidden="true" strokeWidth={1.75} />
+                    </Button>
                   </div>
                   {panel}
-                </aside>
-              ) : null}
-            </div>
-          )}
+                </div>
+              </aside>
+            ) : null}
+          </div>
         </div>
       </div>
 
@@ -439,7 +510,6 @@ export function RoomShell({ code, sessionToken, onInvalidSession, focusOnMount }
               send={send}
               clock={clock}
               connected={connected}
-              onNewGame={() => send("game:reset")}
             />
           ) : (
             <LobbyPanel room={room} send={send} connected={connected} />

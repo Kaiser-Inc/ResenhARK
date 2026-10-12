@@ -2,6 +2,7 @@ import { type Ack, type ErrorCode, type GameEvent, SOCKET_EVENTS } from "@resenh
 import type { Server } from "socket.io";
 import { systemMessage } from "../domain/room/chat.js";
 import { type Room, roomDeadline, tickRoom } from "../domain/room/room.js";
+import type { CatalogCard } from "../games/hitline/catalog.js";
 import { type Card, apply } from "../games/hitline/engine.js";
 import { applyGame, isGamePlayer, isRunning, tickGame } from "../games/registry.js";
 import { SYSTEM_ACTOR } from "../games/system.js";
@@ -36,6 +37,7 @@ export class RoomHub {
       store: RoomStore;
       io: Server;
       audio: AudioPreviewSource;
+      catalog: CatalogCard[];
       now: () => number;
       rng: () => number;
       newId: () => string;
@@ -140,7 +142,7 @@ export class RoomHub {
       // Kicked or departed members stay connected until the gateway drops them: show them nothing.
       if (!room.members.some((m) => m.id === socket.data.memberId)) continue;
       socket.emit(SOCKET_EVENTS.state, {
-        room: projectRoom(room, socket.data.memberId, this.deps.now()),
+        room: projectRoom(room, socket.data.memberId, this.deps.now(), this.deps.catalog),
         events,
       });
     }

@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 
 const subscribe = () => () => {};
 
-export function ThemeToggle() {
+export function ThemeToggle({ label }: { label?: string } = {}) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(
     subscribe,
@@ -21,7 +21,8 @@ export function ThemeToggle() {
     <Button
       type="button"
       variant="ghost"
-      size="icon"
+      size={label ? "default" : "icon"}
+      className={label ? "w-full justify-start" : undefined}
       aria-label="Alternar tema"
       onClick={() => setTheme(isDark ? "light" : "dark")}
     >
@@ -30,6 +31,7 @@ export function ThemeToggle() {
       ) : (
         <Moon aria-hidden="true" size={16} strokeWidth={1.75} />
       )}
+      {label ? <span>{label}</span> : null}
     </Button>
   );
 }

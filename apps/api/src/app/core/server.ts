@@ -3,6 +3,7 @@ import Fastify, { type FastifyError, type FastifyInstance } from "fastify";
 import { serializerCompiler, validatorCompiler } from "fastify-type-provider-zod";
 import type { Redis } from "ioredis";
 import { Server } from "socket.io";
+import type { CatalogCard } from "../games/hitline/catalog.js";
 import type { AudioPreviewSource } from "../gateways/ports/audio-preview-source.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 import type { SpotifyAuth } from "../gateways/spotify/spotify-auth.js";
@@ -24,6 +25,8 @@ export interface ServerDependencies {
   newId: () => string;
   audio: AudioPreviewSource;
   playlists: PlaylistSource;
+  /** The Hitline genre catalog; tests inject a small one. */
+  catalog: CatalogCard[];
   /** Absent when the SPOTIFY_* settings are missing. */
   spotifyAuth?: SpotifyAuth;
   /** Fetches the bytes behind a provider preview URL. */
@@ -58,6 +61,7 @@ export async function createServer(
     store: deps.store,
     hub,
     playlists: deps.playlists,
+    catalog: deps.catalog,
     now: deps.now,
     rng: deps.rng,
     newId: deps.newId,

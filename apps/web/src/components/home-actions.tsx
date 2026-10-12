@@ -12,6 +12,7 @@ import { useRoomTransition } from "@/components/room/room-transition";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { createRoom } from "@/lib/api";
 import { saveSession } from "@/lib/session";
 
@@ -131,7 +132,7 @@ export function HomeActions() {
             >
               <Field data-invalid={!!codeError} className="contents">
                 <FieldLabel htmlFor={codeId} className="col-span-2">
-                  Código da sala
+                  Entrar com código da sala
                 </FieldLabel>
                 <Input
                   ref={codeRef}
@@ -162,6 +163,11 @@ export function HomeActions() {
                 Entrar
               </Button>
             </form>
+            <div className="flex items-center gap-3">
+              <Separator aria-hidden="true" className="flex-1" />
+              <span className="text-xs text-muted-foreground">ou</span>
+              <Separator aria-hidden="true" className="flex-1" />
+            </div>
             <Button
               ref={createRef}
               aria-label={createLabel}

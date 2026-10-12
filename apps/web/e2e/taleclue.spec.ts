@@ -172,7 +172,7 @@ test("Taleclue complete rules follow room settings in the lobby and the game she
   await expect(trigger).toBeFocused();
 });
 
-const UI_DIR = "/home/kaiser/KaiserInc/ResenhARK/.dev-flow/2026-10-09-rodada-6-taleclue/ui-polish";
+const UI_DIR = process.env.E2E_UI_DIR ?? path.resolve(__dirname, "../output/playwright/taleclue");
 async function screenshots(page: Page, phase: string, afterResize?: () => Promise<void>) {
   for (const theme of ["dark", "light"]) {
     await page.evaluate(
@@ -181,9 +181,9 @@ async function screenshots(page: Page, phase: string, afterResize?: () => Promis
     );
     for (const width of [390, 1440]) {
       await page.setViewportSize({ width, height: 900 });
-      await expect(page.getByRole("tab", { name: "Jogo", exact: true })).toHaveCount(
-        width < 1024 ? 1 : 0,
-      );
+      const gameTab = page.getByRole("tab", { name: "Jogo", exact: true, includeHidden: true });
+      if (width < 1024) await expect(gameTab).toBeVisible();
+      else await expect(gameTab).toBeHidden();
       await expect
         .poll(() =>
           page
@@ -716,7 +716,7 @@ test("Taleclue board: fifty houses and eight visible blobatars in the same house
         await page.screenshot({
           path: path.resolve(
             __dirname,
-            `../../../.dev-flow/2026-10-10-taleclue-uiux/ui/fatia-3-${house === 12 ? "" : `${house}-`}${width}-${theme}.png`,
+            `../output/playwright/taleclue-uiux/fatia-3-${house === 12 ? "" : `${house}-`}${width}-${theme}.png`,
           ),
           fullPage: true,
         });

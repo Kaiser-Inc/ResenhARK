@@ -14,7 +14,7 @@ export function HowToPlay({ setup }: { setup: RulesSetup }) {
       <Button
         type="button"
         variant="ghost"
-        className="self-start px-0"
+        className="-mx-3 self-start px-3"
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen(!open)}

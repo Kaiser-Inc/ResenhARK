@@ -1,17 +1,14 @@
 "use client";
 
-import type { Ack, HitlineView, MemberView } from "@resenhark/shared";
+import type { HitlineView, MemberView } from "@resenhark/shared";
 
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useEffect, useRef } from "react";
 
 import { MemberAvatar, expressionFor } from "@/components/avatar/member-avatar";
 import { fireConfetti } from "@/components/hitline/confetti";
 import { FADE, SPRING, useReduced } from "@/components/hitline/motion";
 import { TimelineCards, useTimelineHighlight } from "@/components/hitline/timeline-card-row";
-import { Button } from "@/components/ui/button";
-import { gameErrorMessage } from "@/lib/game-errors";
 import { timelineHighlightFor } from "@/lib/timeline-highlight";
 
 const REASONS: Record<NonNullable<HitlineView["endReason"]>, string> = {
@@ -24,13 +21,11 @@ type ResultPanelProps = {
   view: HitlineView;
   members: MemberView[];
   isOwner: boolean;
-  onNewGame: () => Promise<Ack>;
   /** True only when the game-over event just arrived (not on a reload into a finished game). */
   celebrate: boolean;
 };
 
-export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: ResultPanelProps) {
-  const [loading, setLoading] = useState(false);
+export function ResultPanel({ view, members, isOwner, celebrate }: ResultPanelProps) {
   const reduce = useReduced();
   const flashId = useTimelineHighlight(view.lastReveal?.card.id ?? null);
   // One burst when the result appears; reloads never replay a finished victory.
@@ -41,12 +36,6 @@ export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: Re
     fired.current = true;
     if (celebrate && !reduce && view.winners.length > 0) fireConfetti();
   }, []);
-  async function newGame() {
-    setLoading(true);
-    const ack = await onNewGame();
-    setLoading(false);
-    if (!ack.ok) toast.error(gameErrorMessage(ack.error));
-  }
   const name = (id: string) => members.find((m) => m.id === id)?.name ?? "Alguém";
   const standings = [...view.players].sort((a, b) => b.timeline.length - a.timeline.length);
   return (
@@ -110,15 +99,7 @@ export function ResultPanel({ view, members, isOwner, onNewGame, celebrate }: Re
           </li>
         ))}
       </ol>
-      {isOwner ? (
-        <div>
-          <Button type="button" loading={loading} onClick={() => void newGame()}>
-            Outra rodada
-          </Button>
-        </div>
-      ) : (
-        <p className="text-sm text-muted-foreground">Aguardando o dono</p>
-      )}
+      {!isOwner ? <p className="text-sm text-muted-foreground">Aguardando o dono</p> : null}
     </section>
   );
 }

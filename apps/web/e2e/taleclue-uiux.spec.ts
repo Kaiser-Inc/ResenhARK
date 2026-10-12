@@ -11,7 +11,8 @@ import {
   writeRoom,
 } from "./support";
 
-const UI_DIR = path.resolve(__dirname, "../../../.dev-flow/2026-10-10-taleclue-uiux/ui");
+const UI_DIR =
+  process.env.E2E_UI_DIR ?? path.resolve(__dirname, "../output/playwright/taleclue-uiux");
 
 async function narrator(pages: Page[]) {
   let result: Page | undefined;

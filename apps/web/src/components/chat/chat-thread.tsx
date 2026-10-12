@@ -108,7 +108,7 @@ export function ChatThread({ messages, loading }: { messages: ChatMessage[]; loa
         const el = event.currentTarget;
         following.current = el.scrollHeight - el.scrollTop - el.clientHeight <= FOLLOW_THRESHOLD_PX;
       }}
-      className="min-h-0 flex-1 overflow-y-auto px-4 py-3 outline-hidden focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      className="min-h-0 flex-1 overflow-y-auto xl:overscroll-y-contain px-4 py-3 outline-hidden focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
     >
       {messages.length === 0 ? (
         <p className="py-8 text-center text-sm text-muted-foreground">Nenhuma mensagem ainda.</p>

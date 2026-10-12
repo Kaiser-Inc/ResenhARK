@@ -6,6 +6,7 @@ import { Redis } from "ioredis";
 import type { Server } from "socket.io";
 import { type Socket, io as connect } from "socket.io-client";
 import { type ServerDependencies, createServer } from "../app/core/server.js";
+import { CATALOG } from "../app/games/hitline/catalog.js";
 import { FixturePlaylistSource } from "../app/gateways/fixture/fixture-playlist-source.js";
 import type { RoomHub } from "../app/realtime/room-hub.js";
 import { RedisRoomStore } from "../app/repositories/redis-room-store.js";
@@ -35,7 +36,7 @@ export async function startTestServer(
   overrides: Partial<
     Pick<
       ServerDependencies,
-      "audio" | "fetchAudio" | "playlists" | "spotifyAuth" | "trustProxyHops" | "redis"
+      "audio" | "catalog" | "fetchAudio" | "playlists" | "spotifyAuth" | "trustProxyHops" | "redis"
     >
   > & {
     /** Keeps the db's contents, to simulate a second API instance on the same Redis. */
@@ -63,6 +64,7 @@ export async function startTestServer(
     rng: seededRng(42),
     newId: () => `id-${++counter}`,
     audio: { findPreviewUrl: async () => null },
+    catalog: CATALOG,
     playlists: new FixturePlaylistSource(() => `id-${++counter}`),
     fetchAudio: async () => new Response(null, { status: 404 }),
     ...deps,

@@ -6,6 +6,7 @@ import {
   createRoomAs,
   expect,
   joinRoomAs,
+  openPlaylistImport,
   peekRoom,
   test,
   writeRoom,
@@ -188,6 +189,7 @@ test("Huehint group: private target, three contexts, keyboard guesses, reconnect
   await expect(page.getByRole("region", { name: "Lobby" })).toBeVisible();
   await expect(page.getByLabel("Link da playlist")).toHaveCount(0);
   await chooseOption(page, "Jogo da sala", "Hitline");
+  await openPlaylistImport(page);
   await expect(page.getByLabel("Link da playlist")).toBeVisible();
 });
 

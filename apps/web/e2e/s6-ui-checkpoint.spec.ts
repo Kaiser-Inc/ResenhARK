@@ -1,4 +1,4 @@
-import { createRoomAs, expect, setTheme, shot, test } from "./support";
+import { createRoomAs, expect, openPlaylistImport, setTheme, shot, test } from "./support";
 
 const VIEWPORTS = [
   { name: "390", width: 390, height: 844 },
@@ -46,6 +46,7 @@ for (const viewport of VIEWPORTS) {
       }
 
       await createRoomAs(page, "Ana");
+      await openPlaylistImport(page);
       for (const [screen, link, text] of [
         ["lobby-invalid", "https://open.spotify.com/album/abc", /^Link inválido/],
         ["lobby-no-access", "https://open.spotify.com/playlist/private", /^Sem acesso/],
@@ -53,7 +54,7 @@ for (const viewport of VIEWPORTS) {
       ] as const) {
         await page.getByLabel("Link da playlist").fill(link);
         await page.getByRole("button", { name: "Importar playlist" }).click();
-        await expect(page.getByText(text)).toBeVisible();
+        await expect(page.locator('[data-slot="field-error"]').getByText(text)).toBeVisible();
         await shot(page, name(screen));
       }
 

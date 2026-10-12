@@ -3,6 +3,7 @@ import { createRedis } from "./app/core/redis.js";
 import { seededRng } from "./app/core/seeded-rng.js";
 import { createServer } from "./app/core/server.js";
 import { settings } from "./app/core/settings.js";
+import { CATALOG } from "./app/games/hitline/catalog.js";
 import { ChainedPreview } from "./app/gateways/audio/chained-preview.js";
 import { DeezerPreview } from "./app/gateways/audio/deezer-preview.js";
 import { createFetchAudio } from "./app/gateways/audio/fetch-audio.js";
@@ -33,6 +34,7 @@ async function bootstrap(): Promise<void> {
     now: () => Date.now(),
     rng: settings.E2E_SEED === undefined ? Math.random : seededRng(settings.E2E_SEED),
     newId,
+    catalog: CATALOG,
     audio:
       settings.AUDIO_SOURCE === "fixture"
         ? new FixturePreview()
