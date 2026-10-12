@@ -1,6 +1,6 @@
-# Rebuild the built-in deck
+# Rebuild the Baralho da galera
 
-Every room plays the built-in Hitline deck, "Baralho ResenhARK", until its owner imports a Spotify playlist. The deck lives in `apps/api/src/app/games/hitline/default-deck.json` and is generated from a curated list. This page changes the list and regenerates the deck.
+The Baralho da galera is the built-in Hitline deck: 500 hand-picked songs. A room plays it when the owner picks it as the song source, and when the genres source has no genre listed. The deck lives in `apps/api/src/app/games/hitline/default-deck.json` and is generated from a curated list. This page changes the list and regenerates the deck. To change the genre catalog instead, see [Update the Hitline catalog](update-hitline-catalog.md).
 
 You need Node 22, pnpm and internet access. The script calls the public Deezer and MusicBrainz APIs, so no test runs it.
 
@@ -48,4 +48,4 @@ pnpm --filter api test
 
 The test in `default-deck.test.ts` checks the size (450 to 500), the years, the Deezer ids, the ISRCs, repeated songs and the Brazilian share. Commit the list, the deck and the report together.
 
-Each card keeps its Deezer track id. The API asks Deezer for that exact track first, because a lookup by ISRC can return another release of the same recording without a clip.
+Each card's id is `default-<deezerId>`, so ids survive reordering the list. The API asks Deezer for that exact track first, because a lookup by ISRC can return another release of the same recording without a clip.

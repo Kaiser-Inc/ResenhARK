@@ -32,12 +32,21 @@ A failed intent never changes state. The state comes back through `room:state`, 
 | `lobby:import` | `{ link: string }`, 1 to 500 characters | Owner, no game running | `invalid-input`, `room-not-found`, `not-owner`, `game-running`, `playlist-invalid-link`, `playlist-no-access`, `playlist-empty`, `spotify-disconnected` |
 | `lobby:reset-played` | none | Owner, no game running | `not-owner`, `game-running` |
 | `lobby:use-default-deck` | none | Owner, no game running | `not-owner`, `game-running` |
+| `lobby:set-source` | `{ source: "genres" \| "galera" }` | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
+| `lobby:vote-genres` | `{ genres: number[] }`, ids from `HITLINE_GENRES`, at most 22 | Any member, no game running | `invalid-input`, `game-running` |
+| `lobby:set-genres` | `{ genres: number[] }`, same rules | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
+| `lobby:follow-votes` | none | Owner, no game running | `not-owner`, `game-running` |
+| `lobby:set-decades` | `{ decades: Decade[] }`, at least one | Owner, no game running | `invalid-input`, `not-owner`, `game-running` |
 | `game:start` | none | Owner, no game running. Starts the selected game | `not-owner`, `game-running`, for Hitline only `playlist-empty`, `playlist-exhausted`, and for Taleclue only `not-enough-players`, `no-deck` |
 | `game:end` | none | Owner, game running | `not-owner`, `no-game` |
 | `game:reset` | none | Owner, game finished | `not-owner`, `no-game` |
 | `game:action` | `HitlineIntent`, `HuehintIntent` or `TaleclueIntent` (below), validated against the running game | Players | `invalid-input`, `no-game`, and the rule errors below |
 
-Every room starts with the built-in "Baralho ResenhARK". `lobby:import` replaces the deck, clears the played set and removes a finished game. `lobby:use-default-deck` does the same with the built-in deck, so the owner can drop an imported playlist. `game:reset` is the "Outra rodada" button: it clears the finished game and keeps the playlist and the played set. `lobby:reset-played` is "Recomeçar músicas".
+A Hitline room has three song sources: the genre catalog (`genres`, the default for a new room), the built-in "Baralho da galera" (`galera`) and an imported Spotify playlist (`playlist`). `lobby:set-source` switches between the first two, and `lobby:import` sets the third. Changing the source clears the played set and removes a finished game. Picking the source that is already active changes nothing. `lobby:use-default-deck` is the older name for `lobby:set-source` with `galera`, and it still works.
+
+`lobby:vote-genres` replaces the sender's own vote, and an empty list removes it. `lobby:set-genres` gives the owner a fixed list, and `lobby:follow-votes` drops it so the list follows the votes again. `lobby:set-decades` applies to all three sources. Duplicate ids in any of these lists are removed. Votes, genres and decades do not touch the played set. The rules behind them are in [Hitline rules](hitline-rules.md#setup).
+
+`game:reset` is the "Outra rodada" button: it clears the finished game and keeps the source and the played set. `lobby:reset-played` is "Recomeçar músicas".
 
 `room:leave` and `room:kick` remove the member from a running game. When a leaving member owns the room, the next online member becomes the owner. The kicked member receives `room:kicked`, and the server disconnects their sockets and revokes their sessions.
 
@@ -45,7 +54,7 @@ Every room starts with the built-in "Baralho ResenhARK". `lobby:import` replaces
 
 ```ts
 {
-  targetCards: number;    // 2 to 30, default 10
+  targetCards: number;    // 5 to 15, default 10
   contestSeconds: number; // 5 to 60, default 15
   guessSeconds: number;   // 30 to 300, default 120
   maxPlayers: number;     // 1 to 15, default 15
@@ -143,8 +152,19 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `in
            huehintConfig: HuehintConfig;
            taleclueConfig: TaleclueConfig;
            playlist: { source: "default" | "playlist"; name: string; count: number };
-           remaining: number;          // songs not played yet in this room
-           smallPlaylist: boolean };   // remaining < min(online, maxPlayers) x targetCards x 2
+           remaining: number;          // songs the next game can draw (source, decades, not played)
+           smallPlaylist: boolean;     // remaining < min(online, maxPlayers) x targetCards x 2
+           source: "genres" | "galera" | "playlist";
+           genres: { id: number; name: string;
+                     votes: number;       // members who voted for it, without names
+                     selected: boolean;   // in the list the next game uses
+                     available: number }[]; // catalog songs left in the marked decades
+           myGenres: number[];            // the viewer's own vote
+           genreMode: "votes" | "manual"; // manual once the owner set a list
+           decades: { id: Decade; label: string; selected: boolean;
+                      available: number }[]; // songs of the source in that decade, not played
+           available: number;             // same as remaining
+           galeraFallback: boolean };     // genres source, no genre listed: plays the Baralho da galera
   game: { type: "hitline"; view: HitlineView }
       | { type: "huehint"; view: HuehintView }
       | { type: "taleclue"; view: TaleclueView }
@@ -154,6 +174,8 @@ Rule errors: `not-a-player`, `not-your-turn`, `wrong-phase`, `invalid-hint`, `in
 ```
 
 `role` is `member` while no game runs. During a game, players are `player` and everyone else is `spectator`.
+
+`lobby.playlist` predates the song sources and stays for older clients. Its `source` is `default` for both the genre catalog and the Baralho da galera, and its `name` is "Catálogo de gêneros" while a genre list is active. New clients read `lobby.source`. `Decade` is `"pre60"` (before 1960) or `"1960s"` through `"2020s"`, and `"2020s"` also holds later years.
 
 ### `HitlineView`
 

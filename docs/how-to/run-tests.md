@@ -32,12 +32,20 @@ Playwright (`apps/web/playwright.config.ts`) starts its own servers on dedicated
 
 | Server | Port | How it runs |
 |---|---|---|
-| API | 3334 | `pnpm --filter api dev` with `NODE_ENV=test` |
+| API | 3334 | `apps/web/e2e/genre-api-fixture.ts`, with `NODE_ENV=test` |
 | Web | 4001 | `next build --webpack && next start -p 4001`, a production build |
+
+The API runs the real `apps/api/src/main.ts`. The fixture only swaps the genre catalog for a small, fixed one before the server starts, so lobby tests can count songs exactly. `E2E_API_WORKTREE` points the fixture at another checkout of the API.
 
 The web server uses a production build because `next dev` locks `.next/dev` per project and could not run beside your own dev server. The first run builds the web app, with a 5 minute allowance.
 
-Playwright reuses a server that is already listening on those ports, except when the `CI` environment variable is set.
+Playwright never reuses a running server. If a port is taken, the run stops with "is already used". Pick other ports with `E2E_API_URL` and `E2E_BASE_URL`:
+
+```sh
+E2E_API_URL=http://127.0.0.1:3344 E2E_BASE_URL=http://localhost:4011 pnpm --filter web test:e2e
+```
+
+The production build writes to `apps/web/.next`. Do not run the e2e suite from the same checkout as a running `next dev`, or the two overwrite each other. Use a second git worktree instead.
 
 The tests use one worker and one browser (Chromium). The suite plays real games between two browser contexts, and includes accessibility checks with axe, keyboard-only play and motion checks.
 
@@ -55,7 +63,7 @@ docker exec resenhark_redis redis-cli -n 14 flushdb
 
 The e2e API gets a fixed environment, so a local `apps/api/.env` cannot change test behavior. This works because `dotenv` does not override variables that are already set in the process environment, and Playwright sets every one of them:
 
-- `NODE_ENV=test`, `PORT=3334`, `REDIS_URL=redis://localhost:6379/14`
+- `NODE_ENV=test`, `PORT` (3334 unless `E2E_API_URL` says otherwise), `REDIS_URL=redis://localhost:6379/14`
 - `PLAYLIST_SOURCE=fixture` and `AUDIO_SOURCE=fixture` (the dev deck and a silent mp3)
 - `ADMIN_PASSWORD=dev`, with `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET` and `SPOTIFY_REDIRECT_URI` set to empty strings
 - `WEB_URL`, `CORS_ORIGIN` (`http://localhost:4001`) and `PUBLIC_API_URL` (`http://127.0.0.1:3334`)
@@ -66,7 +74,17 @@ The web server gets `NEXT_PUBLIC_API_URL=http://127.0.0.1:3334` and an empty `AP
 
 ### Output
 
-Playwright writes test results to `.dev-flow/2026-10-04-rodada-1-sala-chat-hitline/ui/test-results`. `test-results` is in `.gitignore`.
+Playwright writes test results to `apps/web/output/playwright/test-results`, and the screenshot checkpoints go under `apps/web/output/playwright/`. `E2E_UI_DIR` moves the screenshots elsewhere. The `output/playwright` folder is ignored by git.
+
+### Running one test
+
+The full suite takes 20 to 25 minutes. To check one scenario, pass the file and a name filter, and repeat it to catch a timing problem:
+
+```sh
+pnpm --filter web exec playwright test e2e/round-8-lobby-genres.spec.ts -g "decades change" --repeat-each=20
+```
+
+Lobby chips change on click, before the server answers. A test that reads a count right after a click can read a value from before the server applied it. Wait for something the server sends, such as the change showing up in a second member's browser, before you compare values.
 
 ## Lint and types
 

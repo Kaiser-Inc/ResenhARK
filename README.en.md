@@ -1,14 +1,24 @@
 # ResenhARK
 
-A room for your team to get together, chat and play: join with a code, talk in real time and play Hitline.
+Board games for web hangouts with friends. What's today's resenha going to be? Create a room, send the code to the crew and play together. No sign-up, straight from the browser.
 
-[Português](README.md)
+[Português](README.md) · [resenhark.vercel.app](https://resenhark.vercel.app)
 
 ## About
 
-ResenhARK was built for Kaiser's team Casual Daily, held on a Google Meet call. Voice and video stay in Meet, outside the app. ResenhARK covers the rest: someone creates a room and shares the code, everyone joins with just a name and a blobatar avatar, no account, and the room has real-time chat and a game.
+Someone creates a room and shares a 5-letter code. Everyone joins with just a name and a blobatar avatar, no account. The room has real-time chat, and the owner picks the game. Voice and video stay outside the app: the group talks on the call it already uses.
 
-The first game is Hitline, a music timeline. You hear a 30 s clip, pick where the song goes in your timeline (by release year), and the rest of the room can contest. Songs come from the built-in deck, or from a Spotify playlist the room owner imports. The server decides everything, and each person receives only what they are allowed to see.
+The server decides everything, and each person receives only what they are allowed to see. Another player's hand never reaches your browser, and the current song only arrives after the reveal.
+
+ResenhARK started as the game room of a work team's casual daily, with a single game. It now has three games and works for any group. "Resenha" is Brazilian slang for a laid-back get-together, and the app itself is in Brazilian Portuguese.
+
+## Games
+
+**Hitline.** You hear 30 s of a song and pick where it goes in your timeline, by release year. The others can contest your guess with tokens. Songs come from a catalog of about 5,900 tracks: the table votes on genres and the owner picks the decades. You can also play the Baralho da galera, 500 hand-picked songs, or a Spotify playlist. Up to 15 players.
+
+**Huehint.** One person sees a secret color and gives a hint in words. The others try to find the color on a picker, and the score comes from the distance between the colors. It works in a group, as a cooperative duo or as solo practice.
+
+**Taleclue.** The narrator gives a clue for one of the illustrated cards in their hand. The others play similar cards as decoys, and the table votes on which one was the narrator's. 200 cards, for 3 to 8 players.
 
 ## Features
 
@@ -16,8 +26,9 @@ The first game is Hitline, a music timeline. You hear a 30 s clip, pick where th
 |---|---|
 | Room by code, with name and blobatar avatar, no sign-up | Available |
 | Real-time chat, with the last 200 messages as history | Available |
-| Hitline: music timeline, tokens, contests | Available |
-| Huehint: color guessing from a hint, in a group or solo | Backend ready, interface in progress |
+| Hitline, with a genre and decade catalog, the Baralho da galera and Spotify playlists | Available |
+| Huehint, in a group, as a duo or solo | Available |
+| Taleclue, with 200 illustrated cards | Available |
 | SiteSpy | Coming soon |
 | Codetalk | Coming soon |
 
@@ -29,6 +40,7 @@ The first game is Hitline, a music timeline. You hear a 30 s clip, pick where th
 | `apps/api` | Fastify 5, Socket.IO, Zod, Redis |
 | `apps/web` | Next 16, React 19, Tailwind 4, `@kaiserinc` registry (KaiserInc Base) |
 | `packages/shared` | Zod contracts used by the api and the web app |
+| Hitline catalog | Deezer and MusicBrainz, refreshed weekly by GitHub Actions |
 | Quality | Biome, `tsx --test`, Playwright |
 
 ## Quick start
@@ -50,11 +62,12 @@ With no `.env` file, the development deck works without Spotify. To play your fi
 
 ```text
 apps/
-  api/            Fastify + Socket.IO + Redis
+  api/            Fastify + Socket.IO + Redis, plus the deck scripts
   web/            Next.js (UI and e2e tests)
 packages/
   shared/         shared schemas and types
 docs/             documentation
+.github/          weekly Hitline catalog workflow
 ```
 
 ## Documentation
@@ -62,8 +75,8 @@ docs/             documentation
 Documentation lives in [`docs/`](docs/README.md):
 
 - Tutorial: [your first game](docs/tutorial-first-game.md)
-- How-to guides: [connect Spotify](docs/how-to/connect-spotify.md), [deploy](docs/how-to/deploy.md), [run the tests](docs/how-to/run-tests.md)
-- Reference: [environment variables](docs/reference/environment-variables.md), [realtime events](docs/reference/realtime-events.md), [Hitline rules](docs/reference/hitline-rules.md)
+- How-to guides: [connect Spotify](docs/how-to/connect-spotify.md), [update the Hitline catalog](docs/how-to/update-hitline-catalog.md), [rebuild the Baralho da galera](docs/how-to/rebuild-default-deck.md), [deploy](docs/how-to/deploy.md), [run the tests](docs/how-to/run-tests.md)
+- Reference: [environment variables](docs/reference/environment-variables.md), [realtime events](docs/reference/realtime-events.md), rules for [Hitline](docs/reference/hitline-rules.md), [Huehint](docs/reference/huehint-rules.md) and [Taleclue](docs/reference/taleclue-rules.md)
 - Explanation: [architecture](docs/explanation/architecture.md), [hidden information](docs/explanation/hidden-information.md), [known limits](docs/explanation/known-limits.md)
 
 ## Development

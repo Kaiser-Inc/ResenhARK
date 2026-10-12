@@ -1,14 +1,24 @@
 # ResenhARK
 
-Uma sala para reunir o time, conversar e jogar: entre com um código, converse em tempo real e jogue Hitline.
+Plataforma de jogos de tabuleiro para web-rolês com os amigos. Qual vai ser a resenha de hoje? Crie uma sala, mande o código pra galera e joguem juntos. Sem cadastro, direto do navegador.
 
-[English](README.en.md)
+[English](README.en.md) · [resenhark.vercel.app](https://resenhark.vercel.app)
 
 ## Sobre
 
-O ResenhARK nasceu para a Casual Daily do time de Kaiser, que acontece numa call do Google Meet. Voz e vídeo continuam no Meet, fora do app. O ResenhARK cuida do resto: alguém cria uma sala e compartilha o código, cada pessoa entra só com um nome e um avatar blobatar, sem conta, e a sala tem chat em tempo real e um jogo.
+Alguém cria uma sala e compartilha um código de 5 letras. Cada pessoa entra só com um nome e um avatar blobatar, sem conta. A sala tem chat em tempo real, e o dono escolhe o jogo da vez. Voz e vídeo ficam fora do app: o grupo conversa na chamada que já usa.
 
-O primeiro jogo é o Hitline, uma linha do tempo de músicas. Você ouve um trecho de 30 s, escolhe onde a música entra na sua linha do tempo (pelo ano de lançamento) e o resto da sala pode contestar. As músicas vêm do baralho embutido ou de uma playlist do Spotify que o dono da sala importa. O servidor decide tudo, e cada pessoa recebe só o que pode ver.
+O servidor decide tudo, e cada pessoa recebe só o que pode ver. A mão de outro jogador nunca chega ao seu navegador, e a música da vez só chega depois da revelação.
+
+O ResenhARK começou como a sala de jogos da Casual Daily de um time de trabalho, com um jogo só. Hoje tem três jogos e serve para qualquer grupo.
+
+## Jogos
+
+**Hitline.** Você ouve 30 s de uma música e escolhe onde ela entra na sua linha do tempo, pelo ano de lançamento. Os outros podem contestar o palpite com fichas. As músicas vêm de um catálogo de cerca de 5.900 faixas: a mesa vota nos gêneros e o dono escolhe as épocas. Também dá para jogar com o Baralho da galera, de 500 músicas escolhidas a dedo, ou com uma playlist do Spotify. Até 15 jogadores.
+
+**Huehint.** Uma pessoa vê uma cor secreta e dá uma dica em palavras. As outras tentam achar a cor num seletor, e a nota sai da distância entre as cores. Funciona em grupo, em dupla cooperativa ou como treino solo.
+
+**Taleclue.** O narrador dá uma pista para uma das cartas ilustradas da mão dele. Os outros jogam cartas parecidas para confundir, e a mesa vota em qual era a do narrador. São 200 cartas, para 3 a 8 jogadores.
 
 ## Recursos
 
@@ -16,8 +26,9 @@ O primeiro jogo é o Hitline, uma linha do tempo de músicas. Você ouve um trec
 |---|---|
 | Sala por código, com nome e avatar blobatar, sem cadastro | Disponível |
 | Chat em tempo real, com histórico das últimas 200 mensagens | Disponível |
-| Hitline: linha do tempo de músicas, fichas, contestação | Disponível |
-| Huehint: jogo de cores por dica, em grupo ou solo | Backend pronto, interface em construção |
+| Hitline, com catálogo por gênero e época, Baralho da galera e playlist do Spotify | Disponível |
+| Huehint, em grupo, em dupla ou solo | Disponível |
+| Taleclue, com 200 cartas ilustradas | Disponível |
 | SiteSpy | Em breve |
 | Codetalk | Em breve |
 
@@ -29,6 +40,7 @@ O primeiro jogo é o Hitline, uma linha do tempo de músicas. Você ouve um trec
 | `apps/api` | Fastify 5, Socket.IO, Zod, Redis |
 | `apps/web` | Next 16, React 19, Tailwind 4, registry `@kaiserinc` (KaiserInc Base) |
 | `packages/shared` | Contratos Zod usados pela api e pelo web |
+| Catálogo do Hitline | Deezer e MusicBrainz, atualizado toda semana por GitHub Actions |
 | Qualidade | Biome, `tsx --test`, Playwright |
 
 ## Início rápido
@@ -50,11 +62,12 @@ Sem nenhum arquivo `.env`, o baralho de desenvolvimento funciona sem Spotify. Pa
 
 ```text
 apps/
-  api/            Fastify + Socket.IO + Redis
+  api/            Fastify + Socket.IO + Redis, e os scripts dos baralhos
   web/            Next.js (interface e testes e2e)
 packages/
   shared/         schemas e tipos compartilhados
 docs/             documentação (em inglês)
+.github/          workflow semanal do catálogo do Hitline
 ```
 
 ## Documentação
@@ -62,8 +75,8 @@ docs/             documentação (em inglês)
 A documentação fica em [`docs/`](docs/README.md), em inglês:
 
 - Tutorial: [seu primeiro jogo](docs/tutorial-first-game.md)
-- Como fazer: [conectar o Spotify](docs/how-to/connect-spotify.md), [fazer o deploy](docs/how-to/deploy.md), [rodar os testes](docs/how-to/run-tests.md)
-- Referência: [variáveis de ambiente](docs/reference/environment-variables.md), [eventos em tempo real](docs/reference/realtime-events.md), [regras do Hitline](docs/reference/hitline-rules.md)
+- Como fazer: [conectar o Spotify](docs/how-to/connect-spotify.md), [atualizar o catálogo do Hitline](docs/how-to/update-hitline-catalog.md), [refazer o Baralho da galera](docs/how-to/rebuild-default-deck.md), [fazer o deploy](docs/how-to/deploy.md), [rodar os testes](docs/how-to/run-tests.md)
+- Referência: [variáveis de ambiente](docs/reference/environment-variables.md), [eventos em tempo real](docs/reference/realtime-events.md), regras do [Hitline](docs/reference/hitline-rules.md), do [Huehint](docs/reference/huehint-rules.md) e do [Taleclue](docs/reference/taleclue-rules.md)
 - Explicação: [arquitetura](docs/explanation/architecture.md), [informação oculta](docs/explanation/hidden-information.md), [limites conhecidos](docs/explanation/known-limits.md)
 
 ## Desenvolvimento

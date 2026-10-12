@@ -1,14 +1,41 @@
 # Hitline rules
 
-These are the rules as the server implements them in `apps/api/src/app/games/hitline` (`engine.ts`, `normalize.ts`, `slots.ts`) and `apps/api/src/app/domain/room/room.ts`. The goal is to be the first player to reach `targetCards` cards in your timeline. A timeline is a list of songs ordered by release year.
+These are the rules as the server implements them in `apps/api/src/app/games/hitline` (`engine.ts`, `pool.ts`, `normalize.ts`, `slots.ts`) and `apps/api/src/app/domain/room/room.ts`. The goal is to be the first player to reach `targetCards` cards in your timeline. A timeline is a list of songs ordered by release year.
 
 ## Setup
 
-- Every room starts with the built-in deck, "Baralho ResenhARK" (`apps/api/src/app/games/hitline/default-deck.json`, 500 songs from 1960 to 2025, see [Rebuild the built-in deck](../how-to/rebuild-default-deck.md)). The owner can import a Spotify playlist instead, go back to the built-in deck with `lobby:use-default-deck`, set the options (see below) and start the game.
+### Song sources
+
+The owner picks where the songs come from:
+
+| Source | Songs | How |
+|---|---|---|
+| Genres (`genres`) | The genre catalog, `catalog.json`: about 5,900 Deezer songs in 21 genres plus "Outros". See [Update the Hitline catalog](../how-to/update-hitline-catalog.md) | The default for a new room. `lobby:set-source` |
+| Baralho da galera (`galera`) | The built-in deck, `default-deck.json`: 500 songs. See [Rebuild the Baralho da galera](../how-to/rebuild-default-deck.md) | `lobby:set-source` or `lobby:use-default-deck` |
+| Playlist (`playlist`) | A Spotify playlist. See [Connect Spotify](../how-to/connect-spotify.md) | `lobby:import` |
+
+Changing the source clears the songs already played in the room.
+
+### Genres
+
+- Every member votes for genres (`lobby:vote-genres`). The lobby shows how many members voted for each genre, never who.
+- The game uses the union of the votes of the current members, in the order of `HITLINE_GENRES`. A member who leaves the room stops counting. A member who is only offline still counts.
+- The owner can replace the list with their own (`lobby:set-genres`) and go back to the votes (`lobby:follow-votes`). The list goes back to the votes when ownership passes to someone else.
+- With no genre in the list, the game plays the Baralho da galera, and the lobby says so (`galeraFallback`).
+- A song's genre is the genre of its album on Deezer. A song whose album has no genre, or a genre outside the list, is in "Outros".
+
+### Decades
+
+The owner picks one or more decades (`lobby:set-decades`): "Antes dos 60s" (`pre60`, anything before 1960) and the 60s to the 2020s (`2020s` also holds later years). All are marked by default except "Antes dos 60s". The filter applies to every source, so it also trims the Baralho da galera and an imported playlist.
+
+### Dealing
+
+- The songs a game can use are the source's songs, in the marked decades, minus the songs already played in the room.
+- With the genres source, the game takes `max(60, players x targetCards x 3)` songs from that pool, one per listed genre in turn, so each genre gets an equal share. A genre that runs out leaves its share to the others. The other sources use the whole pool.
 - Players are the online members, in join order, up to `maxPlayers`. Everyone else is a spectator. A member who joins during a game is a spectator and can play the next one.
 - The deck is shuffled, and the turn order is random.
 - Each player starts with 1 revealed card from the deck and 2 tokens.
-- A game needs more songs in the pool than players, so at least one card remains to draw. Otherwise the start fails with `playlist-empty`, or `playlist-exhausted` when songs were already played in the room.
+- A game needs more songs in the pool than players, so at least one card remains to draw. Otherwise the start fails with `playlist-exhausted` when the songs already played emptied the pool, or `playlist-empty` when the source and decades leave too few.
 
 | Option | Range | Default |
 |---|---|---|
@@ -17,7 +44,7 @@ These are the rules as the server implements them in `apps/api/src/app/games/hit
 | `guessSeconds` | 30 to 300 | 120 |
 | `maxPlayers` | 1 to 15 | 15 |
 
-The lobby warns about a small playlist when the songs not yet played number fewer than `min(online members, maxPlayers) x targetCards x 2`. The owner decides whether to play anyway.
+The lobby warns about a small deck when the songs the next game can use number fewer than `min(online members, maxPlayers) x targetCards x 2`. The owner decides whether to play anyway.
 
 ## A turn
 
@@ -95,10 +122,13 @@ A kicked or departed player is removed from the running game. If it was their tu
 
 Every card that left the deck during a game counts as played in the room: dealt, drawn, skipped, bought or dropped for missing audio. When a game finishes and the owner clicks **Outra rodada** (or starts a new game directly), those cards are added to the room's played set. The next game draws only from songs not yet played.
 
+A game remembers the cards it started with, so only those can become played. With the genres source the game starts with a sample of the catalog, and the songs it never dealt stay available for the next game.
+
 A card's identity for this purpose is its Spotify URL, else its ISRC, else the normalized title plus the artists. Card ids change on every import, so they are not used.
 
-- Importing another playlist clears the played set.
+- Changing the source, or importing another playlist, clears the played set.
 - **Recomeçar músicas** (`lobby:reset-played`) clears it.
+- Votes, the genre list and the decades do not clear it.
 - When the remaining songs are too few for the players, the lobby shows how many remain and the start fails with `playlist-exhausted`. The owner decides to reset the played songs.
 
 ## Name matching
