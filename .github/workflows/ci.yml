@@ -88,7 +88,7 @@ jobs:
       - name: Wait for /health
         run: |
           for _ in $(seq 1 30); do
-            if curl -fsS http://127.0.0.1:3333/health | grep -q '"redis":"ok"'; then
+            if curl -fsS --max-time 5 http://127.0.0.1:3333/health | grep -q '"redis":"ok"'; then
               echo "The API answered /health"
               exit 0
             fi
