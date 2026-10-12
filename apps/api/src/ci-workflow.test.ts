@@ -64,3 +64,11 @@ test("job ci runs lint, typecheck and the tests against a Redis service", () => 
     "steps are out of order",
   );
 });
+
+test("job web-build runs the production build of the web app", () => {
+  const job = jobBlock("web-build");
+  assert.match(job, /^ {4}name: web-build$/m);
+  assert.match(job, /^ {4}timeout-minutes: \d+$/m);
+  assert.match(job, /run: pnpm install --frozen-lockfile\n/);
+  assert.match(job, /run: pnpm --filter web build\n/);
+});
