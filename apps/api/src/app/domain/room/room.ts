@@ -216,6 +216,18 @@ function nextOnline(members: Member[], exceptId: string): Member | undefined {
   return members.filter((m) => m.id !== exceptId && isOnline(m)).sort(byJoinedAt)[0];
 }
 
+/** The owner's own genre list belongs to them: a new owner starts from the members' votes. */
+const withoutOwnerList = (room: Room): Room => ({
+  ...room,
+  lobby: { ...room.lobby, ownerGenres: null },
+});
+
+/** A departed member's votes must not linger in the room. */
+function withoutVotes(room: Room, memberId: string): Room {
+  const { [memberId]: _gone, ...genreVotes } = room.lobby.genreVotes;
+  return { ...room, lobby: { ...room.lobby, genreVotes } };
+}
+
 export function transferOwnershipIfAway(
   room: Room,
   now: number,
@@ -226,7 +238,7 @@ export function transferOwnershipIfAway(
   }
   const heir = nextOnline(room.members, owner.id);
   if (!heir) return { room, newOwnerId: null };
-  return { room: { ...room, ownerId: heir.id }, newOwnerId: heir.id };
+  return { room: withoutOwnerList({ ...room, ownerId: heir.id }), newOwnerId: heir.id };
 }
 
 export function kick(room: Room, actorId: string, targetId: string): RoomResult {
@@ -234,14 +246,16 @@ export function kick(room: Room, actorId: string, targetId: string): RoomResult 
   if (targetId === actorId || !room.members.some((m) => m.id === targetId)) {
     return { ok: false, error: "invalid-target" };
   }
-  return { ok: true, room: { ...room, members: room.members.filter((m) => m.id !== targetId) } };
+  const kicked = { ...room, members: room.members.filter((m) => m.id !== targetId) };
+  return { ok: true, room: withoutVotes(kicked, targetId) };
 }
 
 export function leave(room: Room, memberId: string): Room {
   const members = room.members.filter((m) => m.id !== memberId);
-  if (room.ownerId !== memberId) return { ...room, members };
+  const rest = withoutVotes({ ...room, members }, memberId);
+  if (room.ownerId !== memberId) return rest;
   const heir = nextOnline(members, memberId) ?? [...members].sort(byJoinedAt)[0];
-  return { ...room, members, ownerId: heir?.id ?? room.ownerId };
+  return withoutOwnerList({ ...rest, ownerId: heir?.id ?? room.ownerId });
 }
 
 /** When the room next needs a tick (owner handover or game deadline), or null. */

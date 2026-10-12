@@ -23,21 +23,24 @@ import { inDecades } from "../games/hitline/pool.js";
 import { isRunning, projectGame } from "../games/registry.js";
 import { audioPath } from "../http/audio-tickets.js";
 
-/** What `viewerId` is allowed to see of the room. Never add hidden game data here. */
-export function projectRoom(
-  room: Room,
-  viewerId: string,
-  now: number,
-  catalog: CatalogCard[],
-): RoomView {
-  const { game, lobby } = room;
-  const onlineCount = room.members.filter(isOnline).length;
-  const cap = Math.min(onlineCount, lobby.config.maxPlayers);
+type LobbyCounts = {
+  source: ReturnType<typeof sourceCards>;
+  remaining: number;
+  byGenre: Map<number, number>;
+  byDecade: Map<string, number>;
+};
+
+// Every viewer of a broadcast gets the same counts, so scan the catalog once per room state.
+// The room object is replaced on each mutation, which is what invalidates an entry.
+const counted = new WeakMap<Room, { catalog: CatalogCard[]; counts: LobbyCounts }>();
+
+function lobbyCounts(room: Room, catalog: CatalogCard[]): LobbyCounts {
+  const hit = counted.get(room);
+  if (hit && hit.catalog === catalog) return hit.counts;
+  const { lobby } = room;
   const source = sourceCards(room, catalog);
   const played = new Set(lobby.played);
   const unplayed = (cards: Card[]) => cards.filter((card) => !played.has(playedKey(card)));
-  const remaining = playablePool(room, catalog).length;
-  // ponytail: recounts the catalog on every projection (8k cards per viewer per broadcast); cache per lobby if it shows in profiles.
   const byGenre = new Map<number, number>();
   for (const card of unplayed(inDecades(catalog, lobby.decades))) {
     const genre = (card as CatalogCard).genre;
@@ -48,6 +51,22 @@ export function projectRoom(
     const decade = decadeOf(card.year);
     byDecade.set(decade, (byDecade.get(decade) ?? 0) + 1);
   }
+  const counts = { source, remaining: playablePool(room, catalog).length, byGenre, byDecade };
+  counted.set(room, { catalog, counts });
+  return counts;
+}
+
+/** What `viewerId` is allowed to see of the room. Never add hidden game data here. */
+export function projectRoom(
+  room: Room,
+  viewerId: string,
+  now: number,
+  catalog: CatalogCard[],
+): RoomView {
+  const { game, lobby } = room;
+  const onlineCount = room.members.filter(isOnline).length;
+  const cap = Math.min(onlineCount, lobby.config.maxPlayers);
+  const { source, remaining, byGenre, byDecade } = lobbyCounts(room, catalog);
   const listed = new Set(effectiveGenres(room));
   const chosenDecades = new Set(lobby.decades);
   const lobbyView: LobbyView = {

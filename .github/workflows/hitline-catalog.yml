@@ -5,6 +5,7 @@ on:
     - cron: "0 9 * * 1" # Mondays 09:00 UTC
   workflow_dispatch:
 
+# Needs Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests".
 permissions:
   contents: write
   pull-requests: write
@@ -32,13 +33,16 @@ jobs:
             echo "No new songs this week."
             exit 0
           fi
-          branch="chore/hitline-catalog-$(date +%Y-%m-%d)"
+          # One fixed branch: an unmerged PR from an earlier week is updated, not duplicated.
+          branch="chore/hitline-catalog"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git switch -c "$branch"
+          git switch -C "$branch"
           git add apps/api/src/app/games/hitline/catalog.json apps/api/src/scripts/catalog/report.md
           git commit -m "chore(api): weekly Hitline catalog refresh"
-          git push origin "$branch"
-          gh pr create --base main --head "$branch" \
-            --title "chore(api): Hitline catalog refresh $(date +%Y-%m-%d)" \
-            --body-file apps/api/src/scripts/catalog/report.md
+          git push --force origin "$branch"
+          # A pull request body is capped at 65,536 characters.
+          head -c 60000 apps/api/src/scripts/catalog/report.md > "$RUNNER_TEMP/pr-body.md"
+          title="chore(api): Hitline catalog refresh $(date +%Y-%m-%d)"
+          gh pr create --base main --head "$branch" --title "$title" --body-file "$RUNNER_TEMP/pr-body.md" \
+            || gh pr edit "$branch" --title "$title" --body-file "$RUNNER_TEMP/pr-body.md"

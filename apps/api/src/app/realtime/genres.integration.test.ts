@@ -302,3 +302,38 @@ test("a decade filter that empties the pool blocks the start", async (t) => {
   );
   assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "playlist-empty" });
 });
+
+test("a decade filter that leaves too few songs after a round says the pool is empty, not exhausted", async (t) => {
+  const { owner, clients } = await room(t, ["Ana", "Bia"], withCatalog());
+  await emit(owner, "lobby:configure", config());
+  await emit(clients[1], "lobby:vote-genres", { genres: [132] });
+  await stateWhere(owner, (x) => x.room.lobby.galeraFallback === false);
+  await emit(owner, "game:start");
+  await emit(owner, "game:end");
+  await emit(owner, "game:reset");
+  await emit(owner, "lobby:set-decades", { decades: ["pre60"] });
+  await stateWhere(
+    owner,
+    (x) =>
+      x.room.game === null &&
+      x.room.lobby.available === 0 &&
+      x.room.lobby.decades.filter((d) => d.selected).length === 1,
+  );
+  assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "playlist-empty" });
+});
+
+test("a room saved before genre sources still starts a game", async (t) => {
+  const app = await startTestServer();
+  t.after(() => app.close());
+  const session = await createRoomVia(app, "Ana");
+  const key = `room:${session.code}`;
+  const saved = JSON.parse((await app.store.redis.get(key)) as string);
+  for (const field of ["source", "genreVotes", "ownerGenres", "decades"]) delete saved.lobby[field];
+  await app.store.redis.set(key, JSON.stringify(saved));
+  const ana = await connectClient(app.url, session.sessionToken);
+  t.after(() => ana.close());
+  assert.deepEqual(await emit(ana, "game:start"), { ok: true });
+  const s = await stateWhere(ana, (x) => x.room.game !== null);
+  assert.equal(s.room.lobby.source, "genres");
+  assert.equal(s.room.lobby.galeraFallback, true);
+});

@@ -6,6 +6,7 @@ import {
   catalogReport,
   mergeCatalog,
   newCandidates,
+  rejectedByCut,
   resolveGenre,
   resolveYear,
 } from "./catalog-build.js";
@@ -86,4 +87,15 @@ test("catalogReport lists counts by genre and decade and the unverified years", 
   assert.match(md, /\| Sertanejo \| 1 \|/);
   assert.match(md, /\| Anos 70 \| 1 \|/);
   assert.match(md, /Song 2/);
+});
+
+test("rejectedByCut counts only tracks the cut turns away, not known or repeated ones", () => {
+  const tracks = [
+    track(1),
+    track(2, { preview: "" }),
+    track(3, { isrc: undefined }),
+    track(4, { rank: 100 }),
+    track(1), // the same song listed by a second playlist
+  ];
+  assert.equal(rejectedByCut(tracks, 300_000), 3);
 });

@@ -13,6 +13,7 @@ import {
   catalogReport,
   mergeCatalog,
   newCandidates,
+  rejectedByCut,
   resolveGenre,
   resolveYear,
 } from "./catalog-build.js";
@@ -61,7 +62,7 @@ async function main() {
 
   const known = new Set(existing.map((e) => e.isrc));
   const fresh = newCandidates(tracks, sources.minRank, known).slice(0, limit);
-  const skipped = tracks.length - fresh.length;
+  const skipped = rejectedByCut(tracks, sources.minRank);
   const added: CatalogEntry[] = [];
   for (const [index, t] of fresh.entries()) {
     const isrc = t.isrc as string;

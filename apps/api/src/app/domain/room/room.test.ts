@@ -253,3 +253,26 @@ test("a game saved with position-based default ids still folds only the cards it
   room.game = { type: "hitline", state: started.state, playerIds: ["a", "b"] };
   assert.equal(foldPlayed(room).lobby.played.length, 2);
 });
+
+test("leave and kick drop the departed member's genre votes", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.members.push(member("b"), member("c"));
+  room.lobby.genreVotes = { a: [132], b: [152], c: [80] };
+  assert.deepEqual(Object.keys(leave(room, "b").lobby.genreVotes).sort(), ["a", "c"]);
+  const kicked = kick(room, "a", "c");
+  assert.ok(kicked.ok);
+  assert.deepEqual(Object.keys(kicked.room.lobby.genreVotes).sort(), ["a", "b"]);
+});
+
+test("the owner's own genre list does not pass to the next owner", () => {
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.members.push({ ...member("b"), joinedAt: 1, connections: 1 });
+  room.lobby.ownerGenres = [80];
+  assert.equal(leave(room, "a").ownerId, "b");
+  assert.equal(leave(room, "a").lobby.ownerGenres, null);
+  assert.equal(leave(room, "b").lobby.ownerGenres?.[0], 80, "a non-owner leaving keeps the list");
+  const away = { ...room, members: [{ ...room.members[0], offlineSince: 0 }, room.members[1]] };
+  const moved = transferOwnershipIfAway(away, 120_000);
+  assert.equal(moved.newOwnerId, "b");
+  assert.equal(moved.room.lobby.ownerGenres, null);
+});

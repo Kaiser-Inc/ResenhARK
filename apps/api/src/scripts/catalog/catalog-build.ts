@@ -46,6 +46,19 @@ export function newCandidates(
   return out;
 }
 
+/** Tracks the cut turns away: no clip, no ISRC or too little popularity. Repeats and known songs do not count. */
+export function rejectedByCut(tracks: PlaylistTrack[], minRank: number): number {
+  const seen = new Set<string>();
+  let rejected = 0;
+  for (const t of tracks) {
+    if (!t.preview || !t.isrc || t.rank < minRank) {
+      if (!seen.has(`${t.id}`)) rejected++;
+      seen.add(`${t.id}`);
+    }
+  }
+  return rejected;
+}
+
 /** Remasters and compilations only ever date later, so the earlier year is the closer one. */
 export function resolveYear(
   deezerDate: string | undefined,

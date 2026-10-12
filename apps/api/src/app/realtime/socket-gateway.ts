@@ -28,7 +28,7 @@ import {
 } from "../domain/room/room.js";
 import type { CatalogCard } from "../games/hitline/catalog.js";
 import { create } from "../games/hitline/engine.js";
-import { deckSize, drawBalanced } from "../games/hitline/pool.js";
+import { deckSize, drawBalanced, inDecades } from "../games/hitline/pool.js";
 import { create as createHuehint } from "../games/huehint/engine.js";
 import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
 import { SYSTEM_ACTOR } from "../games/system.js";
@@ -533,8 +533,10 @@ export function registerSocketGateway(
           const playerIds = seatPlayers(room, room.lobby.config.maxPlayers);
           // Each player takes a card and at least one must remain to draw.
           if (pool.length <= playerIds.length) {
-            const played = (room.lobby.played ?? []).length > 0;
-            return { ok: false, error: played ? "playlist-exhausted" : "playlist-empty" };
+            // "Exhausted" is for songs used up by earlier rounds; a filter that leaves too few is "empty".
+            const unfiltered = inDecades(sourceCards(room, catalog).cards, room.lobby.decades);
+            const exhausted = unfiltered.length > playerIds.length;
+            return { ok: false, error: exhausted ? "playlist-exhausted" : "playlist-empty" };
           }
           // A genre game draws a bounded, evenly split deck; other sources play their whole pool.
           const { genres } = sourceCards(room, catalog);
