@@ -22,10 +22,13 @@ import {
   isOnline,
   kick,
   leave,
-  unplayedCards,
+  playablePool,
+  playedKey,
+  sourceCards,
 } from "../domain/room/room.js";
 import type { CatalogCard } from "../games/hitline/catalog.js";
 import { create } from "../games/hitline/engine.js";
+import { deckSize, drawBalanced } from "../games/hitline/pool.js";
 import { create as createHuehint } from "../games/huehint/engine.js";
 import { applyGame, isGamePlayer, isRunning, parseIntent } from "../games/registry.js";
 import { SYSTEM_ACTOR } from "../games/system.js";
@@ -526,17 +529,31 @@ export function registerSocketGateway(
           if (folded.lobby.game === "taleclue") return startTaleclue(folded);
           // A finished game's songs count as played even when the owner skips "Outra rodada".
           const room = foldPlayed(folded);
-          const pool = unplayedCards(room.lobby);
+          const pool = playablePool(room, catalog);
           const playerIds = seatPlayers(room, room.lobby.config.maxPlayers);
           // Each player takes a card and at least one must remain to draw.
           if (pool.length <= playerIds.length) {
             const played = (room.lobby.played ?? []).length > 0;
             return { ok: false, error: played ? "playlist-exhausted" : "playlist-empty" };
           }
-          const started = create(room.lobby.config, playerIds, pool, ctx());
+          // A genre game draws a bounded, evenly split deck; other sources play their whole pool.
+          const { genres } = sourceCards(room, catalog);
+          const deck = genres
+            ? drawBalanced(
+                pool as CatalogCard[],
+                genres,
+                deckSize(playerIds.length, room.lobby.config.targetCards),
+                rng,
+              )
+            : pool;
+          const started = create(room.lobby.config, playerIds, deck, ctx());
+          const startKeys = deck.map(playedKey);
           return {
             ok: true,
-            room: { ...room, game: { type: "hitline", state: started.state, playerIds } },
+            room: {
+              ...room,
+              game: { type: "hitline", state: started.state, playerIds, startKeys },
+            },
             events: started.events,
             system: ["Partida de Hitline começou"],
           };

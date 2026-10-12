@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { seededRng } from "../../core/seeded-rng.js";
+import { create as createHitline } from "../../games/hitline/engine.js";
 import { create as createTaleclue } from "../../games/taleclue/engine.js";
 import { cfg, ctxAt, syntheticDeck } from "../../games/taleclue/test-helpers.js";
 import {
@@ -10,10 +12,12 @@ import {
   addMember,
   createRoom,
   foldColors,
+  foldPlayed,
   foldTaleclueUsed,
   generateRoomCode,
   kick,
   leave,
+  playedKey,
   roomDeadline,
   tickRoom,
   transferOwnershipIfAway,
@@ -202,4 +206,34 @@ test("foldTaleclueUsed adds a finished game's dealt cards once and is idempotent
 test("foldTaleclueUsed ignores rooms without a Taleclue game", () => {
   const room = createRoom("KXPMR", member("a"), 0);
   assert.equal(foldTaleclueUsed(room), room);
+});
+
+test("foldPlayed with startKeys counts only the cards that left the pile, not the rest of the catalog", () => {
+  const cards = Array.from({ length: 5 }, (_, i) => ({
+    id: `cat-${i}`,
+    title: `T${i}`,
+    artists: ["A"],
+    year: 1990,
+    isrc: `ISRC${i}`,
+    spotifyUrl: null,
+  }));
+  const dealt = cards.slice(0, 4);
+  const started = createHitline(
+    { targetCards: 5, contestSeconds: 15, guessSeconds: 120, maxPlayers: 15 },
+    ["a", "b"],
+    dealt,
+    { now: 0, rng: seededRng(1), newId: () => "id" },
+  );
+  const room = createRoom("KXPMR", member("a"), 0);
+  room.game = {
+    type: "hitline",
+    state: started.state,
+    playerIds: ["a", "b"],
+    startKeys: dealt.map(playedKey),
+  };
+  const folded = foldPlayed(room);
+  // 2 players took one card each; the other 2 are still in the pile, and cat-4 was never in the game.
+  assert.equal(folded.lobby.played.length, 2);
+  assert.ok(!folded.lobby.played.includes(playedKey(cards[4])));
+  assert.deepEqual(foldPlayed(folded).lobby.played, folded.lobby.played);
 });

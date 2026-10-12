@@ -5,6 +5,7 @@ import {
   HITLINE_GENRES,
   type LobbyView,
   type RoomView,
+  decadeOf,
 } from "@resenhark/shared";
 import { settings } from "../core/settings.js";
 import {
@@ -12,9 +13,12 @@ import {
   deckOf,
   effectiveGenres,
   isOnline,
-  unplayedCards,
+  playablePool,
+  playedKey,
+  sourceCards,
 } from "../domain/room/room.js";
 import type { CatalogCard } from "../games/hitline/catalog.js";
+import type { Card } from "../games/hitline/engine.js";
 import { isRunning, projectGame } from "../games/registry.js";
 import { audioPath } from "../http/audio-tickets.js";
 
@@ -23,13 +27,26 @@ export function projectRoom(
   room: Room,
   viewerId: string,
   now: number,
-  _catalog: CatalogCard[],
+  catalog: CatalogCard[],
 ): RoomView {
   const { game, lobby } = room;
   const onlineCount = room.members.filter(isOnline).length;
   const cap = Math.min(onlineCount, lobby.config.maxPlayers);
-  const deck = deckOf(lobby);
-  const remaining = unplayedCards(lobby).length;
+  const source = sourceCards(room, catalog);
+  const played = new Set(lobby.played);
+  const unplayed = (cards: Card[]) => cards.filter((card) => !played.has(playedKey(card)));
+  const remaining = playablePool(room, catalog).length;
+  // ponytail: recounts the catalog on every projection (8k cards per viewer per broadcast); cache per lobby if it shows in profiles.
+  const byGenre = new Map<number, number>();
+  for (const card of unplayed(catalog)) {
+    const genre = (card as CatalogCard).genre;
+    byGenre.set(genre, (byGenre.get(genre) ?? 0) + 1);
+  }
+  const byDecade = new Map<string, number>();
+  for (const card of unplayed(source.cards)) {
+    const decade = decadeOf(card.year);
+    byDecade.set(decade, (byDecade.get(decade) ?? 0) + 1);
+  }
   const listed = new Set(effectiveGenres(room));
   const chosenDecades = new Set(lobby.decades);
   const lobbyView: LobbyView = {
@@ -38,9 +55,9 @@ export function projectRoom(
     huehintConfig: { ...lobby.huehintConfig },
     taleclueConfig: { ...lobby.taleclueConfig },
     playlist: {
-      source: lobby.deck ? "playlist" : "default",
-      name: deck.name,
-      count: deck.cards.length,
+      source: lobby.source === "playlist" ? "playlist" : "default",
+      name: source.genres ? "Catálogo de gêneros" : deckOf(lobby).name,
+      count: source.cards.length,
     },
     remaining,
     smallPlaylist: remaining < cap * lobby.config.targetCards * 2,
@@ -50,7 +67,7 @@ export function projectRoom(
       name: g.name,
       votes: room.members.filter((m) => lobby.genreVotes[m.id]?.includes(g.id)).length,
       selected: listed.has(g.id),
-      available: 0,
+      available: byGenre.get(g.id) ?? 0,
     })),
     myGenres: lobby.genreVotes[viewerId] ?? [],
     genreMode: lobby.ownerGenres ? "manual" : "votes",
@@ -58,7 +75,7 @@ export function projectRoom(
       id,
       label: DECADE_LABELS[id],
       selected: chosenDecades.has(id),
-      available: 0,
+      available: byDecade.get(id) ?? 0,
     })),
     available: remaining,
     galeraFallback: lobby.source === "genres" && listed.size === 0,

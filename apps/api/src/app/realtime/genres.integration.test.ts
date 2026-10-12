@@ -7,10 +7,13 @@ import {
   type TestSession,
   connectClient,
   createRoomVia,
+  hitlineView,
   joinRoomVia,
   startTestServer,
   stateWhere,
 } from "../../test/helpers.js";
+import type { CatalogCard } from "../games/hitline/catalog.js";
+import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
 import type { Card } from "../games/hitline/engine.js";
 import type { PlaylistSource } from "../gateways/ports/playlist-source.js";
 
@@ -176,4 +179,83 @@ test("votes, decades and source are locked while a game runs", async (t) => {
   assert.deepEqual(await emit(owner, "lobby:set-source", { source: "galera" }), running);
   await emit(owner, "game:end");
   assert.deepEqual(await emit(clients[1], "lobby:vote-genres", { genres: [132] }), { ok: true });
+});
+
+// 100 songs in each of three genres, years 1970 to 2019.
+const catalog: CatalogCard[] = [132, 80, 152].flatMap((genre, g) =>
+  Array.from({ length: 100 }, (_, i) => ({
+    id: `cat-${g * 1000 + i}`,
+    title: `G${genre}-${i}`,
+    artists: ["A"],
+    year: 1970 + (i % 50),
+    isrc: `ISRC${g * 1000 + i}`,
+    spotifyUrl: null,
+    deezerId: g * 1000 + i,
+    genre,
+  })),
+);
+const withCatalog = (cards: CatalogCard[] = catalog) => ({
+  playlists: playlists(20),
+  catalog: cards,
+});
+
+test("a genre game deals a limited deck split evenly between the chosen genres", async (t) => {
+  const { owner, clients } = await room(t, ["Ana", "Bia"], withCatalog());
+  await emit(owner, "lobby:configure", config()); // 2 players, 5 to win: deck of 60
+  await emit(clients[1], "lobby:vote-genres", { genres: [132, 80] });
+  await stateWhere(owner, (x) => x.room.lobby.genres.filter((g) => g.selected).length === 2);
+  assert.deepEqual(await emit(owner, "game:start"), { ok: true });
+  const s = await stateWhere(owner, (x) => x.room.game !== null);
+  const view = hitlineView(s);
+  const dealt = (view?.players ?? []).flatMap((p) => p.timeline);
+  assert.equal((view?.deckCount ?? 0) + dealt.length, 60);
+  for (const c of dealt) assert.match(c.title, /^G(132|80)-/);
+});
+
+test("with no genre chosen the game plays the Baralho da galera", async (t) => {
+  const { owner } = await room(t, ["Ana", "Bia"], withCatalog());
+  await emit(owner, "lobby:configure", config());
+  assert.deepEqual(await emit(owner, "game:start"), { ok: true });
+  const s = await stateWhere(owner, (x) => x.room.game !== null);
+  assert.equal(s.room.lobby.galeraFallback, true);
+  assert.equal(s.room.lobby.available, DEFAULT_DECK.cards.length);
+  const titles = new Set(DEFAULT_DECK.cards.map((c) => c.title));
+  for (const p of hitlineView(s)?.players ?? []) assert.ok(titles.has(p.timeline[0].title));
+});
+
+test("after a genre game only the cards that left the pile count as played", async (t) => {
+  const { owner, clients } = await room(t, ["Ana", "Bia"], withCatalog());
+  await emit(owner, "lobby:configure", config());
+  await emit(clients[1], "lobby:vote-genres", { genres: [132, 80] });
+  await stateWhere(owner, (x) => x.room.lobby.available === 200);
+  await emit(owner, "game:start");
+  await emit(owner, "game:end");
+  await emit(owner, "game:start"); // straight from the finished game: folds what was dealt
+  // The first game dealt one card to each of the 2 players and drew none.
+  const s = await stateWhere(
+    owner,
+    (x) => x.room.game?.type === "hitline" && x.room.lobby.available < 200,
+  );
+  assert.equal(s.room.lobby.available, 198);
+});
+
+test("genre counts reflect the catalog and the songs already played", async (t) => {
+  const { owner } = await room(t, ["Ana"], withCatalog());
+  await emit(owner, "lobby:vote-genres", { genres: [] }); // forces a state to read
+  const s = await stateWhere(owner, () => true);
+  const byId = new Map(s.room.lobby.genres.map((g) => [g.id, g.available]));
+  assert.equal(byId.get(132), 100);
+  assert.equal(byId.get(80), 100);
+  assert.equal(byId.get(173), 0);
+});
+
+test("a genre pool too small for the players blocks the start", async (t) => {
+  const tiny = catalog.filter((c) => c.genre === 152).slice(0, 2);
+  const { owner, clients } = await room(t, ["Ana", "Bia"], withCatalog(tiny));
+  await emit(clients[1], "lobby:vote-genres", { genres: [152] });
+  await stateWhere(owner, (x) => x.room.lobby.galeraFallback === false);
+  assert.deepEqual(await emit(owner, "game:start"), { ok: false, error: "playlist-empty" });
+  await emit(owner, "lobby:vote-genres", { genres: [152] }); // forces a state to read
+  const s = await stateWhere(owner, (x) => x.room.lobby.available === 2);
+  assert.equal(s.room.lobby.smallPlaylist, true);
 });

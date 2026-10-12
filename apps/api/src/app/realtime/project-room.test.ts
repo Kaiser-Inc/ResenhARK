@@ -7,6 +7,7 @@ import {
   DEFAULT_HUEHINT_CONFIG,
   DEFAULT_TALECLUE_CONFIG,
   HITLINE_GENRES,
+  decadeOf,
 } from "@resenhark/shared";
 import { type Member, createRoom } from "../domain/room/room.js";
 import { DEFAULT_DECK } from "../games/hitline/default-deck.js";
@@ -58,7 +59,7 @@ test("projectRoom shows presence and ownership from the viewer's side", () => {
       id,
       label: DECADE_LABELS[id],
       selected: id !== "pre60",
-      available: 0,
+      available: DEFAULT_DECK.cards.filter((c) => decadeOf(c.year) === id).length,
     })),
     available: DEFAULT_DECK.cards.length,
     galeraFallback: true,

@@ -15,6 +15,7 @@ import {
   type TaleclueConfig,
   normalizeName,
 } from "@resenhark/shared";
+import type { CatalogCard } from "../../games/hitline/catalog.js";
 import { DEFAULT_DECK } from "../../games/hitline/default-deck.js";
 import type { Card } from "../../games/hitline/engine.js";
 import { normalizeTitle } from "../../games/hitline/normalize.js";
@@ -144,22 +145,46 @@ export function effectiveGenres(room: Room): number[] {
   return HITLINE_GENRES.map((g) => g.id).filter((id) => voted.has(id));
 }
 
-/** Deck cards not played yet in this room. */
-export function unplayedCards(lobby: Lobby): Card[] {
-  const played = new Set(lobby.played);
-  return deckOf(lobby).cards.filter((card) => !played.has(playedKey(card)));
+/**
+ * Where the next game draws from: the genre catalog narrowed to the listed genres, or the
+ * room's deck. `genres` is set only for a genre game; no listed genre plays the Baralho da galera.
+ */
+export function sourceCards(
+  room: Room,
+  catalog: CatalogCard[],
+): { cards: Card[]; genres: number[] | null } {
+  const { lobby } = room;
+  if (lobby.source !== "genres") return { cards: deckOf(lobby).cards, genres: null };
+  const genres = effectiveGenres(room);
+  if (genres.length === 0) return { cards: DEFAULT_DECK.cards, genres: null };
+  const listed = new Set(genres);
+  return { cards: catalog.filter((card) => listed.has(card.genre)), genres };
+}
+
+/** Cards the next game can draw: the source minus what this room already played. */
+export function playablePool(room: Room, catalog: CatalogCard[]): Card[] {
+  const played = new Set(room.lobby.played);
+  return sourceCards(room, catalog).cards.filter((card) => !played.has(playedKey(card)));
 }
 
 /**
  * Every card that left the deck (dealt, drawn, skipped, bought, audio-missing) counts as played.
- * Idempotent, so it runs both on reset and on a start straight from a finished game.
+ * A game remembers the cards it started with (`startKeys`), so a sampled catalog deck never marks
+ * the rest of the catalog as played. Idempotent, so it runs both on reset and on a start straight
+ * from a finished game.
  */
 export function foldPlayed(room: Room): Room {
   const { game, lobby } = room;
   if (game?.type !== "hitline") return room;
-  const inDeck = new Set(game.state.deck.map((card) => card.id));
   const played = new Set(lobby.played);
-  for (const card of deckOf(lobby).cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
+  if (game.startKeys) {
+    const inDeck = new Set(game.state.deck.map(playedKey));
+    for (const key of game.startKeys) if (!inDeck.has(key)) played.add(key);
+  } else {
+    // Games saved before sampled decks started with the room's whole deck.
+    const inDeck = new Set(game.state.deck.map((card) => card.id));
+    for (const card of deckOf(lobby).cards) if (!inDeck.has(card.id)) played.add(playedKey(card));
+  }
   return { ...room, lobby: { ...lobby, played: [...played] } };
 }
 
