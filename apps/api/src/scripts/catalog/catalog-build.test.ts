@@ -4,6 +4,7 @@ import {
   type CatalogEntry,
   type PlaylistTrack,
   catalogReport,
+  isPlausibleYear,
   mergeCatalog,
   newCandidates,
   rejectedByCut,
@@ -106,4 +107,26 @@ test("resolveYear ignores placeholder and future years from either source", () =
   assert.equal(resolveYear("2027-01-01", null, 2026), null);
   assert.equal(resolveYear("1900-01-01", null, 2026), null);
   assert.deepEqual(resolveYear("1931-05-01", null, 2026), { year: 1931, verified: false });
+});
+
+test("isPlausibleYear accepts whole years from 1920 up to the limit and nothing else", () => {
+  assert.equal(isPlausibleYear(1920, 2026), true);
+  assert.equal(isPlausibleYear(2026, 2026), true);
+  assert.equal(isPlausibleYear(1919, 2026), false);
+  assert.equal(isPlausibleYear(1900, 2026), false);
+  assert.equal(isPlausibleYear(2027, 2026), false);
+  assert.equal(isPlausibleYear(2027, 2027), true);
+  assert.equal(isPlausibleYear(2000.5, 2026), false);
+  assert.equal(isPlausibleYear(Number.NaN, 2026), false);
+});
+
+test("isPlausibleYear follows the clock when no limit is given", (t) => {
+  // Local-time dates: the limit comes from getFullYear(), so the test must not depend on the time zone.
+  t.mock.timers.enable({ apis: ["Date"], now: new Date(2026, 11, 31, 23, 59, 59) });
+  assert.equal(isPlausibleYear(2026), true);
+  assert.equal(isPlausibleYear(2027), false);
+  t.mock.timers.reset();
+  t.mock.timers.enable({ apis: ["Date"], now: new Date(2027, 0, 1, 0, 0, 0) });
+  assert.equal(isPlausibleYear(2027), true);
+  assert.equal(isPlausibleYear(2028), false);
 });

@@ -59,8 +59,13 @@ export function rejectedByCut(tracks: PlaylistTrack[], minRank: number): number 
   return rejected;
 }
 
-/** Years either source reports as 1900 or in the future are placeholders, not releases. */
-const MIN_YEAR = 1920;
+/** Years before this are placeholders (Deezer and MusicBrainz sometimes send 1900), not releases. */
+export const MIN_YEAR = 1920;
+
+/** A release year is plausible from 1920 up to `maxYear`, which is the current year by default. */
+export function isPlausibleYear(year: number, maxYear = new Date().getFullYear()): boolean {
+  return Number.isInteger(year) && year >= MIN_YEAR && year <= maxYear;
+}
 
 /** Remasters and compilations only ever date later, so the earlier year is the closer one. */
 export function resolveYear(
@@ -68,7 +73,7 @@ export function resolveYear(
   mbYear: number | null,
   maxYear = new Date().getFullYear(),
 ): { year: number; verified: boolean } | null {
-  const valid = (y: number | null): y is number => y !== null && y >= MIN_YEAR && y <= maxYear;
+  const valid = (y: number | null): y is number => y !== null && isPlausibleYear(y, maxYear);
   const parsed = Number.parseInt(deezerDate?.slice(0, 4) ?? "", 10);
   const deezerYear = valid(Number.isFinite(parsed) ? parsed : null) ? parsed : null;
   const mb = valid(mbYear) ? mbYear : null;

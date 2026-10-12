@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { HITLINE_GENRES, decadeOf } from "@resenhark/shared";
+import { isPlausibleYear } from "../../../scripts/catalog/catalog-build.js";
 import { seededRng } from "../../core/seeded-rng.js";
 import { CATALOG } from "./catalog.js";
 import entries from "./catalog.json" with { type: "json" };
@@ -16,10 +17,7 @@ test("the catalog has at least 3,000 valid songs with unique ids and ISRCs", () 
   for (const e of entries) {
     assert.equal(e.id, `cat-${e.deezerId}`);
     assert.match(e.isrc, /^[A-Z]{2}[A-Z0-9]{3}\d{7}$/, e.title);
-    assert.ok(
-      Number.isInteger(e.year) && e.year >= 1920 && e.year <= 2026,
-      `${e.title}: ${e.year}`,
-    );
+    assert.ok(isPlausibleYear(e.year), `${e.title}: ${e.year}`);
     assert.ok(genreIds.has(e.genre), `${e.title}: genre ${e.genre}`);
     assert.ok(e.rank >= MIN_RANK, `${e.title}: rank ${e.rank}`);
     assert.ok(e.title.length > 0 && e.artists.length > 0, e.title);

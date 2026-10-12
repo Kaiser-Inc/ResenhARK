@@ -11,6 +11,7 @@ ResenhARK is a web platform for playing board-style games with friends: someone 
 | Generate and convert the Taleclue card deck | [Build the Taleclue deck](how-to/build-taleclue-deck.md) |
 | Put the app online on free tiers | [Deploy](how-to/deploy.md) |
 | Run the unit, integration and e2e tests | [Run the tests](how-to/run-tests.md) |
+| Understand what the CI checks and make `main` require them | [Run the CI checks and protect main](how-to/run-ci-and-protect-main.md) |
 | Look up an environment variable | [Environment variables](reference/environment-variables.md) |
 | Look up a socket event, an HTTP route or an error code | [Realtime events and HTTP routes](reference/realtime-events.md) |
 | Look up a Hitline rule, a song source or how genres and decades work | [Hitline rules](reference/hitline-rules.md) |

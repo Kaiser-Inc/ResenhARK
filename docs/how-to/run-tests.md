@@ -92,3 +92,7 @@ Lobby chips change on click, before the server answers. A test that reads a coun
 pnpm lint        # biome check, via turbo
 pnpm typecheck   # tsc --noEmit (the web app runs `next typegen` first)
 ```
+
+## In the CI
+
+Pull requests and pushes to `develop` and `main` run lint, typecheck and the unit and integration tests, plus a production build of the web app and a boot test of the API image. See [Run the CI checks and protect main](run-ci-and-protect-main.md) to reproduce each check and to make `main` require them.

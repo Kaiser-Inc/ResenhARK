@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+  push:
+    branches: [develop, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm lint
+      - run: pnpm typecheck
+      - run: pnpm test
+
+  web-build:
+    name: web-build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter web build
+
+  docker-api:
+    name: docker-api
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the API image
+        run: docker build -f apps/api/Dockerfile -t resenhark-api:ci .
+      - name: Start the image in production mode
+        run: |
+          docker run -d --name api --network host \
+            -e NODE_ENV=production \
+            -e SESSION_SECRET="$(openssl rand -hex 24)" \
+            -e ADMIN_PASSWORD="$(openssl rand -hex 12)" \
+            -e CORS_ORIGIN=http://localhost:4000 \
+            -e WEB_URL=http://localhost:4000 \
+            -e PUBLIC_API_URL=http://127.0.0.1:3333 \
+            -e PLAYLIST_SOURCE=fixture \
+            -e REDIS_URL=redis://127.0.0.1:6379/0 \
+            resenhark-api:ci
+      - name: Wait for /health
+        run: |
+          for _ in $(seq 1 30); do
+            if curl -fsS --max-time 5 http://127.0.0.1:3333/health | grep -q '"redis":"ok"'; then
+              echo "The API answered /health"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "The API did not answer /health in time"
+          docker logs api
+          exit 1
