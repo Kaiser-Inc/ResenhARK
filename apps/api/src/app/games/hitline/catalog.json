@@ -1330,6 +1330,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-660609",
+  "deezerId": 660609,
+  "isrc": "NLA320019248",
+  "title": "Black No. 1",
+  "artists": [
+   "Type O Negative"
+  ],
+  "year": 1993,
+  "genre": 152,
+  "rank": 487854,
+  "yearVerified": true
+ },
+ {
   "id": "cat-660625",
   "deezerId": 660625,
   "isrc": "NLA320320207",
@@ -1353,6 +1366,19 @@
   "year": 2000,
   "genre": 152,
   "rank": 612284,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-661127",
+  "deezerId": 661127,
+  "isrc": "NLA329780562",
+  "title": "Chopped in Half",
+  "artists": [
+   "Obituary"
+  ],
+  "year": 1990,
+  "genre": 152,
+  "rank": 335588,
   "yearVerified": true
  },
  {
@@ -4498,6 +4524,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-962781",
+  "deezerId": 962781,
+  "isrc": "USLF29300117",
+  "title": "Player's Ball",
+  "artists": [
+   "OutKast"
+  ],
+  "year": 1993,
+  "genre": 116,
+  "rank": 574448,
+  "yearVerified": true
+ },
+ {
   "id": "cat-963042",
   "deezerId": 963042,
   "isrc": "USLF20000357",
@@ -6914,6 +6953,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2150080",
+  "deezerId": 2150080,
+  "isrc": "FRZ029400470",
+  "title": "Going To Canada",
+  "artists": [
+   "Joe Louis Walker"
+  ],
+  "year": 2008,
+  "genre": 152,
+  "rank": 316704,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2156322",
   "deezerId": 2156322,
   "isrc": "GBF077440518",
@@ -7645,6 +7697,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2307304",
+  "deezerId": 2307304,
+  "isrc": "USGF19821204",
+  "title": "Living Dead Girl",
+  "artists": [
+   "Rob Zombie"
+  ],
+  "year": 1998,
+  "genre": 132,
+  "rank": 896553,
+  "yearVerified": true
+ },
+ {
   "id": "cat-2312047",
   "deezerId": 2312047,
   "isrc": "USSM10000372",
@@ -7894,6 +7959,32 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2441010",
+  "deezerId": 2441010,
+  "isrc": "FRZ029700930",
+  "title": "You're The One For Me",
+  "artists": [
+   "Lucky Peterson"
+  ],
+  "year": 1997,
+  "genre": 152,
+  "rank": 416790,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2441018",
+  "deezerId": 2441018,
+  "isrc": "FRZ029701010",
+  "title": "Purple Rain",
+  "artists": [
+   "Lucky Peterson"
+  ],
+  "year": 1997,
+  "genre": 152,
+  "rank": 438698,
+  "yearVerified": true
+ },
+ {
   "id": "cat-2441438",
   "deezerId": 2441438,
   "isrc": "USMC19858327",
@@ -7998,6 +8089,20 @@
   "genre": 129,
   "rank": 488989,
   "yearVerified": true
+ },
+ {
+  "id": "cat-2495995",
+  "deezerId": 2495995,
+  "isrc": "FRZ027081160",
+  "title": "How Long Blues",
+  "artists": [
+   "Buddy Guy",
+   "Memphis Slim"
+  ],
+  "year": 2004,
+  "genre": 129,
+  "rank": 328211,
+  "yearVerified": false
  },
  {
   "id": "cat-2498167",
@@ -8646,6 +8751,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2755547",
+  "deezerId": 2755547,
+  "isrc": "NLA329880110",
+  "title": "Bleed",
+  "artists": [
+   "Soulfly"
+  ],
+  "year": 1998,
+  "genre": 464,
+  "rank": 384284,
+  "yearVerified": true
+ },
+ {
   "id": "cat-2793680",
   "deezerId": 2793680,
   "isrc": "USBB40610361",
@@ -8937,6 +9055,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-2950821",
+  "deezerId": 2950821,
+  "isrc": "USA176640140",
+  "title": "96 Tears",
+  "artists": [
+   "? and The Mysterians"
+  ],
+  "year": 1966,
+  "genre": 132,
+  "rank": 487766,
+  "yearVerified": true
+ },
+ {
   "id": "cat-2952094",
   "deezerId": 2952094,
   "isrc": "USUR10111255",
@@ -9028,6 +9159,19 @@
   "year": 2005,
   "genre": 116,
   "rank": 586162,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2960711",
+  "deezerId": 2960711,
+  "isrc": "US3B90500021",
+  "title": "Rakata",
+  "artists": [
+   "Wisin & Yandel"
+  ],
+  "year": 2005,
+  "genre": 116,
+  "rank": 690139,
   "yearVerified": true
  },
  {
@@ -9860,6 +10004,22 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3111543",
+  "deezerId": 3111543,
+  "isrc": "GBAYC9903392",
+  "title": "Massenet: Manon, Act 3: \"Obéissons, quand leur voix appelle\" (Manon, Brétigny, Chœur)",
+  "artists": [
+   "Antonio Pappano",
+   "Angela Gheorghiu",
+   "Choeurs De La Monnaie",
+   "Nicolas Rivenq"
+  ],
+  "year": 2000,
+  "genre": 98,
+  "rank": 302690,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3113217",
   "deezerId": 3113217,
   "isrc": "BREMI7600039",
@@ -10013,6 +10173,19 @@
   "year": 1980,
   "genre": 132,
   "rank": 815117,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3122088",
+  "deezerId": 3122088,
+  "isrc": "USCH39100012",
+  "title": "Step In The Arena",
+  "artists": [
+   "Gang Starr"
+  ],
+  "year": 1990,
+  "genre": 116,
+  "rank": 425474,
   "yearVerified": true
  },
  {
@@ -10313,6 +10486,19 @@
   "year": 1983,
   "genre": 152,
   "rank": 817887,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3133684",
+  "deezerId": 3133684,
+  "isrc": "GBAAA8900115",
+  "title": "Good Life",
+  "artists": [
+   "Inner City"
+  ],
+  "year": 1988,
+  "genre": 113,
+  "rank": 519359,
   "yearVerified": true
  },
  {
@@ -11479,6 +11665,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3327383",
+  "deezerId": 3327383,
+  "isrc": "BREMI7900457",
+  "title": "Clube Da Esquina 2",
+  "artists": [
+   "Nana Caymmi"
+  ],
+  "year": 2006,
+  "genre": -1,
+  "rank": 511580,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3341402",
   "deezerId": 3341402,
   "isrc": "GBAYE0100851",
@@ -12071,6 +12270,20 @@
   "year": 1966,
   "genre": 152,
   "rank": 408218,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3441578",
+  "deezerId": 3441578,
+  "isrc": "USSH59983720",
+  "title": "House Of The Rising Sun",
+  "artists": [
+   "Doc Watson",
+   "Richard Watson"
+  ],
+  "year": 1999,
+  "genre": 466,
+  "rank": 439502,
   "yearVerified": true
  },
  {
@@ -12713,6 +12926,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3616653",
+  "deezerId": 3616653,
+  "isrc": "USBB40706429",
+  "title": "Get Money (feat. Junior M.A.F.I.A.)",
+  "artists": [
+   "The Notorious B.I.G.",
+   "Junior M.A.F.I.A."
+  ],
+  "year": 1995,
+  "genre": 116,
+  "rank": 659237,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3658356",
   "deezerId": 3658356,
   "isrc": "USAT29902162",
@@ -12723,6 +12950,20 @@
   "year": 1956,
   "genre": 165,
   "rank": 502104,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3660310",
+  "deezerId": 3660310,
+  "isrc": "USEE19792108",
+  "title": "Put Your Hands Where My Eyes Could See (feat. Jamal)",
+  "artists": [
+   "Busta Rhymes",
+   "Jamal"
+  ],
+  "year": 1997,
+  "genre": 116,
+  "rank": 582472,
   "yearVerified": true
  },
  {
@@ -13962,6 +14203,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4253416",
+  "deezerId": 4253416,
+  "isrc": "USSM19802296",
+  "title": "Here Comes the Hotstepper",
+  "artists": [
+   "Ini Kamoze"
+  ],
+  "year": 1994,
+  "genre": 132,
+  "rank": 490986,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4261381",
   "deezerId": 4261381,
   "isrc": "GBAAA7600201",
@@ -14011,6 +14265,19 @@
   "year": 1984,
   "genre": 132,
   "rank": 880543,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4288219",
+  "deezerId": 4288219,
+  "isrc": "USEE10901078",
+  "title": "Shimmy Shimmy Ya",
+  "artists": [
+   "Ol' Dirty Bastard"
+  ],
+  "year": 1995,
+  "genre": 116,
+  "rank": 658350,
   "yearVerified": true
  },
  {
@@ -14432,6 +14699,22 @@
   "year": 1984,
   "genre": 98,
   "rank": 537367,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4668177",
+  "deezerId": 4668177,
+  "isrc": "DEF059330810",
+  "title": "Otello, Act I : Verdi: Otello, Act I: Già nella notte densa \"Love Duet\"",
+  "artists": [
+   "Plácido Domingo",
+   "Cheryl Studer",
+   "Orchestre de l’Opéra national de Paris",
+   "Myung-Whun Chung"
+  ],
+  "year": 1994,
+  "genre": 98,
+  "rank": 305519,
   "yearVerified": true
  },
  {
@@ -15315,6 +15598,19 @@
   "year": 1993,
   "genre": 152,
   "rank": 410887,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-5079647",
+  "deezerId": 5079647,
+  "isrc": "GBAAA8500001",
+  "title": "Don't You (Forget About Me)",
+  "artists": [
+   "Simple Minds"
+  ],
+  "year": 1985,
+  "genre": 132,
+  "rank": 696709,
   "yearVerified": true
  },
  {
@@ -16629,6 +16925,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-6986912",
+  "deezerId": 6986912,
+  "isrc": "DEF059204137",
+  "title": "The Firebird, K10, 1919 Suite : Stravinsky: The Firebird, K10, 1919 Suite: VI. Finale",
+  "artists": [
+   "Orchestre de l’Opéra national de Paris",
+   "Myung-Whun Chung"
+  ],
+  "year": 1993,
+  "genre": 98,
+  "rank": 489184,
+  "yearVerified": true
+ },
+ {
   "id": "cat-6988993",
   "deezerId": 6988993,
   "isrc": "USFI86800061",
@@ -16810,6 +17120,19 @@
   "year": 1969,
   "genre": 132,
   "rank": 612459,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-7238793",
+  "deezerId": 7238793,
+  "isrc": "USEE10181411",
+  "title": "Real Hip-Hop",
+  "artists": [
+   "Das Efx"
+  ],
+  "year": 1970,
+  "genre": 116,
+  "rank": 546793,
   "yearVerified": true
  },
  {
@@ -17140,6 +17463,19 @@
   "year": 2010,
   "genre": 116,
   "rank": 803199,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-7564123",
+  "deezerId": 7564123,
+  "isrc": "ITD001000193",
+  "title": "Tarzan Boy",
+  "artists": [
+   "Baltimora"
+  ],
+  "year": 1984,
+  "genre": 113,
+  "rank": 683437,
   "yearVerified": true
  },
  {
@@ -18135,6 +18471,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-11154359",
+  "deezerId": 11154359,
+  "isrc": "US4B90461207",
+  "title": "Hoodoo Man Blues",
+  "artists": [
+   "Junior Wells",
+   "Buddy Guy"
+  ],
+  "year": 2004,
+  "genre": 152,
+  "rank": 323494,
+  "yearVerified": true
+ },
+ {
   "id": "cat-11282931",
   "deezerId": 11282931,
   "isrc": "GBAMX8700008",
@@ -18559,6 +18909,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-13166665",
+  "deezerId": 13166665,
+  "isrc": "USBB10400146",
+  "title": "Sing, Sing, Sing",
+  "artists": [
+   "Benny Goodman and His Orchestra"
+  ],
+  "year": 1975,
+  "genre": 129,
+  "rank": 556012,
+  "yearVerified": true
+ },
+ {
   "id": "cat-13167146",
   "deezerId": 13167146,
   "isrc": "USSM19922515",
@@ -18635,6 +18998,19 @@
   "year": 1998,
   "genre": -1,
   "rank": 551331,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-13206291",
+  "deezerId": 13206291,
+  "isrc": "USBB16401013",
+  "title": "Bossa Antigua",
+  "artists": [
+   "Paul Desmond"
+  ],
+  "year": 2000,
+  "genre": 129,
+  "rank": 583794,
   "yearVerified": true
  },
  {
@@ -20011,6 +20387,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-14340119",
+  "deezerId": 14340119,
+  "isrc": "FRZ208400505",
+  "title": "Chopin: Waltz No. 7 in C-Sharp Minor, Op. 64 No. 2",
+  "artists": [
+   "Maria João Pires"
+  ],
+  "year": 1984,
+  "genre": 98,
+  "rank": 517016,
+  "yearVerified": true
+ },
+ {
   "id": "cat-14343282",
   "deezerId": 14343282,
   "isrc": "GBUM71106457",
@@ -21142,6 +21531,19 @@
   "genre": 132,
   "rank": 589120,
   "yearVerified": false
+ },
+ {
+  "id": "cat-15425486",
+  "deezerId": 15425486,
+  "isrc": "USUM70756397",
+  "title": "Ahora Es",
+  "artists": [
+   "Wisin & Yandel"
+  ],
+  "year": 2007,
+  "genre": 122,
+  "rank": 581573,
+  "yearVerified": true
  },
  {
   "id": "cat-15425942",
@@ -23501,6 +23903,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-62497875",
+  "deezerId": 62497875,
+  "isrc": "NLF057790024",
+  "title": "Cocaine",
+  "artists": [
+   "Eric Clapton"
+  ],
+  "year": 1977,
+  "genre": 152,
+  "rank": 528850,
+  "yearVerified": true
+ },
+ {
   "id": "cat-62510280",
   "deezerId": 62510280,
   "isrc": "BRWMB0300448",
@@ -23603,6 +24018,19 @@
   "year": 1985,
   "genre": 173,
   "rank": 604373,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-62960815",
+  "deezerId": 62960815,
+  "isrc": "CAU118201787",
+  "title": "Last Night a D.J. Saved My Life",
+  "artists": [
+   "Indeep"
+  ],
+  "year": 1982,
+  "genre": 113,
+  "rank": 765768,
   "yearVerified": true
  },
  {
@@ -23907,6 +24335,20 @@
   "year": 2013,
   "genre": 152,
   "rank": 318700,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-65367242",
+  "deezerId": 65367242,
+  "isrc": "FR0U91000236",
+  "title": "Where is the love ?",
+  "artists": [
+   "Electro Deluxe",
+   "Ben L'Oncle Soul"
+  ],
+  "year": 2010,
+  "genre": 129,
+  "rank": 605120,
   "yearVerified": false
  },
  {
@@ -24491,6 +24933,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-68240270",
+  "deezerId": 68240270,
+  "isrc": "GBGLW0500036",
+  "title": "Roady",
+  "artists": [
+   "Fat Freddy's Drop"
+  ],
+  "year": 2009,
+  "genre": 106,
+  "rank": 530182,
+  "yearVerified": false
+ },
+ {
   "id": "cat-68301402",
   "deezerId": 68301402,
   "isrc": "DEF058201661",
@@ -24517,6 +24972,19 @@
   "genre": 85,
   "rank": 310505,
   "yearVerified": false
+ },
+ {
+  "id": "cat-68511564",
+  "deezerId": 68511564,
+  "isrc": "GBAJH0600205",
+  "title": "Just Can't Get Enough",
+  "artists": [
+   "Depeche Mode"
+  ],
+  "year": 1981,
+  "genre": 152,
+  "rank": 615331,
+  "yearVerified": true
  },
  {
   "id": "cat-68513610",
@@ -24907,6 +25375,19 @@
   "year": 1982,
   "genre": 85,
   "rank": 801068,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-69982615",
+  "deezerId": 69982615,
+  "isrc": "USLF20600599",
+  "title": "Like a Boy",
+  "artists": [
+   "Ciara"
+  ],
+  "year": 2006,
+  "genre": 165,
+  "rank": 731151,
   "yearVerified": true
  },
  {
@@ -25656,6 +26137,19 @@
   "year": 2003,
   "genre": 85,
   "rank": 832165,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-72060062",
+  "deezerId": 72060062,
+  "isrc": "USAT27800012",
+  "title": "Le Freak",
+  "artists": [
+   "Chic"
+  ],
+  "year": 1978,
+  "genre": 165,
+  "rank": 735820,
   "yearVerified": true
  },
  {
@@ -26714,6 +27208,21 @@
   "yearVerified": true
  },
  {
+  "id": "cat-77995799",
+  "deezerId": 77995799,
+  "isrc": "USSM11306609",
+  "title": "Carmen, Act II: La fleur que tu m'avais jetée",
+  "artists": [
+   "Vittorio Grigolo",
+   "Orchestra Sinfonica Nazionale della Rai",
+   "Evelino Pidò"
+  ],
+  "year": 2014,
+  "genre": 98,
+  "rank": 313720,
+  "yearVerified": false
+ },
+ {
   "id": "cat-78033230",
   "deezerId": 78033230,
   "isrc": "USSM16401425",
@@ -27251,6 +27760,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-79977404",
+  "deezerId": 79977404,
+  "isrc": "US2641321502",
+  "title": "March of the Fire Ants",
+  "artists": [
+   "Mastodon"
+  ],
+  "year": 2002,
+  "genre": 464,
+  "rank": 372814,
+  "yearVerified": true
+ },
+ {
   "id": "cat-80077244",
   "deezerId": 80077244,
   "isrc": "GBUM71400377",
@@ -27313,6 +27835,19 @@
   "year": 2002,
   "genre": 152,
   "rank": 976882,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-80274516",
+  "deezerId": 80274516,
+  "isrc": "USWU30200104",
+  "title": "My Immortal",
+  "artists": [
+   "Evanescence"
+  ],
+  "year": 2003,
+  "genre": 152,
+  "rank": 861968,
   "yearVerified": true
  },
  {
@@ -27712,6 +28247,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-85274478",
+  "deezerId": 85274478,
+  "isrc": "USDJ20010174",
+  "title": "I'll Be There For You/You're All I Need To Get By",
+  "artists": [
+   "Method Man",
+   "Mary J. Blige"
+  ],
+  "year": 1995,
+  "genre": 116,
+  "rank": 586137,
+  "yearVerified": true
+ },
+ {
   "id": "cat-85336286",
   "deezerId": 85336286,
   "isrc": "BRSGL9400408",
@@ -28107,6 +28656,21 @@
   "year": 2007,
   "genre": 464,
   "rank": 376794,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-88911095",
+  "deezerId": 88911095,
+  "isrc": "USRE50200231",
+  "title": "Heaven",
+  "artists": [
+   "DJ Sammy",
+   "Yanou",
+   "Do"
+  ],
+  "year": 2001,
+  "genre": 106,
+  "rank": 352407,
   "yearVerified": true
  },
  {
@@ -29358,6 +29922,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-99360002",
+  "deezerId": 99360002,
+  "isrc": "DKELA9610005",
+  "title": "Scatman (ski-ba-bop-ba-dop-bop)",
+  "artists": [
+   "Scatman John"
+  ],
+  "year": 1994,
+  "genre": 132,
+  "rank": 793311,
+  "yearVerified": true
+ },
+ {
   "id": "cat-99559120",
   "deezerId": 99559120,
   "isrc": "BRDEP0000180",
@@ -30252,6 +30829,19 @@
   "genre": 79,
   "rank": 421833,
   "yearVerified": false
+ },
+ {
+  "id": "cat-108558096",
+  "deezerId": 108558096,
+  "isrc": "GBDHC0910802",
+  "title": "Life",
+  "artists": [
+   "Devin Townsend"
+  ],
+  "year": 1997,
+  "genre": 152,
+  "rank": 304336,
+  "yearVerified": true
  },
  {
   "id": "cat-108605168",
@@ -31260,6 +31850,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-122756666",
+  "deezerId": 122756666,
+  "isrc": "GBBFT0400144",
+  "title": "Ela Disse-Me Assim",
+  "artists": [
+   "Jamelão"
+  ],
+  "year": 2005,
+  "genre": -1,
+  "rank": 306067,
+  "yearVerified": false
+ },
+ {
   "id": "cat-122882002",
   "deezerId": 122882002,
   "isrc": "USWB10703649",
@@ -31270,6 +31873,19 @@
   "year": 2007,
   "genre": 85,
   "rank": 512611,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-122982190",
+  "deezerId": 122982190,
+  "isrc": "NLF711602441",
+  "title": "Turn Around (Hey What's Wrong With You)",
+  "artists": [
+   "Phats & Small"
+  ],
+  "year": 2016,
+  "genre": 106,
+  "rank": 602948,
   "yearVerified": true
  },
  {
@@ -31284,6 +31900,19 @@
   "genre": 132,
   "rank": 448568,
   "yearVerified": false
+ },
+ {
+  "id": "cat-123345204",
+  "deezerId": 123345204,
+  "isrc": "USIR20300361",
+  "title": "I Got To Have It",
+  "artists": [
+   "Ed O.G. & Da Bulldogs"
+  ],
+  "year": 1991,
+  "genre": 116,
+  "rank": 398427,
+  "yearVerified": true
  },
  {
   "id": "cat-123663512",
@@ -33136,6 +33765,19 @@
   "genre": 106,
   "rank": 828441,
   "yearVerified": true
+ },
+ {
+  "id": "cat-144217450",
+  "deezerId": 144217450,
+  "isrc": "USA2B1701364",
+  "title": "2,000 Miles",
+  "artists": [
+   "Brad Stivers"
+  ],
+  "year": 2017,
+  "genre": 152,
+  "rank": 334612,
+  "yearVerified": false
  },
  {
   "id": "cat-144217470",
@@ -36179,6 +36821,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-483146152",
+  "deezerId": 483146152,
+  "isrc": "QZ5AB1881015",
+  "title": "The River",
+  "artists": [
+   "Sam Johnston"
+  ],
+  "year": 2018,
+  "genre": 152,
+  "rank": 320224,
+  "yearVerified": false
+ },
+ {
   "id": "cat-483551252",
   "deezerId": 483551252,
   "isrc": "USF095725070",
@@ -36269,6 +36924,19 @@
   "genre": 165,
   "rank": 470215,
   "yearVerified": false
+ },
+ {
+  "id": "cat-490168932",
+  "deezerId": 490168932,
+  "isrc": "USUM71805536",
+  "title": "Troublemaker",
+  "artists": [
+   "Devon Gilfillian"
+  ],
+  "year": 2018,
+  "genre": 152,
+  "rank": 318868,
+  "yearVerified": true
  },
  {
   "id": "cat-492476202",
@@ -36695,6 +37363,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-518970902",
+  "deezerId": 518970902,
+  "isrc": "ITA647900295",
+  "title": "Ma quale idea",
+  "artists": [
+   "Pino D'Angiò"
+  ],
+  "year": 1981,
+  "genre": 132,
+  "rank": 766849,
+  "yearVerified": true
+ },
+ {
   "id": "cat-523607582",
   "deezerId": 523607582,
   "isrc": "FR47Q0502040",
@@ -36980,6 +37661,19 @@
   "genre": 152,
   "rank": 405067,
   "yearVerified": false
+ },
+ {
+  "id": "cat-540861142",
+  "deezerId": 540861142,
+  "isrc": "CAU118401853",
+  "title": "Let the Music Play",
+  "artists": [
+   "Shannon"
+  ],
+  "year": 1984,
+  "genre": 113,
+  "rank": 483162,
+  "yearVerified": true
  },
  {
   "id": "cat-542335432",
@@ -37935,6 +38629,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-598046552",
+  "deezerId": 598046552,
+  "isrc": "USF067825160",
+  "title": "Shake Your Groove Thing",
+  "artists": [
+   "Peaches & Herb"
+  ],
+  "year": 1978,
+  "genre": 165,
+  "rank": 587345,
+  "yearVerified": true
+ },
+ {
   "id": "cat-599314272",
   "deezerId": 599314272,
   "isrc": "GBAYE1800788",
@@ -38297,6 +39004,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-620946132",
+  "deezerId": 620946132,
+  "isrc": "BRPAG1900001",
+  "title": "Proibido o Carnaval",
+  "artists": [
+   "Daniela Mercury",
+   "Caetano Veloso"
+  ],
+  "year": 2019,
+  "genre": -1,
+  "rank": 374538,
+  "yearVerified": false
+ },
+ {
   "id": "cat-621216432",
   "deezerId": 621216432,
   "isrc": "USAT21811681",
@@ -38374,6 +39095,20 @@
   "year": 2001,
   "genre": 152,
   "rank": 766418,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-624638402",
+  "deezerId": 624638402,
+  "isrc": "USAT21812258",
+  "title": "Are You Bored Yet? (feat. Clairo)",
+  "artists": [
+   "Wallows",
+   "Clairo"
+  ],
+  "year": 2019,
+  "genre": 85,
+  "rank": 625258,
   "yearVerified": true
  },
  {
@@ -38795,6 +39530,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-647236122",
+  "deezerId": 647236122,
+  "isrc": "USNLR1700729",
+  "title": "Dragonglass",
+  "artists": [
+   "Ramin Djawadi"
+  ],
+  "year": 2017,
+  "genre": 173,
+  "rank": 318107,
+  "yearVerified": true
+ },
+ {
   "id": "cat-647236132",
   "deezerId": 647236132,
   "isrc": "USNLR1700730",
@@ -38818,6 +39566,19 @@
   "year": 2017,
   "genre": 173,
   "rank": 414838,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-647236192",
+  "deezerId": 647236192,
+  "isrc": "USNLR1700736",
+  "title": "Against All Odds",
+  "artists": [
+   "Ramin Djawadi"
+  ],
+  "year": 2017,
+  "genre": 173,
+  "rank": 322089,
   "yearVerified": true
  },
  {
@@ -40508,6 +41269,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-796350972",
+  "deezerId": 796350972,
+  "isrc": "BXHAC1900046",
+  "title": "Geminiana",
+  "artists": [
+   "DAY LIMNS"
+  ],
+  "year": 2019,
+  "genre": 132,
+  "rank": 300042,
+  "yearVerified": false
+ },
+ {
   "id": "cat-797228462",
   "deezerId": 797228462,
   "isrc": "USRC11903454",
@@ -40586,6 +41360,19 @@
   "year": 2019,
   "genre": 169,
   "rank": 635643,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-812013182",
+  "deezerId": 812013182,
+  "isrc": "US4GZ2006110",
+  "title": "Can't Help Myself",
+  "artists": [
+   "The James Hunter Six"
+  ],
+  "year": 2020,
+  "genre": 165,
+  "rank": 557046,
   "yearVerified": false
  },
  {
@@ -40974,6 +41761,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-898585582",
+  "deezerId": 898585582,
+  "isrc": "NODSR2001022",
+  "title": "Love & Peace",
+  "artists": [
+   "Seasick Steve"
+  ],
+  "year": 2020,
+  "genre": 152,
+  "rank": 464398,
+  "yearVerified": true
+ },
+ {
   "id": "cat-899865052",
   "deezerId": 899865052,
   "isrc": "USAT22001338",
@@ -40985,6 +41785,20 @@
   "genre": 165,
   "rank": 562436,
   "yearVerified": true
+ },
+ {
+  "id": "cat-902311982",
+  "deezerId": 902311982,
+  "isrc": "BX3QP1900410",
+  "title": "A Roda",
+  "artists": [
+   "Sarajane",
+   "Claudia Leitte"
+  ],
+  "year": 2020,
+  "genre": -1,
+  "rank": 308982,
+  "yearVerified": false
  },
  {
   "id": "cat-903698362",
@@ -41104,6 +41918,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-915560972",
+  "deezerId": 915560972,
+  "isrc": "USEP41727011",
+  "title": "All In It Together",
+  "artists": [
+   "Mavis Staples"
+  ],
+  "year": 2020,
+  "genre": 165,
+  "rank": 324524,
+  "yearVerified": true
+ },
+ {
   "id": "cat-918197312",
   "deezerId": 918197312,
   "isrc": "DEMI69400002",
@@ -41128,6 +41955,19 @@
   "genre": 113,
   "rank": 566801,
   "yearVerified": true
+ },
+ {
+  "id": "cat-920980292",
+  "deezerId": 920980292,
+  "isrc": "GBWMY2050360",
+  "title": "Missing Piece",
+  "artists": [
+   "Marika Takeuchi"
+  ],
+  "year": 2020,
+  "genre": 98,
+  "rank": 398011,
+  "yearVerified": false
  },
  {
   "id": "cat-921027292",
@@ -41248,6 +42088,19 @@
   "year": 1989,
   "genre": 152,
   "rank": 337695,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-935961222",
+  "deezerId": 935961222,
+  "isrc": "GBK3W2001293",
+  "title": "If You’re Too Shy (Let Me Know)",
+  "artists": [
+   "The 1975"
+  ],
+  "year": 2020,
+  "genre": 85,
+  "rank": 488438,
   "yearVerified": true
  },
  {
@@ -41531,6 +42384,45 @@
   "yearVerified": true
  },
  {
+  "id": "cat-985711432",
+  "deezerId": 985711432,
+  "isrc": "GBAAW9500103",
+  "title": "Acquiesce",
+  "artists": [
+   "Oasis"
+  ],
+  "year": 1995,
+  "genre": 85,
+  "rank": 595587,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-985721122",
+  "deezerId": 985721122,
+  "isrc": "GBAAW9700268",
+  "title": "D'You Know What I Mean?",
+  "artists": [
+   "Oasis"
+  ],
+  "year": 1997,
+  "genre": 85,
+  "rank": 664171,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-985722002",
+  "deezerId": 985722002,
+  "isrc": "GBAAW9500190",
+  "title": "Don't Look Back In Anger",
+  "artists": [
+   "Oasis"
+  ],
+  "year": 1995,
+  "genre": 85,
+  "rank": 936806,
+  "yearVerified": true
+ },
+ {
   "id": "cat-985815192",
   "deezerId": 985815192,
   "isrc": "USSM12002039",
@@ -41557,6 +42449,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-986463952",
+  "deezerId": 986463952,
+  "isrc": "GBQCP1600009",
+  "title": "D'You Know What I Mean?",
+  "artists": [
+   "Oasis"
+  ],
+  "year": 1997,
+  "genre": 85,
+  "rank": 322833,
+  "yearVerified": true
+ },
+ {
   "id": "cat-987007182",
   "deezerId": 987007182,
   "isrc": "BRC832000074",
@@ -41568,6 +42473,19 @@
   "genre": -1,
   "rank": 319572,
   "yearVerified": false
+ },
+ {
+  "id": "cat-987053252",
+  "deezerId": 987053252,
+  "isrc": "GBQCP1400110",
+  "title": "Don't Look Back In Anger",
+  "artists": [
+   "Oasis"
+  ],
+  "year": 1995,
+  "genre": 85,
+  "rank": 670780,
+  "yearVerified": true
  },
  {
   "id": "cat-988844812",
@@ -41646,6 +42564,19 @@
   "year": 2000,
   "genre": 132,
   "rank": 542380,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-1009057262",
+  "deezerId": 1009057262,
+  "isrc": "US95U2000560",
+  "title": "Think of Me",
+  "artists": [
+   "Billy Walton Band"
+  ],
+  "year": 2020,
+  "genre": 152,
+  "rank": 333623,
   "yearVerified": false
  },
  {
@@ -42426,6 +43357,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-1118064072",
+  "deezerId": 1118064072,
+  "isrc": "GBUM72005075",
+  "title": "Paradise",
+  "artists": [
+   "MEDUZA",
+   "Dermot Kennedy"
+  ],
+  "year": 2020,
+  "genre": 113,
+  "rank": 650333,
+  "yearVerified": true
+ },
+ {
   "id": "cat-1122450992",
   "deezerId": 1122450992,
   "isrc": "QMFME2004132",
@@ -42509,6 +43454,20 @@
   "year": 1986,
   "genre": 106,
   "rank": 552470,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-1131729162",
+  "deezerId": 1131729162,
+  "isrc": "GB45A2002241",
+  "title": "Cairn I.",
+  "artists": [
+   "Erland Cooper",
+   "Marta Salogni"
+  ],
+  "year": 2020,
+  "genre": 106,
+  "rank": 361078,
   "yearVerified": false
  },
  {
@@ -42661,6 +43620,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-1148265602",
+  "deezerId": 1148265602,
+  "isrc": "FR9W12025212",
+  "title": "Arthur à la Tour",
+  "artists": [
+   "Alexandre Astier"
+  ],
+  "year": 2020,
+  "genre": 173,
+  "rank": 413604,
+  "yearVerified": true
+ },
+ {
   "id": "cat-1148585682",
   "deezerId": 1148585682,
   "isrc": "GBUM72005748",
@@ -42725,6 +43697,35 @@
   "genre": 132,
   "rank": 760326,
   "yearVerified": true
+ },
+ {
+  "id": "cat-1165067842",
+  "deezerId": 1165067842,
+  "isrc": "AUUM72000706",
+  "title": "The Divine Chord",
+  "artists": [
+   "The Avalanches",
+   "MGMT",
+   "Johnny Marr"
+  ],
+  "year": 2020,
+  "genre": 85,
+  "rank": 565917,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-1169524182",
+  "deezerId": 1169524182,
+  "isrc": "NLZ542002035",
+  "title": "Got All Night (feat. Amanda Collis)",
+  "artists": [
+   "Madison Mars",
+   "Amanda Collis"
+  ],
+  "year": 2020,
+  "genre": 113,
+  "rank": 309349,
+  "yearVerified": false
  },
  {
   "id": "cat-1171317462",
@@ -43191,6 +44192,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-1280004512",
+  "deezerId": 1280004512,
+  "isrc": "DEN962003570",
+  "title": "Citrus",
+  "artists": [
+   "Clark"
+  ],
+  "year": 2021,
+  "genre": 98,
+  "rank": 349963,
+  "yearVerified": true
+ },
+ {
   "id": "cat-1280735992",
   "deezerId": 1280735992,
   "isrc": "BR03D2100236",
@@ -43597,6 +44611,20 @@
   "year": 2014,
   "genre": 173,
   "rank": 566833,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-1409675372",
+  "deezerId": 1409675372,
+  "isrc": "NOHEK2103010",
+  "title": "Save Some",
+  "artists": [
+   "D'Sound",
+   "Macy Gray"
+  ],
+  "year": 2021,
+  "genre": 169,
+  "rank": 575287,
   "yearVerified": true
  },
  {
@@ -44317,6 +45345,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-1532010012",
+  "deezerId": 1532010012,
+  "isrc": "US92U1904885",
+  "title": "Fudge Pudge",
+  "artists": [
+   "Organized Konfusion"
+  ],
+  "year": 1991,
+  "genre": 116,
+  "rank": 385621,
+  "yearVerified": true
+ },
+ {
   "id": "cat-1536825002",
   "deezerId": 1536825002,
   "isrc": "GBVVQ1600285",
@@ -44369,6 +45410,19 @@
   "year": 2021,
   "genre": 132,
   "rank": 731596,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-1540063342",
+  "deezerId": 1540063342,
+  "isrc": "GBQCP2100014",
+  "title": "Wonderwall (Live at Knebworth, 10 August '96)",
+  "artists": [
+   "Oasis"
+  ],
+  "year": 2021,
+  "genre": 85,
+  "rank": 462781,
   "yearVerified": true
  },
  {
@@ -44586,6 +45640,19 @@
   "year": 2021,
   "genre": 79,
   "rank": 744825,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-1580727252",
+  "deezerId": 1580727252,
+  "isrc": "USEE10001323",
+  "title": "All for One",
+  "artists": [
+   "Brand Nubian"
+  ],
+  "year": 1990,
+  "genre": 116,
+  "rank": 381514,
   "yearVerified": false
  },
  {
@@ -44923,6 +45990,19 @@
   "genre": 132,
   "rank": 635925,
   "yearVerified": true
+ },
+ {
+  "id": "cat-1658449792",
+  "deezerId": 1658449792,
+  "isrc": "NLX5C2200002",
+  "title": "Sunny Afternoon (Recorded at Deezer HQ, Paris)",
+  "artists": [
+   "Benny Sings"
+  ],
+  "year": 2022,
+  "genre": 85,
+  "rank": 582278,
+  "yearVerified": false
  },
  {
   "id": "cat-1660454622",
@@ -45575,6 +46655,19 @@
   "genre": 132,
   "rank": 515612,
   "yearVerified": false
+ },
+ {
+  "id": "cat-1762873047",
+  "deezerId": 1762873047,
+  "isrc": "USMC19032039",
+  "title": "In The Ghetto",
+  "artists": [
+   "Eric B. & Rakim"
+  ],
+  "year": 1990,
+  "genre": 116,
+  "rank": 459182,
+  "yearVerified": true
  },
  {
   "id": "cat-1767996947",
@@ -46568,6 +47661,20 @@
   "genre": 79,
   "rank": 832277,
   "yearVerified": false
+ },
+ {
+  "id": "cat-2104708077",
+  "deezerId": 2104708077,
+  "isrc": "QMMEH2200190",
+  "title": "The Bizness",
+  "artists": [
+   "De La Soul",
+   "Common"
+  ],
+  "year": 1996,
+  "genre": 116,
+  "rank": 501034,
+  "yearVerified": true
  },
  {
   "id": "cat-2104708217",
@@ -47739,6 +48846,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2306384015",
+  "deezerId": 2306384015,
+  "isrc": "BCXTT2300045",
+  "title": "Remote Control",
+  "artists": [
+   "Victor Lou"
+  ],
+  "year": 2023,
+  "genre": 106,
+  "rank": 340157,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2309589395",
   "deezerId": 2309589395,
   "isrc": "QMHBS2300002",
@@ -47806,6 +48926,19 @@
   "genre": 169,
   "rank": 480326,
   "yearVerified": false
+ },
+ {
+  "id": "cat-2318743265",
+  "deezerId": 2318743265,
+  "isrc": "GBAHS2300602",
+  "title": "Bittersweet Goodbye",
+  "artists": [
+   "Issey Cross"
+  ],
+  "year": 2023,
+  "genre": 113,
+  "rank": 451224,
+  "yearVerified": true
  },
  {
   "id": "cat-2324778865",
@@ -47967,6 +49100,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2371437665",
+  "deezerId": 2371437665,
+  "isrc": "QZ5FN2301015",
+  "title": "Take It Easy",
+  "artists": [
+   "Collie Buddz"
+  ],
+  "year": 2023,
+  "genre": 144,
+  "rank": 317079,
+  "yearVerified": true
+ },
+ {
   "id": "cat-2377628385",
   "deezerId": 2377628385,
   "isrc": "GBAJY2238310",
@@ -48091,6 +49237,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2395829565",
+  "deezerId": 2395829565,
+  "isrc": "FR9W12335840",
+  "title": "Changes",
+  "artists": [
+   "Kungs",
+   "Shadow Child"
+  ],
+  "year": 2023,
+  "genre": 106,
+  "rank": 470598,
+  "yearVerified": true
+ },
+ {
   "id": "cat-2400549045",
   "deezerId": 2400549045,
   "isrc": "COA6W2300015",
@@ -48103,6 +49263,21 @@
   "year": 2023,
   "genre": 116,
   "rank": 396213,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2403785095",
+  "deezerId": 2403785095,
+  "isrc": "GBCEN2300147",
+  "title": "Prada",
+  "artists": [
+   "cassö",
+   "RAYE",
+   "D-Block Europe"
+  ],
+  "year": 2023,
+  "genre": 106,
+  "rank": 845170,
   "yearVerified": true
  },
  {
@@ -48143,6 +49318,20 @@
   "year": 2023,
   "genre": 466,
   "rank": 511527,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2405910575",
+  "deezerId": 2405910575,
+  "isrc": "USA2P2340116",
+  "title": "Kids",
+  "artists": [
+   "Steve Aoki",
+   "Tony Junior"
+  ],
+  "year": 2023,
+  "genre": 113,
+  "rank": 364540,
   "yearVerified": true
  },
  {
@@ -48492,6 +49681,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2474641141",
+  "deezerId": 2474641141,
+  "isrc": "BCXXN2300045",
+  "title": "Enfeitou Minha Testa",
+  "artists": [
+   "Bom Gosto",
+   "Akatu"
+  ],
+  "year": 2023,
+  "genre": -1,
+  "rank": 303782,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2477138841",
   "deezerId": 2477138841,
   "isrc": "GBUM72305912",
@@ -48560,6 +49763,22 @@
   "yearVerified": false
  },
  {
+  "id": "cat-2494278071",
+  "deezerId": 2494278071,
+  "isrc": "BX75Y2300119",
+  "title": "Online",
+  "artists": [
+   "YOÙN",
+   "Duquesa",
+   "Zamba",
+   "Pivet Panda"
+  ],
+  "year": 2023,
+  "genre": -1,
+  "rank": 308080,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2496106371",
   "deezerId": 2496106371,
   "isrc": "QMFME2364182",
@@ -48624,6 +49843,19 @@
   "genre": 122,
   "rank": 438403,
   "yearVerified": false
+ },
+ {
+  "id": "cat-2516432551",
+  "deezerId": 2516432551,
+  "isrc": "USIR28800378",
+  "title": "Teardrops",
+  "artists": [
+   "Womack & Womack"
+  ],
+  "year": 1988,
+  "genre": 132,
+  "rank": 624504,
+  "yearVerified": true
  },
  {
   "id": "cat-2517910441",
@@ -48848,6 +50080,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-2553384802",
+  "deezerId": 2553384802,
+  "isrc": "DEQ022391454",
+  "title": "Tears",
+  "artists": [
+   "Da King & I"
+  ],
+  "year": 1993,
+  "genre": 116,
+  "rank": 451085,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2554544572",
   "deezerId": 2554544572,
   "isrc": "QZW9L2323991",
@@ -48926,6 +50171,21 @@
   "year": 2024,
   "genre": 85,
   "rank": 366023,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2580853722",
+  "deezerId": 2580853722,
+  "isrc": "GBMVH2300820",
+  "title": "tell me",
+  "artists": [
+   "Shygirl",
+   "Boys Noize",
+   "Club Shy"
+  ],
+  "year": 2024,
+  "genre": 106,
+  "rank": 303322,
   "yearVerified": true
  },
  {
@@ -49049,6 +50309,20 @@
   "genre": 113,
   "rank": 422446,
   "yearVerified": false
+ },
+ {
+  "id": "cat-2593816372",
+  "deezerId": 2593816372,
+  "isrc": "NLZ542302123",
+  "title": "Delete Time",
+  "artists": [
+   "Sevenn",
+   "Space Motion"
+  ],
+  "year": 2024,
+  "genre": 113,
+  "rank": 376545,
+  "yearVerified": true
  },
  {
   "id": "cat-2601690812",
@@ -49202,6 +50476,21 @@
   "year": 2024,
   "genre": 113,
   "rank": 351490,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-2624399822",
+  "deezerId": 2624399822,
+  "isrc": "DEUE12467470",
+  "title": "The Hills",
+  "artists": [
+   "Lacroix",
+   "Benny Sands",
+   "Jaime Deraz"
+  ],
+  "year": 2024,
+  "genre": 106,
+  "rank": 306902,
   "yearVerified": false
  },
  {
@@ -49487,6 +50776,21 @@
   "yearVerified": true
  },
  {
+  "id": "cat-2681906912",
+  "deezerId": 2681906912,
+  "isrc": "NLZ542400224",
+  "title": "O Vento (feat. Jessica Cipriano & LETUS et)",
+  "artists": [
+   "Kura",
+   "Jessica Cipriano",
+   "LETUS et"
+  ],
+  "year": 2024,
+  "genre": 113,
+  "rank": 388815,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2690050002",
   "deezerId": 2690050002,
   "isrc": "USUM72317276",
@@ -49512,6 +50816,19 @@
   "year": 2024,
   "genre": -1,
   "rank": 377290,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-2695415432",
+  "deezerId": 2695415432,
+  "isrc": "DEUE12427524",
+  "title": "Let Me Blow Ya Mind",
+  "artists": [
+   "DJ Louis"
+  ],
+  "year": 2024,
+  "genre": 106,
+  "rank": 305043,
   "yearVerified": false
  },
  {
@@ -49858,6 +51175,19 @@
   "year": 2024,
   "genre": 132,
   "rank": 979835,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2745856401",
+  "deezerId": 2745856401,
+  "isrc": "CAN112400933",
+  "title": "Dolly",
+  "artists": [
+   "Geowulf"
+  ],
+  "year": 2024,
+  "genre": 85,
+  "rank": 304248,
   "yearVerified": true
  },
  {
@@ -50920,6 +52250,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-2883166502",
+  "deezerId": 2883166502,
+  "isrc": "USUYG1562455",
+  "title": "Lead Me",
+  "artists": [
+   "Spice",
+   "Ky-Mani Marley"
+  ],
+  "year": 2024,
+  "genre": 144,
+  "rank": 313716,
+  "yearVerified": false
+ },
+ {
   "id": "cat-2887250692",
   "deezerId": 2887250692,
   "isrc": "BRUM72401244",
@@ -50945,6 +52289,19 @@
   "year": 2024,
   "genre": 169,
   "rank": 351644,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-2888191162",
+  "deezerId": 2888191162,
+  "isrc": "BCCAU2300024",
+  "title": "Devagar Minha Filha",
+  "artists": [
+   "É O Tchan"
+  ],
+  "year": 2024,
+  "genre": -1,
+  "rank": 339363,
   "yearVerified": false
  },
  {
@@ -51164,6 +52521,19 @@
   "year": 2024,
   "genre": 85,
   "rank": 305291,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-2928091071",
+  "deezerId": 2928091071,
+  "isrc": "QM7282463157",
+  "title": "100 Poems",
+  "artists": [
+   "Tinyumbrellas"
+  ],
+  "year": 2024,
+  "genre": 85,
+  "rank": 322133,
   "yearVerified": true
  },
  {
@@ -53157,6 +54527,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3145952191",
+  "deezerId": 3145952191,
+  "isrc": "QMFMF2426984",
+  "title": "Need You Around",
+  "artists": [
+   "grentperez"
+  ],
+  "year": 2025,
+  "genre": 132,
+  "rank": 441106,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3146077851",
   "deezerId": 3146077851,
   "isrc": "BKUUS2400073",
@@ -54441,6 +55824,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3240367151",
+  "deezerId": 3240367151,
+  "isrc": "AU2ZC2401074",
+  "title": "Aquarium cowgirl",
+  "artists": [
+   "Babe Rainbow"
+  ],
+  "year": 2025,
+  "genre": 85,
+  "rank": 429673,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3241938641",
   "deezerId": 3241938641,
   "isrc": "BC18P2500007",
@@ -54691,6 +56087,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3256085011",
+  "deezerId": 3256085011,
+  "isrc": "BX9BA2500002",
+  "title": "Sambado (Voz e Violão)",
+  "artists": [
+   "Vander Lee"
+  ],
+  "year": 2025,
+  "genre": -1,
+  "rank": 309634,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3257054531",
   "deezerId": 3257054531,
   "isrc": "BKBSS2500274",
@@ -54844,6 +56253,20 @@
   "genre": 116,
   "rank": 373262,
   "yearVerified": false
+ },
+ {
+  "id": "cat-3268393861",
+  "deezerId": 3268393861,
+  "isrc": "USA2P2510451",
+  "title": "R.I.P.",
+  "artists": [
+   "half·alive",
+   "The Walters"
+  ],
+  "year": 2025,
+  "genre": 85,
+  "rank": 504242,
+  "yearVerified": true
  },
  {
   "id": "cat-3274042271",
@@ -56560,6 +57983,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3463291251",
+  "deezerId": 3463291251,
+  "isrc": "NL9YF2500070",
+  "title": "Claro",
+  "artists": [
+   "Ginton",
+   "AMY MIYÚ"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 365829,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3464448771",
   "deezerId": 3464448771,
   "isrc": "BRC832400407",
@@ -56650,6 +58087,19 @@
   "genre": 132,
   "rank": 692318,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3474206201",
+  "deezerId": 3474206201,
+  "isrc": "BKXEI2500296",
+  "title": "Tendência",
+  "artists": [
+   "Marquinhos Sensação"
+  ],
+  "year": 2025,
+  "genre": -1,
+  "rank": 338148,
+  "yearVerified": false
  },
  {
   "id": "cat-3476500411",
@@ -57036,6 +58486,22 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3513555211",
+  "deezerId": 3513555211,
+  "isrc": "BXSWA2500133",
+  "title": "Aventureiro",
+  "artists": [
+   "FM O Dia",
+   "Grupo Clareou",
+   "Renato Da Rocinha",
+   "Diney"
+  ],
+  "year": 2025,
+  "genre": -1,
+  "rank": 312375,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3513850921",
   "deezerId": 3513850921,
   "isrc": "BX6Y62500063",
@@ -57065,6 +58531,19 @@
   "year": 2025,
   "genre": 113,
   "rank": 618044,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3514247181",
+  "deezerId": 3514247181,
+  "isrc": "CAN112501664",
+  "title": "Cowboy Without a Clue",
+  "artists": [
+   "Yumi Zouma"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 462492,
   "yearVerified": true
  },
  {
@@ -57409,6 +58888,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3531194871",
+  "deezerId": 3531194871,
+  "isrc": "QZA742525403",
+  "title": "Let a Love",
+  "artists": [
+   "EMBRZ",
+   "XIRA"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 412532,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3531552611",
   "deezerId": 3531552611,
   "isrc": "FRX872587946",
@@ -57577,6 +59070,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3541104721",
+  "deezerId": 3541104721,
+  "isrc": "AUBM02500152",
+  "title": "Morning Gum",
+  "artists": [
+   "The Paper Kites"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 350775,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3541276131",
   "deezerId": 3541276131,
   "isrc": "USFP13788509",
@@ -57699,6 +59205,20 @@
   "year": 2025,
   "genre": 80,
   "rank": 973194,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-3546988071",
+  "deezerId": 3546988071,
+  "isrc": "BCVV82400084",
+  "title": "Quarto 67",
+  "artists": [
+   "Guilherme & Benuto",
+   "Luan Santana"
+  ],
+  "year": 2025,
+  "genre": -1,
+  "rank": 909694,
   "yearVerified": false
  },
  {
@@ -57974,6 +59494,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3558796371",
+  "deezerId": 3558796371,
+  "isrc": "BKEHX2500061",
+  "title": "A Milhão",
+  "artists": [
+   "Tasha & Tracie",
+   "Pizzol"
+  ],
+  "year": 2025,
+  "genre": 116,
+  "rank": 307326,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3559115071",
   "deezerId": 3559115071,
   "isrc": "GBKQU2595601",
@@ -58137,6 +59671,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3564256391",
+  "deezerId": 3564256391,
+  "isrc": "QT65Y2511926",
+  "title": "Let Me Know",
+  "artists": [
+   "Ten Pictures"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 393159,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3564332351",
   "deezerId": 3564332351,
   "isrc": "USSD12500623",
@@ -58255,6 +59802,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3571010851",
+  "deezerId": 3571010851,
+  "isrc": "USQE92500194",
+  "title": "Damn",
+  "artists": [
+   "Del Water Gap"
+  ],
+  "year": 2025,
+  "genre": 85,
+  "rank": 422922,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3571023731",
   "deezerId": 3571023731,
   "isrc": "BR03D2502510",
@@ -58279,6 +59839,19 @@
   "year": 2025,
   "genre": 106,
   "rank": 420454,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-3572391651",
+  "deezerId": 3572391651,
+  "isrc": "FRR642501501",
+  "title": "Breathe",
+  "artists": [
+   "Midnight Run"
+  ],
+  "year": 2025,
+  "genre": -1,
+  "rank": 401254,
   "yearVerified": false
  },
  {
@@ -58307,6 +59880,21 @@
   "genre": 113,
   "rank": 374920,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3573020511",
+  "deezerId": 3573020511,
+  "isrc": "QMNS92535731",
+  "title": "Spellbound",
+  "artists": [
+   "JES",
+   "Alex M.O.R.P.H.",
+   "MRPHLNDR"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 362740,
+  "yearVerified": false
  },
  {
   "id": "cat-3573447171",
@@ -58391,6 +59979,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3579420461",
+  "deezerId": 3579420461,
+  "isrc": "QMFME2582937",
+  "title": "Ouverture",
+  "artists": [
+   "Amand",
+   "Capoon"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 326958,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3579573551",
   "deezerId": 3579573551,
   "isrc": "DEE862501551",
@@ -58443,6 +60045,19 @@
   "genre": 106,
   "rank": 381085,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3580113331",
+  "deezerId": 3580113331,
+  "isrc": "DGA052589422",
+  "title": "Away",
+  "artists": [
+   "Xix99"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 417744,
+  "yearVerified": false
  },
  {
   "id": "cat-3580463861",
@@ -58498,6 +60113,19 @@
   "year": 2025,
   "genre": 116,
   "rank": 709733,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-3582285791",
+  "deezerId": 3582285791,
+  "isrc": "GXGUF2500183",
+  "title": "Holding You Tight",
+  "artists": [
+   "Drft"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 340520,
   "yearVerified": false
  },
  {
@@ -58624,6 +60252,34 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3589500061",
+  "deezerId": 3589500061,
+  "isrc": "GBEWA2504890",
+  "title": "In The Dark",
+  "artists": [
+   "Robby East",
+   "Møøne"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 402075,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3589501021",
+  "deezerId": 3589501021,
+  "isrc": "GBEWA2505270",
+  "title": "Stay Still, A Little While",
+  "artists": [
+   "Lane 8",
+   "jyll"
+  ],
+  "year": 2025,
+  "genre": 113,
+  "rank": 466108,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3589510911",
   "deezerId": 3589510911,
   "isrc": "BCAVV2500132",
@@ -58668,6 +60324,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3591457372",
+  "deezerId": 3591457372,
+  "isrc": "GBEWA2504772",
+  "title": "Closer",
+  "artists": [
+   "Calcou"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 399351,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3592958952",
   "deezerId": 3592958952,
   "isrc": "BKC0B2500029",
@@ -58692,6 +60361,33 @@
   "genre": 116,
   "rank": 527064,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3593333712",
+  "deezerId": 3593333712,
+  "isrc": "GBEWA2505350",
+  "title": "Come Closer",
+  "artists": [
+   "Dirty South"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 338334,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-3593657492",
+  "deezerId": 3593657492,
+  "isrc": "NLF712506585",
+  "title": "Disappear Again",
+  "artists": [
+   "Jan Blomqvist",
+   "Beobe"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 450930,
+  "yearVerified": false
  },
  {
   "id": "cat-3595092822",
@@ -58734,6 +60430,20 @@
   "year": 2025,
   "genre": 113,
   "rank": 347843,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-3596739302",
+  "deezerId": 3596739302,
+  "isrc": "GXGUF2500212",
+  "title": "weightless",
+  "artists": [
+   "cypress",
+   "Solaene"
+  ],
+  "year": 2025,
+  "genre": 106,
+  "rank": 367297,
   "yearVerified": false
  },
  {
@@ -58788,6 +60498,19 @@
   "year": 2025,
   "genre": 80,
   "rank": 534487,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-3601809842",
+  "deezerId": 3601809842,
+  "isrc": "GBLV62506413",
+  "title": "Feels So Long To Go",
+  "artists": [
+   "Oliver River"
+  ],
+  "year": 2025,
+  "genre": 113,
+  "rank": 374584,
   "yearVerified": false
  },
  {
@@ -59033,6 +60756,21 @@
   "genre": 116,
   "rank": 995170,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3616174192",
+  "deezerId": 3616174192,
+  "isrc": "QZUCN2202431",
+  "title": "Back To You",
+  "artists": [
+   "Andrew Nagy",
+   "Aaron Pfeiffer",
+   "Arteboome"
+  ],
+  "year": 2025,
+  "genre": 85,
+  "rank": 335515,
+  "yearVerified": false
  },
  {
   "id": "cat-3617328752",
@@ -59550,6 +61288,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3655771262",
+  "deezerId": 3655771262,
+  "isrc": "BCSLS2500012",
+  "title": "Lá e Cá",
+  "artists": [
+   "Samba Que Elas Querem",
+   "Leci Brandão"
+  ],
+  "year": 2025,
+  "genre": -1,
+  "rank": 315316,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3656427182",
   "deezerId": 3656427182,
   "isrc": "FRIDO2514177",
@@ -59899,6 +61651,21 @@
   "genre": 85,
   "rank": 389068,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3680189302",
+  "deezerId": 3680189302,
+  "isrc": "BKPCM2500021",
+  "title": "Minha Varanda",
+  "artists": [
+   "Cynthia Luz",
+   "NASRI",
+   "Ecologyk"
+  ],
+  "year": 2025,
+  "genre": 144,
+  "rank": 304846,
+  "yearVerified": false
  },
  {
   "id": "cat-3680238802",
@@ -60634,6 +62401,19 @@
   "genre": 79,
   "rank": 698266,
   "yearVerified": false
+ },
+ {
+  "id": "cat-3728618572",
+  "deezerId": 3728618572,
+  "isrc": "NL3M12502173",
+  "title": "NINA",
+  "artists": [
+   "glittr"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 317590,
+  "yearVerified": true
  },
  {
   "id": "cat-3729142802",
@@ -61697,6 +63477,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3814065852",
+  "deezerId": 3814065852,
+  "isrc": "BX6IQ2600059",
+  "title": "Quem Te Protege Não Dorme / Clareou",
+  "artists": [
+   "Camile Castro"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 309045,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3814512552",
   "deezerId": 3814512552,
   "isrc": "BCSOR2600024",
@@ -62154,6 +63947,21 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3838001081",
+  "deezerId": 3838001081,
+  "isrc": "BCWXX2600007",
+  "title": "Esperanças Perdidas",
+  "artists": [
+   "Os Originais Do Samba",
+   "Mauro Diniz",
+   "Dj Dri"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 315349,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3838065281",
   "deezerId": 3838065281,
   "isrc": "ILTON2601935",
@@ -62219,6 +64027,20 @@
   "year": 2026,
   "genre": 85,
   "rank": 416194,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-3839775801",
+  "deezerId": 3839775801,
+  "isrc": "QZ5FN2651267",
+  "title": "Ting Loud",
+  "artists": [
+   "Protoje",
+   "Masicka"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 496269,
   "yearVerified": false
  },
  {
@@ -62561,6 +64383,19 @@
   "genre": 113,
   "rank": 990284,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3863109181",
+  "deezerId": 3863109181,
+  "isrc": "BXBAL2500261",
+  "title": "Assunto Que Dói",
+  "artists": [
+   "Gusttavo Lima"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 791460,
+  "yearVerified": false
  },
  {
   "id": "cat-3863109191",
@@ -62911,6 +64746,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-3879793601",
+  "deezerId": 3879793601,
+  "isrc": "NLB932501906",
+  "title": "Critic",
+  "artists": [
+   "Defects"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 358649,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3879836431",
   "deezerId": 3879836431,
   "isrc": "USQX92601166",
@@ -63022,6 +64870,19 @@
   "genre": -1,
   "rank": 979664,
   "yearVerified": true
+ },
+ {
+  "id": "cat-3890095711",
+  "deezerId": 3890095711,
+  "isrc": "FR59R2609224",
+  "title": "Nightwalking",
+  "artists": [
+   "Bruno Bavota"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 406631,
+  "yearVerified": false
  },
  {
   "id": "cat-3890458031",
@@ -64131,6 +65992,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3953690901",
+  "deezerId": 3953690901,
+  "isrc": "USQX92601822",
+  "title": "Coffee Song",
+  "artists": [
+   "Alexis Ffrench"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 812385,
+  "yearVerified": false
+ },
+ {
   "id": "cat-3955938791",
   "deezerId": 3955938791,
   "isrc": "BKDFK2600145",
@@ -64828,6 +66702,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-3990935001",
+  "deezerId": 3990935001,
+  "isrc": "CAN112600803",
+  "title": "Stranger Things",
+  "artists": [
+   "Fenne Lily"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 666988,
+  "yearVerified": true
+ },
+ {
   "id": "cat-3990974521",
   "deezerId": 3990974521,
   "isrc": "US58L2698004",
@@ -64992,6 +66879,20 @@
   "genre": 464,
   "rank": 402249,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4000403351",
+  "deezerId": 4000403351,
+  "isrc": "FR9W12619091",
+  "title": "Summer Days",
+  "artists": [
+   "Kid Francescoli",
+   "Andrea"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 536042,
+  "yearVerified": false
  },
  {
   "id": "cat-4000414351",
@@ -65739,6 +67640,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4023296881",
+  "deezerId": 4023296881,
+  "isrc": "DED832600182",
+  "title": "haunted",
+  "artists": [
+   "unpeople"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 451459,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4023619991",
   "deezerId": 4023619991,
   "isrc": "FRX202609887",
@@ -65835,6 +67749,19 @@
   "genre": 85,
   "rank": 317890,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4030797791",
+  "deezerId": 4030797791,
+  "isrc": "QM6P42661385",
+  "title": "WE ARE ALL DEMONS",
+  "artists": [
+   "Gothminister"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 304795,
+  "yearVerified": true
  },
  {
   "id": "cat-4031129131",
@@ -65943,6 +67870,19 @@
   "year": 2026,
   "genre": 466,
   "rank": 511147,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4033907631",
+  "deezerId": 4033907631,
+  "isrc": "QM7282607446",
+  "title": "Can I Finish Please?",
+  "artists": [
+   "Chloe Slater"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 365923,
   "yearVerified": true
  },
  {
@@ -66178,6 +68118,21 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4045831731",
+  "deezerId": 4045831731,
+  "isrc": "NLSH72600155",
+  "title": "Water World",
+  "artists": [
+   "Sjoerd van Eijck",
+   "Jorg Brinkmann",
+   "Jarle Vespestad"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 306952,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4046207801",
   "deezerId": 4046207801,
   "isrc": "USUYG1791772",
@@ -66224,6 +68179,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4047772881",
+  "deezerId": 4047772881,
+  "isrc": "GBENL2604666",
+  "title": "New Story",
+  "artists": [
+   "Eels"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 622703,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4048073211",
   "deezerId": 4048073211,
   "isrc": "FRPGB2636340",
@@ -66235,6 +68203,20 @@
   "year": 2026,
   "genre": 144,
   "rank": 470306,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4048655361",
+  "deezerId": 4048655361,
+  "isrc": "GBWUL2638230",
+  "title": "A Pufferfish Kind of Day",
+  "artists": [
+   "Davide Perico",
+   "JarLoFi"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 311995,
   "yearVerified": false
  },
  {
@@ -66293,6 +68275,21 @@
   "genre": 169,
   "rank": 836198,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4050048241",
+  "deezerId": 4050048241,
+  "isrc": "DEN962600835",
+  "title": "Guðnadóttir: The Song That Never Was",
+  "artists": [
+   "Hildur Guðnadóttir",
+   "Deutsches Symphonie-Orchester Berlin",
+   "Robert Ames"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 553045,
+  "yearVerified": true
  },
  {
   "id": "cat-4050060021",
@@ -66363,6 +68360,46 @@
   "genre": 464,
   "rank": 466963,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4052370861",
+  "deezerId": 4052370861,
+  "isrc": "UKKP22600462",
+  "title": "Slow Train",
+  "artists": [
+   "BODEGA"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 396512,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4052615071",
+  "deezerId": 4052615071,
+  "isrc": "ATN262640308",
+  "title": "Harmony Manufactured (feat. Hiraes)",
+  "artists": [
+   "Ignea",
+   "Hiraes"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 378568,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4052802951",
+  "deezerId": 4052802951,
+  "isrc": "DEN962600682",
+  "title": "Asal: January Zero",
+  "artists": [
+   "Julius Asal"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 754036,
+  "yearVerified": false
  },
  {
   "id": "cat-4052872771",
@@ -66456,6 +68493,21 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4057626691",
+  "deezerId": 4057626691,
+  "isrc": "NL3M12602954",
+  "title": "Deeper We Go",
+  "artists": [
+   "Lincoln Jesser",
+   "Coco & Breezy",
+   "Ultra Naté"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 575994,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4057672971",
   "deezerId": 4057672971,
   "isrc": "BXS8V2600003",
@@ -66495,6 +68547,19 @@
   "year": 2026,
   "genre": -1,
   "rank": 335383,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4057760491",
+  "deezerId": 4057760491,
+  "isrc": "USMBR2617292",
+  "title": "Hell Is a Part of Me",
+  "artists": [
+   "Entheos"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 405665,
   "yearVerified": false
  },
  {
@@ -66578,6 +68643,19 @@
   "genre": 152,
   "rank": 565769,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4058865091",
+  "deezerId": 4058865091,
+  "isrc": "ATN262645801",
+  "title": "The Fool",
+  "artists": [
+   "Temperance"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 311125,
+  "yearVerified": false
  },
  {
   "id": "cat-4058916481",
@@ -66790,6 +68868,20 @@
   "genre": 132,
   "rank": 489994,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4063738851",
+  "deezerId": 4063738851,
+  "isrc": "GBLLH0100901",
+  "title": "Sonata for Violin, Cello & Continuo in G Major, RV 820: I. Allegro",
+  "artists": [
+   "La Serenissima",
+   "Adrian Chandler"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 334269,
+  "yearVerified": false
  },
  {
   "id": "cat-4063826381",
@@ -67718,6 +69810,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4094456061",
+  "deezerId": 4094456061,
+  "isrc": "QMBZ92636998",
+  "title": "Dum Dum",
+  "artists": [
+   "Rincon Sapiência"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 312105,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4094651701",
   "deezerId": 4094651701,
   "isrc": "GBUR62001351",
@@ -67853,6 +69958,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4099314091",
+  "deezerId": 4099314091,
+  "isrc": "DED832600262",
+  "title": "Og mánin græt / And The Moon Cried",
+  "artists": [
+   "Eivør"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 514834,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4099314171",
   "deezerId": 4099314171,
   "isrc": "DED832600265",
@@ -67892,6 +70010,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4099406401",
+  "deezerId": 4099406401,
+  "isrc": "GBBPW2602373",
+  "title": "Womb Glow",
+  "artists": [
+   "Bibio",
+   "Dorian Concept"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 380624,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4099406551",
   "deezerId": 4099406551,
   "isrc": "GBCFB2600207",
@@ -67902,6 +70034,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 506643,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4099474141",
+  "deezerId": 4099474141,
+  "isrc": "ATN262639907",
+  "title": "Starfighters of Leuchars",
+  "artists": [
+   "Gloryhammer"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 468945,
   "yearVerified": true
  },
  {
@@ -68224,6 +70369,19 @@
   "year": 2026,
   "genre": -1,
   "rank": 302217,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4108637121",
+  "deezerId": 4108637121,
+  "isrc": "BXS2B2600005",
+  "title": "Pena Que Cê Já Namora",
+  "artists": [
+   "Marcos & Belutti"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 704522,
   "yearVerified": false
  },
  {
@@ -68636,6 +70794,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4115963491",
+  "deezerId": 4115963491,
+  "isrc": "USUG12603505",
+  "title": "Great Expectation",
+  "artists": [
+   "SIENNA SPIRO"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 978558,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4116004831",
   "deezerId": 4116004831,
   "isrc": "BE5KW2601205",
@@ -68717,6 +70888,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 399118,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4117158721",
+  "deezerId": 4117158721,
+  "isrc": "GBAYC2600974",
+  "title": "Mendelssohn: Songs Without Words, Book VI, Op. 67: No. 6, Allegro non troppo, MWV U188 \"Cradle Song\"",
+  "artists": [
+   "Bertrand Chamayou"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 465609,
   "yearVerified": false
  },
  {
@@ -68896,6 +71080,32 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4122502131",
+  "deezerId": 4122502131,
+  "isrc": "FR33T2692703",
+  "title": "ZYX",
+  "artists": [
+   "Stoned Jesus"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 420481,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4122679831",
+  "deezerId": 4122679831,
+  "isrc": "US33X2624501",
+  "title": "Lost Station Hideaway",
+  "artists": [
+   "Michael Nau"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 569865,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4124242861",
   "deezerId": 4124242861,
   "isrc": "BRRGE2600754",
@@ -68908,6 +71118,19 @@
   "genre": 80,
   "rank": 577020,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4124405221",
+  "deezerId": 4124405221,
+  "isrc": "ITG272600820",
+  "title": "Psyclops",
+  "artists": [
+   "Forbidden"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 343956,
+  "yearVerified": true
  },
  {
   "id": "cat-4124573561",
@@ -69145,6 +71368,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 606996,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4126393301",
+  "deezerId": 4126393301,
+  "isrc": "FRZ132612002",
+  "title": "Mazurka Apasionada",
+  "artists": [
+   "Laura Lootens"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 309400,
   "yearVerified": false
  },
  {
@@ -69821,6 +72057,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4138557441",
+  "deezerId": 4138557441,
+  "isrc": "GB5KW2601145",
+  "title": "Over the Violent Sun",
+  "artists": [
+   "Tony Iommi",
+   "Jorn"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 666356,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4139081271",
   "deezerId": 4139081271,
   "isrc": "NL8RL2674503",
@@ -69831,6 +72081,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 344878,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4139346951",
+  "deezerId": 4139346951,
+  "isrc": "QM7282667108",
+  "title": "Slush Puppy",
+  "artists": [
+   "Tommy Lefroy"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 353822,
   "yearVerified": false
  },
  {
@@ -69942,6 +72205,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4142878711",
+  "deezerId": 4142878711,
+  "isrc": "GBCFB2500616",
+  "title": "Ironía",
+  "artists": [
+   "Girl Ultra",
+   "Chromeo"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 425893,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4143194201",
   "deezerId": 4143194201,
   "isrc": "GBEWA2602990",
@@ -69953,6 +72230,22 @@
   "year": 2026,
   "genre": 106,
   "rank": 495615,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4143296421",
+  "deezerId": 4143296421,
+  "isrc": "GBDHC2659605",
+  "title": "The Hour Grows Late (feat. Tomi Joutsen, Tomi Koivusaari & Santeri Kallio)",
+  "artists": [
+   "Insomnium",
+   "Tomi Joutsen",
+   "Tomi Koivusaari",
+   "Santeri Kallio"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 547280,
   "yearVerified": true
  },
  {
@@ -70187,6 +72480,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4145913892",
+  "deezerId": 4145913892,
+  "isrc": "QM7282645513",
+  "title": "Give Me A Dream",
+  "artists": [
+   "Strawberry Guy"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 445138,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4146060472",
   "deezerId": 4146060472,
   "isrc": "FRP8H2600270",
@@ -70199,6 +72505,20 @@
   "genre": -1,
   "rank": 563464,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4146111242",
+  "deezerId": 4146111242,
+  "isrc": "GBBPW2602777",
+  "title": "Waiting",
+  "artists": [
+   "Jacques Greene",
+   "Sølv"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 368716,
+  "yearVerified": true
  },
  {
   "id": "cat-4146536962",
@@ -70353,6 +72673,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4151126082",
+  "deezerId": 4151126082,
+  "isrc": "USY6C2645707",
+  "title": "Passing the Cup of Sorrows 1.6",
+  "artists": [
+   "William Basinski"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 313045,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4151135402",
   "deezerId": 4151135402,
   "isrc": "DEY472677314",
@@ -70381,6 +72714,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4151325372",
+  "deezerId": 4151325372,
+  "isrc": "USRC12601059",
+  "title": "oh yeah?",
+  "artists": [
+   "Steve Lacy"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 944190,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4151331642",
   "deezerId": 4151331642,
   "isrc": "US38Y2646502",
@@ -70404,6 +72750,19 @@
   "year": 2026,
   "genre": 152,
   "rank": 328474,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4151680842",
+  "deezerId": 4151680842,
+  "isrc": "DE1KY2607879",
+  "title": "Angels Are Falling",
+  "artists": [
+   "Mystic Prophecy"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 473020,
   "yearVerified": false
  },
  {
@@ -70445,6 +72804,19 @@
   "year": 2026,
   "genre": 129,
   "rank": 544357,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4152825132",
+  "deezerId": 4152825132,
+  "isrc": "ITD292603197",
+  "title": "The Call of the Wild",
+  "artists": [
+   "Dragonland"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 381339,
   "yearVerified": true
  },
  {
@@ -70594,6 +72966,19 @@
   "year": 2026,
   "genre": 132,
   "rank": 840676,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4155088142",
+  "deezerId": 4155088142,
+  "isrc": "US3R42653609",
+  "title": "N of 1",
+  "artists": [
+   "Dummy"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 443196,
   "yearVerified": true
  },
  {
@@ -70816,6 +73201,19 @@
   "genre": 106,
   "rank": 326562,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4156725082",
+  "deezerId": 4156725082,
+  "isrc": "US5ED2600189",
+  "title": "Salvation",
+  "artists": [
+   "Darkest Hour"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 463295,
+  "yearVerified": true
  },
  {
   "id": "cat-4156763952",
@@ -71143,6 +73541,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4160586612",
+  "deezerId": 4160586612,
+  "isrc": "QZWH32600801",
+  "title": "I’M NOT DEAD",
+  "artists": [
+   "Nieve Ella"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 359547,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4160776682",
   "deezerId": 4160776682,
   "isrc": "CA5KR2664756",
@@ -71181,6 +73592,19 @@
   "genre": 165,
   "rank": 452073,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4161066182",
+  "deezerId": 4161066182,
+  "isrc": "USJ5G2602901",
+  "title": "Gay Witchcraft",
+  "artists": [
+   "Claud"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 594640,
+  "yearVerified": true
  },
  {
   "id": "cat-4161107582",
@@ -71317,6 +73741,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4165933412",
+  "deezerId": 4165933412,
+  "isrc": "GBAYE2600500",
+  "title": "Pretty girls",
+  "artists": [
+   "Rachel Chinouriri"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 534667,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4165983542",
   "deezerId": 4165983542,
   "isrc": "FRIDO2613782",
@@ -71384,6 +73821,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4167629852",
+  "deezerId": 4167629852,
+  "isrc": "DEG932603614",
+  "title": "Hay ángeles",
+  "artists": [
+   "Marina Herlop"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 321072,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4167666802",
+  "deezerId": 4167666802,
+  "isrc": "NLML62600159",
+  "title": "Echoes From The 90s",
+  "artists": [
+   "Desmond",
+   "Summum",
+   "Atlantic Ocean"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 394852,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4167806552",
   "deezerId": 4167806552,
   "isrc": "NLZ542600364",
@@ -71422,6 +73887,32 @@
   "year": 2026,
   "genre": 85,
   "rank": 364135,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4168055362",
+  "deezerId": 4168055362,
+  "isrc": "QT6672654915",
+  "title": "What You've Done",
+  "artists": [
+   "Luna Blue"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 333422,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4168056462",
+  "deezerId": 4168056462,
+  "isrc": "QT6672654954",
+  "title": "Alive",
+  "artists": [
+   "Luna Blue"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 676831,
   "yearVerified": false
  },
  {
@@ -71727,6 +74218,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4171330032",
+  "deezerId": 4171330032,
+  "isrc": "USEP42624002",
+  "title": "angela the traveller",
+  "artists": [
+   "Andy Shauf"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 406716,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4171585672",
   "deezerId": 4171585672,
   "isrc": "USAT22604660",
@@ -71754,6 +74258,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4172463242",
+  "deezerId": 4172463242,
+  "isrc": "FRX852600340",
+  "title": "rêve pastel",
+  "artists": [
+   "Ferdi",
+   "BÉESAU"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 558617,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4172489202",
   "deezerId": 4172489202,
   "isrc": "SEAED2628050",
@@ -71764,6 +74282,20 @@
   "year": 2026,
   "genre": 98,
   "rank": 437009,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4172497662",
+  "deezerId": 4172497662,
+  "isrc": "DEG932603927",
+  "title": "El Pençe",
+  "artists": [
+   "Los Bitchos",
+   "Kit Sebastian"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 382365,
   "yearVerified": false
  },
  {
@@ -72115,6 +74647,21 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4180546252",
+  "deezerId": 4180546252,
+  "isrc": "USNRS2644747",
+  "title": "Da Fonk (feat. Joni)",
+  "artists": [
+   "Mochakk",
+   "Joni",
+   "Marco Carola"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 382622,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4180546292",
   "deezerId": 4180546292,
   "isrc": "USNRS2644749",
@@ -72200,6 +74747,21 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4182489302",
+  "deezerId": 4182489302,
+  "isrc": "GBCPZ2625469",
+  "title": "Another Night",
+  "artists": [
+   "RUZE",
+   "Chesster",
+   "Ranger Trucco"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 405137,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4182566002",
   "deezerId": 4182566002,
   "isrc": "GBAFL2600210",
@@ -72238,6 +74800,33 @@
   "genre": 85,
   "rank": 549434,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4183190942",
+  "deezerId": 4183190942,
+  "isrc": "ZZA0Z2619122",
+  "title": "Summer Thing",
+  "artists": [
+   "soft hours",
+   "Addy Ace"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 327559,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4183286362",
+  "deezerId": 4183286362,
+  "isrc": "US38Y2646501",
+  "title": "Human Angel",
+  "artists": [
+   "June McDoom"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 611225,
+  "yearVerified": true
  },
  {
   "id": "cat-4183581232",
@@ -72416,6 +75005,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4186211522",
+  "deezerId": 4186211522,
+  "isrc": "USMBR2617381",
+  "title": "Sweet Suicide",
+  "artists": [
+   "200 Stab Wounds"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 492267,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4190414952",
   "deezerId": 4190414952,
   "isrc": "DED832600277",
@@ -72483,6 +75085,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4191293452",
+  "deezerId": 4191293452,
+  "isrc": "DEYO62600140",
+  "title": "Splinter In A Rusted Crown",
+  "artists": [
+   "Half Me"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 406884,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4191390292",
   "deezerId": 4191390292,
   "isrc": "NLE422666515",
@@ -72497,6 +75112,32 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4191505032",
+  "deezerId": 4191505032,
+  "isrc": "DEYO62600186",
+  "title": "PRYING EYES",
+  "artists": [
+   "Get The Shot"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 382940,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4191795552",
+  "deezerId": 4191795552,
+  "isrc": "GBDHC2658208",
+  "title": "Cry Of Batariel",
+  "artists": [
+   "Mental Cruelty"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 423569,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4191814672",
   "deezerId": 4191814672,
   "isrc": "DEN962633111",
@@ -72508,6 +75149,20 @@
   "genre": 85,
   "rank": 630184,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4191819882",
+  "deezerId": 4191819882,
+  "isrc": "USA2B2602670",
+  "title": "Sakura",
+  "artists": [
+   "Christian McBride",
+   "Ursa major"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 547563,
+  "yearVerified": false
  },
  {
   "id": "cat-4191921692",
@@ -72564,6 +75219,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4192090902",
+  "deezerId": 4192090902,
+  "isrc": "NLE422666501",
+  "title": "Daphnis et Chloé, M. 57, Part I: Introduction",
+  "artists": [
+   "Choeur de l'Orchestre symphonique de Montréal",
+   "Orchestre symphonique de Montréal",
+   "Rafael Payare"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 351093,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4192448262",
+  "deezerId": 4192448262,
+  "isrc": "USQX92604113",
+  "title": "Beg (For You)",
+  "artists": [
+   "Drove"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 317709,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4192716322",
   "deezerId": 4192716322,
   "isrc": "FR9IN2600010",
@@ -72614,6 +75297,19 @@
   "year": 2026,
   "genre": 80,
   "rank": 942857,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4194493572",
+  "deezerId": 4194493572,
+  "isrc": "FRX452633369",
+  "title": "Lueur II",
+  "artists": [
+   "Jordane Tumarinson"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 764365,
   "yearVerified": false
  },
  {
@@ -72806,6 +75502,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4199066132",
+  "deezerId": 4199066132,
+  "isrc": "ITG272601071",
+  "title": "Climbing Higher",
+  "artists": [
+   "Iron Savior"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 380286,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4199066252",
   "deezerId": 4199066252,
   "isrc": "ITG272601067",
@@ -72940,6 +75649,21 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4200789452",
+  "deezerId": 4200789452,
+  "isrc": "NLA460916305",
+  "title": "15 Sinfonias: No. 10 in G Major, BWV 796 (Arr. for Violin, Flute and Viola by Fred Thomas)",
+  "artists": [
+   "Rachel Podger",
+   "Lucie Horsch",
+   "Jane Rogers"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 390157,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4201036902",
   "deezerId": 4201036902,
   "isrc": "GBDLP2601505",
@@ -72950,6 +75674,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 325575,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4201311962",
+  "deezerId": 4201311962,
+  "isrc": "SE5AJ2602888",
+  "title": "dream",
+  "artists": [
+   "DJ SUZY"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 416309,
   "yearVerified": true
  },
  {
@@ -72976,6 +75713,19 @@
   "year": 2026,
   "genre": 113,
   "rank": 378749,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4201450402",
+  "deezerId": 4201450402,
+  "isrc": "QT6682602476",
+  "title": "Closer",
+  "artists": [
+   "After Bloom"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 319503,
   "yearVerified": false
  },
  {
@@ -73251,6 +76001,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4207491452",
+  "deezerId": 4207491452,
+  "isrc": "DEU672600700",
+  "title": "Black Badger",
+  "artists": [
+   "Extrawelt"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 322701,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4207679722",
   "deezerId": 4207679722,
   "isrc": "FR9W12630618",
@@ -73292,6 +76055,21 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4207910562",
+  "deezerId": 4207910562,
+  "isrc": "NLF712604810",
+  "title": "Burn It Up",
+  "artists": [
+   "Armin van Buuren",
+   "Diøn",
+   "Scrufizzer"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 471529,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4207928182",
   "deezerId": 4207928182,
   "isrc": "NLT2H2602800",
@@ -73317,6 +76095,35 @@
   "year": 2026,
   "genre": 98,
   "rank": 383547,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4207950842",
+  "deezerId": 4207950842,
+  "isrc": "GBAYC2601405",
+  "title": "Shore: The Lord of the Rings: The Fellowship of the Ring: Concerning Hobbits",
+  "artists": [
+   "Aurélien Pontier",
+   "Frederic Couderc",
+   "Nemanja Radulović"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 418170,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4208193362",
+  "deezerId": 4208193362,
+  "isrc": "GBEQT2600029",
+  "title": "I Did It in Seattle",
+  "artists": [
+   "Roy Ayers",
+   "Delfonic"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 534669,
   "yearVerified": false
  },
  {
@@ -73414,6 +76221,19 @@
   "genre": -1,
   "rank": 974722,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4209135542",
+  "deezerId": 4209135542,
+  "isrc": "NLWJ22600491",
+  "title": "Injustice and Lack of Remorse",
+  "artists": [
+   "Master"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 317598,
+  "yearVerified": false
  },
  {
   "id": "cat-4209699002",
@@ -73514,6 +76334,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4210906282",
+  "deezerId": 4210906282,
+  "isrc": "FRT092600065",
+  "title": "Gonggong",
+  "artists": [
+   "Nathan Fake"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 417307,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4212427162",
   "deezerId": 4212427162,
   "isrc": "QZNJV2690118",
@@ -73527,6 +76360,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4213118262",
+  "deezerId": 4213118262,
+  "isrc": "BKCKW2600075",
+  "title": "Pachamama | Som no Sebo",
+  "artists": [
+   "Orquestra Brasileira de Musica Jamaicana",
+   "Som No Sebo"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 315212,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4213380492",
+  "deezerId": 4213380492,
+  "isrc": "CA6D22600473",
+  "title": "Forever",
+  "artists": [
+   "Tribbs",
+   "Émilie Rachel"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 458882,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4214048432",
   "deezerId": 4214048432,
   "isrc": "NL9KQ2691509",
@@ -73537,6 +76398,20 @@
   "year": 2026,
   "genre": 106,
   "rank": 435801,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4214193902",
+  "deezerId": 4214193902,
+  "isrc": "FRZ132703005",
+  "title": "Wide Open",
+  "artists": [
+   "Emile Londonien",
+   "Keïta Janota"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 497971,
   "yearVerified": false
  },
  {
@@ -73554,6 +76429,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4214348452",
+  "deezerId": 4214348452,
+  "isrc": "DEG932603456",
+  "title": "Turning",
+  "artists": [
+   "Djrum"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 351004,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4214369022",
   "deezerId": 4214369022,
   "isrc": "FR6LF2516118",
@@ -73565,6 +76453,20 @@
   "year": 2026,
   "genre": 129,
   "rank": 434620,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4214522382",
+  "deezerId": 4214522382,
+  "isrc": "DEY472678251",
+  "title": "Step Back",
+  "artists": [
+   "Tao Andra",
+   "Stone Van Brooken"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 380932,
   "yearVerified": false
  },
  {
@@ -73701,6 +76603,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4215190432",
+  "deezerId": 4215190432,
+  "isrc": "QM9K31200501",
+  "title": "Get Over It",
+  "artists": [
+   "ALA.NI",
+   "Adrian Younge"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 409863,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4215364372",
   "deezerId": 4215364372,
   "isrc": "QMBZ92691158",
@@ -73712,6 +76628,34 @@
   "year": 2026,
   "genre": 464,
   "rank": 371995,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4215470922",
+  "deezerId": 4215470922,
+  "isrc": "FRX452651885",
+  "title": "Kernel Panic",
+  "artists": [
+   "Nasty",
+   "Eternal Enemy"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 424303,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4215554032",
+  "deezerId": 4215554032,
+  "isrc": "GBHZU2614112",
+  "title": "The Wooden Prince: Dance No. 5, The Princess Pulls and Pushes Him and Tries to Make Him Dance",
+  "artists": [
+   "Edward Gardner",
+   "London Philharmonic Orchestra"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 440247,
   "yearVerified": false
  },
  {
@@ -73809,6 +76753,32 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4218229612",
+  "deezerId": 4218229612,
+  "isrc": "USA2P2655882",
+  "title": "Ecstasy",
+  "artists": [
+   "MorMor"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 567869,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4218326162",
+  "deezerId": 4218326162,
+  "isrc": "GBKQU2685396",
+  "title": "Afterglow",
+  "artists": [
+   "Matrx"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 316537,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4218858992",
   "deezerId": 4218858992,
   "isrc": "DED832600098",
@@ -73822,6 +76792,19 @@
   "genre": 464,
   "rank": 364384,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4219187482",
+  "deezerId": 4219187482,
+  "isrc": "DEWM92201417",
+  "title": "Fcuk up the Club",
+  "artists": [
+   "KYANU"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 467932,
+  "yearVerified": false
  },
  {
   "id": "cat-4219187882",
@@ -73976,6 +76959,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4221394852",
+  "deezerId": 4221394852,
+  "isrc": "QT6682637613",
+  "title": "Take Me Back",
+  "artists": [
+   "Mouta"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 305914,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4221450012",
   "deezerId": 4221450012,
   "isrc": "FR9W12627311",
@@ -74030,6 +77026,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4221627132",
+  "deezerId": 4221627132,
+  "isrc": "DED832600490",
+  "title": "10 Cent Martyr",
+  "artists": [
+   "KINGDOM OF GIANTS"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 425446,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4221804632",
   "deezerId": 4221804632,
   "isrc": "ATN262643603",
@@ -74053,6 +77062,33 @@
   "year": 2026,
   "genre": 85,
   "rank": 375415,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4222263212",
+  "deezerId": 4222263212,
+  "isrc": "FXQ892600755",
+  "title": "still, I'll be there",
+  "artists": [
+   "Holseek",
+   "Mosimann"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 766803,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4222544582",
+  "deezerId": 4222544582,
+  "isrc": "QMBZ92691162",
+  "title": "Crackology",
+  "artists": [
+   "PeelingFlesh"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 410202,
   "yearVerified": false
  },
  {
@@ -74084,6 +77120,19 @@
   "year": 2026,
   "genre": -1,
   "rank": 418720,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4222770392",
+  "deezerId": 4222770392,
+  "isrc": "CBEFB2605580",
+  "title": "Broken Love",
+  "artists": [
+   "Julian Fijma"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 459709,
   "yearVerified": false
  },
  {
@@ -74167,6 +77216,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4224343622",
+  "deezerId": 4224343622,
+  "isrc": "GBVEV2700085",
+  "title": "Christmas Song",
+  "artists": [
+   "Olga Amelchenko"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 480687,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4224499752",
   "deezerId": 4224499752,
   "isrc": "CBEFB2605576",
@@ -74221,6 +77283,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4225812022",
+  "deezerId": 4225812022,
+  "isrc": "QZWH32600700",
+  "title": "Sweet Tooth",
+  "artists": [
+   "Gus Dapperton",
+   "Ledbyher"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 516173,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4228072552",
   "deezerId": 4228072552,
   "isrc": "DEDH72300720",
@@ -74245,6 +77321,32 @@
   "genre": 85,
   "rank": 325400,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4228266982",
+  "deezerId": 4228266982,
+  "isrc": "FR9IN2600060",
+  "title": "I Fall In Love Too Easily",
+  "artists": [
+   "Thomas Dutronc"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 649898,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4228267002",
+  "deezerId": 4228267002,
+  "isrc": "FR9IN2600080",
+  "title": "Let's Get Lost",
+  "artists": [
+   "Thomas Dutronc"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 576610,
+  "yearVerified": false
  },
  {
   "id": "cat-4228705762",
@@ -74322,6 +77424,19 @@
   "year": 2026,
   "genre": 113,
   "rank": 353719,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4229438542",
+  "deezerId": 4229438542,
+  "isrc": "FR9W12635072",
+  "title": "Fake or true",
+  "artists": [
+   "Jersey"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 503195,
   "yearVerified": false
  },
  {
@@ -74503,6 +77618,32 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4231500712",
+  "deezerId": 4231500712,
+  "isrc": "GB2LD2610377",
+  "title": "Let Me Love You",
+  "artists": [
+   "Indigo Eyes"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 360190,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4231654142",
+  "deezerId": 4231654142,
+  "isrc": "USBQU2600176",
+  "title": "Loverboy",
+  "artists": [
+   "RIP Magic"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 475589,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4231661782",
   "deezerId": 4231661782,
   "isrc": "FRIDO2615565",
@@ -74540,6 +77681,33 @@
   "year": 2026,
   "genre": 129,
   "rank": 358009,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4231720922",
+  "deezerId": 4231720922,
+  "isrc": "USME32600498",
+  "title": "That's What I Want For Christmas",
+  "artists": [
+   "Kat Edmonson"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 456845,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4231786512",
+  "deezerId": 4231786512,
+  "isrc": "BRT2D2600801",
+  "title": "Ondas Invisíveis",
+  "artists": [
+   "Denis Duarte",
+   "Regiane Cordeiro"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 336974,
   "yearVerified": false
  },
  {
@@ -74707,6 +77875,21 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4233915522",
+  "deezerId": 4233915522,
+  "isrc": "FROV62643801",
+  "title": "Quatre Chansons françaises: I. Nuits de Juin",
+  "artists": [
+   "Cyrille Dubois",
+   "Orchestre national de Metz Grand Est",
+   "David Reiland"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 451970,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4233926152",
   "deezerId": 4233926152,
   "isrc": "UK7MC2600171",
@@ -74745,6 +77928,19 @@
   "year": 2026,
   "genre": 85,
   "rank": 491440,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4234136782",
+  "deezerId": 4234136782,
+  "isrc": "CACK42693002",
+  "title": "Fish Walk",
+  "artists": [
+   "Ken Fowser"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 548777,
   "yearVerified": false
  },
  {
@@ -74837,6 +78033,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 511832,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4235117992",
+  "deezerId": 4235117992,
+  "isrc": "DER372655201",
+  "title": "Do or Die",
+  "artists": [
+   "ELYSION"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 347516,
   "yearVerified": true
  },
  {
@@ -75062,6 +78271,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4236728062",
+  "deezerId": 4236728062,
+  "isrc": "AUUM72600246",
+  "title": "I Give Everything I Have 2 U",
+  "artists": [
+   "The Avalanches",
+   "Loaded Honey"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 632548,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4236746252",
   "deezerId": 4236746252,
   "isrc": "USUG12607823",
@@ -75074,6 +78297,20 @@
   "year": 2026,
   "genre": 116,
   "rank": 554062,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4237166482",
+  "deezerId": 4237166482,
+  "isrc": "GBAYC2600165",
+  "title": "Mompou: Combat del somni: No. 1, Damunt de tu només les flors (Arr. Allhoff for Trumpet and Piano)",
+  "artists": [
+   "Lucienne Renaudin Vary",
+   "Tim Allhoff"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 542430,
   "yearVerified": false
  },
  {
@@ -75213,6 +78450,33 @@
   "year": 2026,
   "genre": 132,
   "rank": 518550,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4237997012",
+  "deezerId": 4237997012,
+  "isrc": "QMDA62691171",
+  "title": "Hannah Montana",
+  "artists": [
+   "Rex Orange County"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 550454,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4238002612",
+  "deezerId": 4238002612,
+  "isrc": "NLF712605510",
+  "title": "FSU",
+  "artists": [
+   "Victor Ruiz",
+   "Kura"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 353451,
   "yearVerified": false
  },
  {
@@ -75469,6 +78733,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4240874902",
+  "deezerId": 4240874902,
+  "isrc": "DEXW92600035",
+  "title": "If you wanna come down",
+  "artists": [
+   "Fine"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 504959,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4241705392",
   "deezerId": 4241705392,
   "isrc": "FRZ052600023",
@@ -75520,6 +78797,19 @@
   "year": 2026,
   "genre": 152,
   "rank": 514624,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4242389612",
+  "deezerId": 4242389612,
+  "isrc": "DEB331688055",
+  "title": "Roma, Part V",
+  "artists": [
+   "Keith Jarrett"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 630414,
   "yearVerified": true
  },
  {
@@ -75789,6 +79079,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4244740061",
+  "deezerId": 4244740061,
+  "isrc": "GBAYC2101781",
+  "title": "Gluck: Orfeo ed Euridice, Wq. 30, Act 2: Melody. Dance of the Blessed Spirits (Arr. Kreisler for Violin and Piano)",
+  "artists": [
+   "Renaud Capuçon",
+   "Guillaume Bellom"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 513558,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4244740121",
   "deezerId": 4244740121,
   "isrc": "GBAYC2101782",
@@ -75889,6 +79193,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4245287661",
+  "deezerId": 4245287661,
+  "isrc": "QZJXY2602002",
+  "title": "Symphony No. 2 in G Minor \"Song of a New Race\": II. Slowly and deeply expressive",
+  "artists": [
+   "Gianandrea Noseda",
+   "National Symphony Orchestra, Kennedy Center"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 482691,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4245339191",
+  "deezerId": 4245339191,
+  "isrc": "QM9K31201713",
+  "title": "Donato’s Run",
+  "artists": [
+   "Adrian Younge",
+   "Ali Shaheed Muhammad"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 562382,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4245380141",
   "deezerId": 4245380141,
   "isrc": "DED622700016",
@@ -75927,6 +79259,46 @@
   "genre": 85,
   "rank": 383881,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4245594611",
+  "deezerId": 4245594611,
+  "isrc": "CAN112601219",
+  "title": "Ghosts",
+  "artists": [
+   "Passenger"
+  ],
+  "year": 2026,
+  "genre": 466,
+  "rank": 548917,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4245814511",
+  "deezerId": 4245814511,
+  "isrc": "NL8RL2691364",
+  "title": "Control",
+  "artists": [
+   "Joseph Capriati",
+   "Gennaro"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 384163,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4245989791",
+  "deezerId": 4245989791,
+  "isrc": "GBUR62001392",
+  "title": "Easy A",
+  "artists": [
+   "Kaufmann (DE)"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 428225,
+  "yearVerified": false
  },
  {
   "id": "cat-4246077111",
@@ -76007,6 +79379,20 @@
   "year": 2026,
   "genre": 98,
   "rank": 534877,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4246920581",
+  "deezerId": 4246920581,
+  "isrc": "DEN962634615",
+  "title": "J.S. Bach: Nun ruhen alle Wälder, BWV 392 (Performed on Piano)",
+  "artists": [
+   "Víkingur Ólafsson",
+   "Johann Sebastian Bach"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 757907,
   "yearVerified": false
  },
  {
@@ -76174,6 +79560,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4249427931",
+  "deezerId": 4249427931,
+  "isrc": "GBBPW2602730",
+  "title": "Self eXamined Endurance",
+  "artists": [
+   "Lorenzo Senni"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 472533,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4249452061",
   "deezerId": 4249452061,
   "isrc": "SE5AJ2602965",
@@ -76241,6 +79640,19 @@
   "year": 2026,
   "genre": 464,
   "rank": 409158,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4249721871",
+  "deezerId": 4249721871,
+  "isrc": "FRX762609275",
+  "title": "One-Way Mirror",
+  "artists": [
+   "Breakdown Of Sanity"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 375870,
   "yearVerified": true
  },
  {
@@ -76324,6 +79736,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4250696681",
+  "deezerId": 4250696681,
+  "isrc": "USUM72606032",
+  "title": "Nicole Kidman",
+  "artists": [
+   "ADÉLA"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 990767,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4250715161",
   "deezerId": 4250715161,
   "isrc": "USUG12605667",
@@ -76374,6 +79799,19 @@
   "year": 2026,
   "genre": 152,
   "rank": 585663,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4251613321",
+  "deezerId": 4251613321,
+  "isrc": "DED832600315",
+  "title": "FOUND ON ROAD DEAD",
+  "artists": [
+   "BIG ASS TRUCK I.E."
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 366919,
   "yearVerified": false
  },
  {
@@ -76687,6 +80125,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4258096211",
+  "deezerId": 4258096211,
+  "isrc": "DE1QW2662173",
+  "title": "Ghost Protocol",
+  "artists": [
+   "HNGT",
+   "Basilone"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 355059,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4258124421",
   "deezerId": 4258124421,
   "isrc": "GBBKS2600066",
@@ -76715,6 +80167,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4258322961",
+  "deezerId": 4258322961,
+  "isrc": "GBMVH2600360",
+  "title": "Mantra",
+  "artists": [
+   "Shygirl"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 417519,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4258489601",
   "deezerId": 4258489601,
   "isrc": "GBJPX2600483",
@@ -76738,6 +80203,35 @@
   "year": 2026,
   "genre": 106,
   "rank": 319217,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4258582291",
+  "deezerId": 4258582291,
+  "isrc": "US23A9772234",
+  "title": "Heartline",
+  "artists": [
+   "Caleb Kunle"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 485261,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4258667731",
+  "deezerId": 4258667731,
+  "isrc": "FR7JM2582002",
+  "title": "Ezekiel",
+  "artists": [
+   "Raphaël Imbert",
+   "Jean-Guihen Queyras",
+   "Pierre-François Blanchard",
+   "Sonny Troupé"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 548763,
   "yearVerified": false
  },
  {
@@ -76807,6 +80301,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4259234801",
+  "deezerId": 4259234801,
+  "isrc": "BRSME2600421",
+  "title": "Imagina Se Me Odiasse",
+  "artists": [
+   "Kaique e Felipe"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 831362,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4259318431",
   "deezerId": 4259318431,
   "isrc": "ITG272601125",
@@ -76818,6 +80325,19 @@
   "genre": 464,
   "rank": 312176,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4259480191",
+  "deezerId": 4259480191,
+  "isrc": "GBKQU2697462",
+  "title": "Fixation",
+  "artists": [
+   "Thomas Newson"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 366664,
+  "yearVerified": false
  },
  {
   "id": "cat-4259537121",
@@ -76832,6 +80352,20 @@
   "genre": 113,
   "rank": 862801,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4260091061",
+  "deezerId": 4260091061,
+  "isrc": "CA5KR2671260",
+  "title": "clay",
+  "artists": [
+   "Clara Kimera",
+   "Heartcoregirl"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 451458,
+  "yearVerified": false
  },
  {
   "id": "cat-4260091101",
@@ -76899,6 +80433,20 @@
   "year": 2026,
   "genre": 85,
   "rank": 718203,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4261269921",
+  "deezerId": 4261269921,
+  "isrc": "NLZ542600474",
+  "title": "Dance Till I Die",
+  "artists": [
+   "Timmy Trumpet",
+   "Olivia Sebastianelli"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 586909,
   "yearVerified": true
  },
  {
@@ -77075,6 +80623,46 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4263909772",
+  "deezerId": 4263909772,
+  "isrc": "UKGFN2600359",
+  "title": "3 Romances for Violin and Piano, Op. 22: No. 3, Leidenschaftlich schnell",
+  "artists": [
+   "Lea Birringer",
+   "Esther Birringer"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 411116,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4263913662",
+  "deezerId": 4263913662,
+  "isrc": "USQX92603612",
+  "title": "Symphony No. 3 in E-Flat Major, Op. 55 \"Eroica\" (Transcr. for Piano by Franz Liszt, S. 464/3): IV. Finale. Allegro molto",
+  "artists": [
+   "Igor Levit"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 536029,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4263937562",
+  "deezerId": 4263937562,
+  "isrc": "DED832700001",
+  "title": "Serum",
+  "artists": [
+   "Reliqa"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 351197,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4264065072",
   "deezerId": 4264065072,
   "isrc": "DEA892600411",
@@ -77235,6 +80823,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4265695492",
+  "deezerId": 4265695492,
+  "isrc": "DEN962601163",
+  "title": "Fantasiestücke, Op. 88 : Schumann: Fantasiestücke, Op. 88: III. Duett. Langsam und mit Ausdruck",
+  "artists": [
+   "Antje Weithaas",
+   "Marie-Elisabeth Hecker",
+   "Dénes Várjon"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 367690,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4265952392",
+  "deezerId": 4265952392,
+  "isrc": "UKKP22600940",
+  "title": "33",
+  "artists": [
+   "Marika Hackman"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 577784,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4265978332",
   "deezerId": 4265978332,
   "isrc": "DEN962601401",
@@ -77246,6 +80862,45 @@
   "genre": 98,
   "rank": 319998,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4265978342",
+  "deezerId": 4265978342,
+  "isrc": "DEN962601402",
+  "title": "Cornfield Chase (from \"Interstellar\")",
+  "artists": [
+   "Lang Lang"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 390582,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4266052082",
+  "deezerId": 4266052082,
+  "isrc": "QMDA72669386",
+  "title": "Smashburger",
+  "artists": [
+   "Callejon"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 419314,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4266068962",
+  "deezerId": 4266068962,
+  "isrc": "USA2P2662077",
+  "title": "Power",
+  "artists": [
+   "Sophia Stel"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 595601,
+  "yearVerified": true
  },
  {
   "id": "cat-4266204102",
@@ -77273,6 +80928,20 @@
   "genre": 106,
   "rank": 348013,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4266568352",
+  "deezerId": 4266568352,
+  "isrc": "FRX762631685",
+  "title": "God Gave Us Techno",
+  "artists": [
+   "Sarah de Warren",
+   "Tao Andra"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 469220,
+  "yearVerified": true
  },
  {
   "id": "cat-4266679752",
@@ -77343,6 +81012,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4267888532",
+  "deezerId": 4267888532,
+  "isrc": "GXBKV2600011",
+  "title": "Ascenda",
+  "artists": [
+   "GiGi FM"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 391603,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4268845892",
   "deezerId": 4268845892,
   "isrc": "QT8CG2688170",
@@ -77396,6 +81078,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4271438502",
+  "deezerId": 4271438502,
+  "isrc": "GXKXT2600803",
+  "title": "Everything Is Moving On",
+  "artists": [
+   "Floor Jansen"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 460286,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4271449812",
   "deezerId": 4271449812,
   "isrc": "GB6TW2600162",
@@ -77439,6 +81134,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4271836592",
+  "deezerId": 4271836592,
+  "isrc": "UKBSR2630001",
+  "title": "Devil Is Fine X Carpenter Brut",
+  "artists": [
+   "Zeal & Ardor",
+   "Carpenter Brut"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 453300,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4272365552",
   "deezerId": 4272365552,
   "isrc": "USC4R2668881",
@@ -77449,6 +81158,20 @@
   "year": 2026,
   "genre": 152,
   "rank": 472277,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4272486642",
+  "deezerId": 4272486642,
+  "isrc": "NL8RL2699317",
+  "title": "Never End",
+  "artists": [
+   "Will Sparks",
+   "Drest"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 372115,
   "yearVerified": false
  },
  {
@@ -77535,6 +81258,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4273267532",
+  "deezerId": 4273267532,
+  "isrc": "FXQ892600887",
+  "title": "My Pocket",
+  "artists": [
+   "Alex Keeper"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 709301,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4273376282",
   "deezerId": 4273376282,
   "isrc": "QM7282645481",
@@ -77586,6 +81322,19 @@
   "genre": 152,
   "rank": 584949,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4273815992",
+  "deezerId": 4273815992,
+  "isrc": "DEN962601530",
+  "title": "4 Gesänge, Op. 70 : Brahms: 4 Gesänge, Op. 70: No. 2, Lerchengesang (Arr. Osokins for Piano)",
+  "artists": [
+   "Georgijs Osokins"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 500478,
+  "yearVerified": false
  },
  {
   "id": "cat-4273844632",
@@ -77668,6 +81417,45 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4274840242",
+  "deezerId": 4274840242,
+  "isrc": "GBKQU2688859",
+  "title": "I Still Believe",
+  "artists": [
+   "Kusta5"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 361789,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4274843282",
+  "deezerId": 4274843282,
+  "isrc": "GBKQU2690976",
+  "title": "Nobody",
+  "artists": [
+   "Passing Clouds"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 308320,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4274844252",
+  "deezerId": 4274844252,
+  "isrc": "GBKQU2674714",
+  "title": "Wanna Be",
+  "artists": [
+   "Leavs."
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 327306,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4274926112",
   "deezerId": 4274926112,
   "isrc": "NL8RL2695949",
@@ -77680,6 +81468,19 @@
   "genre": 113,
   "rank": 597207,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4275460662",
+  "deezerId": 4275460662,
+  "isrc": "ZZA0Z2656276",
+  "title": "Jupiter",
+  "artists": [
+   "Ghostemane"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 680709,
+  "yearVerified": false
  },
  {
   "id": "cat-4275538202",
@@ -77751,6 +81552,33 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4276435982",
+  "deezerId": 4276435982,
+  "isrc": "GBKZV2600197",
+  "title": "waiting for me",
+  "artists": [
+   "Arlo Parks"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 626183,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4276529952",
+  "deezerId": 4276529952,
+  "isrc": "GBUR62001384",
+  "title": "Taste of the Night",
+  "artists": [
+   "A.D.H.S.",
+   "Kos:mo"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 383443,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4276529962",
   "deezerId": 4276529962,
   "isrc": "GBUR62001385",
@@ -77791,6 +81619,20 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4276603472",
+  "deezerId": 4276603472,
+  "isrc": "ITB842600486",
+  "title": "I Dominate U",
+  "artists": [
+   "T78",
+   "DJ Gollum"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 462009,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4276618172",
   "deezerId": 4276618172,
   "isrc": "USDPK2600060",
@@ -77802,6 +81644,19 @@
   "genre": 152,
   "rank": 537846,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4276738432",
+  "deezerId": 4276738432,
+  "isrc": "FR33T2699903",
+  "title": "Læknisgaldr",
+  "artists": [
+   "Heilung"
+  ],
+  "year": 2026,
+  "genre": 466,
+  "rank": 560892,
+  "yearVerified": false
  },
  {
   "id": "cat-4277060052",
@@ -77929,6 +81784,33 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4278715002",
+  "deezerId": 4278715002,
+  "isrc": "DEBZ72600276",
+  "title": "Headbanger",
+  "artists": [
+   "Daemon Grey"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 328030,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4278737282",
+  "deezerId": 4278737282,
+  "isrc": "DEE862600809",
+  "title": "Cello Concerto in B-Flat Major, G. 482/Arr. Grützmacher: II. Andantino grazioso",
+  "artists": [
+   "Jan Vogler",
+   "Moritzburg Ensemble"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 446168,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4278785452",
   "deezerId": 4278785452,
   "isrc": "GBARL2601309",
@@ -77993,6 +81875,20 @@
   "year": 2026,
   "genre": 98,
   "rank": 439973,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4279391392",
+  "deezerId": 4279391392,
+  "isrc": "BXJE72600002",
+  "title": "Circo",
+  "artists": [
+   "Paula Fernandes",
+   "Simone Mendes"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 571592,
   "yearVerified": false
  },
  {
@@ -78104,6 +82000,20 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4280061382",
+  "deezerId": 4280061382,
+  "isrc": "FRX762658706",
+  "title": "Absolute Onslaught",
+  "artists": [
+   "Employed To Serve",
+   "CABAL"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 303205,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4280272162",
   "deezerId": 4280272162,
   "isrc": "USQE92600260",
@@ -78116,6 +82026,19 @@
   "genre": 113,
   "rank": 438083,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4280344942",
+  "deezerId": 4280344942,
+  "isrc": "BEHP42600016",
+  "title": "Don't Forget (About Me)",
+  "artists": [
+   "Lost Frequencies"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 677352,
+  "yearVerified": true
  },
  {
   "id": "cat-4280350582",
@@ -78148,6 +82071,19 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4280430032",
+  "deezerId": 4280430032,
+  "isrc": "FRX762659926",
+  "title": "dizzy",
+  "artists": [
+   "strongboi"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 403598,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4280437602",
   "deezerId": 4280437602,
   "isrc": "QMDA62691170",
@@ -78159,6 +82095,20 @@
   "genre": 85,
   "rank": 520351,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4280512272",
+  "deezerId": 4280512272,
+  "isrc": "DEL022670006",
+  "title": "Your Love Walks Alone",
+  "artists": [
+   "Trentemøller",
+   "Sune Rose Wagner"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 469821,
+  "yearVerified": false
  },
  {
   "id": "cat-4280741982",
@@ -78198,6 +82148,20 @@
   "genre": 116,
   "rank": 639528,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4282151372",
+  "deezerId": 4282151372,
+  "isrc": "QZWDD2608390",
+  "title": "Dolla sign",
+  "artists": [
+   "Bad Gyal Jade",
+   "Yanishi"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 409157,
+  "yearVerified": false
  },
  {
   "id": "cat-4283830192",
@@ -78386,6 +82350,33 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4287331902",
+  "deezerId": 4287331902,
+  "isrc": "GBCFB2600409",
+  "title": "WYWD",
+  "artists": [
+   "Carlita",
+   "Justine Skye"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 351777,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4287499712",
+  "deezerId": 4287499712,
+  "isrc": "GBBPW2602901",
+  "title": "When It Rain",
+  "artists": [
+   "Danny Brown"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 462591,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4287667172",
   "deezerId": 4287667172,
   "isrc": "USA2P2665918",
@@ -78397,6 +82388,32 @@
   "genre": 113,
   "rank": 838294,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4287909192",
+  "deezerId": 4287909192,
+  "isrc": "DEZC62600175",
+  "title": "Lee Millers' Lens",
+  "artists": [
+   "Melina Paxinos"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 325918,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4288087142",
+  "deezerId": 4288087142,
+  "isrc": "CBEFB2606643",
+  "title": "Out of My Head",
+  "artists": [
+   "ANOTR"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 667300,
+  "yearVerified": false
  },
  {
   "id": "cat-4288100312",
@@ -78425,6 +82442,45 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4288290402",
+  "deezerId": 4288290402,
+  "isrc": "GBCFB2600664",
+  "title": "Bliss",
+  "artists": [
+   "Roosevelt"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 543619,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4288476062",
+  "deezerId": 4288476062,
+  "isrc": "USA2P2665990",
+  "title": "Ivy",
+  "artists": [
+   "Worldpeace DMT"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 332540,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4288859252",
+  "deezerId": 4288859252,
+  "isrc": "CA5KR2673519",
+  "title": "Lifeline",
+  "artists": [
+   "Falden"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 337128,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4288864752",
   "deezerId": 4288864752,
   "isrc": "US2S72513033",
@@ -78436,6 +82492,19 @@
   "year": 2026,
   "genre": 106,
   "rank": 438861,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4288876612",
+  "deezerId": 4288876612,
+  "isrc": "BRL1V2600065",
+  "title": "Cavaquinho Descaradinho",
+  "artists": [
+   "Psirico"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 533498,
   "yearVerified": false
  },
  {
@@ -78522,6 +82591,33 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4290568782",
+  "deezerId": 4290568782,
+  "isrc": "GBDGQ1426504",
+  "title": "Symphony No. 3 in A Minor, Op. 56, MWV N 18 \"Scottish\": IV. Allegro vivacissimo – Allegro maestoso assai",
+  "artists": [
+   "John Eliot Gardiner",
+   "London Symphony Orchestra"
+  ],
+  "year": 2014,
+  "genre": 98,
+  "rank": 424018,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4290892602",
+  "deezerId": 4290892602,
+  "isrc": "FR9W12640292",
+  "title": "The Moon That Falls Only Here",
+  "artists": [
+   "Heaven in Her Arms"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 327832,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4290918432",
   "deezerId": 4290918432,
   "isrc": "USC4R2668836",
@@ -78533,6 +82629,21 @@
   "genre": 152,
   "rank": 581811,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4291092612",
+  "deezerId": 4291092612,
+  "isrc": "FR5R02601165",
+  "title": "RISE",
+  "artists": [
+   "Aron Ottignon",
+   "Samuel Dubois",
+   "Courtney Pine"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 524506,
+  "yearVerified": false
  },
  {
   "id": "cat-4291497692",
@@ -78550,6 +82661,33 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4291503182",
+  "deezerId": 4291503182,
+  "isrc": "DED832600516",
+  "title": "where did you go? ○",
+  "artists": [
+   "We Came As Romans",
+   "Headwreck"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 380492,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4291546552",
+  "deezerId": 4291546552,
+  "isrc": "QT6692669102",
+  "title": "City of Ghosts",
+  "artists": [
+   "LUCIE SUE"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 493383,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4291908142",
   "deezerId": 4291908142,
   "isrc": "QT92D2600292",
@@ -78564,6 +82702,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4292231482",
+  "deezerId": 4292231482,
+  "isrc": "QZTLA2679240",
+  "title": "Don in my city pt. 2",
+  "artists": [
+   "jayy v vondon",
+   "French Montana",
+   "Max B"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 570292,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4292486912",
+  "deezerId": 4292486912,
+  "isrc": "QMDA72695574",
+  "title": "Scavenger",
+  "artists": [
+   "Power Trip"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 427836,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4292620742",
   "deezerId": 4292620742,
   "isrc": "USZ4V2600578",
@@ -78575,6 +82741,32 @@
   "year": 2026,
   "genre": 85,
   "rank": 336088,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4292628512",
+  "deezerId": 4292628512,
+  "isrc": "QMBZ92676198",
+  "title": "Pull Me Under",
+  "artists": [
+   "bby"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 396552,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4292845192",
+  "deezerId": 4292845192,
+  "isrc": "CAN112601417",
+  "title": "DIRTY PARTS OF HEAVEN",
+  "artists": [
+   "Crawlers"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 441499,
   "yearVerified": false
  },
  {
@@ -78776,6 +82968,33 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4293892512",
+  "deezerId": 4293892512,
+  "isrc": "QMFME2606089",
+  "title": "Chicken Soup for the Rave",
+  "artists": [
+   "4am Kru",
+   "Shout Out Out Out Out"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 387373,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4294206442",
+  "deezerId": 4294206442,
+  "isrc": "QZWDD2632958",
+  "title": "Not Yet, But Maybe",
+  "artists": [
+   "Khalia"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 612089,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4294516992",
   "deezerId": 4294516992,
   "isrc": "USUG12600665",
@@ -78787,6 +83006,22 @@
   "year": 2026,
   "genre": 165,
   "rank": 686292,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4294618582",
+  "deezerId": 4294618582,
+  "isrc": "BE4JP2600051",
+  "title": "How You Move",
+  "artists": [
+   "Charlotte De Witte",
+   "Avalon",
+   "GMS",
+   "Age of Acid"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 528003,
   "yearVerified": true
  },
  {
@@ -78816,6 +83051,34 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4295017962",
+  "deezerId": 4295017962,
+  "isrc": "DEE862600824",
+  "title": "All by myself",
+  "artists": [
+   "Esther Abrami",
+   "The City of Prague Philharmonic Orchestra",
+   "Irene Delgado-Jiménez"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 408408,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4295162782",
+  "deezerId": 4295162782,
+  "isrc": "CAZ8K2600005",
+  "title": "Tip of My Tongue",
+  "artists": [
+   "Helena Deland"
+  ],
+  "year": 2026,
+  "genre": 466,
+  "rank": 368625,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4295180312",
   "deezerId": 4295180312,
   "isrc": "QMRSZ2602495",
@@ -78830,6 +83093,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4295362402",
+  "deezerId": 4295362402,
+  "isrc": "USSM12604511",
+  "title": "Song Without Words in G Major (\"Pleading\")",
+  "artists": [
+   "Jeneba Kanneh-Mason"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 448838,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4295382992",
   "deezerId": 4295382992,
   "isrc": "USSM12603722",
@@ -78841,6 +83117,19 @@
   "year": 2026,
   "genre": 165,
   "rank": 573082,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4295445732",
+  "deezerId": 4295445732,
+  "isrc": "FRX762690315",
+  "title": "Space In My Heart",
+  "artists": [
+   "Busy Signal"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 506819,
   "yearVerified": false
  },
  {
@@ -78913,6 +83202,21 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4295992252",
+  "deezerId": 4295992252,
+  "isrc": "DEN962634102",
+  "title": "Silvestrov: 5 Pieces: No. 1, Elegie",
+  "artists": [
+   "Daniel Hope",
+   "Vitalii Kyianytsia",
+   "Valentin Silvestrov"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 364457,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4296129642",
   "deezerId": 4296129642,
   "isrc": "QMRSZ2602206",
@@ -78926,6 +83230,61 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4296185282",
+  "deezerId": 4296185282,
+  "isrc": "QMFME2627190",
+  "title": "close to you",
+  "artists": [
+   "grentperez",
+   "UMI"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 376541,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4296195922",
+  "deezerId": 4296195922,
+  "isrc": "QMRSZ2602205",
+  "title": "LET THERE BE LIGHT",
+  "artists": [
+   "Polyphia"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 682152,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4296348412",
+  "deezerId": 4296348412,
+  "isrc": "ATN262645702",
+  "title": "Escapegoat",
+  "artists": [
+   "Heathen"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 310620,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4297294102",
+  "deezerId": 4297294102,
+  "isrc": "QMFME2632690",
+  "title": "Round Trip",
+  "artists": [
+   "Billy Mohler",
+   "Joe LaBarbera",
+   "Mark Turner"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 350541,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4297585372",
   "deezerId": 4297585372,
   "isrc": "GB5KW2601148",
@@ -78937,6 +83296,98 @@
   "year": 2026,
   "genre": 464,
   "rank": 533694,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4297831912",
+  "deezerId": 4297831912,
+  "isrc": "ATN262646707",
+  "title": "D.S.S. (Death Strikes Suddenly)",
+  "artists": [
+   "Evil Invaders"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 444453,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4297910642",
+  "deezerId": 4297910642,
+  "isrc": "FRPJ72600023",
+  "title": "Unchained",
+  "artists": [
+   "Klone"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 465533,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4298209662",
+  "deezerId": 4298209662,
+  "isrc": "DEYO62600243",
+  "title": "Liberate",
+  "artists": [
+   "Ice Sealed Eyes"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 350493,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4298415992",
+  "deezerId": 4298415992,
+  "isrc": "US2S72508051",
+  "title": "Shadowplay",
+  "artists": [
+   "Automatic"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 455778,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4298687762",
+  "deezerId": 4298687762,
+  "isrc": "GBENL2604972",
+  "title": "Time zones",
+  "artists": [
+   "SASSY 009"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 413487,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4299224042",
+  "deezerId": 4299224042,
+  "isrc": "DEY472679474",
+  "title": "Master Of Reality",
+  "artists": [
+   "Victor Ruiz",
+   "Alex Stein"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 402028,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4299237772",
+  "deezerId": 4299237772,
+  "isrc": "GBK3W2503723",
+  "title": "Blood Brothers",
+  "artists": [
+   "Bleachers"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 525457,
   "yearVerified": true
  },
  {
@@ -78954,6 +83405,22 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4300199062",
+  "deezerId": 4300199062,
+  "isrc": "UK7MC2600296",
+  "title": "Expression On Your Face",
+  "artists": [
+   "Mechatok",
+   "Robyn",
+   "Ecco2k",
+   "Bladee"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 380556,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4300988202",
   "deezerId": 4300988202,
   "isrc": "BCVV82600036",
@@ -78964,6 +83431,47 @@
   "year": 2026,
   "genre": 80,
   "rank": 747157,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4302337962",
+  "deezerId": 4302337962,
+  "isrc": "CAN112601608",
+  "title": "One Car Hits Another",
+  "artists": [
+   "Panchiko",
+   "Mei Semones"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 416491,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4303122202",
+  "deezerId": 4303122202,
+  "isrc": "GBAFL2600056",
+  "title": "I Know You Are (But What Am I Thinking)",
+  "artists": [
+   "@"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 545335,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4304373772",
+  "deezerId": 4304373772,
+  "isrc": "QZTV32654015",
+  "title": "Love in a Lovely Way",
+  "artists": [
+   "Lila Iké",
+   "Zion I Kings"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 589374,
   "yearVerified": false
  },
  {
@@ -78979,6 +83487,32 @@
   "genre": 85,
   "rank": 581609,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4304570212",
+  "deezerId": 4304570212,
+  "isrc": "QMV8L2639712",
+  "title": "Let the Bad Times Roll",
+  "artists": [
+   "Dan English"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 595444,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4304578592",
+  "deezerId": 4304578592,
+  "isrc": "QMV8L2639702",
+  "title": "Bon Voyage",
+  "artists": [
+   "Alex Izenberg"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 609977,
+  "yearVerified": false
  },
  {
   "id": "cat-4304940702",
@@ -79146,6 +83680,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4305642912",
+  "deezerId": 4305642912,
+  "isrc": "NL8RL2694726",
+  "title": "IF ONLY",
+  "artists": [
+   "Khal!l"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 520705,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4306050492",
   "deezerId": 4306050492,
   "isrc": "GBUR62001396",
@@ -79158,6 +83705,19 @@
   "genre": 106,
   "rank": 412190,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4306227492",
+  "deezerId": 4306227492,
+  "isrc": "GBCEL2600271",
+  "title": "Random Violence",
+  "artists": [
+   "Hot Chip"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 620790,
+  "yearVerified": true
  },
  {
   "id": "cat-4306414872",
@@ -79185,6 +83745,33 @@
   "year": 2026,
   "genre": 106,
   "rank": 344720,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4306586472",
+  "deezerId": 4306586472,
+  "isrc": "QZNMX2695946",
+  "title": "BURN (feat. Ava Max)",
+  "artists": [
+   "BigXthaPlug",
+   "Ava Max"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 605221,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4306593342",
+  "deezerId": 4306593342,
+  "isrc": "ITQME2600006",
+  "title": "Perfect Darkness",
+  "artists": [
+   "Roberto Cacciapaglia"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 451366,
   "yearVerified": false
  },
  {
@@ -79228,6 +83815,60 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4310484812",
+  "deezerId": 4310484812,
+  "isrc": "USEP42618005",
+  "title": "Giving In",
+  "artists": [
+   "Sleep Theory"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 566639,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4311645642",
+  "deezerId": 4311645642,
+  "isrc": "US2642676801",
+  "title": "Broken Little Doll",
+  "artists": [
+   "Myrkur",
+   "Kalandra"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 581802,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4313257202",
+  "deezerId": 4313257202,
+  "isrc": "FRX872615521",
+  "title": "hands",
+  "artists": [
+   "20TOKENS"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 340489,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4313302302",
+  "deezerId": 4313302302,
+  "isrc": "QZWDD2660984",
+  "title": "2nd Time Around",
+  "artists": [
+   "Jah Lil",
+   "Protoje"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 617911,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4313884492",
   "deezerId": 4313884492,
   "isrc": "USUG12600653",
@@ -79267,6 +83908,86 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4314529742",
+  "deezerId": 4314529742,
+  "isrc": "FR9W12440366",
+  "title": "Celebrity Spin",
+  "artists": [
+   "Point Mort"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 351861,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4314976032",
+  "deezerId": 4314976032,
+  "isrc": "GBLV62608090",
+  "title": "Neckwear",
+  "artists": [
+   "Mochakk",
+   "Channel Tres"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 558044,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4314987652",
+  "deezerId": 4314987652,
+  "isrc": "BE9OU2601001",
+  "title": "Close my eyes",
+  "artists": [
+   "Lous and The Yakuza",
+   "Suki Waterhouse"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 742470,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4315157232",
+  "deezerId": 4315157232,
+  "isrc": "US2J72650403",
+  "title": "Heaven Can Wait",
+  "artists": [
+   "Nabihah Iqbal"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 432309,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4315250822",
+  "deezerId": 4315250822,
+  "isrc": "USSUB2677201",
+  "title": "Creek",
+  "artists": [
+   "waterbaby"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 430133,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4315557782",
+  "deezerId": 4315557782,
+  "isrc": "QMV8L2639706",
+  "title": "Something Fragile",
+  "artists": [
+   "Cate Le Bon"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 473438,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4315616672",
   "deezerId": 4315616672,
   "isrc": "GBAYE2600505",
@@ -79277,6 +83998,21 @@
   "year": 2026,
   "genre": 85,
   "rank": 639779,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4315706512",
+  "deezerId": 4315706512,
+  "isrc": "CBEFB2607257",
+  "title": "Think of You",
+  "artists": [
+   "KETTAMA",
+   "Prospa",
+   "Rohan Pinnock-Hamilton"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 726673,
   "yearVerified": true
  },
  {
@@ -79294,6 +84030,124 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4316073002",
+  "deezerId": 4316073002,
+  "isrc": "BRRGE2601609",
+  "title": "Gilete no Box",
+  "artists": [
+   "Grupo Menos É Mais"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 921942,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4316367242",
+  "deezerId": 4316367242,
+  "isrc": "GBUM72605810",
+  "title": "Mr Right",
+  "artists": [
+   "Nia Smith"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 515941,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4317027002",
+  "deezerId": 4317027002,
+  "isrc": "FR9W12628228",
+  "title": "La solennelle",
+  "artists": [
+   "Claire days"
+  ],
+  "year": 2026,
+  "genre": 466,
+  "rank": 467167,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4317103062",
+  "deezerId": 4317103062,
+  "isrc": "CBEFB2607230",
+  "title": "Bobblehead",
+  "artists": [
+   "Didi Han"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 359826,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4317742152",
+  "deezerId": 4317742152,
+  "isrc": "QT8QN2615112",
+  "title": "H.O.U.S.E",
+  "artists": [
+   "HUGEL",
+   "Snoop Dogg"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 789724,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4317846822",
+  "deezerId": 4317846822,
+  "isrc": "USSM12603982",
+  "title": "III. One Day (Suite from Pirates of the Caribbean)",
+  "artists": [
+   "Anna Lapwood"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 424952,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4317855292",
+  "deezerId": 4317855292,
+  "isrc": "CA1TB2600050",
+  "title": "War Beyond Words",
+  "artists": [
+   "Devin Townsend"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 452730,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4317866722",
+  "deezerId": 4317866722,
+  "isrc": "GBDHC2554711",
+  "title": "If You Found This It's Probably Too Late",
+  "artists": [
+   "Hellripper"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 338567,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4317949572",
+  "deezerId": 4317949572,
+  "isrc": "CAN112601104",
+  "title": "Maybe This Time",
+  "artists": [
+   "Laura Anglade"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 558115,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4318246212",
   "deezerId": 4318246212,
   "isrc": "USRC12601481",
@@ -79305,6 +84159,33 @@
   "year": 2026,
   "genre": 165,
   "rank": 724527,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4319093072",
+  "deezerId": 4319093072,
+  "isrc": "IL7792600006",
+  "title": "Firebird",
+  "artists": [
+   "Zafio",
+   "Ben Wendel"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 559132,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4319210442",
+  "deezerId": 4319210442,
+  "isrc": "DED832600564",
+  "title": "Night Whispers & Shining Lights",
+  "artists": [
+   "Soilwork"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 543487,
   "yearVerified": true
  },
  {
@@ -79322,6 +84203,47 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4319350342",
+  "deezerId": 4319350342,
+  "isrc": "QZVEM0295290",
+  "title": "Another Night (It's Just) ft. Theo Croker, Daru Jones, Oli Rockberger",
+  "artists": [
+   "China Moses",
+   "Daru Jones",
+   "Theo Croker"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 393805,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4319634732",
+  "deezerId": 4319634732,
+  "isrc": "GBDHC2660408",
+  "title": "Reminders of Hell",
+  "artists": [
+   "Suicide Silence"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 478733,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4320271112",
+  "deezerId": 4320271112,
+  "isrc": "US3R42653898",
+  "title": "Sucker Punch",
+  "artists": [
+   "Anamanaguchi"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 450641,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4320589852",
   "deezerId": 4320589852,
   "isrc": "USUM72609070",
@@ -79332,6 +84254,34 @@
   "year": 2026,
   "genre": 129,
   "rank": 492319,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4320758832",
+  "deezerId": 4320758832,
+  "isrc": "QM24S2605932",
+  "title": "Sometimes I Get Emotional",
+  "artists": [
+   "After Louise"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 379381,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4320788902",
+  "deezerId": 4320788902,
+  "isrc": "BXKG22600754",
+  "title": "Escondendo o Rosto",
+  "artists": [
+   "GP DA ZL",
+   "MC Jvila",
+   "Nilo"
+  ],
+  "year": 2026,
+  "genre": 169,
+  "rank": 358208,
   "yearVerified": false
  },
  {
@@ -79375,6 +84325,46 @@
   "genre": 165,
   "rank": 875328,
   "yearVerified": true
+ },
+ {
+  "id": "cat-4321897012",
+  "deezerId": 4321897012,
+  "isrc": "GBCFB2600731",
+  "title": "Lost in the View",
+  "artists": [
+   "Elderbrook"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 489457,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4322630812",
+  "deezerId": 4322630812,
+  "isrc": "FRX872633303",
+  "title": "Kind Of Pastel",
+  "artists": [
+   "Rémi Panossian Trio"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 563111,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4322727342",
+  "deezerId": 4322727342,
+  "isrc": "BRSME2600835",
+  "title": "KINKY",
+  "artists": [
+   "PEDRO SAMPAIO",
+   "Kenia Os"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 573117,
+  "yearVerified": false
  },
  {
   "id": "cat-4322781402",
@@ -79432,6 +84422,33 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4323336292",
+  "deezerId": 4323336292,
+  "isrc": "GBBBC2600072",
+  "title": "Flute Concerto in A Minor, H. 431: I. Allegro assai (Arr. Parkin)",
+  "artists": [
+   "Jess Gillam"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 372714,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4323336372",
+  "deezerId": 4323336372,
+  "isrc": "GBBBC2600321",
+  "title": "Gjeilo: Madison Midwinter",
+  "artists": [
+   "Ola Gjeilo",
+   "Matthew Sharp"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 341828,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4323336462",
   "deezerId": 4323336462,
   "isrc": "USGR10001281",
@@ -79442,6 +84459,22 @@
   "year": 2026,
   "genre": 129,
   "rank": 753144,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4323337752",
+  "deezerId": 4323337752,
+  "isrc": "USUM72607569",
+  "title": "Always",
+  "artists": [
+   "Jeremy Pelt",
+   "Monty Alexander",
+   "Ron Carter",
+   "Steve Jordan"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 390905,
   "yearVerified": false
  },
  {
@@ -79504,6 +84537,85 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4324029042",
+  "deezerId": 4324029042,
+  "isrc": "GBCVZ2600235",
+  "title": "Billie Holiday",
+  "artists": [
+   "Warpaint"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 470786,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4324299592",
+  "deezerId": 4324299592,
+  "isrc": "QT47L2600228",
+  "title": "Staring At The Sun",
+  "artists": [
+   "FISHER",
+   "Laurel"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 687887,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4324455792",
+  "deezerId": 4324455792,
+  "isrc": "DED832600422",
+  "title": "My Confession",
+  "artists": [
+   "MOTHICA"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 352582,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4325311582",
+  "deezerId": 4325311582,
+  "isrc": "USZ4V2600662",
+  "title": "Aldehydes and Ketones",
+  "artists": [
+   "Ecco2k"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 452514,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4328075642",
+  "deezerId": 4328075642,
+  "isrc": "USQX92605593",
+  "title": "God Forbid a Girl Gets Used To This",
+  "artists": [
+   "Emily Bear"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 559094,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4328077092",
+  "deezerId": 4328077092,
+  "isrc": "USSM12604542",
+  "title": "Orphée's Bedroom",
+  "artists": [
+   "Olivia Belli"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 836340,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4328337322",
   "deezerId": 4328337322,
   "isrc": "GXKXT2603115",
@@ -79517,6 +84629,123 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4328692062",
+  "deezerId": 4328692062,
+  "isrc": "BEDX22600007",
+  "title": "Make Love",
+  "artists": [
+   "Henri PFR",
+   "Carston"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 730473,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4328694952",
+  "deezerId": 4328694952,
+  "isrc": "DED832600568",
+  "title": "Lost Children",
+  "artists": [
+   "Beast In Black"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 578292,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4328815732",
+  "deezerId": 4328815732,
+  "isrc": "UKW3Z2603012",
+  "title": "Heartbreak Heatwave",
+  "artists": [
+   "Mattiel"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 394438,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4328843122",
+  "deezerId": 4328843122,
+  "isrc": "DEE862600719",
+  "title": "Christmas Lullaby (Arr. for Cello & Orchestra by Max Knoth)",
+  "artists": [
+   "Raphaela Gromes",
+   "The City of Prague Philharmonic Orchestra",
+   "Gordon Hamilton"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 440793,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4328862882",
+  "deezerId": 4328862882,
+  "isrc": "FXQ802600067",
+  "title": "ECOA",
+  "artists": [
+   "O.B.F",
+   "Marina Peralta",
+   "Dow Raiz",
+   "Red Lion",
+   "Laylah Arruda",
+   "Uale Figura"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 597135,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4328884822",
+  "deezerId": 4328884822,
+  "isrc": "ATN262719701",
+  "title": "We Are Fire",
+  "artists": [
+   "Delain",
+   "Fabienne Erni",
+   "Paolo Ribaldini",
+   "Noa Gruman"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 462871,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4329160892",
+  "deezerId": 4329160892,
+  "isrc": "BXLKS2600053",
+  "title": "Hypnotize",
+  "artists": [
+   "Vintage Culture",
+   "Zaark"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 672425,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4329199022",
+  "deezerId": 4329199022,
+  "isrc": "NLF712604766",
+  "title": "Promise You",
+  "artists": [
+   "D.O.D",
+   "Flynn"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 517845,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4329409942",
   "deezerId": 4329409942,
   "isrc": "USSM12604641",
@@ -79527,6 +84756,19 @@
   "year": 2026,
   "genre": 85,
   "rank": 831071,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4329498452",
+  "deezerId": 4329498452,
+  "isrc": "DED832600546",
+  "title": "Sutures",
+  "artists": [
+   "Machine Head"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 666509,
   "yearVerified": true
  },
  {
@@ -79543,6 +84785,158 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4330000752",
+  "deezerId": 4330000752,
+  "isrc": "QMFMF2600034",
+  "title": "Dance It Out",
+  "artists": [
+   "Zimmer90"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 485680,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4330127912",
+  "deezerId": 4330127912,
+  "isrc": "FRX452631358",
+  "title": "Deathwish",
+  "artists": [
+   "Northlane"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 564702,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4330169502",
+  "deezerId": 4330169502,
+  "isrc": "GBUM72605057",
+  "title": "I Don't Want It",
+  "artists": [
+   "Victor Ray"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 668910,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4331285412",
+  "deezerId": 4331285412,
+  "isrc": "NLF712604022",
+  "title": "What If I Told You",
+  "artists": [
+   "Armin van Buuren",
+   "Douwe Bob"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 832639,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4331337142",
+  "deezerId": 4331337142,
+  "isrc": "DEXO12690857",
+  "title": "Crossover",
+  "artists": [
+   "KAS:ST",
+   "Final Request"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 355847,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4331404272",
+  "deezerId": 4331404272,
+  "isrc": "GBELX2610197",
+  "title": "Concerto for Cello No. 1: III. Cantabile con rubato",
+  "artists": [
+   "Christoph Croisé",
+   "Vancouver Contemporary Orchestra",
+   "Clyde Mitchell"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 424477,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4331431602",
+  "deezerId": 4331431602,
+  "isrc": "US5ED2600592",
+  "title": "War Bait",
+  "artists": [
+   "Ho99o9",
+   "Slay Squad"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 502847,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4331773012",
+  "deezerId": 4331773012,
+  "isrc": "UKSVW2000375",
+  "title": "Mostly",
+  "artists": [
+   "DJ Zinc"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 317788,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4331907042",
+  "deezerId": 4331907042,
+  "isrc": "FRX872649505",
+  "title": "Not This Time",
+  "artists": [
+   "The Hardkiss",
+   "Beyond The Black"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 621829,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4331908842",
+  "deezerId": 4331908842,
+  "isrc": "QZ2L62600138",
+  "title": "Oh Medaase!",
+  "artists": [
+   "El Michels Affair",
+   "Ahemaa Nwomkro"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 632712,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4332291352",
+  "deezerId": 4332291352,
+  "isrc": "USA2P2645370",
+  "title": "All Your Love",
+  "artists": [
+   "Rivo",
+   "Nohr",
+   "Paige Cavell"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 638209,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4332325242",
   "deezerId": 4332325242,
   "isrc": "USUM72609026",
@@ -79554,6 +84948,33 @@
   "year": 2026,
   "genre": 116,
   "rank": 717503,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4332369292",
+  "deezerId": 4332369292,
+  "isrc": "NLRD52657853",
+  "title": "Higher",
+  "artists": [
+   "Spriitzz",
+   "Confidence Man"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 550044,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4332377352",
+  "deezerId": 4332377352,
+  "isrc": "FR7MS2626882",
+  "title": "Fantaisie in E minor, Op.79",
+  "artists": [
+   "Guillaume Bellom"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 427687,
   "yearVerified": false
  },
  {
@@ -79571,6 +84992,297 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4332394142",
+  "deezerId": 4332394142,
+  "isrc": "FR7MS2648962",
+  "title": "Peer Gynt Suite No.1, Op.46 (arr. for Clarinet & Piano): Anitra's Dance",
+  "artists": [
+   "Célimène Daudet"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 417418,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4332395252",
+  "deezerId": 4332395252,
+  "isrc": "QM24S2606093",
+  "title": "Just Friends",
+  "artists": [
+   "Snoh Aalegra"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 583692,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4332469442",
+  "deezerId": 4332469442,
+  "isrc": "QMRSZ2603406",
+  "title": "Ghosts",
+  "artists": [
+   "Staind"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 613649,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4333685232",
+  "deezerId": 4333685232,
+  "isrc": "FRX872655503",
+  "title": "Mama Used To Say",
+  "artists": [
+   "Jaden Bojsen"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 747920,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4334039432",
+  "deezerId": 4334039432,
+  "isrc": "QMFME2637510",
+  "title": "Guess I'm Stuck In The Dark",
+  "artists": [
+   "Heartworms"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 489810,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4334132532",
+  "deezerId": 4334132532,
+  "isrc": "GBFYT2600076",
+  "title": "Young And Dumb",
+  "artists": [
+   "Everything But The Girl"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 691770,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4334133012",
+  "deezerId": 4334133012,
+  "isrc": "FRX872628481",
+  "title": "Run",
+  "artists": [
+   "Enfant Sauvage",
+   "Weval"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 648023,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4334430032",
+  "deezerId": 4334430032,
+  "isrc": "GBBKS2600410",
+  "title": "Starlight",
+  "artists": [
+   "Danny L Harle",
+   "PinkPantheress",
+   "Skrillex",
+   "ring noord"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 581538,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4335011832",
+  "deezerId": 4335011832,
+  "isrc": "FRX872637360",
+  "title": "Nah Follow",
+  "artists": [
+   "Jah Mason",
+   "Derrick Sound"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 579358,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4335138552",
+  "deezerId": 4335138552,
+  "isrc": "JPF662600134",
+  "title": "Last Christmas",
+  "artists": [
+   "H ZETTRIO"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 493304,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4335528142",
+  "deezerId": 4335528142,
+  "isrc": "GBAFL2600227",
+  "title": "Am I Even Real?",
+  "artists": [
+   "Ex:Re"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 647546,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4335528292",
+  "deezerId": 4335528292,
+  "isrc": "USMTD2600090",
+  "title": "Run Away From the Mob",
+  "artists": [
+   "Queens Of The Stone Age"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 307460,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4337168212",
+  "deezerId": 4337168212,
+  "isrc": "QTA7T2655108",
+  "title": "Bring You Back",
+  "artists": [
+   "Oceans Ate Alaska"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 444691,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4337350852",
+  "deezerId": 4337350852,
+  "isrc": "DEN962601650",
+  "title": "Halvorsen: Chant de la \"Veslemøy\"",
+  "artists": [
+   "María Dueñas",
+   "Orchestre Métropolitain",
+   "Yannick Nézet-Séguin",
+   "Johan Halvorsen"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 440090,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337350872",
+  "deezerId": 4337350872,
+  "isrc": "DEN962502410",
+  "title": "Sakamoto: Merry Christmas Mr. Lawrence",
+  "artists": [
+   "Nobuyuki Tsujii",
+   "Ryuichi Sakamoto"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 468506,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337350882",
+  "deezerId": 4337350882,
+  "isrc": "GBBBC2600283",
+  "title": "Dubra: Ave Maria I (Arr. Baker for String Ensemble)",
+  "artists": [
+   "Kristīne Balanas",
+   "Margarita Balanas",
+   "Felix Pascoe",
+   "Hugh Mackay"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 393095,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337350992",
+  "deezerId": 4337350992,
+  "isrc": "GBBBC2600222",
+  "title": "Bloch: From Jewish Life, B. 54 (Arr. C. Palmer for Cello & Strings): I. Prayer",
+  "artists": [
+   "Sheku Kanneh-Mason",
+   "London Philharmonic Orchestra",
+   "Edward Gardner"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 463518,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337351432",
+  "deezerId": 4337351432,
+  "isrc": "FR9W12631516",
+  "title": "Les temps perdus",
+  "artists": [
+   "Cascadeur"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 811102,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337353812",
+  "deezerId": 4337353812,
+  "isrc": "GBUM72605484",
+  "title": "Tell The Bees",
+  "artists": [
+   "Max Richter"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 449392,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4337354712",
+  "deezerId": 4337354712,
+  "isrc": "GBAJY2648316",
+  "title": "Jarrett: My Song (Arr. Osborne for Piano)",
+  "artists": [
+   "Steven Osborne",
+   "Keith Jarrett"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 399928,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337354812",
+  "deezerId": 4337354812,
+  "isrc": "GBUM72605942",
+  "title": "Dawn Chorus - I. Paradisaea - Andante moderato",
+  "artists": [
+   "Erland Cooper",
+   "BBC Scottish Symphony Orchestra",
+   "Freya Goldmark",
+   "Janne Nisonen"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 399194,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4337389322",
   "deezerId": 4337389322,
   "isrc": "QRVEB2600067",
@@ -79584,6 +85296,46 @@
   "yearVerified": false
  },
  {
+  "id": "cat-4337464622",
+  "deezerId": 4337464622,
+  "isrc": "JPPO02603345",
+  "title": "Akira's Theme",
+  "artists": [
+   "Akira Kosemura"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 377652,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337465102",
+  "deezerId": 4337465102,
+  "isrc": "GBUM72603918",
+  "title": "Rocket Science",
+  "artists": [
+   "Jazzy"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 534319,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4337465162",
+  "deezerId": 4337465162,
+  "isrc": "USUG12609307",
+  "title": "Fight For Love",
+  "artists": [
+   "Alesso",
+   "Kaitlin Aragon"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 795841,
+  "yearVerified": true
+ },
+ {
   "id": "cat-4337604592",
   "deezerId": 4337604592,
   "isrc": "USAT22607216",
@@ -79595,6 +85347,19 @@
   "year": 2026,
   "genre": 116,
   "rank": 772513,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4337642092",
+  "deezerId": 4337642092,
+  "isrc": "USAT22606927",
+  "title": "Who Dat Is",
+  "artists": [
+   "Young Nudy"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 495583,
   "yearVerified": true
  },
  {
@@ -79651,6 +85416,19 @@
   "yearVerified": true
  },
  {
+  "id": "cat-4337870092",
+  "deezerId": 4337870092,
+  "isrc": "QZJ842614861",
+  "title": "Got To Do",
+  "artists": [
+   "Disco Lines"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 571800,
+  "yearVerified": false
+ },
+ {
   "id": "cat-4337899132",
   "deezerId": 4337899132,
   "isrc": "USWB12604300",
@@ -79662,5 +85440,1070 @@
   "genre": 132,
   "rank": 517079,
   "yearVerified": false
+ },
+ {
+  "id": "cat-4337972592",
+  "deezerId": 4337972592,
+  "isrc": "FR8Q22605110",
+  "title": "Shine a Light",
+  "artists": [
+   "Jahneration"
+  ],
+  "year": 2026,
+  "genre": 144,
+  "rank": 615811,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4338623562",
+  "deezerId": 4338623562,
+  "isrc": "GBCEL2600513",
+  "title": "Devout",
+  "artists": [
+   "Working Men's Club"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 475841,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4338631222",
+  "deezerId": 4338631222,
+  "isrc": "DEDU22600056",
+  "title": "Nächstenliebe",
+  "artists": [
+   "Boys Noize",
+   "Brutalismus 3000"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 642331,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4338826802",
+  "deezerId": 4338826802,
+  "isrc": "BKI762600001",
+  "title": "Café PQG (Preto, Quente, Gostoso)",
+  "artists": [
+   "O kannalha"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 778359,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4338905922",
+  "deezerId": 4338905922,
+  "isrc": "USSM12604527",
+  "title": "5 Morceaux de fantaisie, Op. 3: III. Mélodie",
+  "artists": [
+   "Mao Fujita"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 484463,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4339268202",
+  "deezerId": 4339268202,
+  "isrc": "BRRGE2601662",
+  "title": "Primavera",
+  "artists": [
+   "Jorge & Mateus"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 796463,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4339302262",
+  "deezerId": 4339302262,
+  "isrc": "QZQAY2697128",
+  "title": "Lil Freak",
+  "artists": [
+   "B2K"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 529411,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4341863652",
+  "deezerId": 4341863652,
+  "isrc": "USYBL2602102",
+  "title": "Red Alert",
+  "artists": [
+   "Aurora Halal"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 423359,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4342653752",
+  "deezerId": 4342653752,
+  "isrc": "GBDHC2554421",
+  "title": "Shallow",
+  "artists": [
+   "Gaerea"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 582242,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4342750242",
+  "deezerId": 4342750242,
+  "isrc": "GBBKS2600067",
+  "title": "Mi Fai Sorridere",
+  "artists": [
+   "DJ Python",
+   "Eden"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 430386,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4344466062",
+  "deezerId": 4344466062,
+  "isrc": "USNO12600302",
+  "title": "Fantasy for Piano",
+  "artists": [
+   "Brad Mehldau"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 516575,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4345570602",
+  "deezerId": 4345570602,
+  "isrc": "GBAHS2600886",
+  "title": "Tension",
+  "artists": [
+   "DJ BORING"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 729367,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4345575802",
+  "deezerId": 4345575802,
+  "isrc": "GBCPZ9025648",
+  "title": "Smoke 3 Tokes",
+  "artists": [
+   "O’Flynn"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 373475,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4345782662",
+  "deezerId": 4345782662,
+  "isrc": "CBEFB2607376",
+  "title": "Repeaty",
+  "artists": [
+   "Sammy Virji"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 522209,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4346442962",
+  "deezerId": 4346442962,
+  "isrc": "USAT22607523",
+  "title": "Yall make me sick",
+  "artists": [
+   "Gucci Mane"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 605284,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4346539042",
+  "deezerId": 4346539042,
+  "isrc": "USWB12603960",
+  "title": "Mouf Say",
+  "artists": [
+   "Lucky Daye",
+   "Pusha T"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 520588,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4346592342",
+  "deezerId": 4346592342,
+  "isrc": "GBBBC2600355",
+  "title": "Chopin: Mazurka No. 37 in A-Flat Major, Op. 59 No. 2. Allegretto",
+  "artists": [
+   "Tianyao Lyu",
+   "Frédéric Chopin"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 537329,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4346928302",
+  "deezerId": 4346928302,
+  "isrc": "JPPC02612292",
+  "title": "SPIN",
+  "artists": [
+   "BAND-MAID"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 443877,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4347576632",
+  "deezerId": 4347576632,
+  "isrc": "QMDA62691429",
+  "title": "Gloria",
+  "artists": [
+   "Barrie"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 440029,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4347793582",
+  "deezerId": 4347793582,
+  "isrc": "GBK3W2503746",
+  "title": "4510",
+  "artists": [
+   "Oscar Farrell"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 427672,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4348860372",
+  "deezerId": 4348860372,
+  "isrc": "USWB12604723",
+  "title": "Lies (feat. Lana Del Rey)",
+  "artists": [
+   "Zach Bryan",
+   "Lana Del Rey"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 632232,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4348935602",
+  "deezerId": 4348935602,
+  "isrc": "QZWA32202554",
+  "title": "SLICK",
+  "artists": [
+   "Victony",
+   "Summer Walker",
+   "Don Toliver"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 707322,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4349144632",
+  "deezerId": 4349144632,
+  "isrc": "USZ4V2600702",
+  "title": "Duck Duck Goose",
+  "artists": [
+   "Ms* Gloom"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 487903,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4349234972",
+  "deezerId": 4349234972,
+  "isrc": "JPU902603602",
+  "title": "Firestarter",
+  "artists": [
+   "Man With A Mission"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 385570,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4350662372",
+  "deezerId": 4350662372,
+  "isrc": "GBCFB2600587",
+  "title": "Gas",
+  "artists": [
+   "Bicep",
+   "Lauren Duffus",
+   "soarr"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 674983,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4350850812",
+  "deezerId": 4350850812,
+  "isrc": "BKSGS2600105",
+  "title": "Meu Celular Te Ama",
+  "artists": [
+   "Hugo & Guilherme"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 889897,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351252782",
+  "deezerId": 4351252782,
+  "isrc": "USUG12600663",
+  "title": "Bodies On The Floor",
+  "artists": [
+   "John Legend",
+   "Clipse"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 623110,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351270062",
+  "deezerId": 4351270062,
+  "isrc": "UK4WW2619015",
+  "title": "Away in a Manger (Arr. Clements for Vocal Ensemble)",
+  "artists": [
+   "VOCES8"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 448836,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351270722",
+  "deezerId": 4351270722,
+  "isrc": "USUG12608817",
+  "title": "Lush Life",
+  "artists": [
+   "Samara Joy"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 657366,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351273202",
+  "deezerId": 4351273202,
+  "isrc": "GBAJY2648804",
+  "title": "Mozart: String Quintet in C Major, K. 515: IV. Allegro",
+  "artists": [
+   "Takács Quartet",
+   "Timothy Ridout",
+   "Wolfgang Amadeus Mozart"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 544750,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351273542",
+  "deezerId": 4351273542,
+  "isrc": "QMRSZ2603471",
+  "title": "the 5 stages of heartbreak",
+  "artists": [
+   "Mahalia"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 574734,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351276272",
+  "deezerId": 4351276272,
+  "isrc": "QMRSZ2603436",
+  "title": "CIRCUS",
+  "artists": [
+   "Icee Red",
+   "Isaiah Falls"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 491706,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351399442",
+  "deezerId": 4351399442,
+  "isrc": "GBUM72502422",
+  "title": "California",
+  "artists": [
+   "Michael Kiwanuka"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 731675,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351400242",
+  "deezerId": 4351400242,
+  "isrc": "US5262628288",
+  "title": "low",
+  "artists": [
+   "Windwaker"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 465871,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351420492",
+  "deezerId": 4351420492,
+  "isrc": "DECE72606210",
+  "title": "Dein Spiel Ist Aus",
+  "artists": [
+   "Lilly Palmer",
+   "Chrissyjeey"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 487156,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351424772",
+  "deezerId": 4351424772,
+  "isrc": "GBUM72604694",
+  "title": "As Far As We Know",
+  "artists": [
+   "dodie"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 535832,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351427852",
+  "deezerId": 4351427852,
+  "isrc": "JPPO02501423",
+  "title": "Sanctuary – The Master of the Tomb",
+  "artists": [
+   "Joe Hisaishi",
+   "Royal Philharmonic Orchestra"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 542290,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4351428862",
+  "deezerId": 4351428862,
+  "isrc": "GBUM72603916",
+  "title": "Peace & Patience",
+  "artists": [
+   "Jazzy"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 532453,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351431902",
+  "deezerId": 4351431902,
+  "isrc": "GBUM72605178",
+  "title": "Table 9",
+  "artists": [
+   "Stephan Moccio"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 772887,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4351505092",
+  "deezerId": 4351505092,
+  "isrc": "USRC12601975",
+  "title": "Shroom Clouds (feat. reggie & Jeremih)",
+  "artists": [
+   "A$AP Rocky",
+   "reggie",
+   "Jeremih"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 664518,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4352410822",
+  "deezerId": 4352410822,
+  "isrc": "QM24S2606290",
+  "title": "Proof",
+  "artists": [
+   "Toro Y Moi"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 538654,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4352548802",
+  "deezerId": 4352548802,
+  "isrc": "QM24S2605155",
+  "title": "HALLOWEEN",
+  "artists": [
+   "Current Joys"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 605928,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4353633592",
+  "deezerId": 4353633592,
+  "isrc": "USWB12603353",
+  "title": "Hystérique",
+  "artists": [
+   "yeule"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 401640,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4356484982",
+  "deezerId": 4356484982,
+  "isrc": "USUYG1842137",
+  "title": "Sin City",
+  "artists": [
+   "Vory"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 545588,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4357038432",
+  "deezerId": 4357038432,
+  "isrc": "NLZ542600617",
+  "title": "We Used To Dance Here",
+  "artists": [
+   "Sigala"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 687790,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4357442092",
+  "deezerId": 4357442092,
+  "isrc": "USSM12604876",
+  "title": "missing person",
+  "artists": [
+   "girl in red"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 682479,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4357457392",
+  "deezerId": 4357457392,
+  "isrc": "USSM12603992",
+  "title": "love or something like it (feat. Lucky Daye)",
+  "artists": [
+   "Halle",
+   "Lucky Daye"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 647391,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4357459132",
+  "deezerId": 4357459132,
+  "isrc": "QMB622610910",
+  "title": "Endlessly (Again Again)",
+  "artists": [
+   "Son Lux",
+   "The Bluecoats"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 564304,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4357608052",
+  "deezerId": 4357608052,
+  "isrc": "USSM12605073",
+  "title": "Dead End - R&B ONLY SESSIONS",
+  "artists": [
+   "R&B ONLY",
+   "Quail P"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 500499,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4357847122",
+  "deezerId": 4357847122,
+  "isrc": "GBUM72604804",
+  "title": "Never Gonna Be A Boxer",
+  "artists": [
+   "Knats",
+   "corto.alto"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 526518,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4357861482",
+  "deezerId": 4357861482,
+  "isrc": "QZH6S1901233",
+  "title": "WATCH ME",
+  "artists": [
+   "K/DA",
+   "League Of Legends",
+   "Mimi Webb",
+   "Sophie Powers"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 790318,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4357861492",
+  "deezerId": 4357861492,
+  "isrc": "QZH6S1901234",
+  "title": "NEVER GOING BACK",
+  "artists": [
+   "K/DA",
+   "League Of Legends",
+   "(G)I-DLE",
+   "SOYEON",
+   "MIYEON"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 753429,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4357861512",
+  "deezerId": 4357861512,
+  "isrc": "QZH6S1901235",
+  "title": "GIRLS",
+  "artists": [
+   "K/DA",
+   "DJ Sona",
+   "League Of Legends",
+   "Sophie Powers",
+   "Sorana",
+   "Royal & the Serpent"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 751791,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4358124922",
+  "deezerId": 4358124922,
+  "isrc": "USAR12600303",
+  "title": "Back To The Start",
+  "artists": [
+   "BUNT."
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 606827,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4358253132",
+  "deezerId": 4358253132,
+  "isrc": "BK44G2600515",
+  "title": "Chama Ele pra Fuder",
+  "artists": [
+   "Dj Ramon Sucesso",
+   "Mc Gw",
+   "DJ RaMeMes (O DESTRUIDOR DO FUNK)",
+   "MC PIVETI"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 370705,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4358275352",
+  "deezerId": 4358275352,
+  "isrc": "USHR12653038",
+  "title": "La Loto",
+  "artists": [
+   "TINI",
+   "Becky G",
+   "Anitta"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 568060,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4359007102",
+  "deezerId": 4359007102,
+  "isrc": "USUG12607794",
+  "title": "Just Might Go",
+  "artists": [
+   "Yung Miami",
+   "Travis Scott"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 580284,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4359645721",
+  "deezerId": 4359645721,
+  "isrc": "GBAHT2602749",
+  "title": "Changes",
+  "artists": [
+   "Mella Dee"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 389141,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4359910981",
+  "deezerId": 4359910981,
+  "isrc": "QZYTZ2600100",
+  "title": "Vulnerable",
+  "artists": [
+   "Ozuna",
+   "Ñengo Flow",
+   "Jory Boy"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 595813,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4360272321",
+  "deezerId": 4360272321,
+  "isrc": "USDPK2600076",
+  "title": "Jolene (With Dolly Parton)",
+  "artists": [
+   "Bad Wolves",
+   "Dolly Parton"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 573496,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4362281001",
+  "deezerId": 4362281001,
+  "isrc": "GBCBR2610448",
+  "title": "Mr. Crowley",
+  "artists": [
+   "Ozzy Osbourne"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 668530,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4363375681",
+  "deezerId": 4363375681,
+  "isrc": "USUG12609269",
+  "title": "2 Hands",
+  "artists": [
+   "Mei Semones"
+  ],
+  "year": 2026,
+  "genre": 132,
+  "rank": 504798,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4364765141",
+  "deezerId": 4364765141,
+  "isrc": "USRC12601881",
+  "title": "Maybe I Still Love You - A COLORS SHOW",
+  "artists": [
+   "Love Spells",
+   "COLORS"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 507336,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4365740751",
+  "deezerId": 4365740751,
+  "isrc": "USUG12611098",
+  "title": "Lil Krazy",
+  "artists": [
+   "Yeat",
+   "Lyfestyle Corporation"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 695608,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4365977741",
+  "deezerId": 4365977741,
+  "isrc": "USUG12608183",
+  "title": "I’m Old Fashioned",
+  "artists": [
+   "Stella Cole"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 490455,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4366042591",
+  "deezerId": 4366042591,
+  "isrc": "USC4R2668103",
+  "title": "Dare Me",
+  "artists": [
+   "DIIV"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 785514,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4366095281",
+  "deezerId": 4366095281,
+  "isrc": "JPPO02603351",
+  "title": "Snowdrop",
+  "artists": [
+   "Akira Kosemura"
+  ],
+  "year": 2026,
+  "genre": 98,
+  "rank": 338856,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4366096341",
+  "deezerId": 4366096341,
+  "isrc": "USUG12608154",
+  "title": "If Ever I Would Leave You",
+  "artists": [
+   "Joshua Redman",
+   "Kevin Hays",
+   "Larry Grenadier",
+   "Marcus Gilmore"
+  ],
+  "year": 2026,
+  "genre": 129,
+  "rank": 572253,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4366096401",
+  "deezerId": 4366096401,
+  "isrc": "USUG12611039",
+  "title": "SOFTER",
+  "artists": [
+   "Jessie Reyez"
+  ],
+  "year": 2026,
+  "genre": 165,
+  "rank": 718787,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4366096751",
+  "deezerId": 4366096751,
+  "isrc": "GBUM72603552",
+  "title": "l0st the pl0t",
+  "artists": [
+   "Becky Hill"
+  ],
+  "year": 2026,
+  "genre": 113,
+  "rank": 734182,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4366097561",
+  "deezerId": 4366097561,
+  "isrc": "USC4R2668839",
+  "title": "Lithium",
+  "artists": [
+   "Evanescence"
+  ],
+  "year": 2026,
+  "genre": 152,
+  "rank": 779921,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4366097571",
+  "deezerId": 4366097571,
+  "isrc": "US5262628553",
+  "title": "Until Christmas Goes Out Of Style",
+  "artists": [
+   "Wallice"
+  ],
+  "year": 2026,
+  "genre": -1,
+  "rank": 436447,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4366131261",
+  "deezerId": 4366131261,
+  "isrc": "QZJ842615154",
+  "title": "Bandit",
+  "artists": [
+   "EsDeeKid"
+  ],
+  "year": 2026,
+  "genre": 116,
+  "rank": 726675,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4366689721",
+  "deezerId": 4366689721,
+  "isrc": "FR6P12602580",
+  "title": "Pusher (feat. Gesaffelstein) [From GTAVI: Original Score]",
+  "artists": [
+   "Justice",
+   "Gesaffelstein",
+   "Grand Theft Auto VI"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 941363,
+  "yearVerified": true
+ },
+ {
+  "id": "cat-4371828271",
+  "deezerId": 4371828271,
+  "isrc": "UKKY82600024",
+  "title": "Medusa",
+  "artists": [
+   "Saxon"
+  ],
+  "year": 2026,
+  "genre": 464,
+  "rank": 606889,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4372020311",
+  "deezerId": 4372020311,
+  "isrc": "UK7MC2600400",
+  "title": "true crime freestyle",
+  "artists": [
+   "Dean Blunt"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 533680,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4372176371",
+  "deezerId": 4372176371,
+  "isrc": "USRC12601898",
+  "title": "have u eva (feat. Cannelle)",
+  "artists": [
+   "horsegiirL",
+   "Cannelle"
+  ],
+  "year": 2026,
+  "genre": 106,
+  "rank": 622645,
+  "yearVerified": false
+ },
+ {
+  "id": "cat-4375285441",
+  "deezerId": 4375285441,
+  "isrc": "USQX92605003",
+  "title": "HONEYLOVE",
+  "artists": [
+   "Dominic Fike",
+   "Grace Ives"
+  ],
+  "year": 2026,
+  "genre": 85,
+  "rank": 613539,
+  "yearVerified": true
  }
 ]
